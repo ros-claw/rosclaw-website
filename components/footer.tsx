@@ -18,7 +18,7 @@ export function Footer() {
           {/* Links */}
           <div className="flex items-center gap-6">
             <a
-              href="https://github.com/rosclaw/rosclaw"
+              href="https://github.com/ros-claw/rosclaw"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/40 hover:text-white transition-colors"
@@ -26,7 +26,7 @@ export function Footer() {
               <Github className="w-5 h-5" />
             </a>
             <a
-              href="https://discord.gg/rosclaw"
+              href="https://discord.gg/E6nPCDu6KJ"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/40 hover:text-white transition-colors"

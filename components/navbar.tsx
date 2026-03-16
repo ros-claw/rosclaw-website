@@ -6,8 +6,8 @@ import { Menu, X, Github, MessageCircle, Book } from 'lucide-react';
 
 const navLinks = [
   { label: 'Docs', href: '#', icon: Book },
-  { label: 'GitHub', href: 'https://github.com/rosclaw/rosclaw', icon: Github },
-  { label: 'Discord', href: 'https://discord.gg/rosclaw', icon: MessageCircle },
+  { label: 'GitHub', href: 'https://github.com/ros-claw/rosclaw', icon: Github },
+  { label: 'Discord', href: 'https://discord.gg/E6nPCDu6KJ', icon: MessageCircle },
 ];
 
 export function Navbar() {

@@ -32,7 +32,7 @@ export function CTASection() {
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <a
-            href="https://github.com/rosclaw/rosclaw"
+            href="https://github.com/ros-claw/rosclaw"
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
@@ -41,7 +41,7 @@ export function CTASection() {
             Star on GitHub
           </a>
           <a
-            href="https://discord.gg/rosclaw"
+            href="https://discord.gg/E6nPCDu6KJ"
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/5 transition-all flex items-center justify-center gap-2"
