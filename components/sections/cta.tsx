@@ -36,6 +36,7 @@ export function CTASection() {
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+            suppressHydrationWarning
           >
             <Github className="w-5 h-5" />
             Star on GitHub
@@ -45,6 +46,7 @@ export function CTASection() {
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+            suppressHydrationWarning
           >
             <MessageCircle className="w-5 h-5" />
             Join Discord

@@ -30,7 +30,7 @@ export function Navbar() {
           </a>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8" suppressHydrationWarning>
             {navLinks.map((link) => (
               <a
                 key={link.label}
@@ -38,6 +38,7 @@ export function Navbar() {
                 target={link.href.startsWith('http') ? '_blank' : undefined}
                 rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
+                suppressHydrationWarning={link.href.startsWith('http')}
               >
                 <link.icon className="w-4 h-4" />
                 <span>{link.label}</span>

@@ -16,12 +16,13 @@ export function Footer() {
           </div>
 
           {/* Links */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6" suppressHydrationWarning>
             <a
               href="https://github.com/ros-claw/rosclaw"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/40 hover:text-white transition-colors"
+              suppressHydrationWarning
             >
               <Github className="w-5 h-5" />
             </a>
@@ -30,6 +31,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/40 hover:text-white transition-colors"
+              suppressHydrationWarning
             >
               <MessageCircle className="w-5 h-5" />
             </a>
@@ -38,6 +40,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/40 hover:text-white transition-colors"
+              suppressHydrationWarning
             >
               <Twitter className="w-5 h-5" />
             </a>

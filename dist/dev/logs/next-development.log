@@ -1,359 +1,10 @@
-[00:00:00.842] Server  LOG     ✓ Ready in 507ms
-[00:02:29.563] Server  WARN    ⚠ Cross origin request detected from 107.150.106.101 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[00:00:00.884] Server  LOG     ✓ Ready in 547ms
+[00:07:20.440] Server  WARN    ⚠ Cross origin request detected from 107.150.106.101 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
 Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[00:02:29.789] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:02:31.620] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:02:31.620] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:02:31.620] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<SegmentViewNode>} forbidden={undefined} ...>
-      <RedirectBoundary>
-        <RedirectErrorBoundary router={{...}}>
-          <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:<Fragment>, ...}} segmentPath={[...]} ...>
-            <SegmentViewNode type="page" pagePath="page.tsx">
-              <SegmentTrieNode>
-              <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
-                <Home params={Promise} searchParams={Promise}>
-                  <main className="relative m...">
-                    <AmbientBackground>
-                    <Navbar>
-                      <motion.nav initial={{y:-100}} animate={{y:0}} className="fixed top-...">
-                        <nav className="fixed top-..." style={{...}} ref={function useMotionRef.useCallback}>
-                          <div className="max-w-7xl ...">
-                            <div className="flex items...">
-                              <a
-                                href="/"
-+                               className="flex items-center gap-2"
--                               className="flex items-center gap-2 keychainify-checked"
-                              >
-                              <div className="hidden md:...">
-                                <a
-                                  href="#"
-                                  target={undefined}
-                                  rel={undefined}
-+                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
--                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
-                                >
-                                <a
-                                  href="https://github.com/rosclaw/rosclaw"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-+                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
--                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
-                                >
-                                <a
-                                  href="https://discord.gg/rosclaw"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-+                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
--                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
-                                >
-                              ...
-                          ...
-                    <section>
-                    <section>
-                    <section>
-                    ...
-                      <ReactFlowWrapper>
-                        <ReactFlowProvider>
-                          <GraphView>
-                          <StoreUpdater>
-                          <Wrapper$1>
-                          <Background>
-                          <Controls>
-                          <Attribution proOptions={undefined} position="bottom-left">
-                            <Panel position="bottom-left" className="react-flow..." data-message="Please onl...">
-                              <div className="react-flow..." style={{...}} data-message="Please onl...">
-                                <a
-                                  href="https://reactflow.dev"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  aria-label="React Flow attribution"
--                                 className="keychainify-checked"
-                                >
-+                                 React Flow
-                          ...
-                    <section>
-                    <section>
-                    <CTASection>
-                      <section className="py-20 px-4">
-                        <div className="max-w-4xl ...">
-                          <motion.h2>
-                          <motion.p>
-                          <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} ...>
-                            <div className="flex flex-..." style={{opacity:0, ...}} ...>
-                              <a
-                                href="https://github.com/rosclaw/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
--                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
-                              >
-                              <a
-                                href="https://discord.gg/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:..."
--                               className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:..."
-                              >
-                    <Footer>
-                      <footer className="relative z...">
-                        <div className="max-w-6xl ...">
-                          <div className="flex flex-...">
-                            <div>
-                            <div className="flex items...">
-                              <a
-                                href="https://github.com/rosclaw/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="text-white/40 hover:text-white transition-colors"
--                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
-                              >
-                              <a
-                                href="https://discord.gg/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="text-white/40 hover:text-white transition-colors"
--                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
-                              >
-                              <a
-                                href="https://twitter.com/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="text-white/40 hover:text-white transition-colors"
--                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
-                              >
-            ...
-          ...
-
-[00:02:31.876] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:02:31.876] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:02:31.876] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:02:31.876] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:02:31.876] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:02:31.877] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:03:26.688] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:03:27.404] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:03:27.404] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:03:27.404] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <HTTPAccessFallbackErrorBoundary pathname="/" notFound={<SegmentViewNode>} forbidden={undefined} ...>
-      <RedirectBoundary>
-        <RedirectErrorBoundary router={{...}}>
-          <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{rsc:<Fragment>, ...}} segmentPath={[...]} ...>
-            <SegmentViewNode type="page" pagePath="page.tsx">
-              <SegmentTrieNode>
-              <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
-                <Home params={Promise} searchParams={Promise}>
-                  <main className="relative m...">
-                    <AmbientBackground>
-                    <Navbar>
-                      <motion.nav initial={{y:-100}} animate={{y:0}} className="fixed top-...">
-                        <nav className="fixed top-..." style={{...}} ref={function useMotionRef.useCallback}>
-                          <div className="max-w-7xl ...">
-                            <div className="flex items...">
-                              <a
-                                href="/"
-+                               className="flex items-center gap-2"
--                               className="flex items-center gap-2 keychainify-checked"
-                              >
-                              <div className="hidden md:...">
-                                <a
-                                  href="#"
-                                  target={undefined}
-                                  rel={undefined}
-+                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
--                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
-                                >
-                                <a
-                                  href="https://github.com/rosclaw/rosclaw"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-+                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
--                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
-                                >
-                                <a
-                                  href="https://discord.gg/rosclaw"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-+                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
--                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
-                                >
-                              ...
-                          ...
-                    <section>
-                    <section>
-                    <section>
-                    ...
-                      <ReactFlowWrapper>
-                        <ReactFlowProvider>
-                          <GraphView>
-                          <StoreUpdater>
-                          <Wrapper$1>
-                          <Background>
-                          <Controls>
-                          <Attribution proOptions={undefined} position="bottom-left">
-                            <Panel position="bottom-left" className="react-flow..." data-message="Please onl...">
-                              <div className="react-flow..." style={{...}} data-message="Please onl...">
-                                <a
-                                  href="https://reactflow.dev"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  aria-label="React Flow attribution"
--                                 className="keychainify-checked"
-                                >
-+                                 React Flow
-                          ...
-                    <section>
-                    <section>
-                    <CTASection>
-                      <section className="py-20 px-4">
-                        <div className="max-w-4xl ...">
-                          <motion.h2>
-                          <motion.p>
-                          <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} ...>
-                            <div className="flex flex-..." style={{opacity:0, ...}} ...>
-                              <a
-                                href="https://github.com/rosclaw/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
--                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
-                              >
-                              <a
-                                href="https://discord.gg/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:..."
--                               className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:..."
-                              >
-                    <Footer>
-                      <footer className="relative z...">
-                        <div className="max-w-6xl ...">
-                          <div className="flex flex-...">
-                            <div>
-                            <div className="flex items...">
-                              <a
-                                href="https://github.com/rosclaw/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="text-white/40 hover:text-white transition-colors"
--                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
-                              >
-                              <a
-                                href="https://discord.gg/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="text-white/40 hover:text-white transition-colors"
--                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
-                              >
-                              <a
-                                href="https://twitter.com/rosclaw"
-                                target="_blank"
-                                rel="noopener noreferrer"
-+                               className="text-white/40 hover:text-white transition-colors"
--                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
-                              >
-            ...
-          ...
-
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:03:27.404] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:03:27.405] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:05:59.549] Server  LOG     ✓ Compiled in 2s
-[00:06:01.616] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:06:01.617] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:06:24.451] Server  LOG     ✓ Compiled in 1579ms
-[00:06:58.578] Server  LOG     ✓ Compiled in 127ms
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:15.534] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:09:46.017] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:09:46.017] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:09:46.017] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:09:46.017] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:07:20.665] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:07:23.066] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:07:23.066] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:07:23.066] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -395,14 +46,14 @@ It can also happen if the client has a browser extension installed which messes 
 -                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
                                 >
                                 <a
-                                  href="https://github.com/rosclaw/rosclaw"
+                                  href="https://github.com/ros-claw/rosclaw"
                                   target="_blank"
                                   rel="noopener noreferrer"
 +                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
 -                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
                                 >
                                 <a
-                                  href="https://discord.gg/rosclaw"
+                                  href="https://discord.gg/E6nPCDu6KJ"
                                   target="_blank"
                                   rel="noopener noreferrer"
 +                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
@@ -443,14 +94,14 @@ It can also happen if the client has a browser extension installed which messes 
                           <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} ...>
                             <div className="flex flex-..." style={{opacity:0, ...}} ...>
                               <a
-                                href="https://github.com/rosclaw/rosclaw"
+                                href="https://github.com/ros-claw/rosclaw"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
 -                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
                               >
                               <a
-                                href="https://discord.gg/rosclaw"
+                                href="https://discord.gg/E6nPCDu6KJ"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:..."
@@ -463,14 +114,14 @@ It can also happen if the client has a browser extension installed which messes 
                             <div>
                             <div className="flex items...">
                               <a
-                                href="https://github.com/rosclaw/rosclaw"
+                                href="https://github.com/ros-claw/rosclaw"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="text-white/40 hover:text-white transition-colors"
 -                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
                               >
                               <a
-                                href="https://discord.gg/rosclaw"
+                                href="https://discord.gg/E6nPCDu6KJ"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="text-white/40 hover:text-white transition-colors"
@@ -486,34 +137,34 @@ It can also happen if the client has a browser extension installed which messes 
             ...
           ...
 
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:09:46.018] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:10:17.563] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:10:21.625] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:10:21.625] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:10:21.625] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:09:37.445] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:10:09.311] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:10.132] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:10:10.132] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:10:10.132] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -555,14 +206,14 @@ It can also happen if the client has a browser extension installed which messes 
 -                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
                                 >
                                 <a
-                                  href="https://github.com/rosclaw/rosclaw"
+                                  href="https://github.com/ros-claw/rosclaw"
                                   target="_blank"
                                   rel="noopener noreferrer"
 +                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
 -                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors..."
                                 >
                                 <a
-                                  href="https://discord.gg/rosclaw"
+                                  href="https://discord.gg/E6nPCDu6KJ"
                                   target="_blank"
                                   rel="noopener noreferrer"
 +                                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
@@ -603,14 +254,14 @@ It can also happen if the client has a browser extension installed which messes 
                           <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true}} ...>
                             <div className="flex flex-..." style={{opacity:0, ...}} ...>
                               <a
-                                href="https://github.com/rosclaw/rosclaw"
+                                href="https://github.com/ros-claw/rosclaw"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
 -                               className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 tr..."
                               >
                               <a
-                                href="https://discord.gg/rosclaw"
+                                href="https://discord.gg/E6nPCDu6KJ"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:..."
@@ -623,14 +274,14 @@ It can also happen if the client has a browser extension installed which messes 
                             <div>
                             <div className="flex items...">
                               <a
-                                href="https://github.com/rosclaw/rosclaw"
+                                href="https://github.com/ros-claw/rosclaw"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="text-white/40 hover:text-white transition-colors"
 -                               className="text-white/40 hover:text-white transition-colors keychainify-checked"
                               >
                               <a
-                                href="https://discord.gg/rosclaw"
+                                href="https://discord.gg/E6nPCDu6KJ"
                                 target="_blank"
                                 rel="noopener noreferrer"
 +                               className="text-white/40 hover:text-white transition-colors"
@@ -646,27 +297,33 @@ It can also happen if the client has a browser extension installed which messes 
             ...
           ...
 
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:13:03.589] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
-[00:13:03.590] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e1. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e2. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e3. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e4. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e5. Help: https://reactflow.dev/error#008
+[00:10:10.132] Browser WARN    [React Flow]: Couldn't create edge for source handle id: "undefined", edge id: e6. Help: https://reactflow.dev/error#008
+[00:14:05.837] Server  LOG     ✓ Compiled in 2.1s
+[00:14:08.064] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:14:08.064] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:14:41.480] Server  LOG     ✓ Compiled in 140ms
+[00:15:28.602] Server  LOG     ✓ Compiled in 134ms
+[00:16:05.129] Server  LOG     ✓ Compiled in 95ms

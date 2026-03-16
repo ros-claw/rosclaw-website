@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import ReactFlow, { 
   Background, 
   Controls,
@@ -8,45 +8,61 @@ import ReactFlow, {
   useEdgesState,
   Node,
   Edge,
-  NodeProps
+  NodeProps,
+  Handle,
+  Position,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { motion } from 'framer-motion';
 
-// Custom Node Components
+// Custom Node Components with Handles
 const BrainNode = ({ data }: NodeProps) => (
-  <motion.div 
-    className="px-6 py-4 rounded-xl border-2 border-[#00F0FF] bg-[#00F0FF]/10"
-    animate={{ boxShadow: ['0 0 20px rgba(0,240,255,0.2)', '0 0 40px rgba(0,240,255,0.4)', '0 0 20px rgba(0,240,255,0.2)'] }}
-    transition={{ duration: 2, repeat: Infinity }}
-  >
-    <div className="text-[#00F0FF] font-bold text-lg">{data.label}</div>
-    <div className="text-[#00F0FF]/70 text-sm">{data.frequency}</div>
-  </motion.div>
+  <div className="relative">
+    <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-[#00F0FF] !w-3 !h-3" />
+    <motion.div 
+      className="px-6 py-4 rounded-xl border-2 border-[#00F0FF] bg-[#00F0FF]/10"
+      animate={{ boxShadow: ['0 0 20px rgba(0,240,255,0.2)', '0 0 40px rgba(0,240,255,0.4)', '0 0 20px rgba(0,240,255,0.2)'] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    >
+      <div className="text-[#00F0FF] font-bold text-lg">{data.label}</div>
+      <div className="text-[#00F0FF]/70 text-sm">{data.frequency}</div>
+    </motion.div>
+  </div>
 );
 
 const MiddlewareNode = ({ data }: NodeProps) => (
-  <div className="px-6 py-4 rounded-xl border-2 border-white/30 bg-white/5">
-    <div className="text-white font-bold text-lg">{data.label}</div>
-    <div className="text-white/50 text-sm">{data.functions?.join(' • ')}</div>
+  <div className="relative">
+    <Handle type="target" position={Position.Top} id="top" className="!bg-white !w-3 !h-3" />
+    <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-white !w-3 !h-3" />
+    <div className="px-6 py-4 rounded-xl border-2 border-white/30 bg-white/5">
+      <div className="text-white font-bold text-lg">{data.label}</div>
+      <div className="text-white/50 text-sm">{data.functions?.join(' • ')}</div>
+    </div>
   </div>
 );
 
 const VlaNode = ({ data }: NodeProps) => (
-  <motion.div 
-    className="px-6 py-4 rounded-xl border-2 border-[#FF3E00] bg-[#FF3E00]/10"
-    animate={{ boxShadow: ['0 0 20px rgba(255,62,0,0.2)', '0 0 40px rgba(255,62,0,0.4)', '0 0 20px rgba(255,62,0,0.2)'] }}
-    transition={{ duration: 0.5, repeat: Infinity }}
-  >
-    <div className="text-[#FF3E00] font-bold text-lg">{data.label}</div>
-    <div className="text-[#FF3E00]/70 text-sm">{data.frequency}</div>
-  </motion.div>
+  <div className="relative">
+    <Handle type="target" position={Position.Top} id="top" className="!bg-[#FF3E00] !w-3 !h-3" />
+    <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-[#FF3E00] !w-3 !h-3" />
+    <motion.div 
+      className="px-6 py-4 rounded-xl border-2 border-[#FF3E00] bg-[#FF3E00]/10"
+      animate={{ boxShadow: ['0 0 20px rgba(255,62,0,0.2)', '0 0 40px rgba(255,62,0,0.4)', '0 0 20px rgba(255,62,0,0.2)'] }}
+      transition={{ duration: 0.5, repeat: Infinity }}
+    >
+      <div className="text-[#FF3E00] font-bold text-lg">{data.label}</div>
+      <div className="text-[#FF3E00]/70 text-sm">{data.frequency}</div>
+    </motion.div>
+  </div>
 );
 
 const RosNode = ({ data }: NodeProps) => (
-  <div className="px-4 py-3 rounded-lg border border-[#4ADE80]/30 bg-[#4ADE80]/5">
-    <div className="text-[#4ADE80] font-medium text-sm">{data.label}</div>
-    <div className="text-[#4ADE80]/50 text-xs">{data.topic}</div>
+  <div className="relative">
+    <Handle type="target" position={Position.Top} id="top" className="!bg-[#4ADE80] !w-3 !h-3" />
+    <div className="px-4 py-3 rounded-lg border border-[#4ADE80]/30 bg-[#4ADE80]/5">
+      <div className="text-[#4ADE80] font-medium text-sm">{data.label}</div>
+      <div className="text-[#4ADE80]/50 text-xs">{data.topic}</div>
+    </div>
   </div>
 );
 
@@ -79,18 +95,30 @@ const mobileNodes: Node[] = [
   { id: 'ros3', type: 'ros', position: { x: 250, y: 360 }, data: { label: 'Nav', topic: 'Twist' } },
 ];
 
-const edges: Edge[] = [
-  { id: 'e1', source: 'llm', target: 'middleware', animated: true, style: { stroke: '#00F0FF', strokeWidth: 2 }, label: 'JSON/MCP' },
-  { id: 'e2', source: 'middleware', target: 'vla', animated: true, style: { stroke: '#fff', strokeWidth: 2 }, label: 'Semantic Intent' },
-  { id: 'e3', source: 'vla', target: 'ros1', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
-  { id: 'e4', source: 'vla', target: 'ros2', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
-  { id: 'e5', source: 'vla', target: 'ros3', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
-  { id: 'e6', source: 'vla', target: 'ros4', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
+// Define edges with proper handle references
+const desktopEdges: Edge[] = [
+  { id: 'e1', source: 'llm', target: 'middleware', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#00F0FF', strokeWidth: 2 } },
+  { id: 'e2', source: 'middleware', target: 'vla', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#fff', strokeWidth: 2 } },
+  { id: 'e3', source: 'vla', target: 'ros1', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
+  { id: 'e4', source: 'vla', target: 'ros2', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
+  { id: 'e5', source: 'vla', target: 'ros3', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
+  { id: 'e6', source: 'vla', target: 'ros4', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
+];
+
+const mobileEdges: Edge[] = [
+  { id: 'e1', source: 'llm', target: 'middleware', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#00F0FF', strokeWidth: 2 } },
+  { id: 'e2', source: 'middleware', target: 'vla', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#fff', strokeWidth: 2 } },
+  { id: 'e3', source: 'vla', target: 'ros1', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
+  { id: 'e4', source: 'vla', target: 'ros2', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
+  { id: 'e5', source: 'vla', target: 'ros3', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
 ];
 
 export function ArchitectureGraph() {
   const [isMobile, setIsMobile] = useState(false);
   const [nodes, setNodes, onNodesChange] = useNodesState(desktopNodes);
+  
+  const initialEdges = useMemo(() => desktopEdges, []);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -104,17 +132,14 @@ export function ArchitectureGraph() {
 
   useEffect(() => {
     setNodes(isMobile ? mobileNodes : desktopNodes);
-  }, [isMobile, setNodes]);
-
-  // Memoize edge data to avoid re-creation
-  const initialEdges = useMemo(() => edges, []);
-  const [stateEdges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+    setEdges(isMobile ? mobileEdges : desktopEdges);
+  }, [isMobile, setNodes, setEdges]);
 
   return (
-    <div className="w-full h-[500px] md:h-[600px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden">
+    <div className="w-full h-[500px] md:h-[600px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden" suppressHydrationWarning>
       <ReactFlow
         nodes={nodes}
-        edges={stateEdges}
+        edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
@@ -126,9 +151,13 @@ export function ArchitectureGraph() {
         zoomOnDoubleClick={false}
         minZoom={0.3}
         maxZoom={1.5}
+        connectOnClick={false}
+        elementsSelectable={false}
+        nodesDraggable={false}
+        nodesConnectable={false}
       >
         <Background color="#333" gap={16} size={1} />
-        <Controls className="!bg-[#1a1a1a] !border-white/10" />
+        <Controls className="!bg-[#1a1a1a] !border-white/10" showInteractive={false} />
       </ReactFlow>
     </div>
   );
