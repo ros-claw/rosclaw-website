@@ -5,7 +5,7 @@ import { Github, MessageCircle } from 'lucide-react';
 
 export function CTASection() {
   return (
-    <section className="py-20 px-4">
+    <section className="py-20 px-4" suppressHydrationWarning>
       <div className="max-w-4xl mx-auto text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

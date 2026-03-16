@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden">
+    <main className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden" suppressHydrationWarning>
       <AmbientBackground />
       <Navbar />
       
@@ -35,15 +35,13 @@ export default function Home() {
                 </span>
                 Standardizing the Future of Robotics
               </motion.div>
-
-              {/* Prevent hydration mismatch from browser extensions */}
-              <script dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.remove("keychainify-checked")' }} />
               
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+                suppressHydrationWarning
               >
                 Software-Defined
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#FF3E00]">
@@ -56,6 +54,7 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className="text-lg text-[#A1A1AA] mb-8 max-w-2xl mx-auto lg:mx-0"
+                suppressHydrationWarning
               >
                 The AUTOSAR + Android for the robotics industry. ROSClaw unifies hardware morphologies, 
                 algorithms, and data formats into a single, scalable Operating System.
@@ -102,10 +101,10 @@ export default function Home() {
       {/* Architecture */}
       <section className="relative z-10 py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" suppressHydrationWarning>
             Brain-Cerebellum Architecture
           </h2>
-          <p className="text-[#A1A1AA] text-center mb-12">
+          <p className="text-[#A1A1AA] text-center mb-12" suppressHydrationWarning>
             Dynamic routing between 1Hz LLM reasoning and 100Hz+ VLA control
           </p>
           <ArchitectureGraph />
@@ -115,10 +114,10 @@ export default function Home() {
       {/* Data Flywheel */}
       <section className="relative z-10 py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" suppressHydrationWarning>
             The Built-in Data Flywheel
           </h2>
-          <p className="text-[#A1A1AA] text-center mb-12">
+          <p className="text-[#A1A1AA] text-center mb-12" suppressHydrationWarning>
             Self-evolving intelligence at the OS level
           </p>
           <DataFlywheel />

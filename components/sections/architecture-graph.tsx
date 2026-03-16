@@ -15,7 +15,7 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { motion } from 'framer-motion';
 
-// Custom Node Components with Handles
+// Custom Node Components with Handles - defined outside component
 const BrainNode = ({ data }: NodeProps) => (
   <div className="relative">
     <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-[#00F0FF] !w-3 !h-3" />
@@ -66,13 +66,13 @@ const RosNode = ({ data }: NodeProps) => (
   </div>
 );
 
-// Define nodeTypes outside component to avoid re-creation
-const nodeTypes = {
+// Memoized nodeTypes - defined once at module level
+const nodeTypes = Object.freeze({
   brain: BrainNode,
   middleware: MiddlewareNode,
   vla: VlaNode,
   ros: RosNode,
-};
+});
 
 // Desktop layout
 const desktopNodes: Node[] = [
@@ -95,27 +95,29 @@ const mobileNodes: Node[] = [
   { id: 'ros3', type: 'ros', position: { x: 250, y: 360 }, data: { label: 'Nav', topic: 'Twist' } },
 ];
 
-// Define edges with proper handle references
-const desktopEdges: Edge[] = [
+// Define edges with proper handle references - memoized at module level
+const desktopEdges: Edge[] = Object.freeze([
   { id: 'e1', source: 'llm', target: 'middleware', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#00F0FF', strokeWidth: 2 } },
   { id: 'e2', source: 'middleware', target: 'vla', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#fff', strokeWidth: 2 } },
   { id: 'e3', source: 'vla', target: 'ros1', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
   { id: 'e4', source: 'vla', target: 'ros2', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
   { id: 'e5', source: 'vla', target: 'ros3', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
   { id: 'e6', source: 'vla', target: 'ros4', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
-];
+]);
 
-const mobileEdges: Edge[] = [
+const mobileEdges: Edge[] = Object.freeze([
   { id: 'e1', source: 'llm', target: 'middleware', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#00F0FF', strokeWidth: 2 } },
   { id: 'e2', source: 'middleware', target: 'vla', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#fff', strokeWidth: 2 } },
   { id: 'e3', source: 'vla', target: 'ros1', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
   { id: 'e4', source: 'vla', target: 'ros2', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
   { id: 'e5', source: 'vla', target: 'ros3', sourceHandle: 'bottom', targetHandle: 'top', animated: true, style: { stroke: '#FF3E00', strokeWidth: 2 } },
-];
+]);
 
 export function ArchitectureGraph() {
   const [isMobile, setIsMobile] = useState(false);
-  const [nodes, setNodes, onNodesChange] = useNodesState(desktopNodes);
+  
+  const initialNodes = useMemo(() => desktopNodes, []);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   
   const initialEdges = useMemo(() => desktopEdges, []);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);

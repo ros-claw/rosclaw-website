@@ -18,11 +18,12 @@ export function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5"
+      suppressHydrationWarning
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-2">
+          <a href="#" className="flex items-center gap-2" suppressHydrationWarning>
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00F0FF] to-[#FF3E00] flex items-center justify-center">
               <span className="text-black font-bold text-sm">R</span>
             </div>
@@ -38,7 +39,7 @@ export function Navbar() {
                 target={link.href.startsWith('http') ? '_blank' : undefined}
                 rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                 className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
-                suppressHydrationWarning={link.href.startsWith('http')}
+                suppressHydrationWarning
               >
                 <link.icon className="w-4 h-4" />
                 <span>{link.label}</span>
@@ -50,6 +51,7 @@ export function Navbar() {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-white"
+            suppressHydrationWarning
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -64,6 +66,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-[#050505]/95 border-b border-white/5"
+            suppressHydrationWarning
           >
             <div className="px-4 py-4 space-y-4">
               {navLinks.map((link) => (
@@ -74,6 +77,7 @@ export function Navbar() {
                   rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                   className="flex items-center gap-3 text-[#A1A1AA] hover:text-white transition-colors py-2"
                   onClick={() => setIsOpen(false)}
+                  suppressHydrationWarning
                 >
                   <link.icon className="w-5 h-5" />
                   <span>{link.label}</span>
