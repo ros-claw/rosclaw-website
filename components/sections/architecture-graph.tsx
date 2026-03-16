@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import ReactFlow, { 
   Background, 
   Controls,
@@ -50,6 +50,7 @@ const RosNode = ({ data }: NodeProps) => (
   </div>
 );
 
+// Define nodeTypes outside component to avoid re-creation
 const nodeTypes = {
   brain: BrainNode,
   middleware: MiddlewareNode,
@@ -105,12 +106,17 @@ export function ArchitectureGraph() {
     setNodes(isMobile ? mobileNodes : desktopNodes);
   }, [isMobile, setNodes]);
 
+  // Memoize edge data to avoid re-creation
+  const initialEdges = useMemo(() => edges, []);
+  const [stateEdges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
   return (
     <div className="w-full h-[500px] md:h-[600px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={stateEdges}
         onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
         fitView
         attributionPosition="bottom-left"

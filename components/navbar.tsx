@@ -22,7 +22,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2">
+          <a href="#" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00F0FF] to-[#FF3E00] flex items-center justify-center">
               <span className="text-black font-bold text-sm">R</span>
             </div>

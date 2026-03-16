@@ -35,6 +35,9 @@ export default function Home() {
                 </span>
                 Standardizing the Future of Robotics
               </motion.div>
+
+              {/* Prevent hydration mismatch from browser extensions */}
+              <script dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.remove("keychainify-checked")' }} />
               
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
