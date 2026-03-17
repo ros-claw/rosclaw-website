@@ -116,6 +116,7 @@ const mobileEdges: Edge[] = Object.freeze([
 export function ArchitectureGraph() {
   const [isMobile, setIsMobile] = useState(false);
   
+  // Use useMemo to prevent recreating arrays on each render
   const initialNodes = useMemo(() => desktopNodes, []);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   
@@ -137,30 +138,39 @@ export function ArchitectureGraph() {
     setEdges(isMobile ? mobileEdges : desktopEdges);
   }, [isMobile, setNodes, setEdges]);
 
+  // Memoize the nodes and edges to prevent the warning
+  const flowNodes = useMemo(() => nodes, [nodes]);
+  const flowEdges = useMemo(() => edges, [edges]);
+
   return (
     <div className="w-full h-[500px] md:h-[600px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden" suppressHydrationWarning>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        fitView
-        attributionPosition="bottom-left"
-        panOnDrag={true}
-        zoomOnScroll={false}
-        zoomOnPinch={true}
-        zoomOnDoubleClick={false}
-        minZoom={0.3}
-        maxZoom={1.5}
-        connectOnClick={false}
-        elementsSelectable={false}
-        nodesDraggable={false}
-        nodesConnectable={false}
-      >
-        <Background color="#333" gap={16} size={1} />
-        <Controls className="!bg-[#1a1a1a] !border-white/10" showInteractive={false} />
-      </ReactFlow>
+      <div className="w-full h-full">
+        <ReactFlow
+          nodes={flowNodes}
+          edges={flowEdges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          nodeTypes={nodeTypes}
+          fitView
+          attributionPosition="bottom-left"
+          panOnDrag={true}
+          zoomOnScroll={false}
+          zoomOnPinch={true}
+          zoomOnDoubleClick={false}
+          minZoom={0.3}
+          maxZoom={1.5}
+          connectOnClick={false}
+          elementsSelectable={false}
+          nodesDraggable={false}
+          nodesConnectable={false}
+          deleteKeyCode={null}
+          snapToGrid={true}
+          snapGrid={[15, 15]}
+        >
+          <Background color="#333" gap={16} size={1} />
+          <Controls className="!bg-[#1a1a1a] !border-white/10" showInteractive={false} />
+        </ReactFlow>
+      </div>
     </div>
   );
 }

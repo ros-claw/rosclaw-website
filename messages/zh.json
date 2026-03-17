@@ -55,6 +55,45 @@
       }
     }
   },
+  "flywheel": {
+    "title": "数据飞轮",
+    "subtitle": "操作系统级别的自我进化",
+    "stages": {
+      "deployment": "部署",
+      "supervision": "监督",
+      "auto_eap": "自动 EAP",
+      "labeling": "标注",
+      "ota": "OTA 更新"
+    }
+  },
+  "architecture": {
+    "title": "系统架构",
+    "subtitle": "大脑 - 小脑路由设计"
+  },
+  "installation": {
+    "items": {
+      "cross_embodiment": {
+        "title": "跨本体 (Cross-Embodiment)",
+        "subtitle": "语义级硬件抽象",
+        "description": "基于 e-URDF 技术。将大模型的高维语义指令自动映射到底层动力学。同一套抓取逻辑，无需修改即可在轮式、四足或双足人形机器人上无缝运行。"
+      },
+      "cross_tool": {
+        "title": "跨工具 (Cross-Tool)",
+        "subtitle": "通用具身 MCP 协议",
+        "description": "原生支持模型上下文协议 (MCP)。不论底层是什么雷达或机械臂，全部自动封装为标准 JSON Schema 工具，让 LLM 直接『原生对话』硬件。"
+      },
+      "cross_algorithm": {
+        "title": "跨算法 (Cross-Algorithm)",
+        "subtitle": "大脑 - 小脑路由内核",
+        "description": "打通低频高层推理（LLM）与高频底层动作（VLA 模型）的异构总线。提供软实时调度器，实现精准控制与逻辑重规划的无缝切换。"
+      },
+      "cross_format": {
+        "title": "跨格式 (Cross-Format)",
+        "subtitle": "统一时空对齐数据引擎",
+        "description": "OS 级别的数据截流。自动监听并严格对齐多模态传感器数据与 Agent 思维链，零代码生成标准 RLDS / HDF5 格式的 VLA 训练集。"
+      }
+    }
+  },
   "installation": {
     "title": "一行命令，接管你的机器人",
     "subtitle": "零配置，原生兼容 ROS 2，60 秒就绪",

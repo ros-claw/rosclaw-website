@@ -1,10 +1,28 @@
-[00:00:00.993] Server  LOG     ✓ Ready in 668ms
-[00:00:04.592] Server  WARN    ⚠ Cross origin request detected from 107.150.106.101 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[00:00:01.988] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:02.173] Server  LOG     ✓ Ready in 1746ms
+[00:00:02.176] Server  WARN    ⚠ Cross origin request detected from 107.150.106.101 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
 Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[00:00:11.980] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:14.364] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:00:14.364] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:00:14.364] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:05.741] Server  LOG     ○ Compiling /[locale] ...
+[00:00:12.310] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.title` in messages for locale `en`.
+[00:00:12.327] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.subtitle` in messages for locale `en`.
+[00:00:12.334] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.title` in messages for locale `en`.
+[00:00:12.340] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.subtitle` in messages for locale `en`.
+[00:00:16.239] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.title` in messages for locale `en`.
+[00:00:16.242] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.subtitle` in messages for locale `en`.
+[00:00:16.245] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.title` in messages for locale `en`.
+[00:00:16.253] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.subtitle` in messages for locale `en`.
+[00:00:18.296] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.title` in messages for locale `en`."}
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.subtitle` in messages for locale `en`."}
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.title` in messages for locale `en`."}
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.subtitle` in messages for locale `en`."}
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.title` in messages for locale `en`."}
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.subtitle` in messages for locale `en`."}
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.title` in messages for locale `en`."}
+[00:00:18.296] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.subtitle` in messages for locale `en`."}
+[00:00:18.525] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:00:18.525] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:00:18.525] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -54,10 +72,29 @@ It can also happen if the client has a browser extension installed which messes 
                           ...
           ...
 
-[00:01:09.129] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:09.129] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:01:09.129] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:01:09.130] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:31.234] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.title` in messages for locale `en`.
+[00:00:31.240] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.subtitle` in messages for locale `en`.
+[00:00:31.245] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.title` in messages for locale `en`.
+[00:00:31.250] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.subtitle` in messages for locale `en`.
+[00:11:13.639] Server  ERROR   Error: aborted
+[00:11:13.640] Server  ERROR   ⨯ "uncaughtException:" Error: aborted
+[00:11:13.641] Server  ERROR   ⨯ "uncaughtException: " Error: aborted
+[00:11:34.445] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.title` in messages for locale `en`.
+[00:11:34.457] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `architecture.subtitle` in messages for locale `en`.
+[00:11:34.463] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.title` in messages for locale `en`.
+[00:11:34.470] Server  ERROR   Error: MISSING_MESSAGE: Could not resolve `flywheel.subtitle` in messages for locale `en`.
+[00:11:36.170] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.title` in messages for locale `en`."}
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.subtitle` in messages for locale `en`."}
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.title` in messages for locale `en`."}
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.subtitle` in messages for locale `en`."}
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.title` in messages for locale `en`."}
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `architecture.subtitle` in messages for locale `en`."}
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.title` in messages for locale `en`."}
+[00:11:36.615] Browser ERROR   {"code":"MISSING_MESSAGE","originalMessage":"Could not resolve `flywheel.subtitle` in messages for locale `en`."}
+[00:11:36.615] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:11:36.615] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:11:36.615] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
 
 - A server/client branch `if (typeof window !== 'undefined')`.
 - Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
@@ -106,4 +143,61 @@ It can also happen if the client has a browser extension installed which messes 
 +                                 React Flow
                           ...
           ...
+
+[00:15:38.495] Server  LOG     ✓ Compiled in 2.2s
+[00:20:57.933] Server  LOG     ✓ Compiled in 262ms
+[00:20:58.638] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:20:58.638] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:21:28.391] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:21:28.943] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:21:28.943] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:21:28.943] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <Home params={Promise} searchParams={Promise}>
+      <main className="relative m..." suppressHydrationWarning={true}>
+        <AmbientBackground>
+        <Navbar>
+        <section>
+        <section>
+        <section>
+        <section className="relative z...">
+          <div className="max-w-6xl ...">
+            <h2>
+            <p>
+            <ArchitectureGraph>
+              <div className="w-full h-[..." suppressHydrationWarning={true}>
+                <div className="w-full h-full">
+                  <ReactFlow nodes={[...]} edges={[...]} ...>
+                    <div style={{width:"100%", ...}} ref={null} className="react-flow" data-testid="rf__wrapper" ...>
+                      <ReactFlowWrapper>
+                        <ReactFlowProvider>
+                          <GraphView>
+                          <StoreUpdater>
+                          <Wrapper$1>
+                          <Background>
+                          <Controls>
+                          <Attribution proOptions={undefined} position="bottom-left">
+                            <Panel position="bottom-left" className="react-flow..." data-message="Please onl...">
+                              <div className="react-flow..." style={{...}} data-message="Please onl...">
+                                <a
+                                  href="https://reactflow.dev"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label="React Flow attribution"
+-                                 className="keychainify-checked"
+                                >
++                                 React Flow
+                          ...
+        ...
 

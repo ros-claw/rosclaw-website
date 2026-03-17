@@ -3,15 +3,17 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Github, MessageCircle, Book } from 'lucide-react';
-
-const navLinks = [
-  { label: 'Docs', href: '#', icon: Book },
-  { label: 'GitHub', href: 'https://github.com/ros-claw/rosclaw', icon: Github },
-  { label: 'Discord', href: 'https://discord.gg/E6nPCDu6KJ', icon: MessageCircle },
-];
+import { useTranslations } from 'next-intl';
 
 export function Navbar() {
+  const t = useTranslations('nav');
   const [isOpen, setIsOpen] = useState(false);
+
+  const navLinks = [
+    { label: t('docs'), href: '#', icon: Book },
+    { label: 'GitHub', href: 'https://github.com/ros-claw/rosclaw', icon: Github },
+    { label: 'Discord', href: 'https://discord.gg/E6nPCDu6KJ', icon: MessageCircle },
+  ];
 
   return (
     <motion.nav
