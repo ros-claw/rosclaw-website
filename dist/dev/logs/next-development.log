@@ -201,3 +201,109 @@ It can also happen if the client has a browser extension installed which messes 
                           ...
         ...
 
+[00:24:24.603] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:24:24.746] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:24:24.746] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:24:24.746] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <Home params={Promise} searchParams={Promise}>
+      <main className="relative m..." suppressHydrationWarning={true}>
+        <AmbientBackground>
+        <Navbar>
+        <section>
+        <section>
+        <section>
+        <section className="relative z...">
+          <div className="max-w-6xl ...">
+            <h2>
+            <p>
+            <ArchitectureGraph>
+              <div className="w-full h-[..." suppressHydrationWarning={true}>
+                <div className="w-full h-full">
+                  <ReactFlow nodes={[...]} edges={[...]} ...>
+                    <div style={{width:"100%", ...}} ref={null} className="react-flow" data-testid="rf__wrapper" ...>
+                      <ReactFlowWrapper>
+                        <ReactFlowProvider>
+                          <GraphView>
+                          <StoreUpdater>
+                          <Wrapper$1>
+                          <Background>
+                          <Controls>
+                          <Attribution proOptions={undefined} position="bottom-left">
+                            <Panel position="bottom-left" className="react-flow..." data-message="Please onl...">
+                              <div className="react-flow..." style={{...}} data-message="Please onl...">
+                                <a
+                                  href="https://reactflow.dev"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label="React Flow attribution"
+-                                 className="keychainify-checked"
+                                >
++                                 React Flow
+                          ...
+        ...
+
+[00:24:53.359] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:24:53.683] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:24:53.684] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:24:53.684] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <Home params={Promise} searchParams={Promise}>
+      <main className="relative m..." suppressHydrationWarning={true}>
+        <AmbientBackground>
+        <Navbar>
+        <section>
+        <section>
+        <section>
+        <section className="relative z...">
+          <div className="max-w-6xl ...">
+            <h2>
+            <p>
+            <ArchitectureGraph>
+              <div className="w-full h-[..." suppressHydrationWarning={true}>
+                <div className="w-full h-full">
+                  <ReactFlow nodes={[...]} edges={[...]} ...>
+                    <div style={{width:"100%", ...}} ref={null} className="react-flow" data-testid="rf__wrapper" ...>
+                      <ReactFlowWrapper>
+                        <ReactFlowProvider>
+                          <GraphView>
+                          <StoreUpdater>
+                          <Wrapper$1>
+                          <Background>
+                          <Controls>
+                          <Attribution proOptions={undefined} position="bottom-left">
+                            <Panel position="bottom-left" className="react-flow..." data-message="Please onl...">
+                              <div className="react-flow..." style={{...}} data-message="Please onl...">
+                                <a
+                                  href="https://reactflow.dev"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label="React Flow attribution"
+-                                 className="keychainify-checked"
+                                >
++                                 React Flow
+                          ...
+        ...
+

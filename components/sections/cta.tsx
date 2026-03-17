@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { Github, MessageCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function CTASection() {
+  const t = useTranslations('cta');
+
   return (
     <section className="py-20 px-4" suppressHydrationWarning>
       <div className="max-w-4xl mx-auto text-center">
@@ -12,8 +15,9 @@ export function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold mb-4"
+          suppressHydrationWarning
         >
-          Join the OS Revolution for Robotics.
+          {t('title')}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -21,8 +25,9 @@ export function CTASection() {
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
           className="text-[#A1A1AA] mb-8"
+          suppressHydrationWarning
         >
-          Stop building custom state machines. Start building intelligent agents.
+          {t('description')}
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -30,6 +35,7 @@ export function CTASection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
+          suppressHydrationWarning
         >
           <a
             href="https://github.com/ros-claw/rosclaw"
@@ -39,7 +45,7 @@ export function CTASection() {
             suppressHydrationWarning
           >
             <Github className="w-5 h-5" />
-            Star on GitHub
+            {t('github')}
           </a>
           <a
             href="https://discord.gg/E6nPCDu6KJ"
@@ -49,7 +55,7 @@ export function CTASection() {
             suppressHydrationWarning
           >
             <MessageCircle className="w-5 h-5" />
-            Join Discord
+            {t('discord')}
           </a>
         </motion.div>
       </div>

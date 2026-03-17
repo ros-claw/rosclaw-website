@@ -152,6 +152,7 @@ export function ArchitectureGraph() {
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
           fitView
+          fitViewOptions={{ padding: 0.2 }}
           attributionPosition="bottom-left"
           panOnDrag={true}
           zoomOnScroll={false}
@@ -166,6 +167,10 @@ export function ArchitectureGraph() {
           deleteKeyCode={null}
           snapToGrid={true}
           snapGrid={[15, 15]}
+          defaultEdgeOptions={{
+            type: 'smoothstep',
+            animated: true,
+          }}
         >
           <Background color="#333" gap={16} size={1} />
           <Controls className="!bg-[#1a1a1a] !border-white/10" showInteractive={false} />

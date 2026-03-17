@@ -98,28 +98,32 @@ export default function Home() {
       </section>
       
       {/* Architecture */}
-      <section className="relative z-10 py-20 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="relative z-10 py-20 px-4 w-full">
+        <div className="max-w-6xl mx-auto w-full">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" suppressHydrationWarning>
             {t('architecture.title')}
           </h2>
           <p className="text-[#A1A1AA] text-center mb-12" suppressHydrationWarning>
             {t('architecture.subtitle')}
           </p>
-          <ArchitectureGraph />
+          <div className="w-full flex justify-center">
+            <ArchitectureGraph />
+          </div>
         </div>
       </section>
       
       {/* Data Flywheel */}
-      <section className="relative z-10 py-20 px-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="relative z-10 py-20 px-4 w-full">
+        <div className="max-w-6xl mx-auto w-full">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" suppressHydrationWarning>
             {t('flywheel.title')}
           </h2>
           <p className="text-[#A1A1AA] text-center mb-12" suppressHydrationWarning>
             {t('flywheel.subtitle')}
           </p>
-          <DataFlywheel />
+          <div className="w-full flex justify-center">
+            <DataFlywheel />
+          </div>
         </div>
       </section>
       
