@@ -2198,228 +2198,236 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 // Custom Node Components with Handles - defined outside component
-const BrainNode = ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "relative",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
-                type: "source",
-                position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Bottom,
-                id: "bottom",
-                className: "!bg-[#00F0FF] !w-3 !h-3"
-            }, void 0, false, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 21,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                className: "px-6 py-4 rounded-xl border-2 border-[#00F0FF] bg-[#00F0FF]/10",
-                animate: {
-                    boxShadow: [
-                        '0 0 20px rgba(0,240,255,0.2)',
-                        '0 0 40px rgba(0,240,255,0.4)',
-                        '0 0 20px rgba(0,240,255,0.2)'
+const BrainNode = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])(_c = ({
+    "useCallback[BrainNode]": ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "relative",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
+                    type: "source",
+                    position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Bottom,
+                    id: "bottom",
+                    className: "!bg-[#00F0FF] !w-3 !h-3"
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 22,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0)),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
+                    className: "px-6 py-4 rounded-xl border-2 border-[#00F0FF] bg-[#00F0FF]/10",
+                    animate: {
+                        boxShadow: [
+                            '0 0 20px rgba(0,240,255,0.2)',
+                            '0 0 40px rgba(0,240,255,0.4)',
+                            '0 0 20px rgba(0,240,255,0.2)'
+                        ]
+                    },
+                    transition: {
+                        duration: 2,
+                        repeat: Infinity
+                    },
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-[#00F0FF] font-bold text-lg",
+                            children: data.label
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 28,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0)),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-[#00F0FF]/70 text-sm",
+                            children: data.frequency
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 29,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0))
                     ]
-                },
-                transition: {
-                    duration: 2,
-                    repeat: Infinity
-                },
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-[#00F0FF] font-bold text-lg",
-                        children: data.label
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 27,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0)),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-[#00F0FF]/70 text-sm",
-                        children: data.frequency
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 28,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0))
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 22,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0))
-        ]
-    }, void 0, true, {
-        fileName: "[project]/components/sections/architecture-graph.tsx",
-        lineNumber: 20,
-        columnNumber: 3
-    }, ("TURBOPACK compile-time value", void 0));
-_c = BrainNode;
-const MiddlewareNode = ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "relative",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
-                type: "target",
-                position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Top,
-                id: "top",
-                className: "!bg-white !w-3 !h-3"
-            }, void 0, false, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 35,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
-                type: "source",
-                position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Bottom,
-                id: "bottom",
-                className: "!bg-white !w-3 !h-3"
-            }, void 0, false, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 36,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "px-6 py-4 rounded-xl border-2 border-white/30 bg-white/5",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-white font-bold text-lg",
-                        children: data.label
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 38,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0)),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-white/50 text-sm",
-                        children: data.functions?.join(' • ')
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 39,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0))
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 37,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0))
-        ]
-    }, void 0, true, {
-        fileName: "[project]/components/sections/architecture-graph.tsx",
-        lineNumber: 34,
-        columnNumber: 3
-    }, ("TURBOPACK compile-time value", void 0));
-_c1 = MiddlewareNode;
-const VlaNode = ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "relative",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
-                type: "target",
-                position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Top,
-                id: "top",
-                className: "!bg-[#FF3E00] !w-3 !h-3"
-            }, void 0, false, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 46,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
-                type: "source",
-                position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Bottom,
-                id: "bottom",
-                className: "!bg-[#FF3E00] !w-3 !h-3"
-            }, void 0, false, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 47,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
-                className: "px-6 py-4 rounded-xl border-2 border-[#FF3E00] bg-[#FF3E00]/10",
-                animate: {
-                    boxShadow: [
-                        '0 0 20px rgba(255,62,0,0.2)',
-                        '0 0 40px rgba(255,62,0,0.4)',
-                        '0 0 20px rgba(255,62,0,0.2)'
+                }, void 0, true, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 23,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0))
+            ]
+        }, void 0, true, {
+            fileName: "[project]/components/sections/architecture-graph.tsx",
+            lineNumber: 21,
+            columnNumber: 3
+        }, ("TURBOPACK compile-time value", void 0))
+})["useCallback[BrainNode]"], []);
+_c1 = BrainNode;
+const MiddlewareNode = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])(_c2 = ({
+    "useCallback[MiddlewareNode]": ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "relative",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
+                    type: "target",
+                    position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Top,
+                    id: "top",
+                    className: "!bg-white !w-3 !h-3"
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 36,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0)),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
+                    type: "source",
+                    position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Bottom,
+                    id: "bottom",
+                    className: "!bg-white !w-3 !h-3"
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 37,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0)),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "px-6 py-4 rounded-xl border-2 border-white/30 bg-white/5",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-white font-bold text-lg",
+                            children: data.label
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 39,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0)),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-white/50 text-sm",
+                            children: data.functions?.join(' • ')
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 40,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0))
                     ]
-                },
-                transition: {
-                    duration: 0.5,
-                    repeat: Infinity
-                },
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-[#FF3E00] font-bold text-lg",
-                        children: data.label
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 53,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0)),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-[#FF3E00]/70 text-sm",
-                        children: data.frequency
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 54,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0))
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 48,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0))
-        ]
-    }, void 0, true, {
-        fileName: "[project]/components/sections/architecture-graph.tsx",
-        lineNumber: 45,
-        columnNumber: 3
-    }, ("TURBOPACK compile-time value", void 0));
-_c2 = VlaNode;
-const RosNode = ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "relative",
-        children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
-                type: "target",
-                position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Top,
-                id: "top",
-                className: "!bg-[#4ADE80] !w-3 !h-3"
-            }, void 0, false, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 61,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "px-4 py-3 rounded-lg border border-[#4ADE80]/30 bg-[#4ADE80]/5",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-[#4ADE80] font-medium text-sm",
-                        children: data.label
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 63,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0)),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-[#4ADE80]/50 text-xs",
-                        children: data.topic
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 64,
-                        columnNumber: 7
-                    }, ("TURBOPACK compile-time value", void 0))
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 62,
-                columnNumber: 5
-            }, ("TURBOPACK compile-time value", void 0))
-        ]
-    }, void 0, true, {
-        fileName: "[project]/components/sections/architecture-graph.tsx",
-        lineNumber: 60,
-        columnNumber: 3
-    }, ("TURBOPACK compile-time value", void 0));
-_c3 = RosNode;
+                }, void 0, true, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 38,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0))
+            ]
+        }, void 0, true, {
+            fileName: "[project]/components/sections/architecture-graph.tsx",
+            lineNumber: 35,
+            columnNumber: 3
+        }, ("TURBOPACK compile-time value", void 0))
+})["useCallback[MiddlewareNode]"], []);
+_c3 = MiddlewareNode;
+const VlaNode = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])(_c4 = ({
+    "useCallback[VlaNode]": ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "relative",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
+                    type: "target",
+                    position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Top,
+                    id: "top",
+                    className: "!bg-[#FF3E00] !w-3 !h-3"
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 47,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0)),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
+                    type: "source",
+                    position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Bottom,
+                    id: "bottom",
+                    className: "!bg-[#FF3E00] !w-3 !h-3"
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 48,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0)),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
+                    className: "px-6 py-4 rounded-xl border-2 border-[#FF3E00] bg-[#FF3E00]/10",
+                    animate: {
+                        boxShadow: [
+                            '0 0 20px rgba(255,62,0,0.2)',
+                            '0 0 40px rgba(255,62,0,0.4)',
+                            '0 0 20px rgba(255,62,0,0.2)'
+                        ]
+                    },
+                    transition: {
+                        duration: 0.5,
+                        repeat: Infinity
+                    },
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-[#FF3E00] font-bold text-lg",
+                            children: data.label
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 54,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0)),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-[#FF3E00]/70 text-sm",
+                            children: data.frequency
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 55,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0))
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 49,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0))
+            ]
+        }, void 0, true, {
+            fileName: "[project]/components/sections/architecture-graph.tsx",
+            lineNumber: 46,
+            columnNumber: 3
+        }, ("TURBOPACK compile-time value", void 0))
+})["useCallback[VlaNode]"], []);
+_c5 = VlaNode;
+const RosNode = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])(_c6 = ({
+    "useCallback[RosNode]": ({ data })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "relative",
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Handle"], {
+                    type: "target",
+                    position: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Position"].Top,
+                    id: "top",
+                    className: "!bg-[#4ADE80] !w-3 !h-3"
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 62,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0)),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "px-4 py-3 rounded-lg border border-[#4ADE80]/30 bg-[#4ADE80]/5",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-[#4ADE80] font-medium text-sm",
+                            children: data.label
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 64,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0)),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-[#4ADE80]/50 text-xs",
+                            children: data.topic
+                        }, void 0, false, {
+                            fileName: "[project]/components/sections/architecture-graph.tsx",
+                            lineNumber: 65,
+                            columnNumber: 7
+                        }, ("TURBOPACK compile-time value", void 0))
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 63,
+                    columnNumber: 5
+                }, ("TURBOPACK compile-time value", void 0))
+            ]
+        }, void 0, true, {
+            fileName: "[project]/components/sections/architecture-graph.tsx",
+            lineNumber: 61,
+            columnNumber: 3
+        }, ("TURBOPACK compile-time value", void 0))
+})["useCallback[RosNode]"], []);
+_c7 = RosNode;
 // Memoized nodeTypes - defined once at module level
 const nodeTypes = Object.freeze({
     brain: BrainNode,
@@ -2428,7 +2436,7 @@ const nodeTypes = Object.freeze({
     ros: RosNode
 });
 // Desktop layout
-const desktopNodes = [
+const desktopNodes = Object.freeze([
     {
         id: 'llm',
         type: 'brain',
@@ -2517,9 +2525,9 @@ const desktopNodes = [
             topic: 'control_msgs/GripperCommand'
         }
     }
-];
+]);
 // Mobile layout (vertical)
-const mobileNodes = [
+const mobileNodes = Object.freeze([
     {
         id: 'llm',
         type: 'brain',
@@ -2596,7 +2604,7 @@ const mobileNodes = [
             topic: 'Twist'
         }
     }
-];
+]);
 // Define edges with proper handle references - memoized at module level
 const desktopEdges = Object.freeze([
     {
@@ -2734,137 +2742,132 @@ const mobileEdges = Object.freeze([
         }
     }
 ]);
-function ArchitectureGraph() {
+function FlowContent() {
     _s();
     const [isMobile, setIsMobile] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    // Use useMemo to prevent recreating arrays on each render
-    const initialNodes = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
-        "ArchitectureGraph.useMemo[initialNodes]": ()=>desktopNodes
-    }["ArchitectureGraph.useMemo[initialNodes]"], []);
-    const [nodes, setNodes, onNodesChange] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNodesState"])(initialNodes);
-    const initialEdges = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
-        "ArchitectureGraph.useMemo[initialEdges]": ()=>desktopEdges
-    }["ArchitectureGraph.useMemo[initialEdges]"], []);
-    const [edges, setEdges, onEdgesChange] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEdgesState"])(initialEdges);
+    const nodesToUse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "FlowContent.useMemo[nodesToUse]": ()=>isMobile ? mobileNodes : desktopNodes
+    }["FlowContent.useMemo[nodesToUse]"], [
+        isMobile
+    ]);
+    const edgesToUse = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
+        "FlowContent.useMemo[edgesToUse]": ()=>isMobile ? mobileEdges : desktopEdges
+    }["FlowContent.useMemo[edgesToUse]"], [
+        isMobile
+    ]);
+    const [nodes, setNodes, onNodesChange] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNodesState"])(nodesToUse);
+    const [edges, setEdges, onEdgesChange] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEdgesState"])(edgesToUse);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "ArchitectureGraph.useEffect": ()=>{
+        "FlowContent.useEffect": ()=>{
             const checkMobile = {
-                "ArchitectureGraph.useEffect.checkMobile": ()=>{
+                "FlowContent.useEffect.checkMobile": ()=>{
                     setIsMobile(window.innerWidth < 768);
                 }
-            }["ArchitectureGraph.useEffect.checkMobile"];
+            }["FlowContent.useEffect.checkMobile"];
             checkMobile();
             window.addEventListener('resize', checkMobile);
             return ({
-                "ArchitectureGraph.useEffect": ()=>window.removeEventListener('resize', checkMobile)
-            })["ArchitectureGraph.useEffect"];
+                "FlowContent.useEffect": ()=>window.removeEventListener('resize', checkMobile)
+            })["FlowContent.useEffect"];
         }
-    }["ArchitectureGraph.useEffect"], []);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "ArchitectureGraph.useEffect": ()=>{
-            setNodes(isMobile ? mobileNodes : desktopNodes);
-            setEdges(isMobile ? mobileEdges : desktopEdges);
-        }
-    }["ArchitectureGraph.useEffect"], [
-        isMobile,
-        setNodes,
-        setEdges
-    ]);
-    // Memoize the nodes and edges to prevent the warning
-    const flowNodes = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
-        "ArchitectureGraph.useMemo[flowNodes]": ()=>nodes
-    }["ArchitectureGraph.useMemo[flowNodes]"], [
-        nodes
-    ]);
-    const flowEdges = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
-        "ArchitectureGraph.useMemo[flowEdges]": ()=>edges
-    }["ArchitectureGraph.useMemo[flowEdges]"], [
-        edges
-    ]);
+    }["FlowContent.useEffect"], []);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "w-full h-[600px] md:h-[700px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden",
         suppressHydrationWarning: true,
-        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "w-full h-full",
-            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__ReactFlow__as__default$3e$__["default"], {
-                nodes: flowNodes,
-                edges: flowEdges,
-                onNodesChange: onNodesChange,
-                onEdgesChange: onEdgesChange,
-                nodeTypes: nodeTypes,
-                fitView: true,
-                fitViewOptions: {
-                    padding: 0.3
-                },
-                attributionPosition: "bottom-left",
-                panOnDrag: true,
-                zoomOnScroll: false,
-                zoomOnPinch: true,
-                zoomOnDoubleClick: false,
-                minZoom: 0.3,
-                maxZoom: 1.5,
-                connectOnClick: false,
-                elementsSelectable: false,
-                nodesDraggable: false,
-                nodesConnectable: false,
-                deleteKeyCode: null,
-                snapToGrid: true,
-                snapGrid: [
-                    15,
-                    15
-                ],
-                defaultEdgeOptions: {
-                    type: 'smoothstep',
-                    animated: true
-                },
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$background$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Background"], {
-                        color: "#333",
-                        gap: 16,
-                        size: 1
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 175,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$controls$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Controls"], {
-                        className: "!bg-[#1a1a1a] !border-white/10",
-                        showInteractive: false
-                    }, void 0, false, {
-                        fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 176,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/components/sections/architecture-graph.tsx",
-                lineNumber: 148,
-                columnNumber: 9
-            }, this)
-        }, void 0, false, {
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__ReactFlow__as__default$3e$__["default"], {
+            nodes: nodes,
+            edges: edges,
+            onNodesChange: onNodesChange,
+            onEdgesChange: onEdgesChange,
+            nodeTypes: nodeTypes,
+            fitView: true,
+            fitViewOptions: {
+                padding: 0.3
+            },
+            attributionPosition: "bottom-left",
+            panOnDrag: true,
+            zoomOnScroll: false,
+            zoomOnPinch: true,
+            zoomOnDoubleClick: false,
+            minZoom: 0.3,
+            maxZoom: 1.5,
+            connectOnClick: false,
+            elementsSelectable: false,
+            nodesDraggable: false,
+            nodesConnectable: false,
+            deleteKeyCode: null,
+            snapToGrid: true,
+            snapGrid: [
+                15,
+                15
+            ],
+            defaultEdgeOptions: {
+                type: 'smoothstep',
+                animated: true
+            },
+            suppressHydrationWarning: true,
+            children: [
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$background$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Background"], {
+                    color: "#333",
+                    gap: 16,
+                    size: 1
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 166,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$controls$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Controls"], {
+                    className: "!bg-[#1a1a1a] !border-white/10",
+                    showInteractive: false
+                }, void 0, false, {
+                    fileName: "[project]/components/sections/architecture-graph.tsx",
+                    lineNumber: 167,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
             fileName: "[project]/components/sections/architecture-graph.tsx",
-            lineNumber: 147,
+            lineNumber: 138,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/sections/architecture-graph.tsx",
-        lineNumber: 146,
+        lineNumber: 137,
         columnNumber: 5
     }, this);
 }
-_s(ArchitectureGraph, "9LBKf4JohFkTudGCVHVUEQdpLHg=", false, function() {
+_s(FlowContent, "voXEoBzj9fL071gLuCi91mZtg8c=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useNodesState"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEdgesState"]
     ];
 });
-_c4 = ArchitectureGraph;
-var _c, _c1, _c2, _c3, _c4;
-__turbopack_context__.k.register(_c, "BrainNode");
-__turbopack_context__.k.register(_c1, "MiddlewareNode");
-__turbopack_context__.k.register(_c2, "VlaNode");
-__turbopack_context__.k.register(_c3, "RosNode");
-__turbopack_context__.k.register(_c4, "ArchitectureGraph");
+_c8 = FlowContent;
+function ArchitectureGraph() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$core$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ReactFlowProvider"], {
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(FlowContent, {}, void 0, false, {
+            fileName: "[project]/components/sections/architecture-graph.tsx",
+            lineNumber: 176,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/components/sections/architecture-graph.tsx",
+        lineNumber: 175,
+        columnNumber: 5
+    }, this);
+}
+_c9 = ArchitectureGraph;
+var _c, _c1, _c2, _c3, _c4, _c5, _c6, _c7, _c8, _c9;
+__turbopack_context__.k.register(_c, "BrainNode$useCallback");
+__turbopack_context__.k.register(_c1, "BrainNode");
+__turbopack_context__.k.register(_c2, "MiddlewareNode$useCallback");
+__turbopack_context__.k.register(_c3, "MiddlewareNode");
+__turbopack_context__.k.register(_c4, "VlaNode$useCallback");
+__turbopack_context__.k.register(_c5, "VlaNode");
+__turbopack_context__.k.register(_c6, "RosNode$useCallback");
+__turbopack_context__.k.register(_c7, "RosNode");
+__turbopack_context__.k.register(_c8, "FlowContent");
+__turbopack_context__.k.register(_c9, "ArchitectureGraph");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }
@@ -3761,7 +3764,7 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8",
+                className: "relative z-10 pt-32 pb-20",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3933,7 +3936,7 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                className: "relative z-10 py-20",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$embodiment$2d$demo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["EmbodimentDemo"], {}, void 0, false, {
@@ -3952,7 +3955,7 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                className: "relative z-10 py-20",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$features$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FeaturesGrid"], {}, void 0, false, {
@@ -3971,7 +3974,7 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                className: "relative z-10 py-20",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: [
@@ -4026,7 +4029,7 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                className: "relative z-10 py-20",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: [
@@ -4081,7 +4084,7 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                className: "relative z-10 py-20",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$installation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InstallationBlock"], {}, void 0, false, {
@@ -4099,28 +4102,14 @@ function Home() {
                 lineNumber: 139,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
-                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$cta$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CTASection"], {}, void 0, false, {
-                        fileName: "[project]/app/[locale]/page.tsx",
-                        lineNumber: 148,
-                        columnNumber: 11
-                    }, this)
-                }, void 0, false, {
-                    fileName: "[project]/app/[locale]/page.tsx",
-                    lineNumber: 147,
-                    columnNumber: 9
-                }, this)
-            }, void 0, false, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$cta$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CTASection"], {}, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
                 lineNumber: 146,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Footer"], {}, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
-                lineNumber: 152,
+                lineNumber: 148,
                 columnNumber: 7
             }, this)
         ]

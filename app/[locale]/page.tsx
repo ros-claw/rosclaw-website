@@ -22,7 +22,7 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             {/* Left: Text */}
@@ -88,21 +88,21 @@ export default function Home() {
       </section>
       
       {/* Embodiment Demo */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <EmbodimentDemo />
         </div>
       </section>
       
       {/* Features */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FeaturesGrid />
         </div>
       </section>
       
       {/* Architecture */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4" suppressHydrationWarning>
@@ -119,7 +119,7 @@ export default function Home() {
       </section>
       
       {/* Data Flywheel */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4" suppressHydrationWarning>
@@ -136,7 +136,7 @@ export default function Home() {
       </section>
       
       {/* Installation */}
-      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <InstallationBlock />
         </div>

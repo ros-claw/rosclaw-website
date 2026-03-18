@@ -21,6 +21,15 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#root, #__next {
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Custom scrollbar */

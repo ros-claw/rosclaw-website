@@ -1,7 +1,10 @@
 import {getRequestConfig} from 'next-intl/server';
 
-// Minimal config - messages are loaded directly in layout.tsx
-export default getRequestConfig(async ({locale}) => ({
-  locale: locale || 'en',
-  messages: {}
-}));
+export default getRequestConfig(async ({locale}) => {
+  const messages = await import(`../messages/${locale}.json`).then(m => m.default);
+  
+  return {
+    locale: locale || 'en',
+    messages
+  };
+});

@@ -73,7 +73,6 @@
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --color-red-50: #fef2f2;
     --color-red-100: #ffe2e2;
     --color-red-200: #ffcaca;
     --color-red-300: #ffa3a3;
@@ -181,7 +180,6 @@
 
   @supports (color: lab(0% 0 0)) {
     :root, :host {
-      --color-red-50: lab(96.5005% 4.18508 1.52328);
       --color-red-100: lab(92.243% 10.2865 3.83865);
       --color-red-200: lab(86.017% 19.8815 7.75869);
       --color-red-300: lab(76.5514% 36.422 15.5335);
@@ -523,6 +521,10 @@
     inset-inline-start: var(--spacing);
   }
 
+  .start-25 {
+    inset-inline-start: calc(var(--spacing) * 25);
+  }
+
   .end {
     inset-inline-end: var(--spacing);
   }
@@ -645,10 +647,6 @@
     .container {
       max-width: 96rem;
     }
-  }
-
-  .m-0 {
-    margin: calc(var(--spacing) * 0);
   }
 
   .mx-auto {
@@ -792,10 +790,6 @@
     height: calc(var(--spacing) * 16);
   }
 
-  .h-52 {
-    height: calc(var(--spacing) * 52);
-  }
-
   .h-\[300px\] {
     height: 300px;
   }
@@ -806,10 +800,6 @@
 
   .h-\[400px\] {
     height: 400px;
-  }
-
-  .h-\[500px\] {
-    height: 500px;
   }
 
   .h-\[600px\] {
@@ -888,20 +878,12 @@
     max-width: var(--container-5xl);
   }
 
-  .max-w-6 {
-    max-width: calc(var(--spacing) * 6);
-  }
-
   .max-w-6xl {
     max-width: var(--container-6xl);
   }
 
   .max-w-7xl {
     max-width: var(--container-7xl);
-  }
-
-  .max-w-full {
-    max-width: 100%;
   }
 
   .max-w-xl {
@@ -942,10 +924,6 @@
 
   .flex-col {
     flex-direction: column;
-  }
-
-  .flex-row {
-    flex-direction: row;
   }
 
   .flex-wrap {
@@ -1306,14 +1284,8 @@
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
 
-  .to-\[�O\.\] {
-    --tw-gradient-to: �O. ;
-    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
-  }
-
-  .to-\[�Q\.\] {
-    --tw-gradient-to: �Q. ;
-    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  .\!p-9 {
+    padding: calc(var(--spacing) * 9) !important;
   }
 
   .p-2 {
@@ -1744,32 +1716,28 @@
     transition-timing-function: var(--ease-out);
   }
 
+  .\[app-\:��\4 \] {
+    app-: �� ;
+  }
+
   .\[app-\:\1 6\] {
     app-:  6;
   }
 
-  .\[app-\:\12 6\] {
-    app-:  6;
+  .\[key\:\3 \.\14 \] {
+    key:  .  ;
   }
 
-  .\[app-\:1r\] {
-    app-: 1r;
-  }
-
-  .\[index\:\b ��\6 \] {
-    index:  �� ;
+  .\[key\:J�\14 \] {
+    key: J� ;
   }
 
   .\[key\:i\^4ng\] {
     key: i^ 4ng;
   }
 
-  .\[key\:�\%�ng\] {
-    key: �% �ng;
-  }
-
-  .\[key\:�D4ng\] {
-    key: �D4ng;
+  .\[key\:�\/\14 \] {
+    key: � /  ;
   }
 
   .\[key\:��4ng\] {
@@ -1778,22 +1746,6 @@
 
   .\[name\:\4 \6 �\] {
     name:   �;
-  }
-
-  .\[name\:8\18 �ng\] {
-    name: 8 �ng;
-  }
-
-  .\[name\:\?��\] {
-    name: ? ��;
-  }
-
-  .\[name\:_\18 �ng\] {
-    name:  �ng;
-  }
-
-  .\[name\:ߍ�\] {
-    name: ߍ�;
   }
 
   @media (hover: hover) {
@@ -1884,12 +1836,6 @@
   @media (min-width: 48rem) {
     .md\:h-\[400px\] {
       height: 400px;
-    }
-  }
-
-  @media (min-width: 48rem) {
-    .md\:h-\[600px\] {
-      height: 600px;
     }
   }
 
