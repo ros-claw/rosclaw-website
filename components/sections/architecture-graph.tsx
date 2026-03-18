@@ -143,7 +143,7 @@ export function ArchitectureGraph() {
   const flowEdges = useMemo(() => edges, [edges]);
 
   return (
-    <div className="w-full h-[500px] md:h-[600px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden" suppressHydrationWarning>
+    <div className="w-full h-[600px] md:h-[700px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden" suppressHydrationWarning>
       <div className="w-full h-full">
         <ReactFlow
           nodes={flowNodes}
@@ -152,7 +152,7 @@ export function ArchitectureGraph() {
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
           fitView
-          fitViewOptions={{ padding: 0.2 }}
+          fitViewOptions={{ padding: 0.3 }}
           attributionPosition="bottom-left"
           panOnDrag={true}
           zoomOnScroll={false}

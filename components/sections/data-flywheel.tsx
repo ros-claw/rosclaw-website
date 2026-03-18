@@ -42,9 +42,9 @@ const flywheelSteps = [
 
 export function DataFlywheel() {
   return (
-    <div className="relative w-full max-w-4xl mx-auto py-20">
+    <div className="relative w-full max-w-5xl mx-auto py-12 px-4" suppressHydrationWarning>
       {/* Mobius Strip SVG */}
-      <svg viewBox="0 0 800 400" className="w-full">
+      <svg viewBox="0 0 800 400" className="w-full" suppressHydrationWarning>
         <defs>
           <linearGradient id="flywheelGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#00F0FF" />

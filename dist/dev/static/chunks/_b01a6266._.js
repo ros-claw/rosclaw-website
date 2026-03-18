@@ -1714,7 +1714,7 @@ task = "Navigate to kitchen, pick up cup, place on table"
 # 🤖 Humanoid | 🐕 Quadruped | 🛞 Wheeled
 agent.execute(task)`;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "w-full max-w-6xl mx-auto px-4",
+        className: "w-full",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "text-center mb-12",
@@ -1728,7 +1728,7 @@ agent.execute(task)`;
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "text-lg text-[#A1A1AA]",
+                        className: "text-lg text-[#A1A1AA] max-w-2xl mx-auto",
                         children: "The same agent logic runs seamlessly across heterogeneous robot morphologies."
                     }, void 0, false, {
                         fileName: "[project]/components/sections/embodiment-demo.tsx",
@@ -2029,13 +2029,16 @@ const features = [
 ];
 function FeaturesGrid() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "w-full max-w-6xl mx-auto px-4",
+        className: "w-full",
+        suppressHydrationWarning: true,
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "text-center mb-12",
+                suppressHydrationWarning: true,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         className: "text-3xl md:text-4xl font-bold text-white mb-4",
+                        suppressHydrationWarning: true,
                         children: "One Unified Standard. Zero Fragmentation."
                     }, void 0, false, {
                         fileName: "[project]/components/sections/features.tsx",
@@ -2043,7 +2046,8 @@ function FeaturesGrid() {
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "text-lg text-[#A1A1AA]",
+                        className: "text-lg text-[#A1A1AA] max-w-2xl mx-auto",
+                        suppressHydrationWarning: true,
                         children: "Breaking down silos. Establishing a unified embodied AI standard."
                     }, void 0, false, {
                         fileName: "[project]/components/sections/features.tsx",
@@ -2058,6 +2062,7 @@ function FeaturesGrid() {
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "grid grid-cols-1 md:grid-cols-2 gap-6",
+                suppressHydrationWarning: true,
                 children: features.map((feature, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                         initial: {
                             opacity: 0,
@@ -2074,6 +2079,7 @@ function FeaturesGrid() {
                             once: true
                         },
                         className: "group relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-white/[0.15] transition-all duration-300",
+                        suppressHydrationWarning: true,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300",
@@ -2082,11 +2088,12 @@ function FeaturesGrid() {
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/features.tsx",
-                                lineNumber: 60,
+                                lineNumber: 61,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "relative",
+                                suppressHydrationWarning: true,
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "w-12 h-12 rounded-xl flex items-center justify-center mb-4",
@@ -2100,20 +2107,21 @@ function FeaturesGrid() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/features.tsx",
-                                            lineNumber: 72,
+                                            lineNumber: 73,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/sections/features.tsx",
-                                        lineNumber: 68,
+                                        lineNumber: 69,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                         className: "text-xl font-bold text-white mb-1",
+                                        suppressHydrationWarning: true,
                                         children: feature.title
                                     }, void 0, false, {
                                         fileName: "[project]/components/sections/features.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 76,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2121,24 +2129,26 @@ function FeaturesGrid() {
                                         style: {
                                             color: feature.color
                                         },
+                                        suppressHydrationWarning: true,
                                         children: feature.subtitle
                                     }, void 0, false, {
                                         fileName: "[project]/components/sections/features.tsx",
-                                        lineNumber: 78,
+                                        lineNumber: 79,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         className: "text-[#A1A1AA] leading-relaxed",
+                                        suppressHydrationWarning: true,
                                         children: feature.description
                                     }, void 0, false, {
                                         fileName: "[project]/components/sections/features.tsx",
-                                        lineNumber: 81,
+                                        lineNumber: 82,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/sections/features.tsx",
-                                lineNumber: 67,
+                                lineNumber: 68,
                                 columnNumber: 13
                             }, this)
                         ]
@@ -2772,7 +2782,7 @@ function ArchitectureGraph() {
         edges
     ]);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "w-full h-[500px] md:h-[600px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden",
+        className: "w-full h-[600px] md:h-[700px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden",
         suppressHydrationWarning: true,
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "w-full h-full",
@@ -2783,6 +2793,9 @@ function ArchitectureGraph() {
                 onEdgesChange: onEdgesChange,
                 nodeTypes: nodeTypes,
                 fitView: true,
+                fitViewOptions: {
+                    padding: 0.3
+                },
                 attributionPosition: "bottom-left",
                 panOnDrag: true,
                 zoomOnScroll: false,
@@ -2800,6 +2813,10 @@ function ArchitectureGraph() {
                     15,
                     15
                 ],
+                defaultEdgeOptions: {
+                    type: 'smoothstep',
+                    animated: true
+                },
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$background$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Background"], {
                         color: "#333",
@@ -2807,7 +2824,7 @@ function ArchitectureGraph() {
                         size: 1
                     }, void 0, false, {
                         fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 170,
+                        lineNumber: 175,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reactflow$2f$controls$2f$dist$2f$esm$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Controls"], {
@@ -2815,7 +2832,7 @@ function ArchitectureGraph() {
                         showInteractive: false
                     }, void 0, false, {
                         fileName: "[project]/components/sections/architecture-graph.tsx",
-                        lineNumber: 171,
+                        lineNumber: 176,
                         columnNumber: 11
                     }, this)
                 ]
@@ -2903,11 +2920,13 @@ const flywheelSteps = [
 ];
 function DataFlywheel() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "relative w-full max-w-4xl mx-auto py-20",
+        className: "relative w-full max-w-5xl mx-auto py-12 px-4",
+        suppressHydrationWarning: true,
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
                 viewBox: "0 0 800 400",
                 className: "w-full",
+                suppressHydrationWarning: true,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("defs", {
                         children: [
@@ -3246,6 +3265,7 @@ function InstallationBlock() {
     ];
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "w-full max-w-3xl mx-auto px-4",
+        suppressHydrationWarning: true,
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                 initial: {
@@ -3260,29 +3280,33 @@ function InstallationBlock() {
                     once: true
                 },
                 className: "text-center mb-8",
+                suppressHydrationWarning: true,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                         className: "text-3xl md:text-4xl font-bold text-white mb-4",
+                        suppressHydrationWarning: true,
                         children: "One Command to Rule Your Robot"
                     }, void 0, false, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 33,
+                        lineNumber: 34,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "text-lg text-[#A1A1AA]",
+                        suppressHydrationWarning: true,
                         children: "Zero configuration. Native ROS 2 compatibility. Ready in 60 seconds."
                     }, void 0, false, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 36,
+                        lineNumber: 37,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "text-base text-[#71717A] mt-2",
+                        suppressHydrationWarning: true,
                         children: "零配置，原生兼容 ROS 2，60 秒就绪"
                     }, void 0, false, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 39,
+                        lineNumber: 40,
                         columnNumber: 9
                     }, this)
                 ]
@@ -3304,18 +3328,21 @@ function InstallationBlock() {
                     once: true
                 },
                 className: "relative bg-[#0D0D0D] rounded-xl border border-white/10 overflow-hidden",
+                suppressHydrationWarning: true,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10",
+                        suppressHydrationWarning: true,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "flex items-center gap-2",
+                                suppressHydrationWarning: true,
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$terminal$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Terminal$3e$__["Terminal"], {
                                         className: "w-4 h-4 text-[#00F0FF]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/sections/installation.tsx",
-                                        lineNumber: 54,
+                                        lineNumber: 56,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3323,25 +3350,26 @@ function InstallationBlock() {
                                         children: "bash"
                                     }, void 0, false, {
                                         fileName: "[project]/components/sections/installation.tsx",
-                                        lineNumber: 55,
+                                        lineNumber: 57,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 53,
+                                lineNumber: 55,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: handleCopy,
                                 className: "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors",
+                                suppressHydrationWarning: true,
                                 children: copied ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$check$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Check$3e$__["Check"], {
                                             className: "w-4 h-4 text-green-400"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 63,
+                                            lineNumber: 66,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3349,7 +3377,7 @@ function InstallationBlock() {
                                             children: "Copied!"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 64,
+                                            lineNumber: 67,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -3359,7 +3387,7 @@ function InstallationBlock() {
                                             className: "w-4 h-4 text-white/70"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 68,
+                                            lineNumber: 71,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3367,31 +3395,32 @@ function InstallationBlock() {
                                             children: "Copy"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 69,
+                                            lineNumber: 72,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true)
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 57,
+                                lineNumber: 59,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 52,
+                        lineNumber: 54,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "p-6 font-mono text-lg",
+                        suppressHydrationWarning: true,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 className: "text-[#00F0FF]",
                                 children: "$"
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 77,
+                                lineNumber: 80,
                                 columnNumber: 11
                             }, this),
                             ' ',
@@ -3400,7 +3429,7 @@ function InstallationBlock() {
                                 children: installCommand
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 78,
+                                lineNumber: 81,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].span, {
@@ -3417,30 +3446,31 @@ function InstallationBlock() {
                                 className: "inline-block w-2.5 h-6 bg-[#00F0FF] ml-2 align-middle"
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 79,
+                                lineNumber: 82,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 76,
+                        lineNumber: 79,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "h-1 bg-gradient-to-r from-[#00F0FF] via-[#FF3E00] to-[#00F0FF]"
                     }, void 0, false, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 87,
+                        lineNumber: 90,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/sections/installation.tsx",
-                lineNumber: 45,
+                lineNumber: 46,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex flex-wrap justify-center gap-3 mt-8",
+                suppressHydrationWarning: true,
                 children: features.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                         initial: {
                             opacity: 0,
@@ -3457,12 +3487,13 @@ function InstallationBlock() {
                             delay: index * 0.1
                         },
                         className: "flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10",
+                        suppressHydrationWarning: true,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: item.icon
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 101,
+                                lineNumber: 105,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3470,18 +3501,18 @@ function InstallationBlock() {
                                 children: item.text
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 102,
+                                lineNumber: 106,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, index, true, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 93,
+                        lineNumber: 96,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/sections/installation.tsx",
-                lineNumber: 91,
+                lineNumber: 94,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].p, {
@@ -3495,10 +3526,11 @@ function InstallationBlock() {
                     once: true
                 },
                 className: "text-center mt-8 text-[#71717A] italic",
+                suppressHydrationWarning: true,
                 children: "“The era of hardcoded state machines is over. Install the ROSClaw kernel and let the LLM take the wheel.”"
             }, void 0, false, {
                 fileName: "[project]/components/sections/installation.tsx",
-                lineNumber: 108,
+                lineNumber: 112,
                 columnNumber: 7
             }, this)
         ]
@@ -3527,11 +3559,16 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/render/components/motion/proxy.mjs [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$github$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Github$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/github.js [app-client] (ecmascript) <export default as Github>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageCircle$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/message-circle.js [app-client] (ecmascript) <export default as MessageCircle>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2d$intl$2f$dist$2f$esm$2f$development$2f$react$2d$client$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next-intl/dist/esm/development/react-client/index.js [app-client] (ecmascript)");
+;
+var _s = __turbopack_context__.k.signature();
 'use client';
 ;
 ;
 ;
 function CTASection() {
+    _s();
+    const t = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2d$intl$2f$dist$2f$esm$2f$development$2f$react$2d$client$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTranslations"])('cta');
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         className: "py-20 px-4",
         suppressHydrationWarning: true,
@@ -3551,10 +3588,11 @@ function CTASection() {
                         once: true
                     },
                     className: "text-3xl md:text-4xl font-bold mb-4",
-                    children: "Join the OS Revolution for Robotics."
+                    suppressHydrationWarning: true,
+                    children: t('title')
                 }, void 0, false, {
                     fileName: "[project]/components/sections/cta.tsx",
-                    lineNumber: 10,
+                    lineNumber: 13,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].p, {
@@ -3573,10 +3611,11 @@ function CTASection() {
                         delay: 0.1
                     },
                     className: "text-[#A1A1AA] mb-8",
-                    children: "Stop building custom state machines. Start building intelligent agents."
+                    suppressHydrationWarning: true,
+                    children: t('description')
                 }, void 0, false, {
                     fileName: "[project]/components/sections/cta.tsx",
-                    lineNumber: 18,
+                    lineNumber: 22,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
@@ -3595,6 +3634,7 @@ function CTASection() {
                         delay: 0.2
                     },
                     className: "flex flex-col sm:flex-row gap-4 justify-center",
+                    suppressHydrationWarning: true,
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                             href: "https://github.com/ros-claw/rosclaw",
@@ -3607,14 +3647,14 @@ function CTASection() {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/components/sections/cta.tsx",
-                                    lineNumber: 41,
+                                    lineNumber: 47,
                                     columnNumber: 13
                                 }, this),
-                                "Star on GitHub"
+                                t('github')
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/sections/cta.tsx",
-                            lineNumber: 34,
+                            lineNumber: 40,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -3628,34 +3668,39 @@ function CTASection() {
                                     className: "w-5 h-5"
                                 }, void 0, false, {
                                     fileName: "[project]/components/sections/cta.tsx",
-                                    lineNumber: 51,
+                                    lineNumber: 57,
                                     columnNumber: 13
                                 }, this),
-                                "Join Discord"
+                                t('discord')
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/sections/cta.tsx",
-                            lineNumber: 44,
+                            lineNumber: 50,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/sections/cta.tsx",
-                    lineNumber: 27,
+                    lineNumber: 32,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/sections/cta.tsx",
-            lineNumber: 9,
+            lineNumber: 12,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/sections/cta.tsx",
-        lineNumber: 8,
+        lineNumber: 11,
         columnNumber: 5
     }, this);
 }
+_s(CTASection, "h6+q2O3NJKPY5uL0BIJGLIanww8=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2d$intl$2f$dist$2f$esm$2f$development$2f$react$2d$client$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useTranslations"]
+    ];
+});
 _c = CTASection;
 var _c;
 __turbopack_context__.k.register(_c, "CTASection");
@@ -3716,14 +3761,14 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 pt-32 pb-20 px-4",
+                className: "relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "max-w-7xl mx-auto",
+                    className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex flex-col lg:flex-row items-center gap-12",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex-1 text-center lg:text-left",
+                                className: "flex-1 w-full text-center lg:text-left",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                                         initial: {
@@ -3860,7 +3905,7 @@ function Home() {
                                 transition: {
                                     delay: 0.4
                                 },
-                                className: "flex-1 w-full max-w-full",
+                                className: "flex-1 w-full max-w-xl mx-auto lg:mx-0",
                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$authentic$2d$terminal$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["AuthenticTerminal"], {}, void 0, false, {
                                     fileName: "[project]/app/[locale]/page.tsx",
                                     lineNumber: 84,
@@ -3888,8 +3933,15 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$embodiment$2d$demo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["EmbodimentDemo"], {}, void 0, false, {
+                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$embodiment$2d$demo$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["EmbodimentDemo"], {}, void 0, false, {
+                        fileName: "[project]/app/[locale]/page.tsx",
+                        lineNumber: 93,
+                        columnNumber: 11
+                    }, this)
+                }, void 0, false, {
                     fileName: "[project]/app/[locale]/page.tsx",
                     lineNumber: 92,
                     columnNumber: 9
@@ -3900,115 +3952,175 @@ function Home() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$features$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FeaturesGrid"], {}, void 0, false, {
+                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$features$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FeaturesGrid"], {}, void 0, false, {
+                        fileName: "[project]/app/[locale]/page.tsx",
+                        lineNumber: 100,
+                        columnNumber: 11
+                    }, this)
+                }, void 0, false, {
                     fileName: "[project]/app/[locale]/page.tsx",
-                    lineNumber: 97,
+                    lineNumber: 99,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
-                lineNumber: 96,
+                lineNumber: 98,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4",
+                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "max-w-6xl mx-auto",
+                    className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                            className: "text-3xl md:text-4xl font-bold text-center mb-4",
-                            suppressHydrationWarning: true,
-                            children: t('architecture.title')
-                        }, void 0, false, {
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-center mb-12",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                    className: "text-3xl md:text-4xl font-bold mb-4",
+                                    suppressHydrationWarning: true,
+                                    children: t('architecture.title')
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[locale]/page.tsx",
+                                    lineNumber: 108,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-lg text-[#A1A1AA] max-w-2xl mx-auto",
+                                    suppressHydrationWarning: true,
+                                    children: t('architecture.subtitle')
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[locale]/page.tsx",
+                                    lineNumber: 111,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
                             fileName: "[project]/app/[locale]/page.tsx",
-                            lineNumber: 103,
+                            lineNumber: 107,
                             columnNumber: 11
                         }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-[#A1A1AA] text-center mb-12",
-                            suppressHydrationWarning: true,
-                            children: t('architecture.subtitle')
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "w-full flex justify-center",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$architecture$2d$graph$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ArchitectureGraph"], {}, void 0, false, {
+                                fileName: "[project]/app/[locale]/page.tsx",
+                                lineNumber: 116,
+                                columnNumber: 13
+                            }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/[locale]/page.tsx",
-                            lineNumber: 106,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$architecture$2d$graph$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["ArchitectureGraph"], {}, void 0, false, {
-                            fileName: "[project]/app/[locale]/page.tsx",
-                            lineNumber: 109,
+                            lineNumber: 115,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/[locale]/page.tsx",
-                    lineNumber: 102,
+                    lineNumber: 106,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
-                lineNumber: 101,
+                lineNumber: 105,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4",
+                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "max-w-6xl mx-auto",
+                    className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: [
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                            className: "text-3xl md:text-4xl font-bold text-center mb-4",
-                            suppressHydrationWarning: true,
-                            children: t('flywheel.title')
-                        }, void 0, false, {
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "text-center mb-12",
+                            children: [
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                    className: "text-3xl md:text-4xl font-bold mb-4",
+                                    suppressHydrationWarning: true,
+                                    children: t('flywheel.title')
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[locale]/page.tsx",
+                                    lineNumber: 125,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "text-lg text-[#A1A1AA] max-w-2xl mx-auto",
+                                    suppressHydrationWarning: true,
+                                    children: t('flywheel.subtitle')
+                                }, void 0, false, {
+                                    fileName: "[project]/app/[locale]/page.tsx",
+                                    lineNumber: 128,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
                             fileName: "[project]/app/[locale]/page.tsx",
-                            lineNumber: 116,
+                            lineNumber: 124,
                             columnNumber: 11
                         }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                            className: "text-[#A1A1AA] text-center mb-12",
-                            suppressHydrationWarning: true,
-                            children: t('flywheel.subtitle')
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "w-full flex justify-center",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$data$2d$flywheel$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DataFlywheel"], {}, void 0, false, {
+                                fileName: "[project]/app/[locale]/page.tsx",
+                                lineNumber: 133,
+                                columnNumber: 13
+                            }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/[locale]/page.tsx",
-                            lineNumber: 119,
-                            columnNumber: 11
-                        }, this),
-                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$data$2d$flywheel$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DataFlywheel"], {}, void 0, false, {
-                            fileName: "[project]/app/[locale]/page.tsx",
-                            lineNumber: 122,
+                            lineNumber: 132,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/[locale]/page.tsx",
-                    lineNumber: 115,
+                    lineNumber: 123,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
-                lineNumber: 114,
+                lineNumber: 122,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                className: "relative z-10 py-20 px-4",
-                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$installation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InstallationBlock"], {}, void 0, false, {
+                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$installation$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InstallationBlock"], {}, void 0, false, {
+                        fileName: "[project]/app/[locale]/page.tsx",
+                        lineNumber: 141,
+                        columnNumber: 11
+                    }, this)
+                }, void 0, false, {
                     fileName: "[project]/app/[locale]/page.tsx",
-                    lineNumber: 128,
+                    lineNumber: 140,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
-                lineNumber: 127,
+                lineNumber: 139,
                 columnNumber: 7
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$cta$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CTASection"], {}, void 0, false, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                className: "relative z-10 py-20 px-4 sm:px-6 lg:px-8",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "max-w-4xl mx-auto px-4 sm:px-6 lg:px-8",
+                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$sections$2f$cta$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CTASection"], {}, void 0, false, {
+                        fileName: "[project]/app/[locale]/page.tsx",
+                        lineNumber: 148,
+                        columnNumber: 11
+                    }, this)
+                }, void 0, false, {
+                    fileName: "[project]/app/[locale]/page.tsx",
+                    lineNumber: 147,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
-                lineNumber: 132,
+                lineNumber: 146,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$footer$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Footer"], {}, void 0, false, {
                 fileName: "[project]/app/[locale]/page.tsx",
-                lineNumber: 134,
+                lineNumber: 152,
                 columnNumber: 7
             }, this)
         ]

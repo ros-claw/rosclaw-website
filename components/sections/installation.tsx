@@ -22,21 +22,22 @@ export function InstallationBlock() {
   ];
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4">
+    <div className="w-full max-w-3xl mx-auto px-4" suppressHydrationWarning>
       {/* Headline */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         className="text-center mb-8"
+        suppressHydrationWarning
       >
-        <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+        <h3 className="text-3xl md:text-4xl font-bold text-white mb-4" suppressHydrationWarning>
           One Command to Rule Your Robot
         </h3>
-        <p className="text-lg text-[#A1A1AA]">
+        <p className="text-lg text-[#A1A1AA]" suppressHydrationWarning>
           Zero configuration. Native ROS 2 compatibility. Ready in 60 seconds.
         </p>
-        <p className="text-base text-[#71717A] mt-2">
+        <p className="text-base text-[#71717A] mt-2" suppressHydrationWarning>
           零配置，原生兼容 ROS 2，60 秒就绪
         </p>
       </motion.div>
@@ -47,16 +48,18 @@ export function InstallationBlock() {
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         className="relative bg-[#0D0D0D] rounded-xl border border-white/10 overflow-hidden"
+        suppressHydrationWarning
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10" suppressHydrationWarning>
+          <div className="flex items-center gap-2" suppressHydrationWarning>
             <Terminal className="w-4 h-4 text-[#00F0FF]" />
             <span className="text-sm text-white/50">bash</span>
           </div>
           <button
             onClick={handleCopy}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+            suppressHydrationWarning
           >
             {copied ? (
               <>
@@ -73,7 +76,7 @@ export function InstallationBlock() {
         </div>
 
         {/* Code */}
-        <div className="p-6 font-mono text-lg">
+        <div className="p-6 font-mono text-lg" suppressHydrationWarning>
           <span className="text-[#00F0FF]">$</span>{' '}
           <span className="text-white">{installCommand}</span>
           <motion.span
@@ -88,7 +91,7 @@ export function InstallationBlock() {
       </motion.div>
 
       {/* Feature badges */}
-      <div className="flex flex-wrap justify-center gap-3 mt-8">
+      <div className="flex flex-wrap justify-center gap-3 mt-8" suppressHydrationWarning>
         {features.map((item, index) => (
           <motion.div
             key={index}
@@ -97,6 +100,7 @@ export function InstallationBlock() {
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
             className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"
+            suppressHydrationWarning
           >
             <span>{item.icon}</span>
             <span className="text-sm text-[#A1A1AA]">{item.text}</span>
@@ -110,6 +114,7 @@ export function InstallationBlock() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         className="text-center mt-8 text-[#71717A] italic"
+        suppressHydrationWarning
       >
         &ldquo;The era of hardcoded state machines is over. Install the ROSClaw kernel and let the LLM take the wheel.&rdquo;
       </motion.p>

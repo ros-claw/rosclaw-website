@@ -125,9 +125,11 @@
     --color-black: #000;
     --color-white: #fff;
     --spacing: .25rem;
+    --container-xl: 36rem;
     --container-2xl: 42rem;
     --container-3xl: 48rem;
     --container-4xl: 56rem;
+    --container-5xl: 64rem;
     --container-6xl: 72rem;
     --container-7xl: 80rem;
     --text-xs: .75rem;
@@ -882,6 +884,14 @@
     max-width: var(--container-4xl);
   }
 
+  .max-w-5xl {
+    max-width: var(--container-5xl);
+  }
+
+  .max-w-6 {
+    max-width: calc(var(--spacing) * 6);
+  }
+
   .max-w-6xl {
     max-width: var(--container-6xl);
   }
@@ -892,6 +902,10 @@
 
   .max-w-full {
     max-width: 100%;
+  }
+
+  .max-w-xl {
+    max-width: var(--container-xl);
   }
 
   .flex-1 {
@@ -1289,6 +1303,16 @@
 
   .to-\[\#FF3E00\] {
     --tw-gradient-to: #ff3e00;
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+
+  .to-\[�O\.\] {
+    --tw-gradient-to: �O. ;
+    --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
+  }
+
+  .to-\[�Q\.\] {
+    --tw-gradient-to: �Q. ;
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
 
@@ -1732,8 +1756,16 @@
     app-: 1r;
   }
 
+  .\[index\:\b ��\6 \] {
+    index:  �� ;
+  }
+
   .\[key\:i\^4ng\] {
     key: i^ 4ng;
+  }
+
+  .\[key\:�\%�ng\] {
+    key: �% �ng;
   }
 
   .\[key\:�D4ng\] {
@@ -1750,6 +1782,14 @@
 
   .\[name\:8\18 �ng\] {
     name: 8 �ng;
+  }
+
+  .\[name\:\?��\] {
+    name: ? ��;
+  }
+
+  .\[name\:_\18 �ng\] {
+    name:  �ng;
   }
 
   .\[name\:ߍ�\] {
@@ -1850,6 +1890,12 @@
   @media (min-width: 48rem) {
     .md\:h-\[600px\] {
       height: 600px;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .md\:h-\[700px\] {
+      height: 700px;
     }
   }
 

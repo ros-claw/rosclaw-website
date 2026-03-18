@@ -36,17 +36,17 @@ const features = [
 
 export function FeaturesGrid() {
   return (
-    <div className="w-full max-w-6xl mx-auto px-4">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+    <div className="w-full" suppressHydrationWarning>
+      <div className="text-center mb-12" suppressHydrationWarning>
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" suppressHydrationWarning>
           One Unified Standard. Zero Fragmentation.
         </h2>
-        <p className="text-lg text-[#A1A1AA]">
+        <p className="text-lg text-[#A1A1AA] max-w-2xl mx-auto" suppressHydrationWarning>
           Breaking down silos. Establishing a unified embodied AI standard.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6" suppressHydrationWarning>
         {features.map((feature, index) => (
           <motion.div
             key={feature.title}
@@ -55,6 +55,7 @@ export function FeaturesGrid() {
             transition={{ delay: index * 0.1 }}
             viewport={{ once: true }}
             className="group relative p-8 rounded-2xl bg-white/[0.02] border border-white/[0.08] hover:border-white/[0.15] transition-all duration-300"
+            suppressHydrationWarning
           >
             {/* Glow effect on hover */}
             <div 
@@ -64,7 +65,7 @@ export function FeaturesGrid() {
               }}
             />
             
-            <div className="relative">
+            <div className="relative" suppressHydrationWarning>
               <div 
                 className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                 style={{ backgroundColor: `${feature.color}15` }}
@@ -72,13 +73,13 @@ export function FeaturesGrid() {
                 <feature.icon className="w-6 h-6" style={{ color: feature.color }} />
               </div>
               
-              <h3 className="text-xl font-bold text-white mb-1">
+              <h3 className="text-xl font-bold text-white mb-1" suppressHydrationWarning>
                 {feature.title}
               </h3>
-              <p className="text-sm mb-3" style={{ color: feature.color }}>
+              <p className="text-sm mb-3" style={{ color: feature.color }} suppressHydrationWarning>
                 {feature.subtitle}
               </p>
-              <p className="text-[#A1A1AA] leading-relaxed">
+              <p className="text-[#A1A1AA] leading-relaxed" suppressHydrationWarning>
                 {feature.description}
               </p>
             </div>

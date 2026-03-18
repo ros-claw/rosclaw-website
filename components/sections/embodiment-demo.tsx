@@ -307,12 +307,12 @@ task = "Navigate to kitchen, pick up cup, place on table"
 agent.execute(task)`;
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4">
+    <div className="w-full">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
           Write Once. Embody Anywhere.
         </h2>
-        <p className="text-lg text-[#A1A1AA]">
+        <p className="text-lg text-[#A1A1AA] max-w-2xl mx-auto">
           The same agent logic runs seamlessly across heterogeneous robot morphologies.
         </p>
       </div>

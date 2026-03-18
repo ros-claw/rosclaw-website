@@ -22,11 +22,11 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative z-10 pt-32 pb-20 px-4">
-        <div className="max-w-7xl mx-auto">
+      <section className="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             {/* Left: Text */}
-            <div className="flex-1 text-center lg:text-left">
+            <div className="flex-1 w-full text-center lg:text-left">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -79,7 +79,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="flex-1 w-full max-w-full"
+              className="flex-1 w-full max-w-xl mx-auto lg:mx-0"
             >
               <AuthenticTerminal />
             </motion.div>
@@ -88,24 +88,30 @@ export default function Home() {
       </section>
       
       {/* Embodiment Demo */}
-      <section className="relative z-10 py-20 px-4">
-        <EmbodimentDemo />
+      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <EmbodimentDemo />
+        </div>
       </section>
       
       {/* Features */}
-      <section className="relative z-10 py-20 px-4">
-        <FeaturesGrid />
+      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FeaturesGrid />
+        </div>
       </section>
       
       {/* Architecture */}
-      <section className="relative z-10 py-20 px-4 w-full">
-        <div className="max-w-6xl mx-auto w-full">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" suppressHydrationWarning>
-            {t('architecture.title')}
-          </h2>
-          <p className="text-[#A1A1AA] text-center mb-12" suppressHydrationWarning>
-            {t('architecture.subtitle')}
-          </p>
+      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4" suppressHydrationWarning>
+              {t('architecture.title')}
+            </h2>
+            <p className="text-lg text-[#A1A1AA] max-w-2xl mx-auto" suppressHydrationWarning>
+              {t('architecture.subtitle')}
+            </p>
+          </div>
           <div className="w-full flex justify-center">
             <ArchitectureGraph />
           </div>
@@ -113,14 +119,16 @@ export default function Home() {
       </section>
       
       {/* Data Flywheel */}
-      <section className="relative z-10 py-20 px-4 w-full">
-        <div className="max-w-6xl mx-auto w-full">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" suppressHydrationWarning>
-            {t('flywheel.title')}
-          </h2>
-          <p className="text-[#A1A1AA] text-center mb-12" suppressHydrationWarning>
-            {t('flywheel.subtitle')}
-          </p>
+      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4" suppressHydrationWarning>
+              {t('flywheel.title')}
+            </h2>
+            <p className="text-lg text-[#A1A1AA] max-w-2xl mx-auto" suppressHydrationWarning>
+              {t('flywheel.subtitle')}
+            </p>
+          </div>
           <div className="w-full flex justify-center">
             <DataFlywheel />
           </div>
@@ -128,8 +136,10 @@ export default function Home() {
       </section>
       
       {/* Installation */}
-      <section className="relative z-10 py-20 px-4">
-        <InstallationBlock />
+      <section className="relative z-10 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <InstallationBlock />
+        </div>
       </section>
       
       {/* CTA */}
