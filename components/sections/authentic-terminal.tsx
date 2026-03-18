@@ -137,33 +137,42 @@ export function AuthenticTerminal() {
   }, []);
 
   const getLogColor = (text: string) => {
-    if (text.includes('[INFO]')) return 'text-blue-400';
-    if (text.includes('[WARN]')) return 'text-yellow-400';
-    if (text.includes('[SUCCESS]')) return 'text-green-400';
-    if (text.includes('[DATA]')) return 'text-purple-400';
-    if (text.startsWith('$')) return 'text-cyan-400';
-    return 'text-gray-300';
+    if (text.includes('[INFO]')) return 'text-[#60A5FA]';
+    if (text.includes('[WARN]')) return 'text-[#FBBF24]';
+    if (text.includes('[SUCCESS]')) return 'text-[#4ADE80]';
+    if (text.includes('[DATA]')) return 'text-[#A78BFA]';
+    if (text.startsWith('$')) return 'text-[#00F0FF]';
+    return 'text-[#A1A1AA]';
+  };
+
+  const getLogGlow = (text: string) => {
+    if (text.includes('[INFO]')) return 'shadow-[0_0_10px_rgba(96,165,250,0.3)]';
+    if (text.includes('[WARN]')) return 'shadow-[0_0_10px_rgba(251,191,36,0.3)]';
+    if (text.includes('[SUCCESS]')) return 'shadow-[0_0_10px_rgba(74,222,128,0.3)]';
+    if (text.includes('[DATA]')) return 'shadow-[0_0_10px_rgba(167,139,250,0.3)]';
+    if (text.startsWith('$')) return 'shadow-[0_0_10px_rgba(0,240,255,0.3)]';
+    return '';
   };
 
   return (
-    <div className="w-full md:w-[600px] bg-[#0a0a0a] rounded-xl border border-white/10 overflow-hidden font-mono text-sm shadow-2xl">
+    <div className="w-full md:w-[600px] backdrop-blur-md bg-black/60 rounded-xl border border-white/10 overflow-hidden font-mono text-sm shadow-[0_0_60px_-15px_rgba(0,240,255,0.2)]">
       {/* Terminal Header */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
-        <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
-        <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
-        <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
-        <span className="ml-4 text-xs text-white/40">rosclaw@agibot-g01: ~/ros2_ws</span>
+      <div className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-white/10 to-transparent border-b border-white/5">
+        <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-[0_0_10px_rgba(255,95,86,0.5)]" />
+        <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[0_0_10px_rgba(255,189,46,0.5)]" />
+        <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-[0_0_10px_rgba(39,201,63,0.5)]" />
+        <span className="ml-4 text-xs text-white/40 font-medium">rosclaw@agibot-g01: ~/ros2_ws</span>
       </div>
 
       {/* Terminal Body */}
-      <div className="p-4 h-[380px] overflow-y-auto">
+      <div className="p-5 h-[400px] overflow-y-auto bg-black/40 backdrop-blur-sm">
         {/* Command being typed */}
-        <div className="flex items-center">
-          <span className="text-cyan-400 mr-2">$</span>
-          <span className="text-white">{command.slice(2)}</span>
+        <div className="flex items-center mb-3 pb-3 border-b border-white/5">
+          <span className="text-[#00F0FF] mr-2 font-bold">$</span>
+          <span className="text-white font-medium tracking-wide">{command.slice(2)}</span>
           {phase === 'typing' && (
             <span 
-              className={`inline-block w-2 h-5 bg-cyan-400 ml-1 transition-opacity duration-100 ${showCursor ? 'opacity-100' : 'opacity-0'}`}
+              className={`inline-block w-2.5 h-5 bg-[#00F0FF] ml-1 transition-opacity duration-100 ${showCursor ? 'opacity-100' : 'opacity-0'} shadow-[0_0_10px_#00F0FF]`}
             />
           )}
         </div>
@@ -175,8 +184,8 @@ export function AuthenticTerminal() {
               key={index}
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.05 }}
-              className={`mt-1 ${getLogColor(log)}`}
+              transition={{ duration: 0.08 }}
+              className={`mt-2 font-medium ${getLogColor(log)} ${getLogGlow(log)}`}
             >
               {log}
             </motion.div>
@@ -187,8 +196,8 @@ export function AuthenticTerminal() {
         {(phase === 'executing' || phase === 'pause') && logs.length > 0 && (
           <motion.span
             animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.5, repeat: Infinity }}
-            className="inline-block w-2 h-4 bg-blue-400 mt-1"
+            transition={{ duration: 0.53, repeat: Infinity }}
+            className="inline-block w-2.5 h-5 bg-[#00F0FF] mt-2 shadow-[0_0_10px_#00F0FF]"
           />
         )}
 
@@ -197,22 +206,22 @@ export function AuthenticTerminal() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-2 text-white/30 text-xs"
+            className="mt-3 text-white/20 text-xs font-mono"
           >
-            [Robot executing physical action... VLA inference in progress...]
+            ⚙️ [Robot executing physical action... VLA inference in progress...]
           </motion.div>
         )}
       </div>
 
       {/* Status bar */}
-      <div className="px-4 py-2 bg-white/5 border-t border-white/10 flex justify-between text-xs">
-        <span className="text-white/40">
-          {phase === 'typing' && 'Waiting for input...'}
-          {phase === 'executing' && 'Initializing ROSClaw OS...'}
-          {phase === 'pause' && 'Executing task...'}
-          {phase === 'error' && 'Error detected!'}
-          {phase === 'recovery' && 'Auto-recovery in progress...'}
-          {phase === 'complete' && 'Ready'}
+      <div className="px-4 py-2.5 bg-gradient-to-r from-white/5 to-transparent border-t border-white/5 flex justify-between text-xs font-mono">
+        <span className="text-white/50">
+          {phase === 'typing' && '⏳ Waiting for input...'}
+          {phase === 'executing' && '🚀 Initializing ROSClaw OS...'}
+          {phase === 'pause' && '⚙️ Executing task...'}
+          {phase === 'error' && '⚠️ Error detected!'}
+          {phase === 'recovery' && '🔄 Auto-recovery in progress...'}
+          {phase === 'complete' && '✅ Ready'}
         </span>
         <span className="text-white/40">bash</span>
       </div>

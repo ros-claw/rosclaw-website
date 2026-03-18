@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import ReactFlow, { 
   Background, 
   Controls,
@@ -17,55 +17,63 @@ import 'reactflow/dist/style.css';
 import { motion } from 'framer-motion';
 
 // Custom Node Components with Handles - defined outside component
-const BrainNode = useCallback(({ data }: NodeProps) => (
-  <div className="relative">
-    <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-[#00F0FF] !w-3 !h-3" />
-    <motion.div 
-      className="px-6 py-4 rounded-xl border-2 border-[#00F0FF] bg-[#00F0FF]/10"
-      animate={{ boxShadow: ['0 0 20px rgba(0,240,255,0.2)', '0 0 40px rgba(0,240,255,0.4)', '0 0 20px rgba(0,240,255,0.2)'] }}
-      transition={{ duration: 2, repeat: Infinity }}
-    >
-      <div className="text-[#00F0FF] font-bold text-lg">{data.label}</div>
-      <div className="text-[#00F0FF]/70 text-sm">{data.frequency}</div>
-    </motion.div>
-  </div>
-), []);
-
-const MiddlewareNode = useCallback(({ data }: NodeProps) => (
-  <div className="relative">
-    <Handle type="target" position={Position.Top} id="top" className="!bg-white !w-3 !h-3" />
-    <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-white !w-3 !h-3" />
-    <div className="px-6 py-4 rounded-xl border-2 border-white/30 bg-white/5">
-      <div className="text-white font-bold text-lg">{data.label}</div>
-      <div className="text-white/50 text-sm">{data.functions?.join(' • ')}</div>
+function BrainNode({ data }: NodeProps) {
+  return (
+    <div className="relative">
+      <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-[#00F0FF] !w-3 !h-3" />
+      <motion.div 
+        className="px-6 py-4 rounded-xl border-2 border-[#00F0FF] bg-[#00F0FF]/10"
+        animate={{ boxShadow: ['0 0 20px rgba(0,240,255,0.2)', '0 0 40px rgba(0,240,255,0.4)', '0 0 20px rgba(0,240,255,0.2)'] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <div className="text-[#00F0FF] font-bold text-lg">{data.label}</div>
+        <div className="text-[#00F0FF]/70 text-sm">{data.frequency}</div>
+      </motion.div>
     </div>
-  </div>
-), []);
+  );
+}
 
-const VlaNode = useCallback(({ data }: NodeProps) => (
-  <div className="relative">
-    <Handle type="target" position={Position.Top} id="top" className="!bg-[#FF3E00] !w-3 !h-3" />
-    <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-[#FF3E00] !w-3 !h-3" />
-    <motion.div 
-      className="px-6 py-4 rounded-xl border-2 border-[#FF3E00] bg-[#FF3E00]/10"
-      animate={{ boxShadow: ['0 0 20px rgba(255,62,0,0.2)', '0 0 40px rgba(255,62,0,0.4)', '0 0 20px rgba(255,62,0,0.2)'] }}
-      transition={{ duration: 0.5, repeat: Infinity }}
-    >
-      <div className="text-[#FF3E00] font-bold text-lg">{data.label}</div>
-      <div className="text-[#FF3E00]/70 text-sm">{data.frequency}</div>
-    </motion.div>
-  </div>
-), []);
-
-const RosNode = useCallback(({ data }: NodeProps) => (
-  <div className="relative">
-    <Handle type="target" position={Position.Top} id="top" className="!bg-[#4ADE80] !w-3 !h-3" />
-    <div className="px-4 py-3 rounded-lg border border-[#4ADE80]/30 bg-[#4ADE80]/5">
-      <div className="text-[#4ADE80] font-medium text-sm">{data.label}</div>
-      <div className="text-[#4ADE80]/50 text-xs">{data.topic}</div>
+function MiddlewareNode({ data }: NodeProps) {
+  return (
+    <div className="relative">
+      <Handle type="target" position={Position.Top} id="top" className="!bg-white !w-3 !h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-white !w-3 !h-3" />
+      <div className="px-6 py-4 rounded-xl border-2 border-white/30 bg-white/5">
+        <div className="text-white font-bold text-lg">{data.label}</div>
+        <div className="text-white/50 text-sm">{data.functions?.join(' • ')}</div>
+      </div>
     </div>
-  </div>
-), []);
+  );
+}
+
+function VlaNode({ data }: NodeProps) {
+  return (
+    <div className="relative">
+      <Handle type="target" position={Position.Top} id="top" className="!bg-[#FF3E00] !w-3 !h-3" />
+      <Handle type="source" position={Position.Bottom} id="bottom" className="!bg-[#FF3E00] !w-3 !h-3" />
+      <motion.div 
+        className="px-6 py-4 rounded-xl border-2 border-[#FF3E00] bg-[#FF3E00]/10"
+        animate={{ boxShadow: ['0 0 20px rgba(255,62,0,0.2)', '0 0 40px rgba(255,62,0,0.4)', '0 0 20px rgba(255,62,0,0.2)'] }}
+        transition={{ duration: 0.5, repeat: Infinity }}
+      >
+        <div className="text-[#FF3E00] font-bold text-lg">{data.label}</div>
+        <div className="text-[#FF3E00]/70 text-sm">{data.frequency}</div>
+      </motion.div>
+    </div>
+  );
+}
+
+function RosNode({ data }: NodeProps) {
+  return (
+    <div className="relative">
+      <Handle type="target" position={Position.Top} id="top" className="!bg-[#4ADE80] !w-3 !h-3" />
+      <div className="px-4 py-3 rounded-lg border border-[#4ADE80]/30 bg-[#4ADE80]/5">
+        <div className="text-[#4ADE80] font-medium text-sm">{data.label}</div>
+        <div className="text-[#4ADE80]/50 text-xs">{data.topic}</div>
+      </div>
+    </div>
+  );
+}
 
 // Memoized nodeTypes - defined once at module level
 const nodeTypes = Object.freeze({

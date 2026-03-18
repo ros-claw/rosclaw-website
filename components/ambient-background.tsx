@@ -24,21 +24,45 @@ export function AmbientBackground() {
 
   return (
     <>
-      {/* Dot Matrix Grid */}
+      {/* Radial Gradient Background - Deep Tech */}
       <div 
         className="fixed inset-0 pointer-events-none z-0"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0)`,
-          backgroundSize: '40px 40px',
+          background: `
+            radial-gradient(ellipse at top, rgba(22, 93, 255, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at bottom, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+            linear-gradient(to bottom, #0a0a0f 0%, #050505 50%, #050505 100%)
+          `,
         }}
       />
       
-      {/* Mouse-Tracking Glow */}
+      {/* Fine Grid Texture - Tech Feel */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+        }}
+      />
+      
+      {/* Dot Matrix Grid - Subtle Pattern */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0, 240, 255, 0.08) 1px, transparent 0)`,
+          backgroundSize: '60px 60px',
+        }}
+      />
+      
+      {/* Mouse-Tracking Glow - Enhanced */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <motion.div
-          className="absolute w-[600px] h-[600px] rounded-full opacity-[0.04]"
+          className="absolute w-[700px] h-[700px] rounded-full opacity-[0.06]"
           style={{
-            background: 'radial-gradient(circle, #00F0FF 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(0, 240, 255, 0.3) 0%, transparent 70%)',
             left: mouseX,
             top: mouseY,
             x: '-50%',
@@ -46,31 +70,41 @@ export function AmbientBackground() {
           }}
         />
         <motion.div
-          className="absolute w-[400px] h-[400px] rounded-full opacity-[0.03]"
+          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.04]"
           style={{
-            background: 'radial-gradient(circle, #FF3E00 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(0, 212, 255, 0.25) 0%, transparent 70%)',
             left: mouseX,
             top: mouseY,
             x: '-30%',
             y: '-30%',
           }}
         />
+        <motion.div
+          className="absolute w-[300px] h-[300px] rounded-full opacity-[0.03]"
+          style={{
+            background: 'radial-gradient(circle, rgba(255, 125, 0, 0.2) 0%, transparent 70%)',
+            left: mouseX,
+            top: mouseY,
+            x: '-20%',
+            y: '-20%',
+          }}
+        />
       </div>
 
-      {/* Gradient Overlay */}
+      {/* Dynamic Gradient Overlay - Mouse Responsive */}
       <div 
         className="fixed inset-0 pointer-events-none z-0"
         style={{
           background: `
             radial-gradient(
               circle at ${mousePosition.x}% ${mousePosition.y}%, 
-              rgba(0, 240, 255, 0.03) 0%, 
-              transparent 50%
+              rgba(0, 240, 255, 0.05) 0%, 
+              transparent 60%
             ),
             radial-gradient(
               circle at ${100 - mousePosition.x}% ${100 - mousePosition.y}%, 
-              rgba(255, 62, 0, 0.02) 0%, 
-              transparent 50%
+              rgba(22, 93, 255, 0.04) 0%, 
+              transparent 60%
             )
           `,
         }}
