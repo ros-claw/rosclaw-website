@@ -3071,21 +3071,21 @@ const flywheelSteps = [
         label: 'Deployment',
         icon: '▶️',
         dataFormat: 'Task Intent (NL)',
-        color: '#00F0FF'
+        color: '#165DFF'
     },
     {
         id: 'supervise',
         label: 'Supervision',
         icon: '👁️',
         dataFormat: '/rosbag2 Stream',
-        color: '#60A5FA'
+        color: '#00D4FF'
     },
     {
         id: 'recover',
         label: 'Auto-EAP',
         icon: '↩️',
         dataFormat: 'Inverse Policy',
-        color: '#FBBF24'
+        color: '#FF7D00'
     },
     {
         id: 'label',
@@ -3099,7 +3099,7 @@ const flywheelSteps = [
         label: 'OTA Update',
         icon: '☁️',
         dataFormat: 'RLDS → VLA',
-        color: '#FF3E00'
+        color: '#165DFF'
     }
 ];
 function DataFlywheel() {
@@ -3503,30 +3503,60 @@ function InstallationBlock() {
                 viewport: {
                     once: true
                 },
-                className: "relative bg-[#0D0D0D] rounded-xl border border-white/10 overflow-hidden",
+                className: "relative bg-[#0D0D0D] rounded-2xl border border-white/10 overflow-hidden shadow-2xl",
                 suppressHydrationWarning: true,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10",
+                        className: "flex items-center justify-between px-4 py-3 bg-gradient-to-r from-white/5 to-transparent border-b border-white/5",
                         suppressHydrationWarning: true,
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex items-center gap-2",
+                                className: "flex items-center gap-3",
                                 suppressHydrationWarning: true,
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$terminal$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Terminal$3e$__["Terminal"], {
-                                        className: "w-4 h-4 text-[#00F0FF]"
-                                    }, void 0, false, {
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex gap-1.5",
+                                        children: [
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "w-3 h-3 rounded-full bg-[#ff5f56] shadow-[0_0_8px_rgba(255,95,86,0.5)]"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/sections/installation.tsx",
+                                                lineNumber: 57,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[0_0_8px_rgba(255,189,46,0.5)]"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/sections/installation.tsx",
+                                                lineNumber: 58,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "w-3 h-3 rounded-full bg-[#27c93f] shadow-[0_0_8px_rgba(39,201,63,0.5)]"
+                                            }, void 0, false, {
+                                                fileName: "[project]/components/sections/installation.tsx",
+                                                lineNumber: 59,
+                                                columnNumber: 15
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
                                         fileName: "[project]/components/sections/installation.tsx",
                                         lineNumber: 56,
                                         columnNumber: 13
                                     }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "text-sm text-white/50",
-                                        children: "bash"
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$terminal$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Terminal$3e$__["Terminal"], {
+                                        className: "w-4 h-4 text-[#165DFF]"
                                     }, void 0, false, {
                                         fileName: "[project]/components/sections/installation.tsx",
-                                        lineNumber: 57,
+                                        lineNumber: 61,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-sm text-white/40 font-medium",
+                                        children: "Installation"
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/sections/installation.tsx",
+                                        lineNumber: 62,
                                         columnNumber: 13
                                     }, this)
                                 ]
@@ -3537,23 +3567,23 @@ function InstallationBlock() {
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: handleCopy,
-                                className: "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors",
+                                className: "flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#165DFF]/20 hover:bg-[#165DFF]/30 border border-[#165DFF]/30 transition-all",
                                 suppressHydrationWarning: true,
                                 children: copied ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$check$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Check$3e$__["Check"], {
-                                            className: "w-4 h-4 text-green-400"
+                                            className: "w-4 h-4 text-[#4ADE80]"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 66,
+                                            lineNumber: 71,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-sm text-green-400",
+                                            className: "text-sm text-[#4ADE80] font-medium",
                                             children: "Copied!"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 67,
+                                            lineNumber: 72,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -3563,7 +3593,7 @@ function InstallationBlock() {
                                             className: "w-4 h-4 text-white/70"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 71,
+                                            lineNumber: 76,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3571,14 +3601,14 @@ function InstallationBlock() {
                                             children: "Copy"
                                         }, void 0, false, {
                                             fileName: "[project]/components/sections/installation.tsx",
-                                            lineNumber: 72,
+                                            lineNumber: 77,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true)
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 59,
+                                lineNumber: 64,
                                 columnNumber: 11
                             }, this)
                         ]
@@ -3596,7 +3626,7 @@ function InstallationBlock() {
                                 children: "$"
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 80,
+                                lineNumber: 85,
                                 columnNumber: 11
                             }, this),
                             ' ',
@@ -3605,7 +3635,7 @@ function InstallationBlock() {
                                 children: installCommand
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 81,
+                                lineNumber: 86,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].span, {
@@ -3622,20 +3652,20 @@ function InstallationBlock() {
                                 className: "inline-block w-2.5 h-6 bg-[#00F0FF] ml-2 align-middle"
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 82,
+                                lineNumber: 87,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 79,
+                        lineNumber: 84,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "h-1 bg-gradient-to-r from-[#00F0FF] via-[#FF3E00] to-[#00F0FF]"
                     }, void 0, false, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 90,
+                        lineNumber: 95,
                         columnNumber: 9
                     }, this)
                 ]
@@ -3669,7 +3699,7 @@ function InstallationBlock() {
                                 children: item.icon
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 105,
+                                lineNumber: 110,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3677,18 +3707,18 @@ function InstallationBlock() {
                                 children: item.text
                             }, void 0, false, {
                                 fileName: "[project]/components/sections/installation.tsx",
-                                lineNumber: 106,
+                                lineNumber: 111,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, index, true, {
                         fileName: "[project]/components/sections/installation.tsx",
-                        lineNumber: 96,
+                        lineNumber: 101,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/sections/installation.tsx",
-                lineNumber: 94,
+                lineNumber: 99,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["motion"].p, {
@@ -3706,7 +3736,7 @@ function InstallationBlock() {
                 children: "“The era of hardcoded state machines is over. Install the ROSClaw kernel and let the LLM take the wheel.”"
             }, void 0, false, {
                 fileName: "[project]/components/sections/installation.tsx",
-                lineNumber: 112,
+                lineNumber: 117,
                 columnNumber: 7
             }, this)
         ]
@@ -3807,7 +3837,7 @@ function CTASection() {
                             href: "https://github.com/ros-claw/rosclaw",
                             target: "_blank",
                             rel: "noopener noreferrer",
-                            className: "px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-all flex items-center justify-center gap-2",
+                            className: "px-8 py-4 bg-[#165DFF] text-white font-semibold rounded-xl hover:bg-[#1456E6] transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(22,93,255,0.4)]",
                             suppressHydrationWarning: true,
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$github$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Github$3e$__["Github"], {
@@ -3828,7 +3858,7 @@ function CTASection() {
                             href: "https://discord.gg/E6nPCDu6KJ",
                             target: "_blank",
                             rel: "noopener noreferrer",
-                            className: "px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/5 transition-all flex items-center justify-center gap-2",
+                            className: "px-8 py-4 bg-[#5865F2] text-white font-semibold rounded-xl hover:bg-[#4752C4] transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(88,101,242,0.4)]",
                             suppressHydrationWarning: true,
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$message$2d$circle$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__MessageCircle$3e$__["MessageCircle"], {

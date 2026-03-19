@@ -8,21 +8,21 @@ const flywheelSteps = [
     label: 'Deployment', 
     icon: '▶️',
     dataFormat: 'Task Intent (NL)',
-    color: '#00F0FF'
+    color: '#165DFF'
   },
   { 
     id: 'supervise', 
     label: 'Supervision', 
     icon: '👁️',
     dataFormat: '/rosbag2 Stream',
-    color: '#60A5FA'
+    color: '#00D4FF'
   },
   { 
     id: 'recover', 
     label: 'Auto-EAP', 
     icon: '↩️',
     dataFormat: 'Inverse Policy',
-    color: '#FBBF24'
+    color: '#FF7D00'
   },
   { 
     id: 'label', 
@@ -36,7 +36,7 @@ const flywheelSteps = [
     label: 'OTA Update', 
     icon: '☁️',
     dataFormat: 'RLDS → VLA',
-    color: '#FF3E00'
+    color: '#165DFF'
   }
 ];
 

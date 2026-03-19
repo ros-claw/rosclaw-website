@@ -47,24 +47,29 @@ export function InstallationBlock() {
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="relative bg-[#0D0D0D] rounded-xl border border-white/10 overflow-hidden"
+        className="relative bg-[#0D0D0D] rounded-2xl border border-white/10 overflow-hidden shadow-2xl"
         suppressHydrationWarning
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10" suppressHydrationWarning>
-          <div className="flex items-center gap-2" suppressHydrationWarning>
-            <Terminal className="w-4 h-4 text-[#00F0FF]" />
-            <span className="text-sm text-white/50">bash</span>
+        {/* Header with Window Controls */}
+        <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-white/5 to-transparent border-b border-white/5" suppressHydrationWarning>
+          <div className="flex items-center gap-3" suppressHydrationWarning>
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-[#ff5f56] shadow-[0_0_8px_rgba(255,95,86,0.5)]" />
+              <div className="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-[0_0_8px_rgba(255,189,46,0.5)]" />
+              <div className="w-3 h-3 rounded-full bg-[#27c93f] shadow-[0_0_8px_rgba(39,201,63,0.5)]" />
+            </div>
+            <Terminal className="w-4 h-4 text-[#165DFF]" />
+            <span className="text-sm text-white/40 font-medium">Installation</span>
           </div>
           <button
             onClick={handleCopy}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#165DFF]/20 hover:bg-[#165DFF]/30 border border-[#165DFF]/30 transition-all"
             suppressHydrationWarning
           >
             {copied ? (
               <>
-                <Check className="w-4 h-4 text-green-400" />
-                <span className="text-sm text-green-400">Copied!</span>
+                <Check className="w-4 h-4 text-[#4ADE80]" />
+                <span className="text-sm text-[#4ADE80] font-medium">Copied!</span>
               </>
             ) : (
               <>

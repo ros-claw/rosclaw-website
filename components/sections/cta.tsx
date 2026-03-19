@@ -41,7 +41,7 @@ export function CTASection() {
             href="https://github.com/ros-claw/rosclaw"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+            className="px-8 py-4 bg-[#165DFF] text-white font-semibold rounded-xl hover:bg-[#1456E6] transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(22,93,255,0.4)]"
             suppressHydrationWarning
           >
             <Github className="w-5 h-5" />
@@ -51,7 +51,7 @@ export function CTASection() {
             href="https://discord.gg/E6nPCDu6KJ"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+            className="px-8 py-4 bg-[#5865F2] text-white font-semibold rounded-xl hover:bg-[#4752C4] transition-all flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(88,101,242,0.4)]"
             suppressHydrationWarning
           >
             <MessageCircle className="w-5 h-5" />

@@ -1,11 +1,708 @@
-[00:00:01.441] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-[00:00:01.550] Server  LOG     ✓ Ready in 1229ms
-[00:00:01.552] Server  WARN    ⚠ Cross origin request detected from 107.150.106.101 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+[00:00:01.863] Server  WARN    ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[00:00:01.972] Server  LOG     ✓ Ready in 1616ms
+[00:00:01.974] Server  WARN    ⚠ Cross origin request detected from 107.150.106.101 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
 Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
-[00:00:05.183] Server  LOG     ○ Compiling /[locale] ...
-[00:00:10.863] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:11.127] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:11.242] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:00:11.242] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:00:12.518] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
-[00:00:12.518] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:00:05.507] Server  LOG     ○ Compiling /[locale] ...
+[00:00:10.733] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:10.742] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:14.677] Browser ERROR   uncaughtError: Error: ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:14.775] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:14.960] Browser ERROR   uncaughtError: Error: ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:15.595] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:16.076] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:16.076] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:52.410] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:53.075] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:54.773] Browser ERROR   uncaughtError: Error: ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:54.882] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:55.147] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:56.075] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:56.492] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:57.060] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:58.343] Browser ERROR   uncaughtError: Error: ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:00:58.438] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:58.704] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:00:59.090] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:01:35.574] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:01:35.983] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:01:36.075] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:26.834] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:02:28.075] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:29.301] Browser ERROR   uncaughtError: Error: ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:02:29.765] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:02:30.341] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:30.341] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:30.341] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:31.080] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:31.080] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:31.413] Server  ERROR   ⨯ ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:02:31.605] Browser ERROR   uncaughtError: Error: ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:02:32.065] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:32.065] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:32.065] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:32.065] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:32.065] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:33.101] Browser ERROR   uncaughtError: Error: ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+[00:02:33.206] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:33.461] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:34.080] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:34.081] Browser ERROR   ./app/globals.css
+Error evaluating Node.js code
+CssSyntaxError: tailwindcss: /root/.openclaw/workspace/rosclaw-website/app/globals.css:1:1: Can't resolve 'tailwindcss' in '/root/.openclaw/workspace/rosclaw-website/app'
+    [at Input.error (turbopack:///[project]/node_modules/postcss/lib/input.js:135:16)]
+    [at Root.error (turbopack:///[project]/node_modules/postcss/lib/node.js:146:32)]
+    [at Object.Once (/root/.openclaw/workspace/rosclaw-website/node_modules/@tailwindcss/postcss/dist/index.js:10:6913)]
+    [at process.processTicksAndRejections (node:internal/process/task_queues:105:5)]
+    [at async LazyResult.runAsync (turbopack:///[project]/node_modules/postcss/lib/lazy-result.js:293:11)]
+    [at async transform (turbopack:///[turbopack-node]/transforms/postcss.ts:70:34)]
+    [at async run (turbopack:///[turbopack-node]/ipc/evaluate.ts:92:23)]
+
+Import trace:
+  Client Component Browser:
+    ./app/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component]
+[00:02:40.818] Server  LOG     ✓ Compiled in 2.6s
+[00:02:44.780] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:45.190] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:02:45.190] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:02:45.261] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:45.671] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:02:46.082] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:02:46.082] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:02:47.076] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:02:47.076] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:04:33.337] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:04:33.337] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
+[00:04:33.337] Browser WARN    [React Flow]: It looks like you've created a new nodeTypes or edgeTypes object. If this wasn't on purpose please define the nodeTypes/edgeTypes outside of the component or memoize them. Help: https://reactflow.dev/error#002
