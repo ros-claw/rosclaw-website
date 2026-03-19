@@ -95,8 +95,8 @@ export function InstallationBlock() {
         <div className="h-1 bg-gradient-to-r from-[#00F0FF] via-[#FF3E00] to-[#00F0FF]" />
       </motion.div>
 
-      {/* Feature badges */}
-      <div className="flex flex-wrap justify-center gap-3 mt-8" suppressHydrationWarning>
+      {/* Feature badges - Fixed with flex-wrap */}
+      <div className="flex flex-wrap justify-center items-center gap-4 mt-8" suppressHydrationWarning>
         {features.map((item, index) => (
           <motion.div
             key={index}
@@ -104,11 +104,11 @@ export function InstallationBlock() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10"
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs"
             suppressHydrationWarning
           >
             <span>{item.icon}</span>
-            <span className="text-sm text-[#A1A1AA]">{item.text}</span>
+            <span className="text-sm text-white/70">{item.text}</span>
           </motion.div>
         ))}
       </div>

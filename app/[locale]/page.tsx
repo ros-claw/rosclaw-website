@@ -59,27 +59,22 @@ export default function Home() {
                 {t('hero.subtitle')}
               </motion.p>
               
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start"
-              >
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-8">
                 <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(22, 93, 255, 0.5)' }}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-10 py-5 bg-gradient-to-r from-[#165DFF] to-[#00D4FF] text-white font-semibold rounded-xl shadow-[0_0_30px_rgba(22,93,255,0.4)] hover:shadow-[0_0_50px_rgba(22,93,255,0.6)] transition-all duration-300"
+                  className="px-8 py-3 rounded-lg bg-[#00F0FF] text-black font-semibold hover:scale-105 transition-transform w-auto"
                 >
                   {t('hero.cta_primary')}
                 </motion.button>
                 <motion.button
-                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}
-                  className="px-10 py-5 backdrop-blur-sm bg-white/5 border border-white/20 text-white font-semibold rounded-xl hover:border-white/40 transition-all duration-300"
+                  className="px-8 py-3 rounded-lg border border-white/20 text-white font-semibold hover:bg-white/10 transition-colors w-auto"
                 >
                   {t('hero.cta_secondary')}
                 </motion.button>
-              </motion.div>
+              </div>
             </div>
             
             {/* Right: Terminal */}
@@ -87,9 +82,16 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="flex-1 w-full max-w-xl mx-auto lg:mx-0"
+              className="w-full max-w-3xl mx-auto mt-12"
             >
-              <AuthenticTerminal />
+              <div className="rounded-xl border border-white/10 bg-[#0A0A0A] shadow-2xl overflow-hidden">
+                <div className="flex gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
+                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                </div>
+                <AuthenticTerminal />
+              </div>
             </motion.div>
           </div>
         </div>

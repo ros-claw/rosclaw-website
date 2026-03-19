@@ -40,54 +40,41 @@ const features = [
 
 export function FeaturesGrid() {
   return (
-    <div className="w-full" suppressHydrationWarning>
-      <div className="text-center mb-16" suppressHydrationWarning>
+    <div className="w-full max-w-6xl mx-auto" suppressHydrationWarning>
+      <div className="text-center mb-12" suppressHydrationWarning>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight" suppressHydrationWarning>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" suppressHydrationWarning>
             One Unified Standard. Zero Fragmentation.
           </h2>
-          <p className="text-lg text-[#A1A1AA] max-w-2xl mx-auto leading-relaxed" suppressHydrationWarning>
+          <p className="text-lg text-[#A1A1AA] max-w-2xl mx-auto" suppressHydrationWarning>
             Breaking down silos. Establishing a unified embodied AI standard.
           </p>
         </motion.div>
       </div>
 
-      {/* Bento Grid - Asymmetric Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6" suppressHydrationWarning>
+      {/* Bento Grid - CSS Grid Layout */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" suppressHydrationWarning>
         {/* Cross-Embodiment - Spans 2 columns */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="md:col-span-2 group relative p-8 rounded-2xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] hover:border-white/[0.20] transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+          className="col-span-1 md:col-span-2 bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20"
           suppressHydrationWarning
         >
-          {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#00F0FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          {/* Glow effect */}
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#00F0FF]/20 to-[#00F0FF]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
-          
-          <div className="relative" suppressHydrationWarning>
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-gradient-to-br from-[#00F0FF]/20 to-[#00F0FF]/5 border border-[#00F0FF]/30 shadow-[0_0_30px_rgba(0,240,255,0.15)]"
-            >
-              <Cpu className="w-7 h-7" style={{ color: '#00F0FF' }} />
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-lg bg-[#00F0FF]/10 border border-[#00F0FF]/30 flex items-center justify-center flex-shrink-0">
+              <Cpu className="w-6 h-6" style={{ color: '#00F0FF' }} />
             </div>
-            
-            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight" suppressHydrationWarning>
-              Cross-Embodiment
-            </h3>
-            <p className="text-sm font-medium mb-4" style={{ color: '#00F0FF' }} suppressHydrationWarning>
-              Semantic-HAL
-            </p>
-            <p className="text-[#A1A1AA] leading-relaxed text-base" suppressHydrationWarning>
-              Powered by e-URDF. Map high-level semantic intents to local hardware dynamics automatically. Your code runs seamlessly on wheeled, quadruped, or bipedal robots without modification.
-            </p>
+            <div>
+              <h3 className="text-xl font-bold text-white mb-1">Cross-Embodiment</h3>
+              <p className="text-sm text-[#00F0FF] mb-3">Semantic-HAL</p>
+              <p className="text-[#A1A1AA] text-sm">Powered by e-URDF. Map high-level semantic intents to local hardware dynamics automatically.</p>
+            </div>
           </div>
         </motion.div>
 
@@ -97,27 +84,18 @@ export function FeaturesGrid() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           viewport={{ once: true }}
-          className="group relative p-8 rounded-2xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] hover:border-white/[0.20] transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+          className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20"
           suppressHydrationWarning
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#FF3E00]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          <div className="relative" suppressHydrationWarning>
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-gradient-to-br from-[#FF3E00]/20 to-[#FF3E00]/5 border border-[#FF3E00]/30 shadow-[0_0_30px_rgba(255,62,0,0.15)]"
-            >
-              <Waypoints className="w-7 h-7" style={{ color: '#FF3E00' }} />
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-lg bg-[#FF3E00]/10 border border-[#FF3E00]/30 flex items-center justify-center flex-shrink-0">
+              <Waypoints className="w-6 h-6" style={{ color: '#FF3E00' }} />
             </div>
-            
-            <h3 className="text-xl font-bold text-white mb-2 tracking-tight" suppressHydrationWarning>
-              Cross-Tool
-            </h3>
-            <p className="text-sm font-medium mb-3" style={{ color: '#FF3E00' }} suppressHydrationWarning>
-              Embodied MCP
-            </p>
-            <p className="text-[#A1A1AA] leading-relaxed text-sm" suppressHydrationWarning>
-              Native Model Context Protocol (MCP) integration. Every camera, LIDAR, and robotic arm API is instantly translated into standard JSON schemas.
-            </p>
+            <div>
+              <h3 className="text-lg font-bold text-white mb-1">Cross-Tool</h3>
+              <p className="text-sm text-[#FF3E00] mb-3">Embodied MCP</p>
+              <p className="text-[#A1A1AA] text-sm">Native MCP integration for cameras, LIDAR, and robotic arms.</p>
+            </div>
           </div>
         </motion.div>
 
@@ -127,27 +105,18 @@ export function FeaturesGrid() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           viewport={{ once: true }}
-          className="group relative p-8 rounded-2xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] hover:border-white/[0.20] transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+          className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20"
           suppressHydrationWarning
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#4ADE80]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          <div className="relative" suppressHydrationWarning>
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-gradient-to-br from-[#4ADE80]/20 to-[#4ADE80]/5 border border-[#4ADE80]/30 shadow-[0_0_30px_rgba(74,222,128,0.15)]"
-            >
-              <Network className="w-7 h-7" style={{ color: '#4ADE80' }} />
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-lg bg-[#4ADE80]/10 border border-[#4ADE80]/30 flex items-center justify-center flex-shrink-0">
+              <Network className="w-6 h-6" style={{ color: '#4ADE80' }} />
             </div>
-            
-            <h3 className="text-xl font-bold text-white mb-2 tracking-tight" suppressHydrationWarning>
-              Cross-Algorithm
-            </h3>
-            <p className="text-sm font-medium mb-3" style={{ color: '#4ADE80' }} suppressHydrationWarning>
-              Brain-Cerebellum Router
-            </p>
-            <p className="text-[#A1A1AA] leading-relaxed text-sm" suppressHydrationWarning>
-              The ultimate bus linking 1Hz LLM reasoning with 100Hz+ VLA control policies with dynamic authority handovers.
-            </p>
+            <div>
+              <h3 className="text-lg font-bold text-white mb-1">Cross-Algorithm</h3>
+              <p className="text-sm text-[#4ADE80] mb-3">Brain-Cerebellum Router</p>
+              <p className="text-[#A1A1AA] text-sm">Linking 1Hz LLM reasoning with 100Hz+ VLA control policies.</p>
+            </div>
           </div>
         </motion.div>
 
@@ -157,27 +126,18 @@ export function FeaturesGrid() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           viewport={{ once: true }}
-          className="md:col-span-2 group relative p-8 rounded-2xl bg-gradient-to-br from-white/[0.03] to-transparent border border-white/[0.08] hover:border-white/[0.20] transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+          className="col-span-1 md:col-span-2 bg-white/5 border border-white/10 rounded-xl p-6 hover:border-white/20"
           suppressHydrationWarning
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-[#A78BFA]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
-          <div className="relative" suppressHydrationWarning>
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center mb-6 bg-gradient-to-br from-[#A78BFA]/20 to-[#A78BFA]/5 border border-[#A78BFA]/30 shadow-[0_0_30px_rgba(167,139,250,0.15)]"
-            >
-              <Database className="w-7 h-7" style={{ color: '#A78BFA' }} />
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-lg bg-[#A78BFA]/10 border border-[#A78BFA]/30 flex items-center justify-center flex-shrink-0">
+              <Database className="w-6 h-6" style={{ color: '#A78BFA' }} />
             </div>
-            
-            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight" suppressHydrationWarning>
-              Cross-Format
-            </h3>
-            <p className="text-sm font-medium mb-4" style={{ color: '#A78BFA' }} suppressHydrationWarning>
-              Unified Trajectory Engine
-            </p>
-            <p className="text-[#A1A1AA] leading-relaxed text-base" suppressHydrationWarning>
-              OS-level data interception. ROSClaw automatically time-syncs and packages heterogeneous sensor data and LLM CoT into standard RLDS/HDF5 formats. Ready for Open X-Embodiment training.
-            </p>
+            <div>
+              <h3 className="text-xl font-bold text-white mb-1">Cross-Format</h3>
+              <p className="text-sm text-[#A78BFA] mb-3">Unified Trajectory Engine</p>
+              <p className="text-[#A1A1AA] text-sm">OS-level data interception and time-sync for RLDS/HDF5 formats.</p>
+            </div>
           </div>
         </motion.div>
       </div>

@@ -7,7 +7,6 @@ import { useTranslations } from 'next-intl';
 
 export function Navbar() {
   const t = useTranslations('nav');
-  const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
     { label: t('docs'), href: '#', icon: Book },
@@ -16,79 +15,31 @@ export function Navbar() {
   ];
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/5"
-      suppressHydrationWarning
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2" suppressHydrationWarning>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00F0FF] to-[#FF3E00] flex items-center justify-center">
-              <span className="text-black font-bold text-sm">R</span>
-            </div>
-            <span className="text-white font-bold text-xl">ROSClaw</span>
-          </a>
-
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8" suppressHydrationWarning>
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target={link.href.startsWith('http') ? '_blank' : undefined}
-                rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="flex items-center gap-2 text-[#A1A1AA] hover:text-white transition-colors"
-                suppressHydrationWarning
-              >
-                <link.icon className="w-4 h-4" />
-                <span>{link.label}</span>
-              </a>
-            ))}
-          </div>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-white"
-            suppressHydrationWarning
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+    <nav className="fixed top-0 w-full flex items-center justify-between px-8 py-4 bg-black/50 backdrop-blur-md z-50 border-b border-white/10" suppressHydrationWarning>
+      {/* Logo */}
+      <a href="#" className="flex items-center gap-2" suppressHydrationWarning>
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00F0FF] to-[#FF3E00] flex items-center justify-center">
+          <span className="text-black font-bold text-sm">R</span>
         </div>
-      </div>
+        <span className="text-white font-bold text-xl">ROSClaw</span>
+      </a>
 
-      {/* Mobile Nav */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#050505]/95 border-b border-white/5"
+      {/* Desktop Links - Horizontal */}
+      <div className="hidden md:flex items-center gap-6 text-sm text-white/70" suppressHydrationWarning>
+        {navLinks.map((link) => (
+          <a
+            key={link.label}
+            href={link.href}
+            target={link.href.startsWith('http') ? '_blank' : undefined}
+            rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+            className="flex items-center gap-2 hover:text-white transition-colors"
             suppressHydrationWarning
           >
-            <div className="px-4 py-4 space-y-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target={link.href.startsWith('http') ? '_blank' : undefined}
-                  rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="flex items-center gap-3 text-[#A1A1AA] hover:text-white transition-colors py-2"
-                  onClick={() => setIsOpen(false)}
-                  suppressHydrationWarning
-                >
-                  <link.icon className="w-5 h-5" />
-                  <span>{link.label}</span>
-                </a>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+            <link.icon className="w-4 h-4" />
+            <span>{link.label}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
   );
 }
