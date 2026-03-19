@@ -22,19 +22,19 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative z-10 pt-32 pb-20">
+      <section className="relative z-10 pt-40 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
             {/* Left: Text */}
             <div className="flex-1 w-full text-center lg:text-left">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00F0FF]/10 border border-[#00F0FF]/30 text-[#00F0FF] text-sm mb-6"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#165DFF]/20 to-[#00D4FF]/20 border border-[#165DFF]/40 text-[#00D4FF] text-sm font-medium mb-8 shadow-[0_0_30px_rgba(22,93,255,0.3)]"
               >
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F0FF] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F0FF]"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00D4FF] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00D4FF] shadow-[0_0_10px_#00D4FF]"></span>
                 </span>
                 {t('hero.badge')}
               </motion.div>
@@ -43,7 +43,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+                className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight bg-gradient-to-r from-white via-[#E0E7FF] to-[#A5B4FC] bg-clip-text text-transparent"
                 suppressHydrationWarning
               >
                 {t('hero.title')}
@@ -53,7 +53,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-lg text-[#A1A1AA] mb-8 max-w-2xl mx-auto lg:mx-0"
+                className="text-lg md:text-xl text-[#A1A1AA] mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed"
                 suppressHydrationWarning
               >
                 {t('hero.subtitle')}
@@ -63,14 +63,22 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+                className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start"
               >
-                <button className="px-8 py-4 bg-gradient-to-r from-[#00F0FF] to-[#00C8D5] text-black font-semibold rounded-lg hover:shadow-[0_0_30px_rgba(0,240,255,0.4)] transition-all">
+                <motion.button
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(22, 93, 255, 0.5)' }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-10 py-5 bg-gradient-to-r from-[#165DFF] to-[#00D4FF] text-white font-semibold rounded-xl shadow-[0_0_30px_rgba(22,93,255,0.4)] hover:shadow-[0_0_50px_rgba(22,93,255,0.6)] transition-all duration-300"
+                >
                   {t('hero.cta_primary')}
-                </button>
-                <button className="px-8 py-4 border border-white/20 text-white font-semibold rounded-lg hover:bg-white/5 transition-all">
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-10 py-5 backdrop-blur-sm bg-white/5 border border-white/20 text-white font-semibold rounded-xl hover:border-white/40 transition-all duration-300"
+                >
                   {t('hero.cta_secondary')}
-                </button>
+                </motion.button>
               </motion.div>
             </div>
             

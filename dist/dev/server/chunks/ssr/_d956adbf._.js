@@ -8,10 +8,33 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2d$intl$2f$dist$2f$esm$2f$development$2f$server$2f$react$2d$server$2f$getRequestConfig$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$export__default__as__getRequestConfig$3e$__ = __turbopack_context__.i("[project]/node_modules/next-intl/dist/esm/development/server/react-server/getRequestConfig.js [app-rsc] (ecmascript) <export default as getRequestConfig>");
 ;
-const __TURBOPACK__default__export__ = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2d$intl$2f$dist$2f$esm$2f$development$2f$server$2f$react$2d$server$2f$getRequestConfig$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$export__default__as__getRequestConfig$3e$__["getRequestConfig"])(async ({ locale })=>({
-        locale: locale || 'en',
-        messages: {}
-    }));
+const __TURBOPACK__default__export__ = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2d$intl$2f$dist$2f$esm$2f$development$2f$server$2f$react$2d$server$2f$getRequestConfig$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__$3c$export__default__as__getRequestConfig$3e$__["getRequestConfig"])(async ({ locale })=>{
+    // Ensure locale is always defined
+    const safeLocale = locale || 'en';
+    try {
+        const messages = (await __turbopack_context__.f({
+            "../messages/en.json": {
+                id: ()=>"[project]/messages/en.json (json, async loader)",
+                module: ()=>__turbopack_context__.A("[project]/messages/en.json (json, async loader)")
+            },
+            "../messages/zh.json": {
+                id: ()=>"[project]/messages/zh.json (json, async loader)",
+                module: ()=>__turbopack_context__.A("[project]/messages/zh.json (json, async loader)")
+            }
+        }).import(`../messages/${safeLocale}.json`)).default;
+        return {
+            locale: safeLocale,
+            messages
+        };
+    } catch (error) {
+        // Fallback to English if locale file not found
+        const messages = (await __turbopack_context__.A("[project]/messages/en.json (json, async loader)")).default;
+        return {
+            locale: 'en',
+            messages
+        };
+    }
+});
 }),
 "[project]/app/[locale]/layout.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
