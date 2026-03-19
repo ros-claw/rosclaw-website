@@ -17,12 +17,12 @@ export default function Home() {
   const t = useTranslations();
 
   return (
-    <main className="relative min-h-screen bg-[#050505] text-white overflow-x-hidden" suppressHydrationWarning>
+    <main className="relative min-h-screen bg-[#050505] text-white overflow-hidden" suppressHydrationWarning>
       <AmbientBackground />
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative z-10 pt-40 pb-24">
+      <section className="relative z-10 pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             {/* Left: Text */}
