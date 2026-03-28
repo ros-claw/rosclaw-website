@@ -1,40 +1,39 @@
-import type { Config } from 'tailwindcss';
+import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: 'class',
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-      },
       colors: {
-        background: '#050505',
-        foreground: '#ffffff',
-        cyan: {
-          DEFAULT: '#00F0FF',
-          dark: '#00C8D5',
-        },
-        orange: {
-          DEFAULT: '#FF3E00',
-          dark: '#D13400',
-        },
+        background: "#050505",
+        foreground: "#ffffff",
+        "cognitive-cyan": "#00F0FF",
+        "physical-orange": "#FF3E00",
+        "glass-bg": "rgba(255, 255, 255, 0.05)",
+        "glass-border": "rgba(255, 255, 255, 0.1)",
+      },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       animation: {
-        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        "logo-ticker": "ticker 30s linear infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
       },
-    },
-    screens: {
-      'sm': '640px',
-      'md': '768px',
-      'lg': '1024px',
-      'xl': '1280px',
-      '2xl': '1536px',
+      keyframes: {
+        ticker: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "1" },
+        },
+      },
     },
   },
   plugins: [],

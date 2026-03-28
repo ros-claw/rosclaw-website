@@ -1,86 +1,43 @@
-# 🚀 ROSClaw Website
+# ROSClaw Website
 
-**[rosclaw.io](https://rosclaw.io) — The Operating System for Embodied AI.**
+The official website for ROSClaw - The Universal OS for Embodied AI.
 
-ROSClaw is the "AUTOSAR + Android" for the robotics industry. We are building a universal, software-defined Embodied AI framework that seamlessly integrates low-frequency LLM reasoning with high-frequency ROS/VLA control. 
+## Phase 1: Hero Section (Complete)
 
-Stop building custom state machines. Start building intelligent agents that **"Write Once, Embody Anywhere."**
+- [x] Video background component
+- [x] Hero section with slogan
+- [x] Terminal CTA with copy functionality
+- [x] Logo ticker animation
+- [x] Glassmorphism design system
 
-## 🛠️ Tech Stack
+## Design System
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Animation**: Framer Motion
-- **Diagrams**: React Flow
-- **Icons**: Lucide React
+- **Background**:  (Deep black)
+- **Cognitive Cyan**:  (AI/Digital)
+- **Physical Orange**:  (ROS/Physics)
+- **Typography**: Geist (headings) + JetBrains Mono (code)
 
-## 🚀 Quick Start
+## Development
 
-```bash
-# Install dependencies
-npm install
 
-# Start development server
-npm run dev
+added 1 package, and audited 112 packages in 10s
 
-# Build for production
-npm run build
+24 packages are looking for funding
+  run `npm fund` for details
 
-# Preview production build
-npm run start
-```
+1 high severity vulnerability
 
-## 📁 Project Structure
+To address all issues (including breaking changes), run:
+  npm audit fix --force
 
-```
-rosclaw-website/
-├── app/                    # Next.js App Router
-│   ├── layout.tsx          # Root layout
-│   ├── page.tsx            # Home page
-│   └── globals.css         # Global styles
-├── components/             # React components
-│   ├── sections/           # Page sections
-│   │   ├── authentic-terminal.tsx
-│   │   ├── embodiment-demo.tsx
-│   │   ├── features.tsx
-│   │   ├── architecture-graph.tsx
-│   │   ├── data-flywheel.tsx
-│   │   ├── installation.tsx
-│   │   └── cta.tsx
-│   ├── navbar.tsx
-│   ├── footer.tsx
-│   └── ambient-background.tsx
-├── messages/               # i18n translations
-│   ├── en.json
-│   └── zh.json
-└── public/                 # Static assets
-```
+Run `npm audit` for details.
 
-## 🌍 Features
+> rosclaw-website@1.0.0 dev
+> next dev
 
-- ✅ Responsive design (mobile-first)
-- ✅ Bilingual support (English/Chinese)
-- ✅ Dynamic terminal simulator with typing animation
-- ✅ Interactive robot embodiment showcase
-- ✅ React Flow architecture diagram
-- ✅ Data flywheel visualization
-- ✅ Mouse-tracking ambient background effects
+## Build
 
-## 📦 Deployment
 
-### Vercel (Recommended)
+> rosclaw-website@1.0.0 build
+> next build
 
-```bash
-npm i -g vercel
-vercel login
-vercel --prod
-```
-
-### Manual Static Hosting
-
-The `dist/` folder contains the static build output ready for any static hosting service.
-
-## 📄 License
-
-MIT © 2026 ROSClaw Team

@@ -3,38 +3,58 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0f;
+  --background: #050505;
   --foreground: #ffffff;
-  --primary: #165DFF;
-  --secondary: #00D4FF;
-  --accent: #FF7D00;
+  --cognitive-cyan: #00f0ff;
+  --physical-orange: #ff3e00;
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+html {
   scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-#root, #__next {
-  width: 100%;
-  max-width: 100%;
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+}
+
+/* Text gradient */
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #00f0ff 0%, #00c8d8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3),
+    0 0 40px rgba(0, 240, 255, 0.1);
+}
+
+.glow-orange {
+  box-shadow: 0 0 20px rgba(255, 62, 0, 0.3), 0 0 40px rgba(255, 62, 0, 0.1);
 }
 
 /* Custom scrollbar */
@@ -44,28 +64,22 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #050505;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: rgba(255, 255, 255, 0.3);
 }
 
-/* Selection color */
+/* Selection */
 ::selection {
-  background: rgba(22, 93, 255, 0.3);
-  color: white;
-}
-
-/* Focus styles */
-:focus-visible {
-  outline: 2px solid #165DFF;
-  outline-offset: 2px;
+  background: rgba(0, 240, 255, 0.3);
+  color: #ffffff;
 }
 
 /* Reduced motion */
