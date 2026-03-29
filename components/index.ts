@@ -8,3 +8,4 @@ export { SkillMarketSection } from "./skill-market-section";
 export { Navbar } from "./navbar";
 export { Footer } from "./footer";
 export { SmoothScroll } from "./smooth-scroll";
+export { DocsSection } from "./docs-section";
