@@ -1,0 +1,95 @@
+"use client";
+
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+
+type Theme = "dark" | "light" | "system";
+
+interface ThemeContextType {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  resolvedTheme: "dark" | "light";
+}
+
+const ThemeContext = createContext<ThemeContextType>({
+  theme: "system",
+  setTheme: () => {},
+  resolvedTheme: "dark",
+});
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setThemeState] = useState<Theme>("system");
+  const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by not rendering theme-dependent content until mounted
+  useEffect(() => {
+    setMounted(true);
+
+    // Load saved theme from localStorage
+    const savedTheme = localStorage.getItem("rosclaw-theme") as Theme | null;
+    if (savedTheme) {
+      setThemeState(savedTheme);
+      applyTheme(savedTheme);
+    } else {
+      applyTheme("system");
+    }
+  }, []);
+
+  const applyTheme = (newTheme: Theme) => {
+    const root = document.documentElement;
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    const resolved = newTheme === "system" ? (systemDark ? "dark" : "light") : newTheme;
+
+    setResolvedTheme(resolved);
+
+    if (resolved === "dark") {
+      root.classList.add("dark");
+      root.classList.remove("light");
+    } else {
+      root.classList.add("light");
+      root.classList.remove("dark");
+    }
+  };
+
+  const setTheme = (newTheme: Theme) => {
+    setThemeState(newTheme);
+    localStorage.setItem("rosclaw-theme", newTheme);
+    if (mounted) {
+      applyTheme(newTheme);
+    }
+  };
+
+  // Listen for system theme changes
+  useEffect(() => {
+    if (!mounted || theme !== "system") return;
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => {
+      const newResolved = e.matches ? "dark" : "light";
+      setResolvedTheme(newResolved);
+      const root = document.documentElement;
+      if (e.matches) {
+        root.classList.add("dark");
+        root.classList.remove("light");
+      } else {
+        root.classList.add("light");
+        root.classList.remove("dark");
+      }
+    };
+
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, [theme, mounted]);
+
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  return context;
+}

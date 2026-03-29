@@ -10,3 +10,5 @@ export { DocsSection } from "./docs-section";
 export { Navbar } from "./navbar";
 export { Footer } from "./footer";
 export { SmoothScroll } from "./smooth-scroll";
+export { ThemeProvider } from "./theme-provider";
+export { ThemeToggle } from "./theme-toggle";

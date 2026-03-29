@@ -6,15 +6,20 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        background: "#050505",
-        foreground: "#ffffff",
-        "cognitive-cyan": "#00F0FF",
-        "physical-orange": "#FF3E00",
-        "glass-bg": "rgba(255, 255, 255, 0.05)",
-        "glass-border": "rgba(255, 255, 255, 0.1)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        "cognitive-cyan": "var(--cognitive-cyan)",
+        "physical-orange": "var(--physical-orange)",
+        "glass-bg": "var(--glass-bg)",
+        "glass-border": "var(--glass-border)",
+        "card-bg": "var(--card-bg)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
+        "text-muted": "var(--text-muted)",
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],

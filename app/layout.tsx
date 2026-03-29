@@ -3,6 +3,7 @@ import { GeistSans } from "geist/font/sans";
 import { JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -41,9 +42,11 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${jetbrainsMono.variable} font-sans antialiased bg-background text-foreground`}
       >
-        <SmoothScroll />
-        <Navbar />
-        {children}
+        <ThemeProvider>
+          <SmoothScroll />
+          <Navbar />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

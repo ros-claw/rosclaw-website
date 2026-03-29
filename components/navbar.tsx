@@ -3,6 +3,7 @@
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Github, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 const navLinks = [
   { name: "Home", href: "#" },
@@ -35,9 +36,9 @@ export function Navbar() {
             {/* Logo */}
             <a href="#" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cognitive-cyan to-physical-orange flex items-center justify-center">
-                <span className="text-black font-bold text-sm">R</span>
+                <span className="text-white font-bold text-sm">R</span>
               </div>
-              <span className="text-white font-semibold tracking-tight">ROSClaw</span>
+              <span className="text-foreground font-semibold tracking-tight">ROSClaw</span>
             </a>
 
             {/* Desktop Nav Links */}
@@ -46,7 +47,7 @@ export function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  className="text-sm text-white/60 hover:text-white transition-colors"
+                  className="text-sm text-text-secondary hover:text-foreground transition-colors"
                 >
                   {link.name}
                 </a>
@@ -54,12 +55,13 @@ export function Navbar() {
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <ThemeToggle />
               <a
                 href="https://github.com/rosclaw"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden md:flex items-center gap-2 text-white/60 hover:text-white transition-colors"
+                className="hidden md:flex items-center gap-2 text-text-secondary hover:text-foreground transition-colors"
               >
                 <Github className="w-5 h-5" />
               </a>
@@ -73,7 +75,7 @@ export function Navbar() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 text-white/60 hover:text-white"
+                className="md:hidden p-2 text-text-secondary hover:text-foreground"
               >
                 {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -97,7 +99,7 @@ export function Navbar() {
               key={link.name}
               href={link.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg text-white/80 hover:text-white py-2"
+              className="block text-lg text-text-secondary hover:text-foreground py-2"
             >
               {link.name}
             </a>
