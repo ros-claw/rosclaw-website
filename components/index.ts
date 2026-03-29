@@ -5,3 +5,5 @@ export { LogoTicker } from "./logo-ticker";
 export { BentoGrid } from "./bento-grid";
 export { McpHubSection } from "./mcp-hub-section";
 export { SkillMarketSection } from "./skill-market-section";
+export { Navbar } from "./navbar";
+export { Footer } from "./footer";

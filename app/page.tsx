@@ -3,6 +3,7 @@ import { LogoTicker } from "@/components/logo-ticker";
 import { BentoGrid } from "@/components/bento-grid";
 import { McpHubSection } from "@/components/mcp-hub-section";
 import { SkillMarketSection } from "@/components/skill-market-section";
+import { Footer } from "@/components/footer";
 
 export default function Home() {
   return (
@@ -21,6 +22,9 @@ export default function Home() {
 
       {/* Skill Market Section */}
       <SkillMarketSection />
+
+      {/* Footer */}
+      <Footer />
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { JetBrains_Mono } from "next/font/google";
+import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${jetbrainsMono.variable} font-sans antialiased bg-background text-foreground`}
       >
+        <Navbar />
         {children}
       </body>
     </html>
