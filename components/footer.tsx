@@ -8,7 +8,6 @@ const footerLinks = {
     { name: "Features", href: "#" },
     { name: "MCP Hub", href: "#mcp-hub" },
     { name: "Skill Market", href: "#skill-market" },
-    { name: "Pricing", href: "#" },
   ],
   Resources: [
     { name: "Documentation", href: "#docs" },
@@ -17,8 +16,8 @@ const footerLinks = {
     { name: "Examples", href: "#" },
   ],
   Community: [
-    { name: "Discord", href: "#" },
-    { name: "GitHub", href: "https://github.com/rosclaw" },
+    { name: "Discord", href: "https://discord.com/invite/E6nPCDu6KJ" },
+    { name: "GitHub", href: "https://github.com/ros-claw" },
     { name: "Twitter", href: "#" },
     { name: "Forum", href: "#" },
   ],
@@ -26,14 +25,14 @@ const footerLinks = {
     { name: "About", href: "#" },
     { name: "Blog", href: "#" },
     { name: "Careers", href: "#" },
-    { name: "Contact", href: "#" },
+    { name: "Contact", href: "mailto:ai@rosclaw.io" },
   ],
 };
 
 const socialLinks = [
-  { name: "GitHub", icon: Github, href: "https://github.com/rosclaw" },
+  { name: "GitHub", icon: Github, href: "https://github.com/ros-claw" },
   { name: "Twitter", icon: Twitter, href: "#" },
-  { name: "Discord", icon: MessageCircle, href: "#" },
+  { name: "Discord", icon: MessageCircle, href: "https://discord.com/invite/E6nPCDu6KJ" },
 ];
 
 export function Footer() {

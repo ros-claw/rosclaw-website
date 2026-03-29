@@ -1,0 +1,457 @@
+"use client";
+
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Upload, Code, FileText, Tags, GitBranch, Info, Check, AlertCircle } from "lucide-react";
+import Link from "next/link";
+
+const categories = [
+  "Manipulation",
+  "Navigation",
+  "Computer Vision",
+  "Grasping",
+  "Assembly",
+  "Social",
+  "Planning",
+  "Control",
+];
+
+const robotTypes = [
+  { id: "ur5", name: "Universal Robots UR5/UR10" },
+  { id: "franka", name: "Franka Emika Panda" },
+  { id: "unitree-g1", name: "Unitree G1 Humanoid" },
+  { id: "unitree-go2", name: "Unitree Go2 Quadruped" },
+  { id: "turtlebot", name: "TurtleBot" },
+  { id: "universal", name: "Universal (Robot Agnostic)" },
+];
+
+export default function PublishSkillPage() {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: "",
+    version: "1.0.0",
+    description: "",
+    category: "",
+    robotTypes: [] as string[],
+    tags: [] as string[],
+    skillMd: `## Overview\n\nDescribe what your skill does...\n\n## Usage\n\n\`\`\`\nrosclaw skill load <skill-name>\n\`\`\`\n\n## Parameters\n\n- \`param1\`: Description\n\n## Examples\n\nExample usage scenarios...`,
+    icon: null as File | null,
+  });
+  const [tagInput, setTagInput] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleAddTag = () => {
+    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+      setFormData({ ...formData, tags: [...formData.tags, tagInput.trim()] });
+      setTagInput("");
+    }
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    setFormData({ ...formData, tags: formData.tags.filter((t) => t !== tag) });
+  };
+
+  const handleRobotToggle = (robotId: string) => {
+    const newTypes = formData.robotTypes.includes(robotId)
+      ? formData.robotTypes.filter((r) => r !== robotId)
+      : [...formData.robotTypes, robotId];
+    setFormData({ ...formData, robotTypes: newTypes });
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    // Simulate submission
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setIsSubmitting(false);
+    setStep(4); // Success step
+  };
+
+  const steps = [
+    { id: 1, title: "Basic Info", icon: Info },
+    { id: 2, title: "Documentation", icon: FileText },
+    { id: 3, title: "Review", icon: Check },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b border-white/10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center gap-2 text-sm text-text-muted mb-2">
+            <Link href="/skills" className="hover:text-foreground">Skills</Link>
+            <span>/</span>
+            <span className="text-foreground">Publish</span>
+          </div>
+          <h1 className="text-2xl font-bold text-foreground">Publish New Skill</h1>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Progress Steps */}
+        <div className="flex items-center gap-4 mb-8">
+          {steps.map((s, index) => (
+            <div key={s.id} className="flex items-center gap-2">
+              <div
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                  step === s.id
+                    ? "bg-cognitive-cyan/10 text-cognitive-cyan border border-cognitive-cyan/30"
+                    : step > s.id
+                    ? "bg-green-500/10 text-green-500"
+                    : "bg-glass-bg text-text-muted"
+                }`}
+              >
+                <s.icon className="w-4 h-4" />
+                <span className="text-sm font-medium hidden sm:inline">{s.title}</span>
+              </div>
+              {index < steps.length - 1 && (
+                <div className={`w-8 h-px ${step > s.id ? "bg-green-500/50" : "bg-glass-border"}`} />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Step 1: Basic Info */}
+        {step === 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Icon Upload */}
+              <div className="p-6 rounded-xl bg-card-bg border border-glass-border">
+                <label className="block text-sm font-medium text-foreground mb-4">
+                  Skill Icon
+                </label>
+                <div className="border-2 border-dashed border-glass-border rounded-lg p-8 text-center hover:border-cognitive-cyan/30 transition-colors cursor-pointer">
+                  <Upload className="w-8 h-8 text-text-muted mx-auto mb-2" />
+                  <p className="text-sm text-text-secondary">Drop SVG or PNG here</p>
+                  <p className="text-xs text-text-muted mt-1">512x512px recommended</p>
+                </div>
+              </div>
+
+              {/* Basic Fields */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Skill Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g., precision-pour"
+                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                  />
+                  <p className="text-xs text-text-muted mt-1">
+                    Use kebab-case, unique identifier
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Version
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.version}
+                    onChange={(e) => setFormData({ ...formData, version: e.target.value })}
+                    placeholder="1.0.0"
+                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Category *
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
+                  >
+                    <option value="">Select category</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat.toLowerCase()}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Short Description *
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Describe what your skill does in one sentence..."
+                rows={3}
+                className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+              />
+            </div>
+
+            {/* Robot Types */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-3">
+                Compatible Robots
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {robotTypes.map((robot) => (
+                  <button
+                    key={robot.id}
+                    onClick={() => handleRobotToggle(robot.id)}
+                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                      formData.robotTypes.includes(robot.id)
+                        ? "bg-cognitive-cyan/20 text-cognitive-cyan border border-cognitive-cyan/30"
+                        : "bg-glass-bg text-text-secondary border border-glass-border hover:border-text-muted"
+                    }`}
+                  >
+                    {robot.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Tags
+              </label>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), handleAddTag())}
+                  placeholder="Add tag and press Enter"
+                  className="flex-1 px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                />
+                <button
+                  onClick={handleAddTag}
+                  className="px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground transition-colors"
+                >
+                  <Tags className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {formData.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-xs"
+                  >
+                    {tag}
+                    <button
+                      onClick={() => handleRemoveTag(tag)}
+                      className="hover:text-white"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setStep(2)}
+                disabled={!formData.name || !formData.category || !formData.description}
+                className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Continue →
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 2: Documentation */}
+        {step === 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-sm flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="font-medium">SKILL.md Format</p>
+                <p className="text-yellow-500/80">
+                  Use Markdown format. Include sections: Overview, Usage, Parameters, and Examples.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-6">
+              {/* Editor */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  SKILL.md
+                </label>
+                <textarea
+                  value={formData.skillMd}
+                  onChange={(e) => setFormData({ ...formData, skillMd: e.target.value })}
+                  rows={20}
+                  className="w-full px-4 py-3 rounded-lg bg-black/40 border border-glass-border text-foreground font-mono text-sm focus:outline-none focus:border-cognitive-cyan/50"
+                />
+              </div>
+
+              {/* Preview */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Preview
+                </label>
+                <div className="p-4 rounded-lg bg-card-bg border border-glass-border h-[500px] overflow-auto">
+                  <div className="prose prose-invert prose-sm max-w-none">
+                    <pre className="whitespace-pre-wrap text-text-secondary">
+                      {formData.skillMd}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep(1)}
+                className="px-6 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground transition-colors"
+              >
+                ← Back
+              </button>
+              <button
+                onClick={() => setStep(3)}
+                className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all"
+              >
+                Continue →
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 3: Review */}
+        {step === 3 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="p-6 rounded-xl bg-card-bg border border-glass-border">
+              <h3 className="text-lg font-semibold text-foreground mb-4">Review Your Skill</h3>
+
+              <div className="space-y-4">
+                <div className="flex justify-between py-2 border-b border-glass-border">
+                  <span className="text-text-secondary">Name</span>
+                  <span className="text-foreground font-medium">{formData.name}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-glass-border">
+                  <span className="text-text-secondary">Version</span>
+                  <span className="text-foreground">{formData.version}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-glass-border">
+                  <span className="text-text-secondary">Category</span>
+                  <span className="text-foreground">{formData.category}</span>
+                </div>
+                <div className="py-2 border-b border-glass-border">
+                  <span className="text-text-secondary block mb-1">Description</span>
+                  <span className="text-foreground">{formData.description}</span>
+                </div>
+                <div className="py-2 border-b border-glass-border">
+                  <span className="text-text-secondary block mb-1">Compatible Robots</span>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.robotTypes.map((robotId) => (
+                      <span
+                        key={robotId}
+                        className="px-2 py-1 rounded-full bg-glass-bg text-text-secondary text-xs"
+                      >
+                        {robotTypes.find((r) => r.id === robotId)?.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="py-2">
+                  <span className="text-text-secondary block mb-1">Tags</span>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-1 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-xs"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-glass-bg border border-glass-border">
+              <div className="flex items-start gap-3">
+                <GitBranch className="w-5 h-5 text-text-muted mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Publishing Options</p>
+                  <p className="text-sm text-text-secondary mt-1">
+                    Your skill will be published to the ROSClaw Skill Market.
+                    It will undergo automated vetting (5-15 minutes) before becoming publicly available.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep(2)}
+                className="px-6 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground transition-colors"
+              >
+                ← Back
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all disabled:opacity-50"
+              >
+                {isSubmitting ? "Publishing..." : "Publish Skill"}
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 4: Success */}
+        {step === 4 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-12"
+          >
+            <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
+              <Check className="w-8 h-8 text-green-500" />
+            </div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Skill Published Successfully!
+            </h2>
+            <p className="text-text-secondary mb-6">
+              Your skill <strong>{formData.name}</strong> has been submitted for automated vetting.
+              You will be notified when it's approved.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link
+                href="/skills"
+                className="px-6 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground transition-colors"
+              >
+                Browse Skills
+              </Link>
+              <Link
+                href={`/skills/${formData.name}`}
+                className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all"
+              >
+                View Skill
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}

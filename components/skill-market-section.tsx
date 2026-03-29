@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Download, Star, User, ArrowRight, Sparkles, Brain, Workflow, Coffee, Music, Wrench } from "lucide-react";
+import Link from "next/link";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },

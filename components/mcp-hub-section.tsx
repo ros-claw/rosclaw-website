@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { FileCode, ArrowRight, Check, Bot, Grip, Car, Camera } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 // Animation variants
 const fadeInUp = {
@@ -379,10 +380,13 @@ export function McpHubSection() {
           viewport={{ once: true }}
           className="text-center mt-10"
         >
-          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all">
+          <Link
+            href="/mcp-hub"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all"
+          >
             <span>View All Packages</span>
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
         </motion.div>
       </div>
     </section>

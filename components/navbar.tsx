@@ -5,11 +5,13 @@ import { Github, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 
+import Link from "next/link";
+
 const navLinks = [
-  { name: "Home", href: "#" },
-  { name: "MCP Hub", href: "#mcp-hub" },
-  { name: "Skill Market", href: "#skill-market" },
-  { name: "Docs", href: "#docs" },
+  { name: "Home", href: "/" },
+  { name: "MCP Hub", href: "/mcp-hub" },
+  { name: "Skill Market", href: "/skills" },
+  { name: "Docs", href: "/#docs" },
 ];
 
 export function Navbar() {
@@ -34,23 +36,23 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cognitive-cyan to-physical-orange flex items-center justify-center">
                 <span className="text-white font-bold text-sm">R</span>
               </div>
               <span className="text-foreground font-semibold tracking-tight">ROSClaw</span>
-            </a>
+            </Link>
 
             {/* Desktop Nav Links */}
             <div className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
                   href={link.href}
                   className="text-sm text-text-secondary hover:text-foreground transition-colors"
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
             </div>
 
@@ -58,7 +60,7 @@ export function Navbar() {
             <div className="flex items-center gap-2 sm:gap-4">
               <ThemeToggle />
               <a
-                href="https://github.com/rosclaw"
+                href="https://github.com/ros-claw"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden md:flex items-center gap-2 text-text-secondary hover:text-foreground transition-colors"
@@ -95,14 +97,14 @@ export function Navbar() {
       >
         <div className="px-4 py-6 space-y-4">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.name}
               href={link.href}
               onClick={() => setIsMobileMenuOpen(false)}
               className="block text-lg text-text-secondary hover:text-foreground py-2"
             >
               {link.name}
-            </a>
+            </Link>
           ))}
           <a
             href="#"
