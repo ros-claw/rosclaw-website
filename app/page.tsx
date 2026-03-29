@@ -1,5 +1,6 @@
 import { HeroSection } from "@/components/hero-section";
 import { LogoTicker } from "@/components/logo-ticker";
+import { BentoGrid } from "@/components/bento-grid";
 
 export default function Home() {
   return (
@@ -10,14 +11,8 @@ export default function Home() {
       {/* Logo Ticker */}
       <LogoTicker />
 
-      {/* Placeholder for Phase 2: Bento Grid */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-white/40 text-sm uppercase tracking-widest">
-            Phase 2: Core Innovations Bento Grid (Coming Next)
-          </p>
-        </div>
-      </section>
+      {/* Bento Grid - Core Innovations */}
+      <BentoGrid />
     </main>
   );
 }
