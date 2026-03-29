@@ -1,25 +1,62 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { ParticleBackground } from "./particle-background";
+
 export function VideoBackground() {
+  const [videoError, setVideoError] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    // Check if video files exist by trying to load them
+    const checkVideo = async () => {
+      try {
+        const response = await fetch("/hero-video.mp4", { method: "HEAD" });
+        if (!response.ok) {
+          setVideoError(true);
+        }
+      } catch {
+        setVideoError(true);
+      }
+    };
+    checkVideo();
+  }, []);
+
+  // If video failed to load or doesn't exist, show particle animation
+  if (videoError) {
+    return (
+      <div className="absolute inset-0 z-0">
+        <ParticleBackground />
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40" />
+      </div>
+    );
+  }
+
   return (
     <div className="absolute inset-0 z-0">
-      {/* Fallback gradient background (shown while video loads or if video fails) */}
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-cognitive-cyan/5" />
+      {/* Fallback shown while video loads or if it fails */}
+      {!videoLoaded && (
+        <div className="absolute inset-0">
+          <ParticleBackground />
+        </div>
+      )}
 
-      {/* Video placeholder - replace src with actual video file */}
+      {/* Video element */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-60"
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+          videoLoaded ? "opacity-60" : "opacity-0"
+        }`}
         poster="/hero-poster.jpg"
+        onLoadedData={() => setVideoLoaded(true)}
+        onError={() => setVideoError(true)}
       >
-        {/* Add your video sources here */}
         <source src="/hero-video.webm" type="video/webm" />
         <source src="/hero-video.mp4" type="video/mp4" />
-        {/* Fallback message */}
-        Your browser does not support the video tag.
       </video>
 
       {/* Grid overlay for tech aesthetic */}

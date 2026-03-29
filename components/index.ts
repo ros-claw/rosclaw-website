@@ -1,11 +1,12 @@
 export { HeroSection } from "./hero-section";
 export { TerminalCTA } from "./terminal-cta";
 export { VideoBackground } from "./video-background";
+export { ParticleBackground } from "./particle-background";
 export { LogoTicker } from "./logo-ticker";
 export { BentoGrid } from "./bento-grid";
 export { McpHubSection } from "./mcp-hub-section";
 export { SkillMarketSection } from "./skill-market-section";
+export { DocsSection } from "./docs-section";
 export { Navbar } from "./navbar";
 export { Footer } from "./footer";
 export { SmoothScroll } from "./smooth-scroll";
-export { DocsSection } from "./docs-section";
