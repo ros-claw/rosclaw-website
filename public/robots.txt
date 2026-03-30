@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Disallow crawlers from indexing API or internal routes
+Disallow: /api/
+Disallow: /_next/
+
+# Sitemap location
+Sitemap: https://rosclaw.io/sitemap.xml
+
+# Crawl rate
+Crawl-delay: 1
