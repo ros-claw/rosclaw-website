@@ -28,7 +28,7 @@ export function VideoBackground() {
       <div className="absolute inset-0 z-0">
         <ParticleBackground />
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/40 dark:opacity-100 opacity-60" />
       </div>
     );
   }

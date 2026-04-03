@@ -1,0 +1,15 @@
+{
+  "id": "session-1775111747215",
+  "startedAt": "2026-04-02T06:35:47.215Z",
+  "cwd": "/root/.openclaw/workspace/rosclaw-website",
+  "context": {},
+  "metrics": {
+    "edits": 39,
+    "commands": 0,
+    "tasks": 0,
+    "errors": 0
+  },
+  "restoredAt": "2026-04-03T02:47:46.949Z",
+  "endedAt": "2026-04-03T03:47:48.633Z",
+  "duration": 76321419
+}

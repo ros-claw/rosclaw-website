@@ -10,8 +10,8 @@ export function HeroSection() {
       {/* Video Background */}
       <VideoBackground />
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-black/60 z-10" />
+      {/* Dark Overlay - dimmed in light mode via CSS */}
+      <div className="absolute inset-0 bg-black/60 dark:opacity-100 opacity-0 z-10" />
 
       {/* Ambient Glow Effects */}
       <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">

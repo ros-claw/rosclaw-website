@@ -91,7 +91,7 @@ function MCPHubAnimation() {
                 cx={start.x}
                 cy={start.y}
                 r="20"
-                fill="rgba(5, 5, 5, 0.9)"
+                fill="rgba(156, 163, 175, 0.5)"
                 stroke={agent.color}
                 strokeWidth="2"
                 initial={{ scale: 0 }}
@@ -232,7 +232,7 @@ function BrainCerebellumAnimation() {
         {/* Grid background */}
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid)" />
@@ -297,8 +297,8 @@ function BrainCerebellumAnimation() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
-          <rect x="150" y="110" width="100" height="30" rx="4" fill="rgba(5,5,5,0.8)" stroke="rgba(255,255,255,0.2)" />
-          <text x="200" y="130" textAnchor="middle" fill="#ffffff" fontSize="10" fontFamily="var(--font-jetbrains-mono)">
+          <rect x="150" y="110" width="100" height="30" rx="4" fill="rgba(0,0,0,0.7)" stroke="rgba(255,255,255,0.2)" />
+          <text x="200" y="130" textAnchor="middle" fill="var(--text-primary)" fontSize="10" fontFamily="var(--font-jetbrains-mono)">
             ASYNC
           </text>
         </motion.g>
@@ -307,7 +307,7 @@ function BrainCerebellumAnimation() {
         <motion.path
           d="M 360 80 Q 370 120, 360 160"
           fill="none"
-          stroke="rgba(255,255,255,0.2)"
+          stroke="rgba(0,0,0,0.2)"
           strokeWidth="1"
           strokeDasharray="4 4"
           initial={{ pathLength: 0 }}
@@ -316,7 +316,7 @@ function BrainCerebellumAnimation() {
         />
         <motion.polygon
           points="360,165 355,155 365,155"
-          fill="rgba(255,255,255,0.3)"
+          fill="rgba(0,0,0,0.3)"
           animate={{ opacity: [0.3, 0.8, 0.3] }}
           transition={{ duration: 1.5, repeat: Infinity }}
         />

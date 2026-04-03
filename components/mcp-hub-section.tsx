@@ -38,15 +38,15 @@ function SdkToMcpAnimation() {
   const codeLines = [
     { text: "class UR5Controller:", color: "#FF3E00" },
     { text: "    def __init__(self):", color: "#00F0FF" },
-    { text: "        self.joints = 6", color: "#ffffff" },
-    { text: "        self.speed = 1.0", color: "#ffffff" },
+    { text: "        self.joints = 6", color: "var(--text-primary)" },
+    { text: "        self.speed = 1.0", color: "var(--text-primary)" },
     { text: "", color: "" },
     { text: "    def move_joint(self, idx, pos):", color: "#00F0FF" },
-    { text: "        # Safety check", color: "#888888" },
+    { text: "        # Safety check", color: "var(--text-muted)" },
     { text: "        if pos > self.limits[idx]:", color: "#FF3E00" },
     { text: "            return False", color: "#FF3E00" },
-    { text: "        # Execute", color: "#888888" },
-    { text: "        return self._send(pos)", color: "#ffffff" },
+    { text: "        # Execute", color: "var(--text-muted)" },
+    { text: "        return self._send(pos)", color: "var(--text-primary)" },
   ];
 
   return (
@@ -75,7 +75,7 @@ function SdkToMcpAnimation() {
             className="flex"
           >
             <span className="w-6 text-white/20 text-right mr-3">{i + 1}</span>
-            <span style={{ color: line.color || "rgba(255,255,255,0.5)" }}>{line.text || " "}</span>
+            <span style={{ color: line.color || "var(--text-secondary)" }}>{line.text || " "}</span>
           </motion.div>
         ))}
       </div>
