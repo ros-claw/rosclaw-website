@@ -34,3 +34,9 @@ Thumbs.db
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Internal documentation (not for open source)
+rosclaw-architecture-v3.md
+rosclaw-architecture-v4.md
+rosclaw_网站设计指南.md
+rustling-popping-walrus.md
