@@ -42,22 +42,23 @@ export function VideoBackground() {
         </div>
       )}
 
-      {/* Video element */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-          videoLoaded ? "opacity-60" : "opacity-0"
-        }`}
-        poster="/hero-poster.jpg"
-        onLoadedData={() => setVideoLoaded(true)}
-        onError={() => setVideoError(true)}
-      >
-        <source src="/hero-video.webm" type="video/webm" />
-        <source src="/hero-video.mp4" type="video/mp4" />
-      </video>
+      {/* Video element - only render if no error detected */}
+      {!videoError && (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+            videoLoaded ? "opacity-60" : "opacity-0"
+          }`}
+          onLoadedData={() => setVideoLoaded(true)}
+          onError={() => setVideoError(true)}
+        >
+          <source src="/videos/hero-video.webm" type="video/webm" />
+          <source src="/videos/hero-video.mp4" type="video/mp4" />
+        </video>
+      )}
 
       {/* Grid overlay for tech aesthetic */}
       <div

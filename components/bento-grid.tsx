@@ -258,7 +258,7 @@ function BrainCerebellumAnimation() {
           fill="none"
           stroke="#FF3E00"
           strokeWidth="2"
-          initial={{ pathLength: 0 }}
+          initial={{ pathLength: 0, d: "M 20 160 L 380 160" }}
           animate={{
             d: [
               "M 20 160 L 380 160",
@@ -281,7 +281,7 @@ function BrainCerebellumAnimation() {
             y2={165}
             stroke="#FF3E00"
             strokeWidth="2"
-            initial={{ opacity: 0.3 }}
+            initial={{ opacity: 0.3, y1: 155, y2: 165 }}
             animate={{ opacity: [0.3, 1, 0.3], y1: [155, 140, 155], y2: [165, 180, 165] }}
             transition={{ duration: 0.1, delay: i * 0.012, repeat: Infinity }}
           />
