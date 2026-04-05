@@ -7,9 +7,9 @@ import { ParticleBackground } from "./particle-background";
 // Benefits: Free egress via R2, branded URLs, global CDN
 const VIDEO_URLS = {
   // 2K version via custom domain
-  hd: "/video/hero-video.mp4",
+  hd: "/video/rosclaw-demo.mp4",
   // Poster image
-  poster: "/video/hero-poster.jpg",
+  poster: "/video/rosclaw-demo-poster.jpg",
 };
 
 export function VideoBackground() {
