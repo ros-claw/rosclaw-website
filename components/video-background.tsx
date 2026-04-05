@@ -8,8 +8,6 @@ import { ParticleBackground } from "./particle-background";
 const VIDEO_URLS = {
   // 2K version via custom domain
   hd: "/video/rosclaw-demo.mp4",
-  // Poster image
-  poster: "/video/rosclaw-demo-poster.jpg",
 };
 
 export function VideoBackground() {
@@ -64,7 +62,6 @@ export function VideoBackground() {
         loop
         playsInline
         preload="auto"
-        poster={VIDEO_URLS.poster}
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
           videoLoaded ? "opacity-60" : "opacity-0"
         }`}
