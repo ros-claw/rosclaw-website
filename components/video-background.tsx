@@ -8,7 +8,7 @@ import { ParticleBackground } from "./particle-background";
 const VIDEO_URLS = {
   // 2K version - uses redirect to R2
   // Paper-friendly URL: rosclaw.io/video
-  hd: "/video",
+  hd: "/demo",
 };
 
 export function VideoBackground() {
