@@ -3,16 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { ParticleBackground } from "./particle-background";
 
-// Cloudflare R2 Public Bucket URL
-// Benefits: Free egress, high performance, global CDN
-const R2_BASE_URL = "https://pub-471f90c3abac48ac88996b8ef195acd8.r2.dev";
-
-// Video URLs with quality variants for adaptive loading
+// Video URLs - served through custom domain proxy
+// Benefits: Free egress via R2, branded URLs, global CDN
 const VIDEO_URLS = {
-  // 2K version (default for desktop)
-  hd: `${R2_BASE_URL}/hero-video.mp4`,
-  // Poster image for preview
-  poster: `${R2_BASE_URL}/hero-poster.jpg`,
+  // 2K version via custom domain
+  hd: "/video/hero-video.mp4",
+  // Poster image
+  poster: "/video/hero-poster.jpg",
 };
 
 export function VideoBackground() {
