@@ -4,6 +4,11 @@ import { useEffect } from "react";
 
 export function SmoothScroll() {
   useEffect(() => {
+    // Reset scroll to top on page load (prevent browser from restoring scroll position)
+    if (window.location.hash !== "#docs") {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
     // Handle anchor link smooth scrolling
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;

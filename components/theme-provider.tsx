@@ -16,6 +16,25 @@ const ThemeContext = createContext<ThemeContextType>({
   resolvedTheme: "dark",
 });
 
+// Script to prevent flash - runs before React hydrates
+const themeScript = `
+  (function() {
+    try {
+      var saved = localStorage.getItem('rosclaw-theme');
+      if (saved === 'light') {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      } else {
+        // Default to dark
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    } catch (e) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+`;
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
   const [resolvedTheme, setResolvedTheme] = useState<"dark" | "light">("dark");
@@ -86,6 +105,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
+      {/* Inject script to prevent flash before hydration */}
+      <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       {children}
     </ThemeContext.Provider>
   );
