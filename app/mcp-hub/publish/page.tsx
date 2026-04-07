@@ -8,41 +8,53 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 const categories = [
-  "Manipulation",
-  "Navigation",
-  "Computer Vision",
-  "Grasping",
-  "Assembly",
-  "Social",
-  "Planning",
-  "Control",
+  "Manipulators",
+  "Humanoids",
+  "Mobile Bases",
+  "Sensors",
+  "Grippers",
+  "Cameras",
+  "End Effectors",
 ];
 
-const robotTypes = [
-  { id: "ur5", name: "Universal Robots UR5/UR10" },
-  { id: "franka", name: "Franka Emika Panda" },
-  { id: "unitree-g1", name: "Unitree G1 Humanoid" },
-  { id: "unitree-go2", name: "Unitree Go2 Quadruped" },
-  { id: "turtlebot", name: "TurtleBot" },
-  { id: "universal", name: "Universal (Robot Agnostic)" },
-];
+const rosVersions = ["ROS 2 Humble", "ROS 2 Iron", "ROS 2 Jazzy", "ROS 2 Foxy"];
 
-export default function PublishSkillPage() {
+export default function PublishMcpPackagePage() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
+    displayName: "",
     version: "1.0.0",
     description: "",
     category: "",
-    robotTypes: [] as string[],
+    rosVersion: "ROS 2 Humble",
+    robotType: "",
     tags: [] as string[],
-    skillMd: `## Overview\n\nDescribe what your skill does...\n\n## Usage\n\n\`\`\`\nrosclaw skill load <skill-name>\n\`\`\`\n\n## Parameters\n\n- \`param1\`: Description\n\n## Examples\n\nExample usage scenarios...`,
+    githubUrl: "",
+    readmeMd: `## Overview
+
+Describe your MCP package...
+
+## Installation
+
+\`\`\`
+rosclaw install <package-name>
+\`\`\`
+
+## Configuration
+
+Configuration options...
+
+## Tools
+
+List of MCP tools provided by this package...`,
+    tools: [] as { name: string; description: string }[],
     icon: null as File | null,
   });
   const [tagInput, setTagInput] = useState("");
+  const [toolInput, setToolInput] = useState({ name: "", description: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-  const [githubUrl, setGithubUrl] = useState("");
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
@@ -55,22 +67,32 @@ export default function PublishSkillPage() {
     setFormData({ ...formData, tags: formData.tags.filter((t) => t !== tag) });
   };
 
-  const handleRobotToggle = (robotId: string) => {
-    const newTypes = formData.robotTypes.includes(robotId)
-      ? formData.robotTypes.filter((r) => r !== robotId)
-      : [...formData.robotTypes, robotId];
-    setFormData({ ...formData, robotTypes: newTypes });
+  const handleAddTool = () => {
+    if (toolInput.name.trim() && toolInput.description.trim()) {
+      setFormData({
+        ...formData,
+        tools: [...formData.tools, { ...toolInput }],
+      });
+      setToolInput({ name: "", description: "" });
+    }
+  };
+
+  const handleRemoveTool = (index: number) => {
+    setFormData({
+      ...formData,
+      tools: formData.tools.filter((_, i) => i !== index),
+    });
   };
 
   const handleImportFromGithub = async () => {
-    if (!githubUrl) return;
+    if (!formData.githubUrl) return;
 
     setIsImporting(true);
     try {
       const response = await fetch("/api/github/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repoUrl: githubUrl }),
+        body: JSON.stringify({ repoUrl: formData.githubUrl }),
       });
 
       if (response.ok) {
@@ -78,9 +100,11 @@ export default function PublishSkillPage() {
         setFormData({
           ...formData,
           name: data.name || formData.name,
+          displayName: data.displayName || data.name || formData.displayName,
           description: data.description || formData.description,
-          skillMd: data.longDescription || formData.skillMd,
+          readmeMd: data.longDescription || formData.readmeMd,
           category: data.category || formData.category,
+          robotType: data.robotType || formData.robotType,
           tags: data.tags || formData.tags,
         });
       }
@@ -93,10 +117,9 @@ export default function PublishSkillPage() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate submission
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setIsSubmitting(false);
-    setStep(4); // Success step
+    setStep(4);
   };
 
   const steps = [
@@ -106,16 +129,16 @@ export default function PublishSkillPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pt-16">
       {/* Header */}
       <div className="border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-2 text-sm text-text-muted mb-2">
-            <Link href="/skills" className="hover:text-foreground">Skills</Link>
+            <Link href="/mcp-hub" className="hover:text-foreground">MCP Hub</Link>
             <span>/</span>
             <span className="text-foreground">Publish</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Publish New Skill</h1>
+          <h1 className="text-2xl font-bold text-foreground">Publish MCP Package</h1>
         </div>
       </div>
 
@@ -159,14 +182,14 @@ export default function PublishSkillPage() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
+                  value={formData.githubUrl}
+                  onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
                   placeholder="https://github.com/username/repo"
                   className="flex-1 px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
                 />
                 <button
                   onClick={handleImportFromGithub}
-                  disabled={isImporting || !githubUrl}
+                  disabled={isImporting || !formData.githubUrl}
                   className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-foreground hover:bg-white/10 transition-all disabled:opacity-50"
                 >
                   {isImporting ? "Importing..." : "Import"}
@@ -181,7 +204,7 @@ export default function PublishSkillPage() {
               {/* Icon Upload */}
               <div className="p-6 rounded-xl bg-card-bg border border-glass-border">
                 <label className="block text-sm font-medium text-foreground mb-4">
-                  Skill Icon
+                  Package Icon
                 </label>
                 <div className="border-2 border-dashed border-glass-border rounded-lg p-8 text-center hover:border-cognitive-cyan/30 transition-colors cursor-pointer">
                   <Upload className="w-8 h-8 text-text-muted mx-auto mb-2" />
@@ -194,18 +217,31 @@ export default function PublishSkillPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    Skill Name *
+                    Package Name *
                   </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="e.g., precision-pour"
+                    placeholder="e.g., rosclaw-ur5-mcp"
                     className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
                   />
                   <p className="text-xs text-text-muted mt-1">
                     Use kebab-case, unique identifier
                   </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Display Name
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.displayName}
+                    onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                    placeholder="e.g., UR5e MCP Driver"
+                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                  />
                 </div>
 
                 <div>
@@ -220,24 +256,6 @@ export default function PublishSkillPage() {
                     className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Category *
-                  </label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
-                  >
-                    <option value="">Select category</option>
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat.toLowerCase()}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
             </div>
 
@@ -249,32 +267,61 @@ export default function PublishSkillPage() {
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Describe what your skill does in one sentence..."
+                placeholder="Describe what your MCP package does..."
                 rows={3}
                 className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
               />
             </div>
 
-            {/* Robot Types */}
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-3">
-                Compatible Robots
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {robotTypes.map((robot) => (
-                  <button
-                    key={robot.id}
-                    onClick={() => handleRobotToggle(robot.id)}
-                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                      formData.robotTypes.includes(robot.id)
-                        ? "bg-cognitive-cyan/20 text-cognitive-cyan border border-cognitive-cyan/30"
-                        : "bg-glass-bg text-text-secondary border border-glass-border hover:border-text-muted"
-                    }`}
-                  >
-                    {robot.name}
-                  </button>
-                ))}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Category *
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
+                >
+                  <option value="">Select category</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat.toLowerCase()}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  ROS Version
+                </label>
+                <select
+                  value={formData.rosVersion}
+                  onChange={(e) => setFormData({ ...formData, rosVersion: e.target.value })}
+                  className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
+                >
+                  {rosVersions.map((ver) => (
+                    <option key={ver} value={ver}>
+                      {ver}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Robot Type */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Robot Type
+              </label>
+              <input
+                type="text"
+                value={formData.robotType}
+                onChange={(e) => setFormData({ ...formData, robotType: e.target.value })}
+                placeholder="e.g., UR5, Unitree G1, etc."
+                className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+              />
             </div>
 
             {/* Tags */}
@@ -338,9 +385,9 @@ export default function PublishSkillPage() {
             <div className="p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-sm flex items-start gap-2">
               <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-medium">SKILL.md Format</p>
+                <p className="font-medium">README.md Format</p>
                 <p className="text-yellow-500/80">
-                  Use Markdown format. Include sections: Overview, Usage, Parameters, and Examples.
+                  Use Markdown format. Include sections: Overview, Installation, Configuration, and Tools.
                 </p>
               </div>
             </div>
@@ -349,11 +396,11 @@ export default function PublishSkillPage() {
               {/* Editor */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  SKILL.md
+                  README.md
                 </label>
                 <textarea
-                  value={formData.skillMd}
-                  onChange={(e) => setFormData({ ...formData, skillMd: e.target.value })}
+                  value={formData.readmeMd}
+                  onChange={(e) => setFormData({ ...formData, readmeMd: e.target.value })}
                   rows={20}
                   className="w-full px-4 py-3 rounded-lg bg-black/40 border border-glass-border text-foreground font-mono text-sm focus:outline-none focus:border-cognitive-cyan/50"
                 />
@@ -367,10 +414,58 @@ export default function PublishSkillPage() {
                 <div className="p-4 rounded-lg bg-card-bg border border-glass-border h-[500px] overflow-auto">
                   <div className="prose prose-invert prose-sm max-w-none">
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {formData.skillMd}
+                      {formData.readmeMd}
                     </ReactMarkdown>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* MCP Tools */}
+            <div className="p-6 rounded-xl bg-card-bg border border-glass-border">
+              <label className="block text-sm font-medium text-foreground mb-4">
+                MCP Tools
+              </label>
+              <div className="flex gap-2 mb-4">
+                <input
+                  type="text"
+                  value={toolInput.name}
+                  onChange={(e) => setToolInput({ ...toolInput, name: e.target.value })}
+                  placeholder="Tool name"
+                  className="flex-1 px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                />
+                <input
+                  type="text"
+                  value={toolInput.description}
+                  onChange={(e) => setToolInput({ ...toolInput, description: e.target.value })}
+                  placeholder="Description"
+                  className="flex-1 px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                />
+                <button
+                  onClick={handleAddTool}
+                  className="px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+              <div className="space-y-2">
+                {formData.tools.map((tool, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between px-3 py-2 rounded-lg bg-glass-bg"
+                  >
+                    <div>
+                      <span className="text-foreground font-medium">{tool.name}</span>
+                      <span className="text-text-muted text-sm ml-2">{tool.description}</span>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveTool(index)}
+                      className="text-text-muted hover:text-red-400"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -399,12 +494,16 @@ export default function PublishSkillPage() {
             className="space-y-6"
           >
             <div className="p-6 rounded-xl bg-card-bg border border-glass-border">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Review Your Skill</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-4">Review Your Package</h3>
 
               <div className="space-y-4">
                 <div className="flex justify-between py-2 border-b border-glass-border">
                   <span className="text-text-secondary">Name</span>
                   <span className="text-foreground font-medium">{formData.name}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-glass-border">
+                  <span className="text-text-secondary">Display Name</span>
+                  <span className="text-foreground">{formData.displayName || formData.name}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-glass-border">
                   <span className="text-text-secondary">Version</span>
@@ -414,22 +513,13 @@ export default function PublishSkillPage() {
                   <span className="text-text-secondary">Category</span>
                   <span className="text-foreground">{formData.category}</span>
                 </div>
+                <div className="flex justify-between py-2 border-b border-glass-border">
+                  <span className="text-text-secondary">ROS Version</span>
+                  <span className="text-foreground">{formData.rosVersion}</span>
+                </div>
                 <div className="py-2 border-b border-glass-border">
                   <span className="text-text-secondary block mb-1">Description</span>
                   <span className="text-foreground">{formData.description}</span>
-                </div>
-                <div className="py-2 border-b border-glass-border">
-                  <span className="text-text-secondary block mb-1">Compatible Robots</span>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.robotTypes.map((robotId) => (
-                      <span
-                        key={robotId}
-                        className="px-2 py-1 rounded-full bg-glass-bg text-text-secondary text-xs"
-                      >
-                        {robotTypes.find((r) => r.id === robotId)?.name}
-                      </span>
-                    ))}
-                  </div>
                 </div>
                 <div className="py-2">
                   <span className="text-text-secondary block mb-1">Tags</span>
@@ -444,6 +534,19 @@ export default function PublishSkillPage() {
                     ))}
                   </div>
                 </div>
+                {formData.tools.length > 0 && (
+                  <div className="py-2">
+                    <span className="text-text-secondary block mb-1">MCP Tools</span>
+                    <div className="space-y-1">
+                      {formData.tools.map((tool, index) => (
+                        <div key={index} className="text-sm">
+                          <span className="text-foreground font-medium">{tool.name}</span>
+                          <span className="text-text-muted ml-2">{tool.description}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -453,7 +556,7 @@ export default function PublishSkillPage() {
                 <div>
                   <p className="text-sm font-medium text-foreground">Publishing Options</p>
                   <p className="text-sm text-text-secondary mt-1">
-                    Your skill will be published to the ROSClaw Skill Market.
+                    Your MCP package will be published to the ROSClaw MCP Hub.
                     It will undergo automated vetting (5-15 minutes) before becoming publicly available.
                   </p>
                 </div>
@@ -472,7 +575,7 @@ export default function PublishSkillPage() {
                 disabled={isSubmitting}
                 className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all disabled:opacity-50"
               >
-                {isSubmitting ? "Publishing..." : "Publish Skill"}
+                {isSubmitting ? "Publishing..." : "Publish Package"}
               </button>
             </div>
           </motion.div>
@@ -489,24 +592,24 @@ export default function PublishSkillPage() {
               <Check className="w-8 h-8 text-green-500" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-2">
-              Skill Published Successfully!
+              Package Published Successfully!
             </h2>
             <p className="text-text-secondary mb-6">
-              Your skill <strong>{formData.name}</strong> has been submitted for automated vetting.
-              You will be notified when it's approved.
+              Your package <strong>{formData.name}</strong> has been submitted for automated vetting.
+              You will be notified when it&apos;s approved.
             </p>
             <div className="flex justify-center gap-4">
               <Link
-                href="/skills"
+                href="/mcp-hub"
                 className="px-6 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground transition-colors"
               >
-                Browse Skills
+                Browse Packages
               </Link>
               <Link
-                href={`/skills/${formData.name}`}
+                href={`/mcp-hub/${formData.name}`}
                 className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all"
               >
-                View Skill
+                View Package
               </Link>
             </div>
           </motion.div>
