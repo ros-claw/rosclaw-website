@@ -54,6 +54,7 @@ export default function PublishSkillPage() {
   const [githubUrl, setGithubUrl] = useState("");
   const [importedData, setImportedData] = useState<ImportedData | null>(null);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [importApplied, setImportApplied] = useState(false);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
@@ -196,7 +197,12 @@ export default function PublishSkillPage() {
         customCategory: isCustom ? importedData.category : formData.customCategory,
         tags: importedData.tags.length > 0 ? importedData.tags : formData.tags,
       });
-      setImportedData(null);
+      setImportApplied(true);
+      // Close preview after 1.5 seconds so user sees the success message
+      setTimeout(() => {
+        setImportedData(null);
+        setImportApplied(false);
+      }, 1500);
     }
   };
 
@@ -287,8 +293,16 @@ export default function PublishSkillPage() {
 
               {/* Import Preview Panel */}
               {importedData && (
-                <div className="mt-4 p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
-                  <h4 className="text-sm font-medium text-cognitive-cyan mb-3">Preview Imported Data</h4>
+                <div className={`mt-4 p-4 rounded-lg border transition-all ${
+                  importApplied
+                    ? "bg-green-500/5 border-green-500/20"
+                    : "bg-cognitive-cyan/5 border-cognitive-cyan/20"
+                }`}>
+                  <h4 className={`text-sm font-medium mb-3 ${
+                    importApplied ? "text-green-500" : "text-cognitive-cyan"
+                  }`}>
+                    {importApplied ? "✓ Applied Successfully!" : "Preview Imported Data"}
+                  </h4>
                   <div className="space-y-2 text-sm">
                     {importedData.name && (
                       <div className="flex justify-between">
@@ -321,20 +335,22 @@ export default function PublishSkillPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex gap-2 mt-4">
-                    <button
-                      onClick={handleApplyImport}
-                      className="px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
-                    >
-                      Apply & Modify
-                    </button>
-                    <button
-                      onClick={() => setImportedData(null)}
-                      className="px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary text-sm hover:text-foreground transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                  {!importApplied && (
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        onClick={handleApplyImport}
+                        className="px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
+                      >
+                        Apply & Modify
+                      </button>
+                      <button
+                        onClick={() => setImportedData(null)}
+                        className="px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary text-sm hover:text-foreground transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

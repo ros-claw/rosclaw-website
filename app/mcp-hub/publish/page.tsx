@@ -55,6 +55,7 @@ List of MCP tools provided by this package...`,
   const [isImporting, setIsImporting] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [importApplied, setImportApplied] = useState(false);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
@@ -206,7 +207,12 @@ List of MCP tools provided by this package...`,
         tags: importedData.tags || formData.tags,
       });
       if (isCustomCat) setShowCustomCategory(true);
-      setImportedData(null);
+      setImportApplied(true);
+      // Close preview after 1.5 seconds so user sees the success message
+      setTimeout(() => {
+        setImportedData(null);
+        setImportApplied(false);
+      }, 1500);
     }
   };
 
@@ -311,15 +317,25 @@ List of MCP tools provided by this package...`,
 
               {/* Import Preview */}
               {importedData && (
-                <div className="mt-4 p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
+                <div className={`mt-4 p-4 rounded-lg border transition-all ${
+                  importApplied
+                    ? "bg-green-500/5 border-green-500/20"
+                    : "bg-cognitive-cyan/5 border-cognitive-cyan/20"
+                }`}>
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-sm font-medium text-cognitive-cyan">Preview Imported Data</h4>
-                    <button
-                      onClick={() => setImportedData(null)}
-                      className="text-text-muted hover:text-foreground"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    <h4 className={`text-sm font-medium ${
+                      importApplied ? "text-green-500" : "text-cognitive-cyan"
+                    }`}>
+                      {importApplied ? "✓ Applied Successfully!" : "Preview Imported Data"}
+                    </h4>
+                    {!importApplied && (
+                      <button
+                        onClick={() => setImportedData(null)}
+                        className="text-text-muted hover:text-foreground"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                   <div className="space-y-2 text-sm">
                     {importedData.name && (
@@ -347,12 +363,14 @@ List of MCP tools provided by this package...`,
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={handleApplyImport}
-                    className="mt-3 px-4 py-1.5 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
-                  >
-                    Apply & Modify
-                  </button>
+                  {!importApplied && (
+                    <button
+                      onClick={handleApplyImport}
+                      className="mt-3 px-4 py-1.5 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
+                    >
+                      Apply & Modify
+                    </button>
+                  )}
                 </div>
               )}
             </div>
