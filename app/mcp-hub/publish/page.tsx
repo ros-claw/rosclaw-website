@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, Code, FileText, Tags, GitBranch, Info, Check, AlertCircle, Github } from "lucide-react";
+import { Upload, Code, FileText, Tags, GitBranch, Info, Check, AlertCircle, Github, Plus, X } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const categories = [
+const predefinedCategories = [
   "Manipulators",
   "Humanoids",
   "Mobile Bases",
@@ -17,8 +17,6 @@ const categories = [
   "End Effectors",
 ];
 
-const rosVersions = ["ROS 2 Humble", "ROS 2 Iron", "ROS 2 Jazzy", "ROS 2 Foxy"];
-
 export default function PublishMcpPackagePage() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -27,7 +25,7 @@ export default function PublishMcpPackagePage() {
     version: "1.0.0",
     description: "",
     category: "",
-    rosVersion: "ROS 2 Humble",
+    customCategory: "",
     robotType: "",
     tags: [] as string[],
     githubUrl: "",
@@ -55,6 +53,8 @@ List of MCP tools provided by this package...`,
   const [toolInput, setToolInput] = useState({ name: "", description: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [importedData, setImportedData] = useState<any>(null);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
@@ -97,22 +97,48 @@ List of MCP tools provided by this package...`,
 
       if (response.ok) {
         const data = await response.json();
-        setFormData({
-          ...formData,
-          name: data.name || formData.name,
-          displayName: data.displayName || data.name || formData.displayName,
-          description: data.description || formData.description,
-          readmeMd: data.longDescription || formData.readmeMd,
-          category: data.category || formData.category,
-          robotType: data.robotType || formData.robotType,
-          tags: data.tags || formData.tags,
-        });
+        setImportedData(data);
+        // Don't auto-fill, just show preview for user to confirm
       }
     } catch (error) {
       console.error("Failed to import from GitHub:", error);
     } finally {
       setIsImporting(false);
     }
+  };
+
+  const handleApplyImport = () => {
+    if (importedData) {
+      const isCustomCat = importedData.category && !predefinedCategories.includes(importedData.category);
+      setFormData({
+        ...formData,
+        name: importedData.name || formData.name,
+        displayName: importedData.displayName || importedData.name || formData.displayName,
+        description: importedData.description || formData.description,
+        readmeMd: importedData.longDescription || formData.readmeMd,
+        category: isCustomCat ? "custom" : (importedData.category || formData.category),
+        customCategory: isCustomCat ? importedData.category : formData.customCategory,
+        robotType: importedData.robotType || formData.robotType,
+        tags: importedData.tags || formData.tags,
+      });
+      if (isCustomCat) setShowCustomCategory(true);
+      setImportedData(null);
+    }
+  };
+
+  const handleCategoryChange = (value: string) => {
+    if (value === "custom") {
+      setShowCustomCategory(true);
+      setFormData({ ...formData, category: "custom" });
+    } else {
+      setShowCustomCategory(false);
+      setFormData({ ...formData, category: value, customCategory: "" });
+    }
+  };
+
+  const getFinalCategory = () => {
+    if (formData.category === "custom") return formData.customCategory;
+    return formData.category;
   };
 
   const handleSubmit = async () => {
@@ -196,8 +222,55 @@ List of MCP tools provided by this package...`,
                 </button>
               </div>
               <p className="text-xs text-text-muted mt-2">
-                One-click import: name, description, README, and tags will be auto-populated
+                Auto-import: Preview data from GitHub, then confirm and modify before publishing
               </p>
+
+              {/* Import Preview */}
+              {importedData && (
+                <div className="mt-4 p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-sm font-medium text-cognitive-cyan">Preview Imported Data</h4>
+                    <button
+                      onClick={() => setImportedData(null)}
+                      className="text-text-muted hover:text-foreground"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    {importedData.name && (
+                      <div className="flex">
+                        <span className="text-text-muted w-24">Name:</span>
+                        <span className="text-foreground">{importedData.name}</span>
+                      </div>
+                    )}
+                    {importedData.description && (
+                      <div className="flex">
+                        <span className="text-text-muted w-24">Description:</span>
+                        <span className="text-foreground line-clamp-2">{importedData.description}</span>
+                      </div>
+                    )}
+                    {importedData.category && (
+                      <div className="flex">
+                        <span className="text-text-muted w-24">Category:</span>
+                        <span className="text-foreground">{importedData.category}</span>
+                      </div>
+                    )}
+                    {importedData.tags && importedData.tags.length > 0 && (
+                      <div className="flex">
+                        <span className="text-text-muted w-24">Tags:</span>
+                        <span className="text-foreground">{importedData.tags.join(", ")}</span>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleApplyImport}
+                    className="mt-3 px-4 py-1.5 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
+                  >
+                    Apply & Modify
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -273,55 +346,52 @@ List of MCP tools provided by this package...`,
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Category *
-                </label>
+            {/* Category with Custom Option */}
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Category *
+              </label>
+              <div className="flex gap-2">
                 <select
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  className="flex-1 px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
                 >
                   <option value="">Select category</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat.toLowerCase()}>
+                  {predefinedCategories.map((cat) => (
+                    <option key={cat} value={cat}>
                       {cat}
                     </option>
                   ))}
+                  <option value="custom">+ Custom Category</option>
                 </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  ROS Version
-                </label>
-                <select
-                  value={formData.rosVersion}
-                  onChange={(e) => setFormData({ ...formData, rosVersion: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
-                >
-                  {rosVersions.map((ver) => (
-                    <option key={ver} value={ver}>
-                      {ver}
-                    </option>
-                  ))}
-                </select>
+                {showCustomCategory && (
+                  <input
+                    type="text"
+                    value={formData.customCategory}
+                    onChange={(e) => setFormData({ ...formData, customCategory: e.target.value })}
+                    placeholder="Enter custom category"
+                    className="flex-1 px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                  />
+                )}
               </div>
             </div>
 
             {/* Robot Type */}
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Robot Type
+                Robot Type / Hardware
               </label>
               <input
                 type="text"
                 value={formData.robotType}
                 onChange={(e) => setFormData({ ...formData, robotType: e.target.value })}
-                placeholder="e.g., UR5, Unitree G1, etc."
+                placeholder="e.g., UR5, Unitree G1, Webcam, Microphone, etc."
                 className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
               />
+              <p className="text-xs text-text-muted mt-1">
+                Can be any hardware or software interface
+              </p>
             </div>
 
             {/* Tags */}
@@ -366,7 +436,7 @@ List of MCP tools provided by this package...`,
             <div className="flex justify-end">
               <button
                 onClick={() => setStep(2)}
-                disabled={!formData.name || !formData.category || !formData.description}
+                disabled={!formData.name || !getFinalCategory() || !formData.description}
                 className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue →
@@ -511,11 +581,11 @@ List of MCP tools provided by this package...`,
                 </div>
                 <div className="flex justify-between py-2 border-b border-glass-border">
                   <span className="text-text-secondary">Category</span>
-                  <span className="text-foreground">{formData.category}</span>
+                  <span className="text-foreground">{getFinalCategory()}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-glass-border">
-                  <span className="text-text-secondary">ROS Version</span>
-                  <span className="text-foreground">{formData.rosVersion}</span>
+                  <span className="text-text-secondary">Robot/Hardware</span>
+                  <span className="text-foreground">{formData.robotType || "N/A"}</span>
                 </div>
                 <div className="py-2 border-b border-glass-border">
                   <span className="text-text-secondary block mb-1">Description</span>

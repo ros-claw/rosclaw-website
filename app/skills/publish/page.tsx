@@ -27,6 +27,14 @@ const robotTypes = [
   { id: "universal", name: "Universal (Robot Agnostic)" },
 ];
 
+interface ImportedData {
+  name: string;
+  description: string;
+  skillMd: string;
+  category: string;
+  tags: string[];
+}
+
 export default function PublishSkillPage() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -34,6 +42,7 @@ export default function PublishSkillPage() {
     version: "1.0.0",
     description: "",
     category: "",
+    customCategory: "",
     robotTypes: [] as string[],
     tags: [] as string[],
     skillMd: `## Overview\n\nDescribe what your skill does...\n\n## Usage\n\n\`\`\`\nrosclaw skill load <skill-name>\n\`\`\`\n\n## Parameters\n\n- \`param1\`: Description\n\n## Examples\n\nExample usage scenarios...`,
@@ -43,6 +52,8 @@ export default function PublishSkillPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [githubUrl, setGithubUrl] = useState("");
+  const [importedData, setImportedData] = useState<ImportedData | null>(null);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
@@ -62,6 +73,16 @@ export default function PublishSkillPage() {
     setFormData({ ...formData, robotTypes: newTypes });
   };
 
+  const handleCategoryChange = (value: string) => {
+    if (value === "custom") {
+      setShowCustomCategory(true);
+      setFormData({ ...formData, category: "custom" });
+    } else {
+      setShowCustomCategory(false);
+      setFormData({ ...formData, category: value, customCategory: "" });
+    }
+  };
+
   const handleImportFromGithub = async () => {
     if (!githubUrl) return;
 
@@ -75,19 +96,35 @@ export default function PublishSkillPage() {
 
       if (response.ok) {
         const data = await response.json();
-        setFormData({
-          ...formData,
-          name: data.name || formData.name,
-          description: data.description || formData.description,
-          skillMd: data.longDescription || formData.skillMd,
-          category: data.category || formData.category,
-          tags: data.tags || formData.tags,
+        setImportedData({
+          name: data.name || "",
+          description: data.description || "",
+          skillMd: data.longDescription || "",
+          category: data.category || "",
+          tags: data.tags || [],
         });
       }
     } catch (error) {
       console.error("Failed to import from GitHub:", error);
     } finally {
       setIsImporting(false);
+    }
+  };
+
+  const handleApplyImport = () => {
+    if (importedData) {
+      const isCustom = !!(importedData.category && !categories.includes(importedData.category));
+      setShowCustomCategory(isCustom);
+      setFormData({
+        ...formData,
+        name: importedData.name || formData.name,
+        description: importedData.description || formData.description,
+        skillMd: importedData.skillMd || formData.skillMd,
+        category: isCustom ? "custom" : (importedData.category || formData.category),
+        customCategory: isCustom ? importedData.category : formData.customCategory,
+        tags: importedData.tags.length > 0 ? importedData.tags : formData.tags,
+      });
+      setImportedData(null);
     }
   };
 
@@ -173,8 +210,61 @@ export default function PublishSkillPage() {
                 </button>
               </div>
               <p className="text-xs text-text-muted mt-2">
-                One-click import: name, description, README, and tags will be auto-populated
+                Preview before applying: name, description, README, and tags will be shown for confirmation
               </p>
+
+              {/* Import Preview Panel */}
+              {importedData && (
+                <div className="mt-4 p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
+                  <h4 className="text-sm font-medium text-cognitive-cyan mb-3">Preview Imported Data</h4>
+                  <div className="space-y-2 text-sm">
+                    {importedData.name && (
+                      <div className="flex justify-between">
+                        <span className="text-text-secondary">Name:</span>
+                        <span className="text-foreground">{importedData.name}</span>
+                      </div>
+                    )}
+                    {importedData.description && (
+                      <div className="flex justify-between">
+                        <span className="text-text-secondary">Description:</span>
+                        <span className="text-foreground truncate max-w-[200px]">{importedData.description}</span>
+                      </div>
+                    )}
+                    {importedData.category && (
+                      <div className="flex justify-between">
+                        <span className="text-text-secondary">Category:</span>
+                        <span className="text-foreground">{importedData.category}</span>
+                      </div>
+                    )}
+                    {importedData.tags.length > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-text-secondary">Tags:</span>
+                        <span className="text-foreground">{importedData.tags.join(", ")}</span>
+                      </div>
+                    )}
+                    {importedData.skillMd && (
+                      <div className="flex justify-between">
+                        <span className="text-text-secondary">README:</span>
+                        <span className="text-foreground">✓ Available</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      onClick={handleApplyImport}
+                      className="px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
+                    >
+                      Apply & Modify
+                    </button>
+                    <button
+                      onClick={() => setImportedData(null)}
+                      className="px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary text-sm hover:text-foreground transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -227,16 +317,26 @@ export default function PublishSkillPage() {
                   </label>
                   <select
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
                     className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
                   >
                     <option value="">Select category</option>
                     {categories.map((cat) => (
-                      <option key={cat} value={cat.toLowerCase()}>
+                      <option key={cat} value={cat}>
                         {cat}
                       </option>
                     ))}
+                    <option value="custom">+ Custom Category</option>
                   </select>
+                  {showCustomCategory && (
+                    <input
+                      type="text"
+                      value={formData.customCategory}
+                      onChange={(e) => setFormData({ ...formData, customCategory: e.target.value })}
+                      placeholder="Enter custom category"
+                      className="w-full mt-2 px-4 py-2 rounded-lg bg-glass-bg border border-cognitive-cyan/30 text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -319,7 +419,7 @@ export default function PublishSkillPage() {
             <div className="flex justify-end">
               <button
                 onClick={() => setStep(2)}
-                disabled={!formData.name || !formData.category || !formData.description}
+                disabled={!formData.name || !formData.category || !formData.description || (formData.category === "custom" && !formData.customCategory)}
                 className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue →
@@ -412,7 +512,9 @@ export default function PublishSkillPage() {
                 </div>
                 <div className="flex justify-between py-2 border-b border-glass-border">
                   <span className="text-text-secondary">Category</span>
-                  <span className="text-foreground">{formData.category}</span>
+                  <span className="text-foreground">
+                    {formData.category === "custom" ? formData.customCategory : formData.category}
+                  </span>
                 </div>
                 <div className="py-2 border-b border-glass-border">
                   <span className="text-text-secondary block mb-1">Description</span>
