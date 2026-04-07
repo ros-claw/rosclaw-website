@@ -4,40 +4,61 @@ import { useState, useEffect, useRef } from "react";
 import { ParticleBackground } from "./particle-background";
 
 // Video URLs - served through custom domain proxy
-// Benefits: Free egress via R2, branded URLs, global CDN
 const VIDEO_URLS = {
-  // 2K version - uses redirect to R2
-  // Paper-friendly URL: rosclaw.io/video
+  // Main video via redirect
   hd: "/demo",
 };
 
 export function VideoBackground() {
   const [videoError, setVideoError] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  const [networkSpeed, setNetworkSpeed] = useState<"fast" | "slow" | "unknown">("unknown");
+  const [isMobile, setIsMobile] = useState(false);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    // Detect network speed for adaptive quality
-    const detectNetwork = () => {
-      const connection = (navigator as any).connection;
-      if (connection) {
-        const saveData = connection.saveData;
-        const effectiveType = connection.effectiveType;
+    // Detect mobile devices
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isMobileDevice = /iphone|ipad|ipod|android|mobile/.test(userAgent);
+    setIsMobile(isMobileDevice);
 
-        if (saveData || effectiveType === "2g" || effectiveType === "slow-2g") {
-          setNetworkSpeed("slow");
-        } else {
-          setNetworkSpeed("fast");
-        }
+    // Check for data saver mode
+    const connection = (navigator as any).connection;
+    if (connection) {
+      const saveData = connection.saveData;
+      const effectiveType = connection.effectiveType;
+
+      // Skip video on slow connections or data saver
+      if (saveData || effectiveType === "2g" || effectiveType === "slow-2g") {
+        setShouldLoadVideo(false);
+        setVideoError(true);
       }
-    };
+    }
 
-    detectNetwork();
+    // iOS Safari: need user interaction for autoplay in some cases
+    // We handle this by trying to play, and falling back on error
   }, []);
 
-  // If video failed to load, show particle animation fallback
-  if (videoError) {
+  // Try to play video on mount (especially for iOS)
+  useEffect(() => {
+    if (videoRef.current && shouldLoadVideo) {
+      const playVideo = async () => {
+        try {
+          // iOS Safari requires playsInline + muted for autoplay
+          videoRef.current!.muted = true;
+          videoRef.current!.playsInline = true;
+          await videoRef.current!.play();
+        } catch (err) {
+          console.log("Autoplay prevented, showing fallback");
+          setVideoError(true);
+        }
+      };
+      playVideo();
+    }
+  }, [shouldLoadVideo]);
+
+  // If video failed to load or shouldn't load, show particle animation fallback
+  if (videoError || !shouldLoadVideo) {
     return (
       <div className="absolute inset-0 z-0">
         <ParticleBackground />
@@ -48,21 +69,22 @@ export function VideoBackground() {
 
   return (
     <div className="absolute inset-0 z-0">
-      {/* Fallback shown while video loads */}
-      {!videoLoaded && (
+      {/* Fallback shown while video loads or on mobile */}
+      {(!videoLoaded || isMobile) && (
         <div className="absolute inset-0">
           <ParticleBackground />
         </div>
       )}
 
-      {/* Video from Cloudflare R2 - Free egress, high performance */}
+      {/* Video - optimized for mobile */}
       <video
         ref={videoRef}
         autoPlay
         muted
         loop
         playsInline
-        preload="auto"
+        preload={isMobile ? "metadata" : "auto"}
+        webkit-playsinline="true"
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
           videoLoaded ? "opacity-60" : "opacity-0"
         }`}
@@ -72,14 +94,13 @@ export function VideoBackground() {
           setVideoError(true);
         }}
       >
-        {/* Primary: 2K MP4 from R2 */}
         <source
           src={VIDEO_URLS.hd}
           type="video/mp4"
         />
       </video>
 
-      {/* Grid overlay for tech aesthetic */}
+      {/* Grid overlay */}
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{
