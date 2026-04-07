@@ -124,7 +124,14 @@ List of MCP tools provided by this package...`,
         const readmeData = await readmeRes.json();
         if (readmeData.content) {
           try {
-            readmeContent = atob(readmeData.content.replace(/\n/g, ""));
+            // Properly decode base64 with UTF-8 support to fix encoding issues
+            const base64Content = readmeData.content.replace(/\n/g, "");
+            const binaryString = atob(base64Content);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            readmeContent = new TextDecoder("utf-8").decode(bytes);
           } catch {
             readmeContent = "";
           }
@@ -149,6 +156,26 @@ List of MCP tools provided by this package...`,
         if (check("go2") || check("go1") || check("quadruped") || check("dog")) return "Mobile Bases";
         if (check("mobile") || check("base") || check("wheel") || check("turtlebot")) return "Mobile Bases";
         if (check("end effector") || check("endeffector")) return "End Effectors";
+        return "";
+      };
+
+      // Extract robot type from repo name, description and README
+      const extractRobotType = (name: string, desc: string, readme: string): string => {
+        const text = (name + " " + desc + " " + readme).toLowerCase();
+        // Specific robot models
+        if (text.includes("ur5")) return "UR5";
+        if (text.includes("ur10")) return "UR10";
+        if (text.includes("ur3")) return "UR3";
+        if (text.includes("ur ") || text.includes("universal robot")) return "Universal Robots";
+        if (text.includes("franka") || text.includes("panda")) return "Franka Emika Panda";
+        if (text.includes("g1")) return "Unitree G1 Humanoid";
+        if (text.includes("go2")) return "Unitree Go2 Quadruped";
+        if (text.includes("go1")) return "Unitree Go1 Quadruped";
+        if (text.includes("turtlebot")) return "TurtleBot";
+        // Generic types from description
+        if (desc.toLowerCase().includes("humanoid")) return "Humanoid";
+        if (desc.toLowerCase().includes("manipulator")) return "Manipulator";
+        if (desc.toLowerCase().includes("mobile")) return "Mobile Base";
         return "";
       };
 
@@ -181,7 +208,7 @@ List of MCP tools provided by this package...`,
         authorName: repoData.owner?.login || owner,
         tags: extractedTags.length > 0 ? extractedTags : ["mcp"],
         category: inferCategory(repo, repoData.description || ""),
-        robotType: "",
+        robotType: extractRobotType(repo, repoData.description || "", readmeContent),
       };
 
       setImportedData(data);
@@ -598,9 +625,17 @@ List of MCP tools provided by this package...`,
 
             {/* MCP Tools */}
             <div className="p-6 rounded-xl bg-card-bg border border-glass-border">
-              <label className="block text-sm font-medium text-foreground mb-4">
-                MCP Tools
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-foreground">
+                  MCP Tools
+                </label>
+                <span className="text-xs text-text-muted">What capabilities does this MCP server provide?</span>
+              </div>
+              <p className="text-xs text-text-secondary mb-4">
+                MCP (Model Context Protocol) Tools are functions that AI agents can call.
+                Examples: "get_joint_positions", "move_to_pose", "capture_image".
+                Add one or more tools that describe what your package can do.
+              </p>
               <div className="flex gap-2 mb-4">
                 <input
                   type="text"
@@ -731,8 +766,8 @@ List of MCP tools provided by this package...`,
                 <div>
                   <p className="text-sm font-medium text-foreground">Publishing Options</p>
                   <p className="text-sm text-text-secondary mt-1">
-                    Your MCP package will be published to the ROSClaw MCP Hub.
-                    It will undergo automated vetting (5-15 minutes) before becoming publicly available.
+                    This is a demo form. In production, your package would be submitted to the ROSClaw MCP Hub
+                    for review before becoming publicly available.
                   </p>
                 </div>
               </div>
@@ -770,8 +805,8 @@ List of MCP tools provided by this package...`,
               Package Published Successfully!
             </h2>
             <p className="text-text-secondary mb-6">
-              Your package <strong>{formData.name}</strong> has been submitted for automated vetting.
-              You will be notified when it&apos;s approved.
+              This is a demo. In production, your package <strong>{formData.name}</strong> would be
+              submitted to the ROSClaw registry for review.
             </p>
             <div className="flex justify-center gap-4">
               <Link

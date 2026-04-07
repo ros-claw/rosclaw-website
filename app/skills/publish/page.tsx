@@ -123,7 +123,14 @@ export default function PublishSkillPage() {
         const readmeData = await readmeRes.json();
         if (readmeData.content) {
           try {
-            readmeContent = atob(readmeData.content.replace(/\n/g, ""));
+            // Properly decode base64 with UTF-8 support to fix encoding issues
+            const base64Content = readmeData.content.replace(/\n/g, "");
+            const binaryString = atob(base64Content);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              bytes[i] = binaryString.charCodeAt(i);
+            }
+            readmeContent = new TextDecoder("utf-8").decode(bytes);
           } catch {
             readmeContent = "";
           }
@@ -646,8 +653,8 @@ export default function PublishSkillPage() {
                 <div>
                   <p className="text-sm font-medium text-foreground">Publishing Options</p>
                   <p className="text-sm text-text-secondary mt-1">
-                    Your skill will be published to the ROSClaw Skill Market.
-                    It will undergo automated vetting (5-15 minutes) before becoming publicly available.
+                    This is a demo form. In production, your skill would be submitted to the ROSClaw Skill Market
+                    for review before becoming publicly available.
                   </p>
                 </div>
               </div>
@@ -685,8 +692,8 @@ export default function PublishSkillPage() {
               Skill Published Successfully!
             </h2>
             <p className="text-text-secondary mb-6">
-              Your skill <strong>{formData.name}</strong> has been submitted for automated vetting.
-              You will be notified when it's approved.
+              This is a demo. In production, your skill <strong>{formData.name}</strong> would be
+              submitted to the ROSClaw registry for review.
             </p>
             <div className="flex justify-center gap-4">
               <Link
