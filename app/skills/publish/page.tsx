@@ -129,32 +129,52 @@ export default function PublishSkillPage() {
         }
       }
 
+      // Infer category from repo name and description
+      const inferCategory = (name: string, desc: string): string => {
+        const check = (s: string) => name.toLowerCase().includes(s) || desc.toLowerCase().includes(s);
+        if (check("grasp") || check("grip")) return "Grasping";
+        if (check("vision") || check("camera") || check("realsense") || check("detect")) return "Computer Vision";
+        if (check("nav") || check("path") || check("slam")) return "Navigation";
+        if (check("manipul") || check("arm") || check("pick") || check("place")) return "Manipulation";
+        if (check("assembly") || check("assemble")) return "Assembly";
+        if (check("social") || check("interact") || check("speech") || check("chat")) return "Social";
+        if (check("plan") || check("schedul")) return "Planning";
+        if (check("control") || check("move") || check("servo")) return "Control";
+        return "";
+      };
+
       // Extract tags from README keywords
       const keywordsMatch = readmeContent.match(/keywords["\s:]+\[([^\]]+)\]/i);
       const extractedTags: string[] = keywordsMatch
         ? keywordsMatch[1].split(",").map((t: string) => t.trim().replace(/["']/g, "")).filter(Boolean)
         : [];
 
-      // Infer category from repo name
-      const inferCategory = (name: string, t: string[]): string => {
-        const check = (s: string) => name.toLowerCase().includes(s) || t.some(tag => tag.toLowerCase().includes(s));
-        if (check("grasp")) return "Grasping";
-        if (check("vision") || check("camera")) return "Computer Vision";
-        if (check("nav")) return "Navigation";
-        if (check("manipul")) return "Manipulation";
-        if (check("assembly")) return "Assembly";
-        if (check("social") || check("interact")) return "Social";
-        if (check("plan")) return "Planning";
-        if (check("control")) return "Control";
-        return "";
-      };
+      // Also extract meaningful tags from name and description
+      const lowerName = repo.toLowerCase();
+      const lowerDesc = (repoData.description || "").toLowerCase();
+
+      // Hardware keywords
+      if (lowerName.includes("ur") || lowerDesc.includes("ur ")) extractedTags.push("ur");
+      if (lowerName.includes("franka") || lowerDesc.includes("franka")) { extractedTags.push("franka"); extractedTags.push("panda"); }
+      if (lowerName.includes("g1")) { extractedTags.push("g1"); extractedTags.push("unitree"); }
+      if (lowerName.includes("go2")) { extractedTags.push("go2"); extractedTags.push("unitree"); }
+
+      // Tech/protocol keywords
+      if (lowerName.includes("rtde") || lowerDesc.includes("rtde")) extractedTags.push("rtde");
+      if (lowerDesc.includes("no ros") || lowerDesc.includes("without ros")) extractedTags.push("no-ros");
+
+      // Skill type keywords
+      if (lowerName.includes("mcp") || lowerDesc.includes("mcp")) extractedTags.push("mcp");
+
+      // Remove duplicates
+      const uniqueTags = Array.from(new Set(extractedTags));
 
       setImportedData({
         name: repo,
         description: repoData.description || "",
         skillMd: readmeContent,
-        category: inferCategory(repo, extractedTags),
-        tags: extractedTags.length > 0 ? extractedTags : ["rosclaw", "skill"],
+        category: inferCategory(repo, repoData.description || ""),
+        tags: uniqueTags.length > 0 ? uniqueTags : [],
       });
     } catch (error) {
       console.error("Failed to import from GitHub:", error);
