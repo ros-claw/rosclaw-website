@@ -198,10 +198,12 @@ export default function PublishSkillPage() {
         tags: importedData.tags.length > 0 ? importedData.tags : formData.tags,
       });
       setImportApplied(true);
-      // Close preview after 1.5 seconds so user sees the success message
+      // Close preview after 1.5 seconds and scroll to form
       setTimeout(() => {
         setImportedData(null);
         setImportApplied(false);
+        // Scroll to the Skill Name field so user sees the filled data
+        document.getElementById("skill-name")?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 1500);
     }
   };
@@ -375,6 +377,7 @@ export default function PublishSkillPage() {
                     Skill Name *
                   </label>
                   <input
+                    id="skill-name"
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}

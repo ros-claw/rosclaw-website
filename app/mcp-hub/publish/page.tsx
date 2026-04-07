@@ -208,10 +208,12 @@ List of MCP tools provided by this package...`,
       });
       if (isCustomCat) setShowCustomCategory(true);
       setImportApplied(true);
-      // Close preview after 1.5 seconds so user sees the success message
+      // Close preview after 1.5 seconds and scroll to form
       setTimeout(() => {
         setImportedData(null);
         setImportApplied(false);
+        // Scroll to the Package Name field so user sees the filled data
+        document.getElementById("package-name")?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 1500);
     }
   };
@@ -395,6 +397,7 @@ List of MCP tools provided by this package...`,
                     Package Name *
                   </label>
                   <input
+                    id="package-name"
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
