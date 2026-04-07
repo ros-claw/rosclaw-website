@@ -88,22 +88,74 @@ export default function PublishSkillPage() {
 
     setIsImporting(true);
     try {
-      const response = await fetch("/api/github/import", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repoUrl: githubUrl }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setImportedData({
-          name: data.name || "",
-          description: data.description || "",
-          skillMd: data.longDescription || "",
-          category: data.category || "",
-          tags: data.tags || [],
-        });
+      // Parse GitHub URL to get owner and repo
+      const urlMatch = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+      if (!urlMatch) {
+        console.error("Invalid GitHub URL");
+        setIsImporting(false);
+        return;
       }
+
+      const [, owner, repo] = urlMatch;
+      const apiUrlBase = `https://api.github.com/repos/${owner}/${repo}`;
+
+      // Fetch repo metadata and README directly from GitHub API (client-side)
+      const [repoRes, readmeRes] = await Promise.all([
+        fetch(apiUrlBase, {
+          headers: { Accept: "application/vnd.github+json" },
+        }),
+        fetch(`${apiUrlBase}/readme`, {
+          headers: { Accept: "application/vnd.github+json" },
+        }),
+      ]);
+
+      if (!repoRes.ok) {
+        console.error("Failed to fetch repo:", repoRes.statusText);
+        setIsImporting(false);
+        return;
+      }
+
+      const repoData = await repoRes.json();
+      let readmeContent = "";
+
+      if (readmeRes.ok) {
+        const readmeData = await readmeRes.json();
+        if (readmeData.content) {
+          try {
+            readmeContent = atob(readmeData.content.replace(/\n/g, ""));
+          } catch {
+            readmeContent = "";
+          }
+        }
+      }
+
+      // Extract tags from README keywords
+      const keywordsMatch = readmeContent.match(/keywords["\s:]+\[([^\]]+)\]/i);
+      const extractedTags: string[] = keywordsMatch
+        ? keywordsMatch[1].split(",").map((t: string) => t.trim().replace(/["']/g, "")).filter(Boolean)
+        : [];
+
+      // Infer category from repo name
+      const inferCategory = (name: string, t: string[]): string => {
+        const check = (s: string) => name.toLowerCase().includes(s) || t.some(tag => tag.toLowerCase().includes(s));
+        if (check("grasp")) return "Grasping";
+        if (check("vision") || check("camera")) return "Computer Vision";
+        if (check("nav")) return "Navigation";
+        if (check("manipul")) return "Manipulation";
+        if (check("assembly")) return "Assembly";
+        if (check("social") || check("interact")) return "Social";
+        if (check("plan")) return "Planning";
+        if (check("control")) return "Control";
+        return "";
+      };
+
+      setImportedData({
+        name: repo,
+        description: repoData.description || "",
+        skillMd: readmeContent,
+        category: inferCategory(repo, extractedTags),
+        tags: extractedTags.length > 0 ? extractedTags : ["rosclaw", "skill"],
+      });
     } catch (error) {
       console.error("Failed to import from GitHub:", error);
     } finally {

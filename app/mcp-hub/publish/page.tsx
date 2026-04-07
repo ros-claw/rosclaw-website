@@ -89,17 +89,87 @@ List of MCP tools provided by this package...`,
 
     setIsImporting(true);
     try {
-      const response = await fetch("/api/github/import", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ repoUrl: formData.githubUrl }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setImportedData(data);
-        // Don't auto-fill, just show preview for user to confirm
+      // Parse GitHub URL to get owner and repo
+      const urlMatch = formData.githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+      if (!urlMatch) {
+        console.error("Invalid GitHub URL");
+        setIsImporting(false);
+        return;
       }
+
+      const [, owner, repo] = urlMatch;
+      const apiUrlBase = `https://api.github.com/repos/${owner}/${repo}`;
+
+      // Fetch repo metadata and README directly from GitHub API (client-side)
+      const [repoRes, readmeRes] = await Promise.all([
+        fetch(apiUrlBase, {
+          headers: { Accept: "application/vnd.github+json" },
+        }),
+        fetch(`${apiUrlBase}/readme`, {
+          headers: { Accept: "application/vnd.github+json" },
+        }),
+      ]);
+
+      if (!repoRes.ok) {
+        console.error("Failed to fetch repo:", repoRes.statusText);
+        setIsImporting(false);
+        return;
+      }
+
+      const repoData = await repoRes.json();
+      let readmeContent = "";
+
+      if (readmeRes.ok) {
+        const readmeData = await readmeRes.json();
+        if (readmeData.content) {
+          try {
+            readmeContent = atob(readmeData.content.replace(/\n/g, ""));
+          } catch {
+            readmeContent = "";
+          }
+        }
+      }
+
+      // Extract tags from README keywords
+      const keywordsMatch = readmeContent.match(/keywords["\s:]+\[([^\]]+)\]/i);
+      const tags: string[] = keywordsMatch
+        ? keywordsMatch[1].split(",").map((t: string) => t.trim().replace(/["']/g, "")).filter(Boolean)
+        : [];
+
+      // Infer category from repo name
+      const inferCategory = (name: string, t: string[]): string => {
+        const check = (s: string) => name.toLowerCase().includes(s) || t.some(tag => tag.toLowerCase().includes(s));
+        if (check("camera") || check("vision") || check("realsense")) return "Cameras";
+        if (check("sensor")) return "Sensors";
+        if (check("gripper")) return "Grippers";
+        if (check("manipulator") || check("arm")) return "Manipulators";
+        if (check("humanoid")) return "Humanoids";
+        if (check("mobile") || check("base")) return "Mobile Bases";
+        return "Sensors";
+      };
+
+      // Guess tags if none found
+      const guessTags = (name: string): string[] => {
+        const lower = name.toLowerCase();
+        if (lower.includes("realsense")) return ["realsense", "camera", "vision", "depth"];
+        if (lower.includes("ur5")) return ["ur5", "manipulator", "ros2"];
+        if (lower.includes("g1")) return ["g1", "humanoid", "unitree"];
+        return ["rosclaw", "mcp"];
+      };
+
+      const data = {
+        name: repo,
+        displayName: repoData.full_name,
+        description: repoData.description || "",
+        longDescription: readmeContent,
+        githubRepoUrl: repoData.html_url,
+        authorName: repoData.owner?.login || owner,
+        tags: tags.length > 0 ? tags : guessTags(repo),
+        category: inferCategory(repo, tags),
+        robotType: "",
+      };
+
+      setImportedData(data);
     } catch (error) {
       console.error("Failed to import from GitHub:", error);
     } finally {
