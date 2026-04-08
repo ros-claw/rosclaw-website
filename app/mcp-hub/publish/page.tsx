@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, Code, FileText, Tags, GitBranch, Info, Check, AlertCircle, Github, Plus, X } from "lucide-react";
+import { Upload, Code, FileText, Tags, GitBranch, Info, Check, AlertCircle, Github, Plus, X, FileArchive, Loader2 } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -52,6 +52,8 @@ List of MCP tools provided by this package...`,
   const [tagInput, setTagInput] = useState("");
   const [toolInput, setToolInput] = useState({ name: "", description: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importedData, setImportedData] = useState<any>(null);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
@@ -83,6 +85,56 @@ List of MCP tools provided by this package...`,
       ...formData,
       tools: formData.tools.filter((_, i) => i !== index),
     });
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".zip")) {
+      alert("Only .zip files are supported");
+      return;
+    }
+
+    setUploadedFile(file);
+    setIsUploading(true);
+
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+    formDataUpload.append("type", "mcp");
+
+    try {
+      const res = await fetch("/api/upload/analyze", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        const data = result.data;
+
+        setImportedData({
+          name: data.name || file.name.replace(".zip", ""),
+          displayName: data.displayName || data.name || file.name.replace(".zip", ""),
+          description: data.description || "",
+          longDescription: data.readmeMd || "",
+          githubRepoUrl: "",
+          authorName: "",
+          tags: data.tags || [],
+          category: data.category || "",
+          robotType: data.robotType || "",
+          tools: data.tools || [],
+        });
+      } else {
+        const error = await res.json();
+        alert(error.error || "Failed to analyze file");
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Failed to upload and analyze file");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleImportFromGithub = async () => {
@@ -199,6 +251,26 @@ List of MCP tools provided by this package...`,
       // Type keywords
       if (lowerName.includes("mcp") || lowerDesc.includes("mcp")) extractedTags.push("mcp");
 
+      // Call LLM for advanced analysis
+      let llmAnalysis = null;
+      try {
+        const llmRes = await fetch("/api/llm/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            readmeContent,
+            repoName: repo,
+            repoDescription: repoData.description || "",
+          }),
+        });
+        if (llmRes.ok) {
+          const llmData = await llmRes.json();
+          llmAnalysis = llmData.data;
+        }
+      } catch (llmError) {
+        console.error("LLM analysis failed:", llmError);
+      }
+
       const data = {
         name: repo,
         displayName: repoData.full_name,
@@ -206,9 +278,10 @@ List of MCP tools provided by this package...`,
         longDescription: readmeContent,
         githubRepoUrl: repoData.html_url,
         authorName: repoData.owner?.login || owner,
-        tags: extractedTags.length > 0 ? extractedTags : ["mcp"],
-        category: inferCategory(repo, repoData.description || ""),
-        robotType: extractRobotType(repo, repoData.description || "", readmeContent),
+        tags: llmAnalysis?.tags?.length > 0 ? llmAnalysis.tags : (extractedTags.length > 0 ? extractedTags : ["mcp"]),
+        category: llmAnalysis?.category || inferCategory(repo, repoData.description || ""),
+        robotType: llmAnalysis?.robotType || extractRobotType(repo, repoData.description || "", readmeContent),
+        tools: llmAnalysis?.tools || [],
       };
 
       setImportedData(data);
@@ -232,6 +305,8 @@ List of MCP tools provided by this package...`,
         customCategory: isCustomCat ? importedData.category : formData.customCategory,
         robotType: importedData.robotType || formData.robotType,
         tags: importedData.tags || formData.tags,
+        // Auto-fill MCP tools from LLM analysis
+        tools: importedData.tools?.length > 0 ? importedData.tools : formData.tools,
       });
       if (isCustomCat) setShowCustomCategory(true);
       setImportApplied(true);
@@ -343,6 +418,42 @@ List of MCP tools provided by this package...`,
               <p className="text-xs text-text-muted mt-2">
                 Auto-import: Preview data from GitHub, then confirm and modify before publishing
               </p>
+            </div>
+
+            {/* File Upload */}
+            <div className="p-6 rounded-xl bg-card-bg border border-glass-border border-dashed">
+              <label className="block text-sm font-medium text-foreground mb-4">
+                <FileArchive className="w-4 h-4 inline mr-2" />
+                Upload Package (.zip)
+              </label>
+              <div className="flex flex-col gap-3">
+                <label className="flex flex-col items-center justify-center p-6 rounded-lg bg-glass-bg border border-glass-border hover:border-cognitive-cyan/30 cursor-pointer transition-all">
+                  <input
+                    type="file"
+                    accept=".zip"
+                    onChange={handleFileUpload}
+                    disabled={isUploading}
+                    className="hidden"
+                  />
+                  {isUploading ? (
+                    <Loader2 className="w-8 h-8 text-cognitive-cyan animate-spin mb-2" />
+                  ) : (
+                    <Upload className="w-8 h-8 text-text-muted mb-2" />
+                  )}
+                  <span className="text-sm text-text-secondary">
+                    {isUploading ? "Analyzing with AI..." : "Drop .zip file or click to upload"}
+                  </span>
+                  <span className="text-xs text-text-muted mt-1">
+                    Must include README.md. Max 10MB.
+                  </span>
+                </label>
+                {uploadedFile && (
+                  <div className="flex items-center gap-2 text-sm text-cognitive-cyan">
+                    <Check className="w-4 h-4" />
+                    <span>{uploadedFile.name}</span>
+                  </div>
+                )}
+              </div>
 
               {/* Import Preview */}
               {importedData && (
@@ -389,6 +500,18 @@ List of MCP tools provided by this package...`,
                       <div className="flex">
                         <span className="text-text-muted w-24">Tags:</span>
                         <span className="text-foreground">{importedData.tags.join(", ")}</span>
+                      </div>
+                    )}
+                    {importedData.tools && importedData.tools.length > 0 && (
+                      <div className="flex flex-col gap-1">
+                        <span className="text-text-muted w-24">MCP Tools:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {importedData.tools.map((tool: any, idx: number) => (
+                            <span key={idx} className="px-2 py-0.5 rounded bg-cognitive-cyan/10 text-cognitive-cyan text-xs">
+                              {tool.name}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -766,8 +889,7 @@ List of MCP tools provided by this package...`,
                 <div>
                   <p className="text-sm font-medium text-foreground">Publishing Options</p>
                   <p className="text-sm text-text-secondary mt-1">
-                    This is a demo form. In production, your package would be submitted to the ROSClaw MCP Hub
-                    for review before becoming publicly available.
+                    Your package will be submitted to the ROSClaw MCP Hub for AI-powered review before becoming publicly available.
                   </p>
                 </div>
               </div>
@@ -805,8 +927,8 @@ List of MCP tools provided by this package...`,
               Package Published Successfully!
             </h2>
             <p className="text-text-secondary mb-6">
-              This is a demo. In production, your package <strong>{formData.name}</strong> would be
-              submitted to the ROSClaw registry for review.
+              Your package <strong>{formData.name}</strong> has been submitted for AI-powered automated vetting.
+              You will be notified when it's approved.
             </p>
             <div className="flex justify-center gap-4">
               <Link
