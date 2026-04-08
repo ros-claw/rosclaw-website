@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": 1775544485694,
-  "nodeCount": 7,
+  "updatedAt": 1775639275161,
+  "nodeCount": 8,
   "nodes": {
     "mem-MEMORY-project-knowledge": {
       "id": "mem-MEMORY-project-knowledge",
@@ -34,15 +34,15 @@
     "mem-security-fixes-2026-04-05-----": {
       "id": "mem-security-fixes-2026-04-05-----",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.56,
-      "accessCount": 2,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1775544485681
     },
     "mem-security-fixes-2026-04-05------": {
       "id": "mem-security-fixes-2026-04-05------",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.53,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1775544485681
     },
     "mem-security-fixes-2026-04-05----source-map-----": {
@@ -51,6 +51,13 @@
       "confidence": 0.53,
       "accessCount": 1,
       "createdAt": 1775544485681
+    },
+    "insight-1775639163974-fdxf": {
+      "id": "insight-1775639163974-fdxf",
+      "category": "insights",
+      "confidence": 0.5,
+      "accessCount": 0,
+      "createdAt": 1775639163975
     }
   },
   "edges": [
@@ -158,12 +165,13 @@
     }
   ],
   "pageRanks": {
-    "mem-MEMORY-project-knowledge": 0.02439024390243903,
-    "mem-css-layout-lessons-----": 0.25710513515391564,
-    "mem-css-layout-lessons-------": 0.06809811687860469,
-    "mem-security-fixes-2026-04-05----------": 0.02439024390243903,
-    "mem-security-fixes-2026-04-05-----": 0.21593663968264382,
-    "mem-security-fixes-2026-04-05------": 0.20805017966173137,
-    "mem-security-fixes-2026-04-05----source-map-----": 0.20202944081822644
+    "mem-MEMORY-project-knowledge": 0.023809523809523815,
+    "mem-css-layout-lessons-----": 0.25098358431691775,
+    "mem-css-layout-lessons-------": 0.06647673314339983,
+    "mem-security-fixes-2026-04-05----------": 0.023809523809523815,
+    "mem-security-fixes-2026-04-05-----": 0.21082625493619855,
+    "mem-security-fixes-2026-04-05------": 0.20316627254471092,
+    "mem-security-fixes-2026-04-05----source-map-----": 0.19711858363020157,
+    "insight-1775639163974-fdxf": 0.023809523809523815
   }
 }

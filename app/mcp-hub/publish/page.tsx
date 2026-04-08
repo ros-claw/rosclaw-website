@@ -54,6 +54,13 @@ export default function PublishMcpPackagePage() {
     return `rosclaw mcp install ${name}`;
   };
 
+  // Get agent adaptations for display
+  const getAgentCommands = (name: string) => [
+    { agent: "OpenClaw", command: `install mcp ${name}` },
+    { agent: "Claude Code", command: `@rosclaw install mcp ${name}` },
+    { agent: "Generic Agent", command: `Use ROSClaw MCP to install "${name}"` },
+  ];
+
   // Name Help Tooltip Component
   const NameHelpTooltip = () => (
     <div className="absolute z-50 left-0 top-full mt-2 w-80 p-4 rounded-lg bg-card-bg border border-glass-border shadow-xl">
@@ -312,7 +319,43 @@ export default function PublishMcpPackagePage() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Create package object
+    const newPackage = {
+      id: formData.name,
+      name: formData.name,
+      displayName: formData.displayName,
+      description: formData.description,
+      author: formData.githubUrl.split('/')[3] || 'Unknown',
+      authorUrl: `https://github.com/${formData.githubUrl.split('/')[3] || ''}`,
+      githubUrl: formData.githubUrl,
+      verified: false,
+      isOfficial: formData.isOfficial,
+      category: formData.category,
+      robotType: formData.robotType,
+      version: formData.version,
+      updatedAt: new Date().toISOString().split('T')[0],
+      stars: 0,
+      downloads: 0,
+      tags: formData.tags,
+      tools: formData.tools,
+    };
+
+    // Save to localStorage (user's submitted packages)
+    try {
+      const existing = JSON.parse(localStorage.getItem('userMcpPackages') || '[]');
+      existing.push(newPackage);
+      localStorage.setItem('userMcpPackages', JSON.stringify(existing));
+
+      // Also save to a "pending" list that can be shown in MCP Hub
+      const pending = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
+      pending.push(newPackage);
+      localStorage.setItem('pendingMcpPackages', JSON.stringify(pending));
+    } catch (e) {
+      console.error('Failed to save package:', e);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsSubmitting(false);
     setShowInstallCommand(true);
     setStep(4);
@@ -719,7 +762,7 @@ export default function PublishMcpPackagePage() {
             </p>
 
             {/* Install Command */}
-            <div className="max-w-lg mx-auto mb-8">
+            <div className="max-w-xl mx-auto mb-6">
               <div className="p-4 rounded-lg bg-black/40 border border-glass-border">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-text-muted">Install with one command:</span>
@@ -734,18 +777,38 @@ export default function PublishMcpPackagePage() {
                 <code className="block p-3 rounded bg-glass-bg text-foreground font-mono text-sm">
                   {generateInstallCommand(formData.name)}
                 </code>
+
+                {/* Agent Adaptations */}
+                <div className="mt-4 pt-4 border-t border-glass-border">
+                  <p className="text-xs text-text-muted mb-2">Also works with other agents:</p>
+                  <div className="space-y-1.5">
+                    {getAgentCommands(formData.name).map((adapt) => (
+                      <div key={adapt.agent} className="flex items-center justify-between text-xs">
+                        <span className="text-text-secondary">{adapt.agent}</span>
+                        <code className="text-cognitive-cyan font-mono">{adapt.command}</code>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-xs text-text-muted">
-                  Users can paste this command into their ROSClaw agent to install your package.
-                </p>
-                <button
-                  onClick={() => setShowRuntimeModal(true)}
-                  className="text-xs text-cognitive-cyan hover:underline flex items-center gap-1"
-                >
-                  <Terminal className="w-3 h-3" />
-                  How it works
-                </button>
+            </div>
+
+            {/* Registry Explanation */}
+            <div className="max-w-xl mx-auto mb-8 p-4 rounded-lg bg-glass-bg border border-glass-border">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-cognitive-cyan flex-shrink-0 mt-0.5" />
+                <div className="text-left">
+                  <p className="text-sm font-medium text-foreground mb-1">How agents find this package</p>
+                  <p className="text-xs text-text-secondary">
+                    When you say <span className="text-cognitive-cyan font-mono">"install mcp {formData.name}"</span>,
+                    OpenClaw and other agents query the <strong className="text-foreground">ROSClaw MCP Registry</strong>
+                    at <code className="text-cognitive-cyan">rosclaw.io/mcp-hub/{formData.name}</code>
+                    to get the GitHub repository URL and installation instructions.
+                  </p>
+                  <p className="text-xs text-text-muted mt-2">
+                    Your package is now indexed and searchable in the MCP Hub.
+                  </p>
+                </div>
               </div>
             </div>
 

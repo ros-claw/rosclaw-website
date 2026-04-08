@@ -42,18 +42,64 @@ async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; upda
   }
 }
 
+// Load user-submitted packages from localStorage
+function getUserSubmittedPackages(): McpPackage[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const pending = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
+    return pending;
+  } catch {
+    return [];
+  }
+}
+
 export function McpHubClient() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [githubData, setGithubData] = useState<Record<string, { stars: number; updatedAt: string }>>({});
   const [isLoadingStars, setIsLoadingStars] = useState(false);
+  const [userPackages, setUserPackages] = useState<McpPackage[]>([]);
 
-  const allPackages = useMemo(() => getAllPackages(), []);
-  const categories = useMemo(() => getCategories(), []);
+  // Load user packages on client side
+  useEffect(() => {
+    setUserPackages(getUserSubmittedPackages());
+  }, []);
+
+  const allPackages = useMemo(() => {
+    const builtIn = getAllPackages();
+    return [...builtIn, ...userPackages];
+  }, [userPackages]);
+
+  const categories = useMemo(() => {
+    const cats = getCategories();
+    // Update counts to include user packages
+    return cats.map((cat) => ({
+      ...cat,
+      count:
+        cat.id === "all"
+          ? allPackages.length
+          : allPackages.filter(
+              (p) => p.category.toLowerCase().replace(/\s+/g, "-") === cat.id
+            ).length,
+    }));
+  }, [allPackages]);
 
   const filteredPackages = useMemo(() => {
-    return filterPackages(activeCategory, searchQuery);
-  }, [activeCategory, searchQuery]);
+    return allPackages.filter((pkg) => {
+      const matchesCategory =
+        activeCategory === "all" ||
+        pkg.category.toLowerCase().replace(/\s+/g, "-") === activeCategory;
+      const matchesSearch =
+        !searchQuery ||
+        pkg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pkg.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pkg.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        pkg.tags.some((tag: string) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, searchQuery, allPackages]);
 
   // Fetch GitHub stars when packages change
   useEffect(() => {

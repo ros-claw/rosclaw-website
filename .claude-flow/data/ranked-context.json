@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "computedAt": 1775544485694,
+  "computedAt": 1775639275163,
   "entries": [
     {
       "id": "mem-css-layout-lessons-----",
@@ -8,7 +8,7 @@
       "summary": "问题背景",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.25710513515391564,
+      "pageRank": 0.25098358431691775,
       "accessCount": 0,
       "words": [
         "alphatown"
@@ -20,7 +20,7 @@
       "summary": "核心问题",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.25710513515391564,
+      "pageRank": 0.25098358431691775,
       "accessCount": 0,
       "words": [
         "fixed",
@@ -47,7 +47,7 @@
       "summary": "修复清单",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.25710513515391564,
+      "pageRank": 0.25098358431691775,
       "accessCount": 0,
       "words": [
         "------",
@@ -69,7 +69,7 @@
       "summary": "经验教训",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.25710513515391564,
+      "pageRank": 0.25098358431691775,
       "accessCount": 0,
       "words": [
         "mx-auto",
@@ -95,7 +95,7 @@
       "summary": "常见陷阱",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.25710513515391564,
+      "pageRank": 0.25098358431691775,
       "accessCount": 0,
       "words": [
         "text-center",
@@ -144,7 +144,7 @@
       "summary": "最佳实践",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.25710513515391564,
+      "pageRank": 0.25098358431691775,
       "accessCount": 0,
       "words": [
         "devtools",
@@ -157,9 +157,9 @@
       "content": "pnpm build",
       "summary": "生产构建",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.56,
-      "pageRank": 0.21593663968264382,
-      "accessCount": 2,
+      "confidence": 0.5,
+      "pageRank": 0.21082625493619855,
+      "accessCount": 0,
       "words": [
         "pnpm",
         "build"
@@ -170,9 +170,9 @@
       "content": "- `/apps/web/next.config.ts`\n- `/apps/web/proxy.ts`",
       "summary": "相关文件",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.56,
-      "pageRank": 0.21593663968264382,
-      "accessCount": 2,
+      "confidence": 0.5,
+      "pageRank": 0.21082625493619855,
+      "accessCount": 0,
       "words": [
         "apps",
         "web",
@@ -188,9 +188,9 @@
       "content": "curl -I http://localhost:3000/ | grep -i \"content-security-policy\"",
       "summary": "检查响应头",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.53,
-      "pageRank": 0.20805017966173137,
-      "accessCount": 1,
+      "confidence": 0.5,
+      "pageRank": 0.20316627254471092,
+      "accessCount": 0,
       "words": [
         "curl",
         "http",
@@ -206,7 +206,7 @@
       "summary": "检查 source map 是否禁用",
       "category": "security-fixes-2026-04-05",
       "confidence": 0.53,
-      "pageRank": 0.20202944081822644,
+      "pageRank": 0.19711858363020157,
       "accessCount": 1,
       "words": [
         "curl",
@@ -228,7 +228,7 @@
       "summary": "正确修复方案",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.06809811687860469,
+      "pageRank": 0.06647673314339983,
       "accessCount": 0,
       "words": [
         "main",
@@ -256,7 +256,7 @@
       "summary": "相关代码位置",
       "category": "css-layout-lessons",
       "confidence": 0.5,
-      "pageRank": 0.06809811687860469,
+      "pageRank": 0.06647673314339983,
       "accessCount": 0,
       "words": [
         "apps",
@@ -275,7 +275,7 @@
       "summary": "Project Knowledge",
       "category": "core",
       "confidence": 0.5,
-      "pageRank": 0.02439024390243903,
+      "pageRank": 0.023809523809523815,
       "accessCount": 0,
       "words": [
         "css",
@@ -292,7 +292,7 @@
       "summary": "渗透测试发现的问题",
       "category": "security-fixes-2026-04-05",
       "confidence": 0.5,
-      "pageRank": 0.02439024390243903,
+      "pageRank": 0.023809523809523815,
       "accessCount": 0,
       "words": [
         "high",
@@ -326,6 +326,32 @@
         "frame-ancestors",
         "self",
         "high"
+      ]
+    },
+    {
+      "id": "insight-1775639163974-fdxf",
+      "content": "File unknown was edited 181 times this session — likely a hot path worth monitoring.",
+      "summary": "Frequently edited: unknown (181x)",
+      "category": "insights",
+      "confidence": 0.5,
+      "pageRank": 0.023809523809523815,
+      "accessCount": 0,
+      "words": [
+        "file",
+        "unknown",
+        "edited",
+        "181",
+        "times",
+        "session",
+        "likely",
+        "hot",
+        "path",
+        "worth",
+        "monitoring",
+        "frequently",
+        "edited",
+        "unknown",
+        "181x"
       ]
     }
   ]

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Github, LogOut, Package, Wrench } from "lucide-react";
+import { User, Github, LogOut, Package, Wrench, ExternalLink } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 export default function ProfilePage() {
@@ -38,7 +38,11 @@ export default function ProfilePage() {
     ]);
 
     if (skillsRes.data) setUserSkills(skillsRes.data);
-    if (packagesRes.data) setUserPackages(packagesRes.data);
+
+    // Combine database packages with localStorage packages
+    const dbPackages = packagesRes.data || [];
+    const localPackages = JSON.parse(localStorage.getItem('userMcpPackages') || '[]');
+    setUserPackages([...dbPackages, ...localPackages]);
   };
 
   const handleSignOut = async () => {
@@ -118,6 +122,28 @@ export default function ProfilePage() {
               <p className="text-2xl font-bold text-foreground">{userPackages.length}</p>
             </div>
           </div>
+
+          {/* User's Packages */}
+          {userPackages.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Your MCP Packages</h2>
+              <div className="space-y-3">
+                {userPackages.map((pkg) => (
+                  <a
+                    key={pkg.id || pkg.name}
+                    href={`/mcp-hub/${pkg.id || pkg.name}`}
+                    className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                  >
+                    <div>
+                      <p className="font-medium text-foreground">{pkg.display_name || pkg.displayName || pkg.name}</p>
+                      <p className="text-sm text-text-secondary">{pkg.name}</p>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-text-muted" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex flex-wrap gap-4">
