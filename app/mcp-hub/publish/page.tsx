@@ -24,7 +24,6 @@ export default function PublishMcpPackagePage() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
-    displayName: "",
     version: "1.0.0",
     description: "",
     category: "",
@@ -55,8 +54,9 @@ export default function PublishMcpPackagePage() {
   };
 
   // Get agent adaptations for display
-  const getAgentCommands = (name: string) => [
-    { agent: "OpenClaw", command: `install mcp ${name}` },
+  const getAgentCommands = (name: string, githubUrl: string) => [
+    { agent: "ROSClaw CLI", command: `rosclaw mcp install ${name}` },
+    { agent: "OpenClaw", command: `install mcp from ${githubUrl}` },
     { agent: "Claude Code", command: `@rosclaw install mcp ${name}` },
     { agent: "Generic Agent", command: `Use ROSClaw MCP to install "${name}"` },
   ];
@@ -72,21 +72,15 @@ export default function PublishMcpPackagePage() {
       </div>
       <div className="space-y-3 text-sm">
         <div>
-          <p className="font-medium text-cognitive-cyan">Package Name (Locked)</p>
-          <p className="text-text-secondary">The unique identifier derived from your GitHub repo name. Used in commands like:</p>
+          <p className="font-medium text-cognitive-cyan">Full Repository Path</p>
+          <p className="text-text-secondary">Package name is the full GitHub repository path <code>owner/repo</code>. This ensures uniqueness across all packages.</p>
           <code className="block mt-1 p-1.5 rounded bg-black/40 text-xs text-cognitive-cyan font-mono">
-            rosclaw mcp install your-package
+            ros-claw/librealsense-mcp
           </code>
-        </div>
-        <div>
-          <p className="font-medium text-cognitive-cyan">Display Name (Editable)</p>
-          <p className="text-text-secondary">Human-friendly name shown in listings. Can include spaces, emoji, and special characters.</p>
-          <p className="text-xs text-text-muted mt-1">Example: &quot;Universal Robots UR5 Driver 🤖&quot;</p>
         </div>
         <div className="pt-2 border-t border-glass-border">
           <p className="text-text-muted text-xs">
-            <strong className="text-foreground">Name Conflicts:</strong> If a package with the same name exists,
-            you&apos;ll see suggestions like <code>your-package-v2</code> or <code>your-package-community</code>.
+            <strong className="text-foreground">Why full path?</strong> Different users can have repos with the same name (e.g., <code>ros-claw/librealsense-mcp</code> vs <code>shaoxiang/librealsense-mcp</code>).
           </p>
         </div>
       </div>
@@ -95,7 +89,7 @@ export default function PublishMcpPackagePage() {
 
   // Runtime Modal Component
   const RuntimeModal = () => {
-    const adaptations = formData.name ? getAgentAdaptations(formData.name) : [];
+    const adaptations = formData.name ? getAgentAdaptations(formData.name, formData.githubUrl) : [];
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <motion.div
@@ -168,7 +162,7 @@ export default function PublishMcpPackagePage() {
                 Natural Language Alternative
               </h4>
               <p className="text-sm text-text-secondary">
-                Users can also say: <em>&quot;Install the {formData.displayName || formData.name || "package"} MCP package&quot;</em>
+                Users can also say: <em>&quot;Install the {formData.name || "package"} MCP package&quot;</em>
                 and any LLM agent with ROSClaw integration will understand.
               </p>
             </div>
@@ -241,24 +235,27 @@ export default function PublishMcpPackagePage() {
       // Check if official
       const isOfficial = isOfficialRepo(formData.githubUrl);
 
+      // Use full repo path as package name (owner/repo) to avoid conflicts
+      const fullPackageName = `${owner}/${repo}`;
+
       // Check name availability using local data
-      const nameExists = packageNameExists(repo);
+      const nameExists = packageNameExists(fullPackageName);
       if (nameExists) {
-        const suggestions = suggestAlternativeNames(repo);
+        const suggestions = suggestAlternativeNames(fullPackageName);
         setNameCheckResult({
           available: false,
-          message: `Package "${repo}" already exists`,
+          message: `Package "${fullPackageName}" already exists`,
           suggestions,
         });
         setImportError(
-          `Package "${repo}" already exists. Try: ${suggestions.join(", ")}`
+          `Package "${fullPackageName}" already exists. Try: ${suggestions.join(", ")}`
         );
         setIsImporting(false);
         return;
       } else {
         setNameCheckResult({
           available: true,
-          message: `Package "${repo}" is available`,
+          message: `Package "${fullPackageName}" is available`,
         });
       }
 
@@ -270,7 +267,7 @@ export default function PublishMcpPackagePage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             readmeContent,
-            repoName: repo,
+            repoName: fullPackageName,
             repoDescription: repoData.description || "",
           }),
         });
@@ -285,8 +282,8 @@ export default function PublishMcpPackagePage() {
       // Auto-fill all fields
       setFormData({
         ...formData,
-        name: repo,
-        displayName: repoData.full_name || repo,
+        name: fullPackageName,
+        
         description: repoData.description || "",
         readmeMd: readmeContent,
         category: llmAnalysis?.category || "",
@@ -320,11 +317,10 @@ export default function PublishMcpPackagePage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
-    // Create package object
+    // Create package object with full repo path as name
     const newPackage = {
-      id: formData.name,
+      id: formData.name.replace(/\//g, '-'),
       name: formData.name,
-      displayName: formData.displayName,
       description: formData.description,
       author: formData.githubUrl.split('/')[3] || 'Unknown',
       authorUrl: `https://github.com/${formData.githubUrl.split('/')[3] || ''}`,
@@ -511,13 +507,13 @@ export default function PublishMcpPackagePage() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="relative">
+                <div className="relative md:col-span-2">
                   <div className="flex items-center gap-2 mb-1">
                     <label className="block text-sm text-text-muted">Package Name (locked)</label>
                     <button
                       onClick={() => setShowNameHelp(!showNameHelp)}
                       className="text-text-muted hover:text-cognitive-cyan transition-colors"
-                      title="What's the difference?"
+                      title="What's this?"
                     >
                       <HelpCircle className="w-4 h-4" />
                     </button>
@@ -527,24 +523,14 @@ export default function PublishMcpPackagePage() {
                     type="text"
                     value={formData.name}
                     disabled
-                    className="w-full px-4 py-2 rounded-lg bg-glass-bg/50 border border-glass-border text-text-muted cursor-not-allowed"
+                    className="w-full px-4 py-2 rounded-lg bg-glass-bg/50 border border-glass-border text-text-muted cursor-not-allowed font-mono"
                   />
                   <p className="text-xs text-text-muted mt-1">
-                    Unique identifier used in commands
+                    Full repository path (owner/repo) - uniquely identifies this package
                     {nameCheckResult?.available === false && (
                       <span className="text-red-500 ml-2">Name taken - see suggestions above</span>
                     )}
                   </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm text-text-muted mb-1">Display Name</label>
-                  <input
-                    type="text"
-                    value={formData.displayName}
-                    onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
-                  />
                 </div>
 
                 <div>
@@ -782,10 +768,10 @@ export default function PublishMcpPackagePage() {
                 <div className="mt-4 pt-4 border-t border-glass-border">
                   <p className="text-xs text-text-muted mb-2">Also works with other agents:</p>
                   <div className="space-y-1.5">
-                    {getAgentCommands(formData.name).map((adapt) => (
+                    {getAgentCommands(formData.name, formData.githubUrl).map((adapt) => (
                       <div key={adapt.agent} className="flex items-center justify-between text-xs">
                         <span className="text-text-secondary">{adapt.agent}</span>
-                        <code className="text-cognitive-cyan font-mono">{adapt.command}</code>
+                        <code className="text-cognitive-cyan font-mono text-[10px] truncate max-w-[200px]">{adapt.command}</code>
                       </div>
                     ))}
                   </div>
@@ -800,13 +786,14 @@ export default function PublishMcpPackagePage() {
                 <div className="text-left">
                   <p className="text-sm font-medium text-foreground mb-1">How agents find this package</p>
                   <p className="text-xs text-text-secondary">
-                    When you say <span className="text-cognitive-cyan font-mono">"install mcp {formData.name}"</span>,
-                    OpenClaw and other agents query the <strong className="text-foreground">ROSClaw MCP Registry</strong>
-                    at <code className="text-cognitive-cyan">rosclaw.io/mcp-hub/{formData.name}</code>
-                    to get the GitHub repository URL and installation instructions.
+                    ROSClaw CLI users can install by name. For other agents like OpenClaw,
+                    provide the GitHub URL directly:
                   </p>
+                  <code className="block mt-2 p-2 rounded bg-black/40 text-[10px] text-cognitive-cyan font-mono break-all">
+                    install mcp from {formData.githubUrl}
+                  </code>
                   <p className="text-xs text-text-muted mt-2">
-                    Your package is now indexed and searchable in the MCP Hub.
+                    Your package page: <code className="text-cognitive-cyan">rosclaw.io/mcp-hub/{formData.name.replace(/\//g, '-')}</code>
                   </p>
                 </div>
               </div>

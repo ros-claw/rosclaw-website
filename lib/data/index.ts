@@ -8,7 +8,6 @@ export interface McpTool {
 export interface McpPackage {
   id: string;
   name: string;
-  displayName: string;
   description: string;
   author: string;
   authorUrl: string;
@@ -82,7 +81,6 @@ export function filterPackages(
     const matchesSearch =
       !searchQuery ||
       pkg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pkg.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pkg.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pkg.tags.some((tag) =>
         tag.toLowerCase().includes(searchQuery.toLowerCase())
@@ -97,7 +95,7 @@ export function generateInstallCommand(name: string): string {
 }
 
 // Generate agent adaptation commands
-export function getAgentAdaptations(name: string): {
+export function getAgentAdaptations(name: string, githubUrl: string): {
   agent: string;
   command: string;
   description: string;
@@ -110,8 +108,8 @@ export function getAgentAdaptations(name: string): {
     },
     {
       agent: "OpenClaw",
-      command: `install mcp ${name}`,
-      description: "OpenClaw agent: 'install mcp package-name'",
+      command: `install mcp from ${githubUrl}`,
+      description: "OpenClaw agent needs the full GitHub URL",
     },
     {
       agent: "Claude Code",
