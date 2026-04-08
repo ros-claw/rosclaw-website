@@ -317,28 +317,22 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                       {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
                     </button>
                   </div>
-                </div>
 
-                {/* Agent Adaptations */}
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                    <Bot className="w-4 h-4 text-cognitive-cyan" />
-                    Agent-Specific Commands
-                  </h3>
-                  <p className="text-sm text-text-secondary">
-                    Different agents can install this package using their native syntax:
-                  </p>
-                  {agentAdaptations.slice(1).map((adapt) => (
-                    <div key={adapt.agent} className="p-4 rounded-lg bg-card-bg border border-glass-border">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-foreground">{adapt.agent}</span>
-                      </div>
-                      <code className="block p-2 rounded bg-black/40 text-cognitive-cyan font-mono text-sm">
-                        {adapt.command}
-                      </code>
-                      <p className="text-xs text-text-muted mt-2">{adapt.description}</p>
+                  {/* Agent Adaptations - Directly under main command */}
+                  <div className="mt-4 pt-4 border-t border-glass-border">
+                    <h4 className="text-xs font-medium text-text-muted mb-3 flex items-center gap-2">
+                      <Bot className="w-3.5 h-3.5" />
+                      Also works with other agents:
+                    </h4>
+                    <div className="space-y-2">
+                      {agentAdaptations.slice(1).map((adapt) => (
+                        <div key={adapt.agent} className="flex items-center justify-between p-2 rounded bg-black/20 text-xs">
+                          <span className="text-text-secondary">{adapt.agent}</span>
+                          <code className="text-cognitive-cyan font-mono">{adapt.command}</code>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
                 </div>
 
                 {/* Natural Language */}

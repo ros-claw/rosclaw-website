@@ -96,13 +96,13 @@
       ]
     },
     {
-      "id": "rosclaw-realsense-mcp",
-      "name": "rosclaw-realsense-mcp",
+      "id": "librealsense-mcp",
+      "name": "librealsense-mcp",
       "displayName": "Intel RealSense Driver",
       "description": "Intel RealSense D435/D455 depth cameras with point cloud streaming and object detection pipeline.",
       "author": "ROSClaw Vision Team",
       "authorUrl": "https://github.com/ros-claw",
-      "githubUrl": "https://github.com/ros-claw/rosclaw-realsense-mcp",
+      "githubUrl": "https://github.com/ros-claw/librealsense-mcp",
       "verified": true,
       "isOfficial": true,
       "category": "Sensors",
