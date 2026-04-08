@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, Code, FileText, Tags, GitBranch, Info, Check, AlertCircle, Github } from "lucide-react";
+import { Upload, Code, FileText, Tags, GitBranch, Info, Check, AlertCircle, Github, FileArchive, Loader2 } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -33,6 +33,7 @@ interface ImportedData {
   skillMd: string;
   category: string;
   tags: string[];
+  robotTypes?: string[];
 }
 
 export default function PublishSkillPage() {
@@ -55,6 +56,8 @@ export default function PublishSkillPage() {
   const [importedData, setImportedData] = useState<ImportedData | null>(null);
   const [showCustomCategory, setShowCustomCategory] = useState(false);
   const [importApplied, setImportApplied] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
@@ -72,6 +75,52 @@ export default function PublishSkillPage() {
       ? formData.robotTypes.filter((r) => r !== robotId)
       : [...formData.robotTypes, robotId];
     setFormData({ ...formData, robotTypes: newTypes });
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".zip")) {
+      alert("Only .zip files are supported");
+      return;
+    }
+
+    setUploadedFile(file);
+    setIsUploading(true);
+
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+    formDataUpload.append("type", "skill");
+
+    try {
+      const res = await fetch("/api/upload/analyze", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        const data = result.data;
+
+        setImportedData({
+          name: data.name || file.name.replace(".zip", ""),
+          description: data.description || "",
+          skillMd: data.skillMd || "",
+          category: data.category || "",
+          tags: data.tags || [],
+          robotTypes: data.robotTypes || [],
+        });
+      } else {
+        const error = await res.json();
+        alert(error.error || "Failed to analyze file");
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      alert("Failed to upload and analyze file");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleCategoryChange = (value: string) => {
@@ -177,12 +226,46 @@ export default function PublishSkillPage() {
       // Remove duplicates
       const uniqueTags = Array.from(new Set(extractedTags));
 
+      // Call LLM for advanced analysis
+      let llmAnalysis = null;
+      try {
+        const llmRes = await fetch("/api/llm/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            readmeContent,
+            repoName: repo,
+            repoDescription: repoData.description || "",
+          }),
+        });
+        if (llmRes.ok) {
+          const llmData = await llmRes.json();
+          llmAnalysis = llmData.data;
+        }
+      } catch (llmError) {
+        console.error("LLM analysis failed:", llmError);
+      }
+
+      // Extract robot types from LLM or fallback
+      const robotTypes = llmAnalysis?.robotTypes || [];
+      if (robotTypes.length === 0) {
+        // Fallback extraction
+        const text = (repo + " " + (repoData.description || "") + " " + readmeContent).toLowerCase();
+        if (text.includes("ur5")) robotTypes.push("ur5");
+        if (text.includes("ur10")) robotTypes.push("ur10");
+        if (text.includes("franka") || text.includes("panda")) robotTypes.push("franka");
+        if (text.includes("g1")) robotTypes.push("g1");
+        if (text.includes("go2")) robotTypes.push("go2");
+        if (text.includes("turtlebot")) robotTypes.push("turtlebot");
+      }
+
       setImportedData({
         name: repo,
         description: repoData.description || "",
         skillMd: readmeContent,
-        category: inferCategory(repo, repoData.description || ""),
-        tags: uniqueTags.length > 0 ? uniqueTags : [],
+        category: llmAnalysis?.category || inferCategory(repo, repoData.description || ""),
+        tags: llmAnalysis?.tags?.length > 0 ? llmAnalysis.tags : (uniqueTags.length > 0 ? uniqueTags : []),
+        robotTypes: robotTypes,
       });
     } catch (error) {
       console.error("Failed to import from GitHub:", error);
@@ -203,6 +286,7 @@ export default function PublishSkillPage() {
         category: isCustom ? "custom" : (importedData.category || formData.category),
         customCategory: isCustom ? importedData.category : formData.customCategory,
         tags: importedData.tags.length > 0 ? importedData.tags : formData.tags,
+        robotTypes: importedData.robotTypes && importedData.robotTypes.length > 0 ? importedData.robotTypes : formData.robotTypes,
       });
       setImportApplied(true);
       // Close preview after 1.5 seconds and scroll to form
@@ -299,6 +383,42 @@ export default function PublishSkillPage() {
               <p className="text-xs text-text-muted mt-2">
                 Preview before applying: name, description, README, and tags will be shown for confirmation
               </p>
+            </div>
+
+            {/* File Upload */}
+            <div className="p-6 rounded-xl bg-card-bg border border-glass-border border-dashed">
+              <label className="block text-sm font-medium text-foreground mb-4">
+                <FileArchive className="w-4 h-4 inline mr-2" />
+                Upload Package (.zip)
+              </label>
+              <div className="flex flex-col gap-3">
+                <label className="flex flex-col items-center justify-center p-6 rounded-lg bg-glass-bg border border-glass-border hover:border-cognitive-cyan/30 cursor-pointer transition-all">
+                  <input
+                    type="file"
+                    accept=".zip"
+                    onChange={handleFileUpload}
+                    disabled={isUploading}
+                    className="hidden"
+                  />
+                  {isUploading ? (
+                    <Loader2 className="w-8 h-8 text-cognitive-cyan animate-spin mb-2" />
+                  ) : (
+                    <Upload className="w-8 h-8 text-text-muted mb-2" />
+                  )}
+                  <span className="text-sm text-text-secondary">
+                    {isUploading ? "Analyzing with AI..." : "Drop .zip file or click to upload"}
+                  </span>
+                  <span className="text-xs text-text-muted mt-1">
+                    Must include SKILL.md or README.md. Max 10MB.
+                  </span>
+                </label>
+                {uploadedFile && (
+                  <div className="flex items-center gap-2 text-sm text-cognitive-cyan">
+                    <Check className="w-4 h-4" />
+                    <span>{uploadedFile.name}</span>
+                  </div>
+                )}
+              </div>
 
               {/* Import Preview Panel */}
               {importedData && (
@@ -335,6 +455,12 @@ export default function PublishSkillPage() {
                       <div className="flex justify-between">
                         <span className="text-text-secondary">Tags:</span>
                         <span className="text-foreground">{importedData.tags.join(", ")}</span>
+                      </div>
+                    )}
+                    {importedData.robotTypes && importedData.robotTypes.length > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-text-secondary">Robots:</span>
+                        <span className="text-foreground">{importedData.robotTypes.join(", ")}</span>
                       </div>
                     )}
                     {importedData.skillMd && (
@@ -653,8 +779,7 @@ export default function PublishSkillPage() {
                 <div>
                   <p className="text-sm font-medium text-foreground">Publishing Options</p>
                   <p className="text-sm text-text-secondary mt-1">
-                    This is a demo form. In production, your skill would be submitted to the ROSClaw Skill Market
-                    for review before becoming publicly available.
+                    Your skill will be submitted to the ROSClaw Skill Market for AI-powered review before becoming publicly available.
                   </p>
                 </div>
               </div>
@@ -692,8 +817,8 @@ export default function PublishSkillPage() {
               Skill Published Successfully!
             </h2>
             <p className="text-text-secondary mb-6">
-              This is a demo. In production, your skill <strong>{formData.name}</strong> would be
-              submitted to the ROSClaw registry for review.
+              Your skill <strong>{formData.name}</strong> has been submitted for AI-powered automated vetting.
+              You will be notified when it&apos;s approved.
             </p>
             <div className="flex justify-center gap-4">
               <Link
