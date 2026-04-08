@@ -137,7 +137,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
   }
 
   const installCommand = `rosclaw mcp install ${packageData.name}`;
-  const agentAdaptations = getAgentAdaptations(packageData.name);
+  const agentAdaptations = getAgentAdaptations(packageData.name, packageData.githubUrl);
   const stars = githubData?.stars || packageData.stars || 0;
   const readmeContent = githubData?.readme || packageData.description;
 
@@ -161,7 +161,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground">{packageData.displayName}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground font-mono">{packageData.name}</h1>
                   {packageData.isOfficial ? (
                     <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-medium">
                       Official
@@ -260,7 +260,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="prose prose-invert prose-sm max-w-none"
+                className="prose prose-invert prose-sm max-w-none prose-headings:text-foreground prose-headings:font-semibold prose-a:text-cognitive-cyan prose-a:no-underline hover:prose-a:underline prose-code:text-cognitive-cyan prose-code:bg-black/40 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-black/40 prose-pre:border prose-pre:border-glass-border prose-img:rounded-lg"
               >
                 {readmeContent ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -322,13 +322,16 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                   <div className="mt-4 pt-4 border-t border-glass-border">
                     <h4 className="text-xs font-medium text-text-muted mb-3 flex items-center gap-2">
                       <Bot className="w-3.5 h-3.5" />
-                      Also works with other agents:
+                      Agent-specific commands:
                     </h4>
                     <div className="space-y-2">
-                      {agentAdaptations.slice(1).map((adapt) => (
-                        <div key={adapt.agent} className="flex items-center justify-between p-2 rounded bg-black/20 text-xs">
-                          <span className="text-text-secondary">{adapt.agent}</span>
-                          <code className="text-cognitive-cyan font-mono">{adapt.command}</code>
+                      {agentAdaptations.map((adapt) => (
+                        <div key={adapt.agent} className="p-2 rounded bg-black/20 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="text-text-secondary">{adapt.agent}</span>
+                          </div>
+                          <code className="block mt-1 text-cognitive-cyan font-mono text-[10px] truncate">{adapt.command}</code>
+                          <p className="text-[10px] text-text-muted mt-0.5">{adapt.description}</p>
                         </div>
                       ))}
                     </div>
@@ -342,7 +345,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                     Natural Language
                   </h3>
                   <p className="text-sm text-text-secondary">
-                    Simply tell your agent: <em>&quot;Install the {packageData.displayName} MCP package&quot;</em>
+                    Simply tell your agent: <em>&quot;Install the {packageData.name} MCP package&quot;</em>
                   </p>
                 </div>
 

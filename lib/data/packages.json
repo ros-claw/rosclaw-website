@@ -1,9 +1,8 @@
 {
   "packages": [
     {
-      "id": "rosclaw-ur5-mcp",
-      "name": "rosclaw-ur5-mcp",
-      "displayName": "Universal Robots UR5/UR10 Driver",
+      "id": "ros-claw-rosclaw-ur5-mcp",
+      "name": "ros-claw/rosclaw-ur5-mcp",
       "description": "Production-ready Universal Robots driver with full e-URDF safety boundaries, trajectory planning, and force control.",
       "author": "ROSClaw Official",
       "authorUrl": "https://github.com/ros-claw",
@@ -26,9 +25,8 @@
       ]
     },
     {
-      "id": "rosclaw-g1-mcp",
-      "name": "rosclaw-g1-mcp",
-      "displayName": "Unitree G1 Humanoid Driver",
+      "id": "unitreerobotics-rosclaw-g1-mcp",
+      "name": "unitreerobotics/rosclaw-g1-mcp",
       "description": "Unitree G1 humanoid with 23 DoF, walking gait control, manipulation primitives, and whole-body control.",
       "author": "Unitree Robotics",
       "authorUrl": "https://github.com/unitreerobotics",
@@ -49,9 +47,8 @@
       ]
     },
     {
-      "id": "rosclaw-go2-mcp",
-      "name": "rosclaw-go2-mcp",
-      "displayName": "Unitree Go2 Quadruped Driver",
+      "id": "unitreerobotics-rosclaw-go2-mcp",
+      "name": "unitreerobotics/rosclaw-go2-mcp",
       "description": "Unitree Go2 quadruped with terrain adaptation, SLAM navigation, and voice command support.",
       "author": "Unitree Robotics",
       "authorUrl": "https://github.com/unitreerobotics",
@@ -73,9 +70,8 @@
       ]
     },
     {
-      "id": "rosclaw-franka-mcp",
-      "name": "rosclaw-franka-mcp",
-      "displayName": "Franka Emika Panda Driver",
+      "id": "frankaemika-rosclaw-franka-mcp",
+      "name": "frankaemika/rosclaw-franka-mcp",
       "description": "Franka Emika Panda with Franka Control Interface (FCI), force/torque feedback, and impedance control.",
       "author": "Franka Robotics",
       "authorUrl": "https://github.com/frankaemika",
@@ -96,9 +92,8 @@
       ]
     },
     {
-      "id": "librealsense-mcp",
-      "name": "librealsense-mcp",
-      "displayName": "Intel RealSense Driver",
+      "id": "ros-claw-librealsense-mcp",
+      "name": "ros-claw/librealsense-mcp",
       "description": "Intel RealSense D435/D455 depth cameras with point cloud streaming and object detection pipeline.",
       "author": "ROSClaw Vision Team",
       "authorUrl": "https://github.com/ros-claw",
@@ -120,9 +115,8 @@
       ]
     },
     {
-      "id": "rosclaw-turtlebot-mcp",
-      "name": "rosclaw-turtlebot-mcp",
-      "displayName": "TurtleBot3/4 Mobile Base",
+      "id": "robotis-git-rosclaw-turtlebot-mcp",
+      "name": "robotis-git/rosclaw-turtlebot-mcp",
       "description": "TurtleBot3/4 mobile base with navigation stack, multi-robot coordination, and SLAM support.",
       "author": "ROBOTIS",
       "authorUrl": "https://github.com/ROBOTIS-GIT",

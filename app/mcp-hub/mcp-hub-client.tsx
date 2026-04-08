@@ -92,7 +92,6 @@ export function McpHubClient() {
       const matchesSearch =
         !searchQuery ||
         pkg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         pkg.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         pkg.tags.some((tag: string) =>
           tag.toLowerCase().includes(searchQuery.toLowerCase())
@@ -262,7 +261,7 @@ export function McpHubClient() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate">
+                          <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate font-mono text-sm">
                             <Link href={`/mcp-hub/${pkg.id}`}>{pkg.name}</Link>
                           </h3>
                           {pkg.isOfficial ? (
