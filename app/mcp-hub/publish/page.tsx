@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, FileText, Tags, Info, Check, AlertCircle, Github, Sparkles, Copy, CheckCircle } from "lucide-react";
+import { Upload, FileText, Tags, Info, Check, AlertCircle, Github, Sparkles, Copy, CheckCircle, HelpCircle, X, Terminal, Bot, MessageSquare, Code } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { getAgentAdaptations, packageNameExists, suggestAlternativeNames } from "@/lib/data";
 
 const predefinedCategories = [
   "Manipulators",
@@ -39,8 +40,11 @@ export default function PublishMcpPackagePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState("");
+  const [nameCheckResult, setNameCheckResult] = useState<{ available?: boolean; message?: string; suggestions?: string[] } | null>(null);
   const [showInstallCommand, setShowInstallCommand] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showNameHelp, setShowNameHelp] = useState(false);
+  const [showRuntimeModal, setShowRuntimeModal] = useState(false);
 
   const isOfficialRepo = (url: string) => {
     return OFFICIAL_ORGS.some(org => url.toLowerCase().includes(`github.com/${org.toLowerCase()}`));
@@ -48,6 +52,132 @@ export default function PublishMcpPackagePage() {
 
   const generateInstallCommand = (name: string) => {
     return `rosclaw mcp install ${name}`;
+  };
+
+  // Name Help Tooltip Component
+  const NameHelpTooltip = () => (
+    <div className="absolute z-50 left-0 top-full mt-2 w-80 p-4 rounded-lg bg-card-bg border border-glass-border shadow-xl">
+      <div className="flex items-start justify-between mb-2">
+        <h4 className="font-semibold text-foreground">Package Naming</h4>
+        <button onClick={() => setShowNameHelp(false)} className="text-text-muted hover:text-foreground">
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+      <div className="space-y-3 text-sm">
+        <div>
+          <p className="font-medium text-cognitive-cyan">Package Name (Locked)</p>
+          <p className="text-text-secondary">The unique identifier derived from your GitHub repo name. Used in commands like:</p>
+          <code className="block mt-1 p-1.5 rounded bg-black/40 text-xs text-cognitive-cyan font-mono">
+            rosclaw mcp install your-package
+          </code>
+        </div>
+        <div>
+          <p className="font-medium text-cognitive-cyan">Display Name (Editable)</p>
+          <p className="text-text-secondary">Human-friendly name shown in listings. Can include spaces, emoji, and special characters.</p>
+          <p className="text-xs text-text-muted mt-1">Example: &quot;Universal Robots UR5 Driver 🤖&quot;</p>
+        </div>
+        <div className="pt-2 border-t border-glass-border">
+          <p className="text-text-muted text-xs">
+            <strong className="text-foreground">Name Conflicts:</strong> If a package with the same name exists,
+            you&apos;ll see suggestions like <code>your-package-v2</code> or <code>your-package-community</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Runtime Modal Component
+  const RuntimeModal = () => {
+    const adaptations = formData.name ? getAgentAdaptations(formData.name) : [];
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 rounded-xl bg-card-bg border border-glass-border"
+        >
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-cognitive-cyan/10 flex items-center justify-center">
+                <Terminal className="w-5 h-5 text-cognitive-cyan" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Install Command Runtime</h3>
+                <p className="text-sm text-text-muted">How agents execute the install command</p>
+              </div>
+            </div>
+            <button onClick={() => setShowRuntimeModal(false)} className="text-text-muted hover:text-foreground">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-glass-bg">
+              <p className="text-sm text-text-secondary">
+                When you run <code className="text-cognitive-cyan font-mono">rosclaw mcp install {formData.name || "&lt;package&gt;"}</code>,
+                here&apos;s what happens behind the scenes:
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-medium text-foreground flex items-center gap-2">
+                <Bot className="w-4 h-4 text-cognitive-cyan" />
+                Agent Adaptation
+              </h4>
+              <p className="text-sm text-text-secondary">
+                Different agents support this command in different ways:
+              </p>
+              <div className="space-y-2">
+                {adaptations.map((adapt) => (
+                  <div key={adapt.agent} className="p-3 rounded-lg bg-black/40 border border-glass-border">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-foreground text-sm">{adapt.agent}</span>
+                    </div>
+                    <code className="block text-xs text-cognitive-cyan font-mono">{adapt.command}</code>
+                    <p className="text-xs text-text-muted mt-1">{adapt.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-medium text-foreground flex items-center gap-2">
+                <Code className="w-4 h-4 text-cognitive-cyan" />
+                Runtime Logic
+              </h4>
+              <ol className="space-y-2 text-sm text-text-secondary list-decimal list-inside">
+                <li>Agent receives the install command</li>
+                <li>Fetches package metadata from ROSClaw registry</li>
+                <li>Downloads source from GitHub repository</li>
+                <li>Validates package structure and dependencies</li>
+                <li>Installs into agent&apos;s MCP tools directory</li>
+                <li>Registers available tools with the agent</li>
+              </ol>
+            </div>
+
+            <div className="p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
+              <h4 className="font-medium text-foreground flex items-center gap-2 mb-2">
+                <MessageSquare className="w-4 h-4 text-cognitive-cyan" />
+                Natural Language Alternative
+              </h4>
+              <p className="text-sm text-text-secondary">
+                Users can also say: <em>&quot;Install the {formData.displayName || formData.name || "package"} MCP package&quot;</em>
+                and any LLM agent with ROSClaw integration will understand.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={() => setShowRuntimeModal(false)}
+              className="px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan hover:bg-cognitive-cyan/20 transition-all"
+            >
+              Got it
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
   };
 
   const handleOneClickImport = async () => {
@@ -103,6 +233,27 @@ export default function PublishMcpPackagePage() {
 
       // Check if official
       const isOfficial = isOfficialRepo(formData.githubUrl);
+
+      // Check name availability using local data
+      const nameExists = packageNameExists(repo);
+      if (nameExists) {
+        const suggestions = suggestAlternativeNames(repo);
+        setNameCheckResult({
+          available: false,
+          message: `Package "${repo}" already exists`,
+          suggestions,
+        });
+        setImportError(
+          `Package "${repo}" already exists. Try: ${suggestions.join(", ")}`
+        );
+        setIsImporting(false);
+        return;
+      } else {
+        setNameCheckResult({
+          available: true,
+          message: `Package "${repo}" is available`,
+        });
+      }
 
       // Call LLM for analysis
       let llmAnalysis = null;
@@ -317,15 +468,30 @@ export default function PublishMcpPackagePage() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm text-text-muted mb-1">Package Name (locked)</label>
+                <div className="relative">
+                  <div className="flex items-center gap-2 mb-1">
+                    <label className="block text-sm text-text-muted">Package Name (locked)</label>
+                    <button
+                      onClick={() => setShowNameHelp(!showNameHelp)}
+                      className="text-text-muted hover:text-cognitive-cyan transition-colors"
+                      title="What's the difference?"
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                    </button>
+                  </div>
+                  {showNameHelp && <NameHelpTooltip />}
                   <input
                     type="text"
                     value={formData.name}
                     disabled
                     className="w-full px-4 py-2 rounded-lg bg-glass-bg/50 border border-glass-border text-text-muted cursor-not-allowed"
                   />
-                  <p className="text-xs text-text-muted mt-1">Derived from GitHub repository name</p>
+                  <p className="text-xs text-text-muted mt-1">
+                    Unique identifier used in commands
+                    {nameCheckResult?.available === false && (
+                      <span className="text-red-500 ml-2">Name taken - see suggestions above</span>
+                    )}
+                  </p>
                 </div>
 
                 <div>
@@ -569,9 +735,18 @@ export default function PublishMcpPackagePage() {
                   {generateInstallCommand(formData.name)}
                 </code>
               </div>
-              <p className="text-xs text-text-muted mt-2">
-                Users can paste this command into their ROSClaw agent to install your package.
-              </p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs text-text-muted">
+                  Users can paste this command into their ROSClaw agent to install your package.
+                </p>
+                <button
+                  onClick={() => setShowRuntimeModal(true)}
+                  className="text-xs text-cognitive-cyan hover:underline flex items-center gap-1"
+                >
+                  <Terminal className="w-3 h-3" />
+                  How it works
+                </button>
+              </div>
             </div>
 
             <div className="flex justify-center gap-4">
@@ -591,6 +766,9 @@ export default function PublishMcpPackagePage() {
           </motion.div>
         )}
       </div>
+
+      {/* Runtime Explanation Modal */}
+      {showRuntimeModal && <RuntimeModal />}
     </div>
   );
 }

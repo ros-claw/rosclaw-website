@@ -1,123 +1,121 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Filter, Download, Star, Terminal, Cpu, Shield, ExternalLink } from "lucide-react";
+import { Search, Filter, Download, Star, Terminal, Cpu, Shield, ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { getAllPackages, filterPackages, getCategories, type McpPackage } from "@/lib/data";
 
-const categories = [
-  { id: "all", name: "All Packages", count: 156 },
-  { id: "manipulators", name: "Manipulators", count: 42 },
-  { id: "humanoids", name: "Humanoids", count: 18 },
-  { id: "mobile", name: "Mobile Bases", count: 35 },
-  { id: "sensors", name: "Sensors", count: 28 },
-  { id: "grippers", name: "Grippers", count: 15 },
-  { id: "cameras", name: "Cameras", count: 18 },
-];
+// GitHub API cache
+const githubCache: Record<string, { stars: number; updatedAt: string }> = {};
 
-const packages = [
-  {
-    id: "rosclaw-ur5-mcp",
-    name: "rosclaw-ur5-mcp",
-    description: "Universal Robots UR5e/UR10e driver with full e-URDF safety boundaries, trajectory planning, and force control.",
-    author: "ROSClaw Official",
-    verified: true,
-    downloads: 45200,
-    rating: 4.8,
-    reviews: 342,
-    category: "manipulators",
-    version: "3.2.1",
-    updatedAt: "2024-03-20",
-    rosVersion: "ROS 2 Humble",
-    safety: "e-URDF Certified",
-  },
-  {
-    id: "rosclaw-g1-mcp",
-    name: "rosclaw-g1-mcp",
-    description: "Unitree G1 humanoid with 23 DoF, walking gait control, manipulation primitives, and whole-body control.",
-    author: "Unitree Robotics",
-    verified: true,
-    downloads: 12800,
-    rating: 4.7,
-    reviews: 156,
-    category: "humanoids",
-    version: "2.1.0",
-    updatedAt: "2024-03-18",
-    rosVersion: "ROS 2 Humble",
-    safety: "Digital Twin",
-  },
-  {
-    id: "rosclaw-go2-mcp",
-    name: "rosclaw-go2-mcp",
-    description: "Unitree Go2 quadruped with terrain adaptation, SLAM navigation, and voice command support.",
-    author: "Unitree Robotics",
-    verified: true,
-    downloads: 8400,
-    rating: 4.6,
-    reviews: 98,
-    category: "mobile",
-    version: "1.8.2",
-    updatedAt: "2024-03-15",
-    rosVersion: "ROS 2 Humble",
-    safety: "Terrain Aware",
-  },
-  {
-    id: "rosclaw-franka-mcp",
-    name: "rosclaw-franka-mcp",
-    description: "Franka Emika Panda with Franka Control Interface (FCI), force/torque feedback, and impedance control.",
-    author: "Franka Robotics",
-    verified: true,
-    downloads: 6200,
-    rating: 4.7,
-    reviews: 124,
-    category: "manipulators",
-    version: "2.0.1",
-    updatedAt: "2024-03-22",
-    rosVersion: "ROS 2 Foxy/Humble",
-    safety: "FCI Certified",
-  },
-  {
-    id: "rosclaw-realsense-mcp",
-    name: "rosclaw-realsense-mcp",
-    description: "Intel RealSense D435/D455 depth cameras with point cloud streaming and object detection pipeline.",
-    author: "ROSClaw Vision Team",
-    verified: true,
-    downloads: 15600,
-    rating: 4.5,
-    reviews: 234,
-    category: "cameras",
-    version: "4.1.0",
-    updatedAt: "2024-03-25",
-    rosVersion: "ROS 2 Humble",
-    safety: "N/A",
-  },
-  {
-    id: "rosclaw-turtlebot-mcp",
-    name: "rosclaw-turtlebot-mcp",
-    description: "TurtleBot3/4 mobile base with navigation stack, multi-robot coordination, and SLAM support.",
-    author: "ROBOTIS",
-    verified: true,
-    downloads: 22100,
-    rating: 4.4,
-    reviews: 312,
-    category: "mobile",
-    version: "3.0.0",
-    updatedAt: "2024-03-12",
-    rosVersion: "ROS 2 Humble",
-    safety: "Collision Avoid",
-  },
-];
+async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; updatedAt: string }> {
+  // Check cache first
+  if (githubCache[githubUrl]) {
+    return githubCache[githubUrl];
+  }
+
+  try {
+    const match = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+    if (!match) return { stars: 0, updatedAt: "" };
+
+    const [, owner, repo] = match;
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: { Accept: "application/vnd.github+json" },
+    });
+
+    if (!response.ok) {
+      return { stars: 0, updatedAt: "" };
+    }
+
+    const data = await response.json();
+    const result = {
+      stars: data.stargazers_count || 0,
+      updatedAt: data.updated_at || "",
+    };
+
+    // Cache result
+    githubCache[githubUrl] = result;
+    return result;
+  } catch {
+    return { stars: 0, updatedAt: "" };
+  }
+}
 
 export function McpHubClient() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [githubData, setGithubData] = useState<Record<string, { stars: number; updatedAt: string }>>({});
+  const [isLoadingStars, setIsLoadingStars] = useState(false);
 
-  const filteredPackages = packages.filter((pkg) => {
-    const matchesCategory = activeCategory === "all" || pkg.category === activeCategory;
-    const matchesSearch = pkg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         pkg.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const allPackages = useMemo(() => getAllPackages(), []);
+  const categories = useMemo(() => getCategories(), []);
+
+  const filteredPackages = useMemo(() => {
+    return filterPackages(activeCategory, searchQuery);
+  }, [activeCategory, searchQuery]);
+
+  // Fetch GitHub stars when packages change
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchStars() {
+      setIsLoadingStars(true);
+      const newData: Record<string, { stars: number; updatedAt: string }> = {};
+
+      // Fetch in batches to avoid rate limiting
+      const batchSize = 3;
+      for (let i = 0; i < filteredPackages.length; i += batchSize) {
+        if (!isMounted) break;
+
+        const batch = filteredPackages.slice(i, i + batchSize);
+        const batchResults = await Promise.all(
+          batch.map(async (pkg) => {
+            const data = await fetchGitHubData(pkg.githubUrl);
+            return { id: pkg.id, data };
+          })
+        );
+
+        batchResults.forEach(({ id, data }) => {
+          newData[id] = data;
+        });
+
+        // Update state incrementally
+        setGithubData((prev) => ({ ...prev, ...newData }));
+
+        // Small delay between batches
+        if (i + batchSize < filteredPackages.length) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+      }
+
+      setIsLoadingStars(false);
+    }
+
+    fetchStars();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [filteredPackages]);
+
+  // Format date
+  function formatDate(dateStr: string): string {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  // Format number
+  function formatNumber(num: number): string {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+    if (num >= 1000) return (num / 1000).toFixed(1) + "k";
+    return num.toString();
+  }
 
   return (
     <div className="min-h-screen bg-background pt-16">
@@ -187,8 +185,16 @@ export function McpHubClient() {
               <div className="p-4 rounded-lg bg-card-bg border border-glass-border">
                 <h3 className="text-sm font-semibold text-foreground mb-2">Quick Install</h3>
                 <code className="block p-2 rounded bg-black/40 text-xs text-text-secondary font-mono">
-                  rosclaw install {'<package>'}
+                  rosclaw mcp install {"<package>"}
                 </code>
+              </div>
+
+              {/* Data Source Note */}
+              <div className="p-3 rounded-lg bg-glass-bg text-xs text-text-muted">
+                <p className="flex items-center gap-1.5">
+                  <Github className="w-3.5 h-3.5" />
+                  Stars fetched from GitHub in real-time
+                </p>
               </div>
             </div>
           </div>
@@ -196,64 +202,88 @@ export function McpHubClient() {
           {/* Packages Grid */}
           <div className="lg:col-span-3">
             <div className="grid md:grid-cols-2 gap-4">
-              {filteredPackages.map((pkg) => (
-                <motion.div
-                  key={pkg.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="group p-5 rounded-xl bg-card-bg border border-glass-border hover:border-cognitive-cyan/30 transition-all"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate">
-                          <Link href={`/mcp-hub/${pkg.id}`}>{pkg.name}</Link>
-                        </h3>
-                        {pkg.verified && (
-                          <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium">
-                            Verified
+              {filteredPackages.map((pkg) => {
+                const ghData = githubData[pkg.id];
+                const stars = ghData?.stars || pkg.stars || 0;
+
+                return (
+                  <motion.div
+                    key={pkg.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="group p-5 rounded-xl bg-card-bg border border-glass-border hover:border-cognitive-cyan/30 transition-all"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate">
+                            <Link href={`/mcp-hub/${pkg.id}`}>{pkg.name}</Link>
+                          </h3>
+                          {pkg.isOfficial ? (
+                            <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium">
+                              Official
+                            </span>
+                          ) : (
+                            <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-[10px] font-medium">
+                              Community
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-sm text-text-secondary mt-1">{pkg.author}</p>
+                        <p className="text-sm text-text-muted mt-2 line-clamp-2">{pkg.description}</p>
+
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {pkg.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="px-1.5 py-0.5 rounded bg-glass-bg text-[10px] text-text-muted"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                          {pkg.tags.length > 3 && (
+                            <span className="px-1.5 py-0.5 rounded bg-glass-bg text-[10px] text-text-muted">
+                              +{pkg.tags.length - 3}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Meta */}
+                        <div className="flex flex-wrap items-center gap-3 mt-3 text-xs">
+                          <span className="flex items-center gap-1 text-text-muted">
+                            <Cpu className="w-3.5 h-3.5" />
+                            {pkg.robotType}
                           </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-text-secondary mt-1">{pkg.author}</p>
-                      <p className="text-sm text-text-muted mt-2 line-clamp-2">{pkg.description}</p>
-
-                      {/* Meta */}
-                      <div className="flex flex-wrap items-center gap-3 mt-3 text-xs">
-                        <span className="flex items-center gap-1 text-text-muted">
-                          <Cpu className="w-3.5 h-3.5" />
-                          {pkg.rosVersion}
-                        </span>
-                        <span className="flex items-center gap-1 text-text-muted">
-                          <Shield className="w-3.5 h-3.5" />
-                          {pkg.safety}
-                        </span>
-                        <span className="text-text-muted">v{pkg.version}</span>
-                      </div>
-
-                      {/* Stats */}
-                      <div className="flex items-center gap-4 mt-4 pt-4 border-t border-glass-border">
-                        <div className="flex items-center gap-1 text-text-muted text-sm">
-                          <Download className="w-4 h-4" />
-                          <span>{pkg.downloads.toLocaleString()}</span>
+                          <span className="text-text-muted">v{pkg.version}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-yellow-500 text-sm">
-                          <Star className="w-4 h-4 fill-current" />
-                          <span>{pkg.rating}</span>
-                          <span className="text-text-muted text-xs">({pkg.reviews})</span>
+
+                        {/* Stats */}
+                        <div className="flex items-center gap-4 mt-4 pt-4 border-t border-glass-border">
+                          <div className="flex items-center gap-1 text-text-muted text-sm">
+                            <Download className="w-4 h-4" />
+                            <span>{formatNumber(pkg.downloads)}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-yellow-500 text-sm">
+                            <Star className="w-4 h-4 fill-current" />
+                            <span>{stars > 0 ? formatNumber(stars) : "—"}</span>
+                            {isLoadingStars && stars === 0 && (
+                              <span className="w-3 h-3 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin" />
+                            )}
+                          </div>
+                          <Link
+                            href={`/mcp-hub/${pkg.id}`}
+                            className="flex items-center gap-1 text-cognitive-cyan text-sm ml-auto hover:underline"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            Details
+                          </Link>
                         </div>
-                        <Link
-                          href={`/mcp-hub/${pkg.id}`}
-                          className="flex items-center gap-1 text-cognitive-cyan text-sm ml-auto hover:underline"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          Details
-                        </Link>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
 
             {filteredPackages.length === 0 && (

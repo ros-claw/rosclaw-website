@@ -1,14 +1,11 @@
 import { McpPackageClient } from "./mcp-package-client";
+import { getAllPackages } from "@/lib/data";
 
 export async function generateStaticParams() {
-  return [
-    { id: 'rosclaw-ur5-mcp' },
-    { id: 'rosclaw-g1-mcp' },
-    { id: 'rosclaw-go2-mcp' },
-    { id: 'rosclaw-franka-mcp' },
-    { id: 'rosclaw-realsense-mcp' },
-    { id: 'rosclaw-turtlebot-mcp' },
-  ];
+  const packages = getAllPackages();
+  return packages.map((pkg) => ({
+    id: pkg.id,
+  }));
 }
 
 interface McpPackagePageProps {
