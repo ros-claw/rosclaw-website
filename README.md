@@ -1,5 +1,7 @@
 # ROSClaw Website
 
+🌐 **English** | [中文](./README.zh.md)
+
 The official website for ROSClaw - The Universal OS for Embodied AI.
 
 ## Phase 1: Hero Section (Complete)
