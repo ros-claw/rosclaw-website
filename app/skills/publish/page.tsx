@@ -192,9 +192,44 @@ export default function PublishSkillPage() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setStep(4);
+
+    try {
+      // Submit to API (with credentials to include session cookie)
+      const res = await fetch('/api/skills', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          name: formData.name,
+          display_name: formData.name,
+          description: formData.description,
+          long_description: formData.description,
+          category: formData.category,
+          version: formData.version,
+          author_name: formData.githubUrl.split('/')[3] || 'Unknown',
+          github_repo_url: formData.githubUrl,
+          robot_types: formData.robotTypes,
+          tags: formData.tags,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || 'Failed to publish skill');
+        setIsSubmitting(false);
+        return;
+      }
+
+      const data = await res.json();
+      console.log('Skill published:', data);
+
+      setIsSubmitting(false);
+      setStep(4);
+    } catch (err) {
+      console.error('Submit error:', err);
+      alert('Failed to publish skill');
+      setIsSubmitting(false);
+    }
   };
 
   const copyToClipboard = (text: string) => {

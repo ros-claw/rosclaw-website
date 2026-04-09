@@ -315,10 +315,11 @@ export default function PublishMcpPackagePage() {
     setIsSubmitting(true);
 
     try {
-      // Submit to API
+      // Submit to API (with credentials to include session cookie)
       const res = await fetch('/api/mcp-packages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name: formData.name,
           description: formData.description,
