@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getSupabaseServer } from "@/lib/supabase/server"
+import { createServerClient } from "@supabase/ssr"
 
 export async function GET(req: NextRequest) {
   const requestUrl = new URL(req.url)
@@ -9,8 +9,38 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${requestUrl.origin}/login?error=no_code`)
   }
 
+  // Create response object to set cookies
+  const response = NextResponse.redirect(requestUrl.origin)
+
+  // Create Supabase client with cookie handling
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name) {
+          return req.cookies.get(name)?.value
+        },
+        set(name, value, options) {
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        },
+        remove(name, options) {
+          response.cookies.set({
+            name,
+            value: "",
+            ...options,
+            maxAge: 0,
+          })
+        },
+      },
+    }
+  )
+
   try {
-    const supabase = getSupabaseServer()
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (error) {
@@ -42,5 +72,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${requestUrl.origin}/login?error=callback_failed`)
   }
 
-  return NextResponse.redirect(requestUrl.origin)
+  // Return response with cookies set
+  return response
 }
