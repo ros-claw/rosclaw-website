@@ -42,7 +42,12 @@ export default function ProfilePage() {
     // Combine database packages with localStorage packages
     const dbPackages = packagesRes.data || [];
     const localPackages = JSON.parse(localStorage.getItem('userMcpPackages') || '[]');
-    setUserPackages([...dbPackages, ...localPackages]);
+    // Ensure each package has the correct sanitized ID for links
+    const normalizedLocalPackages = localPackages.map((pkg: any) => ({
+      ...pkg,
+      id: pkg.id || pkg.name.toLowerCase().replace(/\//g, '-').replace(/[^a-z0-9-]/g, ''),
+    }));
+    setUserPackages([...dbPackages, ...normalizedLocalPackages]);
   };
 
   const handleSignOut = async () => {
@@ -135,7 +140,7 @@ export default function ProfilePage() {
                     className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                   >
                     <div>
-                      <p className="font-medium text-foreground">{pkg.display_name || pkg.displayName || pkg.name}</p>
+                      <p className="font-medium text-foreground">{pkg.name}</p>
                       <p className="text-sm text-text-secondary">{pkg.name}</p>
                     </div>
                     <ExternalLink className="w-4 h-4 text-text-muted" />

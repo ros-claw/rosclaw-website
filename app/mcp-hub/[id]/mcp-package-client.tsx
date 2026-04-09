@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Download, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, FileText, GitBranch, Bot, MessageSquare } from "lucide-react";
+import { Download, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, FileText, GitBranch, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getPackageById, getAgentAdaptations, type McpPackage } from "@/lib/data";
+import { getPackageById, type McpPackage } from "@/lib/data";
 
 interface McpPackageClientProps {
   id: string;
@@ -136,8 +136,10 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
     );
   }
 
-  const installCommand = `rosclaw mcp install ${packageData.name}`;
-  const agentAdaptations = getAgentAdaptations(packageData.name, packageData.githubUrl);
+  // URL-based install commands
+  const installUrl = `https://rosclaw.io/mcp-hub/${id}`;
+  const installCommand = `install mcp ${installUrl}`;
+  const githubInstallCommand = `install mcp from ${packageData.githubUrl}`;
   const stars = githubData?.stars || packageData.stars || 0;
   const readmeContent = githubData?.readme || packageData.description;
 
@@ -301,11 +303,11 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                 animate={{ opacity: 1 }}
                 className="space-y-6"
               >
-                {/* Main Install Command */}
+                {/* Main Install Command - URL based */}
                 <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
                   <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                     <Terminal className="w-4 h-4 text-cognitive-cyan" />
-                    ROSClaw CLI
+                    Install from ROSClaw Registry
                   </h3>
                   <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
                     <code className="flex-1 text-text-secondary">{installCommand}</code>
@@ -317,24 +319,23 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                       {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
                     </button>
                   </div>
+                </div>
 
-                  {/* Agent Adaptations - Directly under main command */}
-                  <div className="mt-4 pt-4 border-t border-glass-border">
-                    <h4 className="text-xs font-medium text-text-muted mb-3 flex items-center gap-2">
-                      <Bot className="w-3.5 h-3.5" />
-                      Agent-specific commands:
-                    </h4>
-                    <div className="space-y-2">
-                      {agentAdaptations.map((adapt) => (
-                        <div key={adapt.agent} className="p-2 rounded bg-black/20 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="text-text-secondary">{adapt.agent}</span>
-                          </div>
-                          <code className="block mt-1 text-cognitive-cyan font-mono text-[10px] truncate">{adapt.command}</code>
-                          <p className="text-[10px] text-text-muted mt-0.5">{adapt.description}</p>
-                        </div>
-                      ))}
-                    </div>
+                {/* Alternative: Install from GitHub */}
+                <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <GitBranch className="w-4 h-4 text-cognitive-cyan" />
+                    Install from GitHub Directly
+                  </h3>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
+                    <code className="flex-1 text-text-secondary">{githubInstallCommand}</code>
+                    <button
+                      onClick={() => handleCopy(githubInstallCommand)}
+                      className="p-1.5 rounded hover:bg-white/10 transition-colors"
+                      title="Copy to clipboard"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
+                    </button>
                   </div>
                 </div>
 
@@ -348,19 +349,6 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                     Simply tell your agent: <em>&quot;Install the {packageData.name} MCP package&quot;</em>
                   </p>
                 </div>
-
-                {/* Runtime Explanation */}
-                <div className="p-4 rounded-lg bg-glass-bg">
-                  <h3 className="text-sm font-semibold text-foreground mb-3">What Happens When You Install?</h3>
-                  <ol className="space-y-2 text-sm text-text-secondary list-decimal list-inside">
-                    <li>Agent parses the install command</li>
-                    <li>Fetches package metadata from ROSClaw registry</li>
-                    <li>Downloads source from GitHub: <code className="text-cognitive-cyan">{packageData.githubUrl}</code></li>
-                    <li>Validates package structure and dependencies</li>
-                    <li>Installs into agent&apos;s MCP tools directory</li>
-                    <li>Registers available tools ({packageData.tools.length} tools)</li>
-                  </ol>
-                </div>
               </motion.div>
             )}
           </div>
@@ -370,15 +358,18 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
             {/* Install Box */}
             <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
               <h3 className="text-sm font-semibold text-foreground mb-3">Install</h3>
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
-                <code className="flex-1 text-text-secondary">{installCommand}</code>
-                <button
-                  onClick={() => handleCopy(installCommand)}
-                  className="p-1.5 rounded hover:bg-white/10 transition-colors"
-                  title="Copy to clipboard"
-                >
-                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
-                </button>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
+                  <code className="flex-1 text-text-secondary text-xs">{installCommand}</code>
+                  <button
+                    onClick={() => handleCopy(installCommand)}
+                    className="p-1.5 rounded hover:bg-white/10 transition-colors"
+                    title="Copy to clipboard"
+                  >
+                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
+                  </button>
+                </div>
+                <p className="text-xs text-text-muted">Or use GitHub URL directly</p>
               </div>
             </div>
 

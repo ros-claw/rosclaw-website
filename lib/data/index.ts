@@ -29,9 +29,41 @@ export function getAllPackages(): McpPackage[] {
   return packagesData.packages;
 }
 
-// Get package by ID
+// Get package by ID (supports both built-in and user-submitted packages)
 export function getPackageById(id: string): McpPackage | undefined {
-  return packagesData.packages.find((p) => p.id === id);
+  // First check built-in packages
+  const builtIn = packagesData.packages.find((p) => p.id === id);
+  if (builtIn) return builtIn;
+
+  // Check user-submitted packages from localStorage (client-side only)
+  if (typeof window !== 'undefined') {
+    try {
+      const pendingPackages = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
+      const userPackage = pendingPackages.find((p: McpPackage) => p.id === id);
+      if (userPackage) return userPackage;
+    } catch (e) {
+      // Ignore localStorage errors
+    }
+  }
+
+  return undefined;
+}
+
+// Get all packages including user-submitted ones
+export function getAllPackagesWithUserSubmitted(): McpPackage[] {
+  const builtIn = packagesData.packages;
+
+  // Add user-submitted packages from localStorage (client-side only)
+  if (typeof window !== 'undefined') {
+    try {
+      const pendingPackages = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
+      return [...builtIn, ...pendingPackages];
+    } catch (e) {
+      // Ignore localStorage errors
+    }
+  }
+
+  return builtIn;
 }
 
 // Get package by name

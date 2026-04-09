@@ -24,7 +24,6 @@ export default function PublishMcpPackagePage() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
-    displayName: "",
     version: "1.0.0",
     description: "",
     category: "",
@@ -61,7 +60,7 @@ export default function PublishMcpPackagePage() {
     { agent: "Generic Agent", command: `Use ROSClaw MCP to install "${name}"` },
   ];
 
-  // Name Help Tooltip Component
+  // Name Help Tooltip Component - simplified
   const NameHelpTooltip = () => (
     <div className="absolute z-50 left-0 top-full mt-2 w-80 p-4 rounded-lg bg-card-bg border border-glass-border shadow-xl">
       <div className="flex items-start justify-between mb-2">
@@ -73,15 +72,7 @@ export default function PublishMcpPackagePage() {
       <div className="space-y-3 text-sm">
         <div>
           <p className="font-medium text-cognitive-cyan">Package Name (Locked)</p>
-          <p className="text-text-secondary">The unique identifier derived from your GitHub repo name. Used in commands like:</p>
-          <code className="block mt-1 p-1.5 rounded bg-black/40 text-xs text-cognitive-cyan font-mono">
-            rosclaw mcp install your-package
-          </code>
-        </div>
-        <div>
-          <p className="font-medium text-cognitive-cyan">Display Name (Editable)</p>
-          <p className="text-text-secondary">Human-friendly name shown in listings. Can include spaces, emoji, and special characters.</p>
-          <p className="text-xs text-text-muted mt-1">Example: &quot;Universal Robots UR5 Driver 🤖&quot;</p>
+          <p className="text-text-secondary">Uses the GitHub owner/repo format (e.g., ros-claw/librealsense-mcp). This is the unique identifier for your package.</p>
         </div>
         <div className="pt-2 border-t border-glass-border">
           <p className="text-text-muted text-xs">
@@ -168,7 +159,7 @@ export default function PublishMcpPackagePage() {
                 Natural Language Alternative
               </h4>
               <p className="text-sm text-text-secondary">
-                Users can also say: <em>&quot;Install the {formData.displayName || formData.name || "package"} MCP package&quot;</em>
+                Users can also say: <em>&quot;Install the {formData.name || "package"} MCP package&quot;</em>
                 and any LLM agent with ROSClaw integration will understand.
               </p>
             </div>
@@ -282,11 +273,14 @@ export default function PublishMcpPackagePage() {
         console.error("LLM analysis failed:", llmError);
       }
 
+      // Generate sanitized ID from full repo path
+      const fullRepoName = `${owner}/${repo}`;
+      const sanitizedId = fullRepoName.toLowerCase().replace(/\//g, '-').replace(/[^a-z0-9-]/g, '');
+
       // Auto-fill all fields
       setFormData({
         ...formData,
-        name: repo,
-        displayName: repoData.full_name || repo,
+        name: fullRepoName,
         description: repoData.description || "",
         readmeMd: readmeContent,
         category: llmAnalysis?.category || "",
@@ -320,11 +314,13 @@ export default function PublishMcpPackagePage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
-    // Create package object
+    // Generate sanitized ID from owner/repo format
+    const sanitizedId = formData.name.toLowerCase().replace(/\//g, '-').replace(/[^a-z0-9-]/g, '');
+
+    // Create package object - use sanitized ID for routing, full name for display
     const newPackage = {
-      id: formData.name,
+      id: sanitizedId,
       name: formData.name,
-      displayName: formData.displayName,
       description: formData.description,
       author: formData.githubUrl.split('/')[3] || 'Unknown',
       authorUrl: `https://github.com/${formData.githubUrl.split('/')[3] || ''}`,
@@ -510,14 +506,14 @@ export default function PublishMcpPackagePage() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="relative">
+              <div>
+                <div className="relative mb-4">
                   <div className="flex items-center gap-2 mb-1">
                     <label className="block text-sm text-text-muted">Package Name (locked)</label>
                     <button
                       onClick={() => setShowNameHelp(!showNameHelp)}
                       className="text-text-muted hover:text-cognitive-cyan transition-colors"
-                      title="What's the difference?"
+                      title="What's this?"
                     >
                       <HelpCircle className="w-4 h-4" />
                     </button>
@@ -527,49 +523,41 @@ export default function PublishMcpPackagePage() {
                     type="text"
                     value={formData.name}
                     disabled
-                    className="w-full px-4 py-2 rounded-lg bg-glass-bg/50 border border-glass-border text-text-muted cursor-not-allowed"
+                    className="w-full px-4 py-2 rounded-lg bg-glass-bg/50 border border-glass-border text-text-muted cursor-not-allowed font-mono"
                   />
                   <p className="text-xs text-text-muted mt-1">
-                    Unique identifier used in commands
+                    Uses owner/repo format from GitHub
                     {nameCheckResult?.available === false && (
                       <span className="text-red-500 ml-2">Name taken - see suggestions above</span>
                     )}
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm text-text-muted mb-1">Display Name</label>
-                  <input
-                    type="text"
-                    value={formData.displayName}
-                    onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
-                  />
-                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm text-text-muted mb-1">Category</label>
+                    <select
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                      className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
+                    >
+                      <option value="">Select category</option>
+                      {predefinedCategories.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
 
-                <div>
-                  <label className="block text-sm text-text-muted mb-1">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
-                  >
-                    <option value="">Select category</option>
-                    {predefinedCategories.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm text-text-muted mb-1">Robot / Hardware</label>
-                  <input
-                    type="text"
-                    value={formData.robotType}
-                    onChange={(e) => setFormData({ ...formData, robotType: e.target.value })}
-                    placeholder="e.g., UR5, Unitree G1"
-                    className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
-                  />
+                  <div>
+                    <label className="block text-sm text-text-muted mb-1">Robot / Hardware</label>
+                    <input
+                      type="text"
+                      value={formData.robotType}
+                      onChange={(e) => setFormData({ ...formData, robotType: e.target.value })}
+                      placeholder="e.g., UR5, Unitree G1"
+                      className="w-full px-4 py-2 rounded-lg bg-glass-bg border border-glass-border text-foreground focus:outline-none focus:border-cognitive-cyan/50"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -758,16 +746,16 @@ export default function PublishMcpPackagePage() {
               Package Published Successfully!
             </h2>
             <p className="text-text-secondary mb-6">
-              Your package <strong>{formData.name}</strong> is now available in the MCP Hub.
+              Your package <strong>{formData.name}</strong> is now available.
             </p>
 
-            {/* Install Command */}
+            {/* Install Command - Simplified URL-based */}
             <div className="max-w-xl mx-auto mb-6">
               <div className="p-4 rounded-lg bg-black/40 border border-glass-border">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-text-muted">Install with one command:</span>
+                  <span className="text-sm text-text-muted">Install from URL:</span>
                   <button
-                    onClick={() => copyToClipboard(generateInstallCommand(formData.name))}
+                    onClick={() => copyToClipboard(`install mcp https://rosclaw.io/mcp-hub/${formData.name.toLowerCase().replace(/\//g, '-')}`)}
                     className="flex items-center gap-1 text-xs text-cognitive-cyan hover:text-cognitive-cyan/80"
                   >
                     {copied ? <CheckCircle className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -775,39 +763,14 @@ export default function PublishMcpPackagePage() {
                   </button>
                 </div>
                 <code className="block p-3 rounded bg-glass-bg text-foreground font-mono text-sm">
-                  {generateInstallCommand(formData.name)}
+                  install mcp https://rosclaw.io/mcp-hub/{formData.name.toLowerCase().replace(/\//g, '-')}
                 </code>
 
-                {/* Agent Adaptations */}
                 <div className="mt-4 pt-4 border-t border-glass-border">
-                  <p className="text-xs text-text-muted mb-2">Also works with other agents:</p>
-                  <div className="space-y-1.5">
-                    {getAgentCommands(formData.name).map((adapt) => (
-                      <div key={adapt.agent} className="flex items-center justify-between text-xs">
-                        <span className="text-text-secondary">{adapt.agent}</span>
-                        <code className="text-cognitive-cyan font-mono">{adapt.command}</code>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Registry Explanation */}
-            <div className="max-w-xl mx-auto mb-8 p-4 rounded-lg bg-glass-bg border border-glass-border">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-cognitive-cyan flex-shrink-0 mt-0.5" />
-                <div className="text-left">
-                  <p className="text-sm font-medium text-foreground mb-1">How agents find this package</p>
-                  <p className="text-xs text-text-secondary">
-                    When you say <span className="text-cognitive-cyan font-mono">"install mcp {formData.name}"</span>,
-                    OpenClaw and other agents query the <strong className="text-foreground">ROSClaw MCP Registry</strong>
-                    at <code className="text-cognitive-cyan">rosclaw.io/mcp-hub/{formData.name}</code>
-                    to get the GitHub repository URL and installation instructions.
-                  </p>
-                  <p className="text-xs text-text-muted mt-2">
-                    Your package is now indexed and searchable in the MCP Hub.
-                  </p>
+                  <p className="text-xs text-text-muted mb-2">Or install from GitHub directly:</p>
+                  <code className="block p-2 rounded bg-black/40 text-xs text-cognitive-cyan font-mono">
+                    install mcp from {formData.githubUrl}
+                  </code>
                 </div>
               </div>
             </div>
@@ -820,7 +783,7 @@ export default function PublishMcpPackagePage() {
                 Browse Packages
               </Link>
               <Link
-                href={`/mcp-hub/${formData.name}`}
+                href={`/mcp-hub/${formData.name.toLowerCase().replace(/\//g, '-')}`}
                 className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all"
               >
                 View Package
