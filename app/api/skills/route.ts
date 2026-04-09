@@ -53,3 +53,166 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch skills" }, { status: 500 })
   }
 }
+
+// POST /api/skills - Create a new skill
+export async function POST(req: NextRequest) {
+  try {
+    const supabase = getSupabaseServer()
+    const body = await req.json()
+
+    // Validate required fields
+    const required = ["name", "display_name", "description", "author_name"]
+    for (const field of required) {
+      if (!body[field]) {
+        return NextResponse.json(
+          { error: `Missing required field: ${field}` },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Check for API key authentication
+    const apiKey = req.headers.get("x-api-key")
+    let userId = null
+
+    if (apiKey) {
+      if (apiKey !== process.env.ADMIN_API_KEY) {
+        return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
+      }
+      body.status = "approved"
+    } else {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session) {
+        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+      }
+      userId = session.user.id
+      body.status = "pending"
+    }
+
+    // Check if skill name already exists
+    const { data: existing } = await supabase
+      .from("skills")
+      .select("name")
+      .eq("name", body.name)
+      .single()
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "Skill with this name already exists" },
+        { status: 409 }
+      )
+    }
+
+    // Insert new skill
+    const { data, error } = await supabase
+      .from("skills")
+      .insert({
+        name: body.name,
+        display_name: body.display_name,
+        description: body.description,
+        long_description: body.long_description,
+        category: body.category,
+        version: body.version || "1.0.0",
+        author_user_id: userId,
+        author_name: body.author_name,
+        author_url: body.author_url,
+        github_repo_url: body.github_repo_url,
+        robot_types: body.robot_types || [],
+        tags: body.tags || [],
+        compatible_robots: body.compatible_robots || [],
+        dependencies: body.dependencies || [],
+        status: body.status,
+        icon_url: body.icon_url,
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Supabase insert error:", error)
+      return NextResponse.json(
+        { error: "Failed to create skill" },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      id: data.id,
+      name: data.name,
+      display_name: data.display_name,
+      status: data.status,
+      message: "Skill created successfully",
+    }, { status: 201 })
+
+  } catch (err: any) {
+    console.error("Skills POST error:", err.message)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE /api/skills?id=xxx - Delete a skill
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get("id")
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Skill ID required" },
+        { status: 400 }
+      )
+    }
+
+    const supabase = getSupabaseServer()
+
+    const apiKey = req.headers.get("x-api-key")
+    let userId = null
+
+    if (apiKey && apiKey === process.env.ADMIN_API_KEY) {
+      // Admin can delete any skill
+    } else {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session) {
+        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+      }
+      userId = session.user.id
+
+      const { data: skill } = await supabase
+        .from("skills")
+        .select("author_user_id")
+        .eq("id", id)
+        .single()
+
+      if (!skill || skill.author_user_id !== userId) {
+        return NextResponse.json(
+          { error: "You can only delete your own skills" },
+          { status: 403 }
+        )
+      }
+    }
+
+    const { error } = await supabase
+      .from("skills")
+      .delete()
+      .eq("id", id)
+
+    if (error) {
+      console.error("Delete error:", error)
+      return NextResponse.json(
+        { error: "Failed to delete skill" },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ message: "Skill deleted successfully" })
+
+  } catch (err: any) {
+    console.error("Skills DELETE error:", err.message)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}

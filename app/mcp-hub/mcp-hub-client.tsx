@@ -1,16 +1,33 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Filter, Download, Star, Terminal, Cpu, Shield, ExternalLink, Github } from "lucide-react";
+import { Search, Filter, Download, Star, Terminal, Cpu, ExternalLink, Github, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
-import { getAllPackages, filterPackages, getCategories, type McpPackage } from "@/lib/data";
+import { useState, useEffect } from "react";
+import { getSupabaseClient } from "@/lib/supabase/client";
+
+interface McpPackage {
+  id: string;
+  name: string;
+  description: string;
+  authorName: string;
+  author_user_id?: string;
+  githubRepoUrl: string;
+  verified: boolean;
+  isOfficial?: boolean;
+  category: string;
+  robotType: string;
+  version: string;
+  downloadsCount: number;
+  rating: number;
+  tags: string[];
+  tools: { name: string; description: string }[];
+}
 
 // GitHub API cache
 const githubCache: Record<string, { stars: number; updatedAt: string }> = {};
 
 async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; updatedAt: string }> {
-  // Check cache first
   if (githubCache[githubUrl]) {
     return githubCache[githubUrl];
   }
@@ -34,7 +51,6 @@ async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; upda
       updatedAt: data.updated_at || "",
     };
 
-    // Cache result
     githubCache[githubUrl] = result;
     return result;
   } catch {
@@ -42,117 +58,110 @@ async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; upda
   }
 }
 
-// Load user-submitted packages from localStorage
-function getUserSubmittedPackages(): McpPackage[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const pending = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
-    return pending;
-  } catch {
-    return [];
-  }
-}
+const categories = [
+  { id: "all", name: "All Packages" },
+  { id: "manipulators", name: "Manipulators" },
+  { id: "humanoids", name: "Humanoids" },
+  { id: "mobile", name: "Mobile Bases" },
+  { id: "sensors", name: "Sensors" },
+  { id: "grippers", name: "Grippers" },
+  { id: "cameras", name: "Cameras" },
+];
 
 export function McpHubClient() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [packages, setPackages] = useState<McpPackage[]>([]);
   const [githubData, setGithubData] = useState<Record<string, { stars: number; updatedAt: string }>>({});
-  const [isLoadingStars, setIsLoadingStars] = useState(false);
-  const [userPackages, setUserPackages] = useState<McpPackage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // Load user packages on client side
+  // Load packages from API
   useEffect(() => {
-    setUserPackages(getUserSubmittedPackages());
+    async function loadPackages() {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/mcp-packages?category=${activeCategory}&search=${searchQuery}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPackages(data);
+        }
+      } catch (err) {
+        console.error("Failed to load packages:", err);
+      }
+      setIsLoading(false);
+    }
+
+    loadPackages();
+  }, [activeCategory, searchQuery]);
+
+  // Get current user
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUserId(session?.user?.id || null);
+    });
   }, []);
 
-  const allPackages = useMemo(() => {
-    const builtIn = getAllPackages();
-    return [...builtIn, ...userPackages];
-  }, [userPackages]);
-
-  const categories = useMemo(() => {
-    const cats = getCategories();
-    // Update counts to include user packages
-    return cats.map((cat) => ({
-      ...cat,
-      count:
-        cat.id === "all"
-          ? allPackages.length
-          : allPackages.filter(
-              (p) => p.category.toLowerCase().replace(/\s+/g, "-") === cat.id
-            ).length,
-    }));
-  }, [allPackages]);
-
-  const filteredPackages = useMemo(() => {
-    return allPackages.filter((pkg) => {
-      const matchesCategory =
-        activeCategory === "all" ||
-        pkg.category.toLowerCase().replace(/\s+/g, "-") === activeCategory;
-      const matchesSearch =
-        !searchQuery ||
-        pkg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.tags.some((tag: string) =>
-          tag.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      return matchesCategory && matchesSearch;
-    });
-  }, [activeCategory, searchQuery, allPackages]);
-
-  // Fetch GitHub stars when packages change
+  // Fetch GitHub stars
   useEffect(() => {
     let isMounted = true;
 
     async function fetchStars() {
-      setIsLoadingStars(true);
-      const newData: Record<string, { stars: number; updatedAt: string }> = {};
-
-      // Fetch in batches to avoid rate limiting
       const batchSize = 3;
-      for (let i = 0; i < filteredPackages.length; i += batchSize) {
+      for (let i = 0; i < packages.length; i += batchSize) {
         if (!isMounted) break;
 
-        const batch = filteredPackages.slice(i, i + batchSize);
-        const batchResults = await Promise.all(
+        const batch = packages.slice(i, i + batchSize);
+        const results = await Promise.all(
           batch.map(async (pkg) => {
-            const data = await fetchGitHubData(pkg.githubUrl);
+            const data = await fetchGitHubData(pkg.githubRepoUrl);
             return { id: pkg.id, data };
           })
         );
 
-        batchResults.forEach(({ id, data }) => {
-          newData[id] = data;
+        setGithubData((prev) => {
+          const newData = { ...prev };
+          results.forEach(({ id, data }) => {
+            newData[id] = data;
+          });
+          return newData;
         });
 
-        // Update state incrementally
-        setGithubData((prev) => ({ ...prev, ...newData }));
-
-        // Small delay between batches
-        if (i + batchSize < filteredPackages.length) {
+        if (i + batchSize < packages.length) {
           await new Promise((resolve) => setTimeout(resolve, 500));
         }
       }
-
-      setIsLoadingStars(false);
     }
 
-    fetchStars();
+    if (packages.length > 0) {
+      fetchStars();
+    }
 
     return () => {
       isMounted = false;
     };
-  }, [filteredPackages]);
+  }, [packages]);
 
-  // Format date
-  function formatDate(dateStr: string): string {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+  // Delete package
+  async function handleDelete(pkgId: string) {
+    if (!confirm("Are you sure you want to delete this package?")) return;
+
+    try {
+      const res = await fetch(`/api/mcp-packages?id=${pkgId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setPackages((prev) => prev.filter((p) => p.id !== pkgId));
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to delete package");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("Failed to delete package");
+    }
   }
 
   // Format number
@@ -161,6 +170,16 @@ export function McpHubClient() {
     if (num >= 1000) return (num / 1000).toFixed(1) + "k";
     return num.toString();
   }
+
+  const categoryCounts = categories.map((cat) => ({
+    ...cat,
+    count:
+      cat.id === "all"
+        ? packages.length
+        : packages.filter(
+            (p) => p.category?.toLowerCase().replace(/\s+/g, "-") === cat.id
+          ).length,
+  }));
 
   return (
     <div className="min-h-screen bg-background pt-16">
@@ -209,7 +228,7 @@ export function McpHubClient() {
                   Categories
                 </h3>
                 <div className="space-y-1">
-                  {categories.map((cat) => (
+                  {categoryCounts.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => setActiveCategory(cat.id)}
@@ -246,95 +265,118 @@ export function McpHubClient() {
 
           {/* Packages Grid */}
           <div className="lg:col-span-3">
-            <div className="grid md:grid-cols-2 gap-4">
-              {filteredPackages.map((pkg) => {
-                const ghData = githubData[pkg.id];
-                const stars = ghData?.stars || pkg.stars || 0;
-
-                return (
-                  <motion.div
-                    key={pkg.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="group p-5 rounded-xl bg-card-bg border border-glass-border hover:border-cognitive-cyan/30 transition-all"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate font-mono text-sm">
-                            <Link href={`/mcp-hub/${pkg.id}`}>{pkg.name}</Link>
-                          </h3>
-                          {pkg.isOfficial ? (
-                            <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium">
-                              Official
-                            </span>
-                          ) : (
-                            <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-[10px] font-medium">
-                              Community
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-text-secondary mt-1">{pkg.author}</p>
-                        <p className="text-sm text-text-muted mt-2 line-clamp-2">{pkg.description}</p>
-
-                        {/* Tags */}
-                        <div className="flex flex-wrap gap-1.5 mt-2">
-                          {pkg.tags.slice(0, 3).map((tag) => (
-                            <span
-                              key={tag}
-                              className="px-1.5 py-0.5 rounded bg-glass-bg text-[10px] text-text-muted"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                          {pkg.tags.length > 3 && (
-                            <span className="px-1.5 py-0.5 rounded bg-glass-bg text-[10px] text-text-muted">
-                              +{pkg.tags.length - 3}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Meta */}
-                        <div className="flex flex-wrap items-center gap-3 mt-3 text-xs">
-                          <span className="flex items-center gap-1 text-text-muted">
-                            <Cpu className="w-3.5 h-3.5" />
-                            {pkg.robotType}
-                          </span>
-                          <span className="text-text-muted">v{pkg.version}</span>
-                        </div>
-
-                        {/* Stats */}
-                        <div className="flex items-center gap-4 mt-4 pt-4 border-t border-glass-border">
-                          <div className="flex items-center gap-1 text-text-muted text-sm">
-                            <Download className="w-4 h-4" />
-                            <span>{formatNumber(pkg.downloads)}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-yellow-500 text-sm">
-                            <Star className="w-4 h-4 fill-current" />
-                            <span>{stars > 0 ? formatNumber(stars) : "—"}</span>
-                            {isLoadingStars && stars === 0 && (
-                              <span className="w-3 h-3 border-2 border-yellow-500/30 border-t-yellow-500 rounded-full animate-spin" />
-                            )}
-                          </div>
-                          <Link
-                            href={`/mcp-hub/${pkg.id}`}
-                            className="flex items-center gap-1 text-cognitive-cyan text-sm ml-auto hover:underline"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                            Details
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {filteredPackages.length === 0 && (
+            {isLoading ? (
               <div className="text-center py-12">
-                <p className="text-text-muted">No packages found matching your criteria.</p>
+                <div className="w-8 h-8 border-2 border-cognitive-cyan/30 border-t-cognitive-cyan rounded-full animate-spin mx-auto" />
+                <p className="text-text-muted mt-4">Loading packages...</p>
               </div>
+            ) : (
+              <>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {packages.map((pkg) => {
+                    const ghData = githubData[pkg.id];
+                    const stars = ghData?.stars || 0;
+                    const canDelete = currentUserId && pkg.author_user_id === currentUserId;
+
+                    return (
+                      <motion.div
+                        key={pkg.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="group p-5 rounded-xl bg-card-bg border border-glass-border hover:border-cognitive-cyan/30 transition-all"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate font-mono text-sm">
+                                <Link href={`/mcp-hub/${pkg.id}`}>{pkg.name}</Link>
+                              </h3>
+                              {pkg.verified ? (
+                                <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium">
+                                  Official
+                                </span>
+                              ) : (
+                                <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-[10px] font-medium">
+                                  Community
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-text-secondary mt-1">{pkg.authorName}</p>
+                            <p className="text-sm text-text-muted mt-2 line-clamp-2">{pkg.description}</p>
+
+                            {/* Tags */}
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {pkg.tags?.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-1.5 py-0.5 rounded bg-glass-bg text-[10px] text-text-muted"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                              {pkg.tags && pkg.tags.length > 3 && (
+                                <span className="px-1.5 py-0.5 rounded bg-glass-bg text-[10px] text-text-muted">
+                                  +{pkg.tags.length - 3}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Meta */}
+                            <div className="flex flex-wrap items-center gap-3 mt-3 text-xs">
+                              <span className="flex items-center gap-1 text-text-muted">
+                                <Cpu className="w-3.5 h-3.5" />
+                                {pkg.robotType || "Universal"}
+                              </span>
+                              <span className="text-text-muted">v{pkg.version}</span>
+                            </div>
+
+                            {/* Stats */}
+                            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-glass-border">
+                              <div className="flex items-center gap-1 text-text-muted text-sm">
+                                <Download className="w-4 h-4" />
+                                <span>{formatNumber(pkg.downloadsCount)}</span>
+                              </div>
+                              <div className="flex items-center gap-1 text-yellow-500 text-sm">
+                                <Star className="w-4 h-4 fill-current" />
+                                <span>{stars > 0 ? formatNumber(stars) : "—"}</span>
+                              </div>
+                              <Link
+                                href={`/mcp-hub/${pkg.id}`}
+                                className="flex items-center gap-1 text-cognitive-cyan text-sm ml-auto hover:underline"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                                Details
+                              </Link>
+                              {canDelete && (
+                                <button
+                                  onClick={() => handleDelete(pkg.id)}
+                                  className="p-1.5 rounded text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                                  title="Delete package"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {packages.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-text-muted">No packages found matching your criteria.</p>
+                    <Link
+                      href="/mcp-hub/publish"
+                      className="inline-flex items-center gap-2 mt-4 text-cognitive-cyan hover:underline"
+                    >
+                      <Terminal className="w-4 h-4" />
+                      Be the first to publish a package
+                    </Link>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

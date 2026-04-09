@@ -24,57 +24,33 @@ export interface McpPackage {
   tools: McpTool[];
 }
 
-// Get all packages
+// Get all packages from local JSON (legacy - now empty)
 export function getAllPackages(): McpPackage[] {
-  return packagesData.packages;
+  return (packagesData.packages || []) as McpPackage[];
 }
 
-// Get package by ID (supports both built-in and user-submitted packages)
+// Get package by ID (legacy - now uses API)
 export function getPackageById(id: string): McpPackage | undefined {
-  // First check built-in packages
-  const builtIn = packagesData.packages.find((p) => p.id === id);
-  if (builtIn) return builtIn;
-
-  // Check user-submitted packages from localStorage (client-side only)
-  if (typeof window !== 'undefined') {
-    try {
-      const pendingPackages = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
-      const userPackage = pendingPackages.find((p: McpPackage) => p.id === id);
-      if (userPackage) return userPackage;
-    } catch (e) {
-      // Ignore localStorage errors
-    }
-  }
-
-  return undefined;
+  const packages = (packagesData.packages || []) as McpPackage[];
+  return packages.find((p: McpPackage) => p.id === id);
 }
 
-// Get all packages including user-submitted ones
+// Get all packages including user-submitted ones (legacy)
 export function getAllPackagesWithUserSubmitted(): McpPackage[] {
-  const builtIn = packagesData.packages;
-
-  // Add user-submitted packages from localStorage (client-side only)
-  if (typeof window !== 'undefined') {
-    try {
-      const pendingPackages = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
-      return [...builtIn, ...pendingPackages];
-    } catch (e) {
-      // Ignore localStorage errors
-    }
-  }
-
-  return builtIn;
+  return (packagesData.packages || []) as McpPackage[];
 }
 
-// Get package by name
+// Get package by name (legacy)
 export function getPackageByName(name: string): McpPackage | undefined {
-  return packagesData.packages.find((p) => p.name === name);
+  const packages = (packagesData.packages || []) as McpPackage[];
+  return packages.find((p: McpPackage) => p.name === name);
 }
 
-// Check if package name exists
+// Check if package name exists (legacy - always returns false now)
 export function packageNameExists(name: string): boolean {
-  return packagesData.packages.some(
-    (p) => p.name.toLowerCase() === name.toLowerCase()
+  const packages = (packagesData.packages || []) as McpPackage[];
+  return packages.some(
+    (p: McpPackage) => p.name.toLowerCase() === name.toLowerCase()
   );
 }
 
@@ -90,23 +66,26 @@ export function getCategories(): { id: string; name: string; count: number }[] {
     { id: "cameras", name: "Cameras" },
   ];
 
+  const packages = (packagesData.packages || []) as McpPackage[];
+
   return categories.map((cat) => ({
     ...cat,
     count:
       cat.id === "all"
-        ? packagesData.packages.length
-        : packagesData.packages.filter(
-            (p) => p.category.toLowerCase() === cat.name.toLowerCase()
+        ? packages.length
+        : packages.filter(
+            (p: McpPackage) => p.category.toLowerCase() === cat.name.toLowerCase()
           ).length,
   }));
 }
 
-// Filter packages
+// Filter packages (legacy)
 export function filterPackages(
   category: string,
   searchQuery: string
 ): McpPackage[] {
-  return packagesData.packages.filter((pkg) => {
+  const packages = (packagesData.packages || []) as McpPackage[];
+  return packages.filter((pkg: McpPackage) => {
     const matchesCategory =
       category === "all" ||
       pkg.category.toLowerCase().replace(/\s+/g, "-") === category;
@@ -114,7 +93,7 @@ export function filterPackages(
       !searchQuery ||
       pkg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pkg.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pkg.tags.some((tag) =>
+      pkg.tags.some((tag: string) =>
         tag.toLowerCase().includes(searchQuery.toLowerCase())
       );
     return matchesCategory && matchesSearch;

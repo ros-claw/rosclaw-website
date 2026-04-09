@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1775639275161,
+  "updatedAt": 1775716748229,
   "nodeCount": 8,
   "nodes": {
     "mem-MEMORY-project-knowledge": {
@@ -41,8 +41,8 @@
     "mem-security-fixes-2026-04-05------": {
       "id": "mem-security-fixes-2026-04-05------",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.5,
-      "accessCount": 0,
+      "confidence": 0.53,
+      "accessCount": 1,
       "createdAt": 1775544485681
     },
     "mem-security-fixes-2026-04-05----source-map-----": {

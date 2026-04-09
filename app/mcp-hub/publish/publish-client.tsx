@@ -314,47 +314,43 @@ export default function PublishMcpPackagePage() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
-    // Generate sanitized ID from owner/repo format
-    const sanitizedId = formData.name.toLowerCase().replace(/\//g, '-').replace(/[^a-z0-9-]/g, '');
-
-    // Create package object - use sanitized ID for routing, full name for display
-    const newPackage = {
-      id: sanitizedId,
-      name: formData.name,
-      description: formData.description,
-      author: formData.githubUrl.split('/')[3] || 'Unknown',
-      authorUrl: `https://github.com/${formData.githubUrl.split('/')[3] || ''}`,
-      githubUrl: formData.githubUrl,
-      verified: false,
-      isOfficial: formData.isOfficial,
-      category: formData.category,
-      robotType: formData.robotType,
-      version: formData.version,
-      updatedAt: new Date().toISOString().split('T')[0],
-      stars: 0,
-      downloads: 0,
-      tags: formData.tags,
-      tools: formData.tools,
-    };
-
-    // Save to localStorage (user's submitted packages)
     try {
-      const existing = JSON.parse(localStorage.getItem('userMcpPackages') || '[]');
-      existing.push(newPackage);
-      localStorage.setItem('userMcpPackages', JSON.stringify(existing));
+      // Submit to API
+      const res = await fetch('/api/mcp-packages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description,
+          long_description: formData.description,
+          category: formData.category,
+          version: formData.version,
+          author_name: formData.githubUrl.split('/')[3] || 'Unknown',
+          github_repo_url: formData.githubUrl,
+          robot_type: formData.robotType,
+          tags: formData.tags,
+          tools: formData.tools,
+        }),
+      });
 
-      // Also save to a "pending" list that can be shown in MCP Hub
-      const pending = JSON.parse(localStorage.getItem('pendingMcpPackages') || '[]');
-      pending.push(newPackage);
-      localStorage.setItem('pendingMcpPackages', JSON.stringify(pending));
-    } catch (e) {
-      console.error('Failed to save package:', e);
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || 'Failed to publish package');
+        setIsSubmitting(false);
+        return;
+      }
+
+      const data = await res.json();
+      console.log('Package published:', data);
+
+      setIsSubmitting(false);
+      setShowInstallCommand(true);
+      setStep(4);
+    } catch (err) {
+      console.error('Submit error:', err);
+      alert('Failed to publish package');
+      setIsSubmitting(false);
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-    setShowInstallCommand(true);
-    setStep(4);
   };
 
   const copyToClipboard = (text: string) => {
