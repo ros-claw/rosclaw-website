@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, Github, LogOut, Package, Wrench, ExternalLink } from "lucide-react";
+import { User, Github, LogOut, Package, Wrench, ExternalLink, Trash2 } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 export default function ProfilePage() {
@@ -38,16 +38,47 @@ export default function ProfilePage() {
     ]);
 
     if (skillsRes.data) setUserSkills(skillsRes.data);
+    if (packagesRes.data) setUserPackages(packagesRes.data);
+  };
 
-    // Combine database packages with localStorage packages
-    const dbPackages = packagesRes.data || [];
-    const localPackages = JSON.parse(localStorage.getItem('userMcpPackages') || '[]');
-    // Ensure each package has the correct sanitized ID for links
-    const normalizedLocalPackages = localPackages.map((pkg: any) => ({
-      ...pkg,
-      id: pkg.id || pkg.name.toLowerCase().replace(/\//g, '-').replace(/[^a-z0-9-]/g, ''),
-    }));
-    setUserPackages([...dbPackages, ...normalizedLocalPackages]);
+  const handleDeletePackage = async (pkgId: string) => {
+    if (!confirm("Are you sure you want to delete this package?")) return;
+
+    try {
+      const res = await fetch(`/api/mcp-packages?id=${pkgId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setUserPackages((prev) => prev.filter((p) => p.id !== pkgId));
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to delete package");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("Failed to delete package");
+    }
+  };
+
+  const handleDeleteSkill = async (skillId: string) => {
+    if (!confirm("Are you sure you want to delete this skill?")) return;
+
+    try {
+      const res = await fetch(`/api/skills?id=${skillId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setUserSkills((prev) => prev.filter((s) => s.id !== skillId));
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to delete skill");
+      }
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert("Failed to delete skill");
+    }
   };
 
   const handleSignOut = async () => {
@@ -128,23 +159,85 @@ export default function ProfilePage() {
             </div>
           </div>
 
+          {/* User's Skills */}
+          {userSkills.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-lg font-semibold text-foreground mb-4">Your Skills</h2>
+              <div className="space-y-3">
+                {userSkills.map((skill) => (
+                  <div
+                    key={skill.id}
+                    className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                  >
+                    <a
+                      href={`/skills/${skill.id}`}
+                      className="flex-1"
+                    >
+                      <p className="font-medium text-foreground">{skill.display_name || skill.name}</p>
+                      <p className="text-sm text-text-secondary">{skill.name}</p>
+                    </a>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        skill.status === 'approved'
+                          ? 'bg-green-500/10 text-green-500'
+                          : 'bg-yellow-500/10 text-yellow-500'
+                      }`}>
+                        {skill.status}
+                      </span>
+                      <button
+                        onClick={() => handleDeleteSkill(skill.id)}
+                        className="p-2 rounded text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                        title="Delete skill"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <a href={`/skills/${skill.id}`}>
+                        <ExternalLink className="w-4 h-4 text-text-muted" />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* User's Packages */}
           {userPackages.length > 0 && (
             <div className="mb-8">
               <h2 className="text-lg font-semibold text-foreground mb-4">Your MCP Packages</h2>
               <div className="space-y-3">
                 {userPackages.map((pkg) => (
-                  <a
-                    key={pkg.id || pkg.name}
-                    href={`/mcp-hub/${pkg.id || pkg.name}`}
+                  <div
+                    key={pkg.id}
                     className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                   >
-                    <div>
+                    <a
+                      href={`/mcp-hub/${pkg.id}`}
+                      className="flex-1"
+                    >
                       <p className="font-medium text-foreground">{pkg.name}</p>
-                      <p className="text-sm text-text-secondary">{pkg.name}</p>
+                      <p className="text-sm text-text-secondary">{pkg.category}</p>
+                    </a>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        pkg.status === 'approved'
+                          ? 'bg-green-500/10 text-green-500'
+                          : 'bg-yellow-500/10 text-yellow-500'
+                      }`}>
+                        {pkg.status}
+                      </span>
+                      <button
+                        onClick={() => handleDeletePackage(pkg.id)}
+                        className="p-2 rounded text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                        title="Delete package"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                      <a href={`/mcp-hub/${pkg.id}`}>
+                        <ExternalLink className="w-4 h-4 text-text-muted" />
+                      </a>
                     </div>
-                    <ExternalLink className="w-4 h-4 text-text-muted" />
-                  </a>
+                  </div>
                 ))}
               </div>
             </div>

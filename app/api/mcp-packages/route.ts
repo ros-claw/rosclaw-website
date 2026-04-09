@@ -75,15 +75,27 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check for API key authentication (required)
+    // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")
+    let userId: string | null = null
+    let isApiKeyAuth = false
 
-    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
-      return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 })
+    if (apiKey) {
+      // API key authentication (for external integrations)
+      if (apiKey !== process.env.ADMIN_API_KEY) {
+        return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
+      }
+      isApiKeyAuth = true
+      body.status = "approved"  // API key creates approved packages
+    } else {
+      // Session authentication (for web users)
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session) {
+        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+      }
+      userId = session.user.id
+      body.status = "pending"  // Web users create pending packages
     }
-
-    // API key auth auto-approves the package
-    body.status = "approved"
 
     // Check if package name already exists
     const { data: existing } = await supabase
@@ -99,7 +111,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Insert new package (no author_user_id for API-created packages)
+    // Insert new package
     const { data, error } = await supabase
       .from("mcp_packages")
       .insert({
@@ -108,13 +120,14 @@ export async function POST(req: NextRequest) {
         long_description: body.long_description,
         category: body.category,
         version: body.version || "1.0.0",
+        author_user_id: userId,
         author_name: body.author_name,
         github_repo_url: body.github_repo_url,
         robot_type: body.robot_type,
         tags: body.tags || [],
         tools: body.tools || [],
-        status: "approved",
-        is_verified: false,
+        status: body.status,
+        is_verified: isApiKeyAuth,  // API key creates verified packages
       })
       .select()
       .single()
@@ -144,7 +157,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// DELETE /api/mcp-packages?id=xxx - Delete a package (API key only)
+// DELETE /api/mcp-packages?id=xxx - Delete a package
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -157,13 +170,39 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    // Check API key authentication (required)
-    const apiKey = req.headers.get("x-api-key")
-    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
-      return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 })
-    }
-
     const supabase = getSupabaseServer()
+
+    // Check API key or session authentication
+    const apiKey = req.headers.get("x-api-key")
+    let userId: string | null = null
+
+    if (apiKey) {
+      // API key authentication - can delete any package
+      if (apiKey !== process.env.ADMIN_API_KEY) {
+        return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
+      }
+    } else {
+      // Session authentication - can only delete own packages
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError || !session) {
+        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+      }
+      userId = session.user.id
+
+      // Check if user owns this package
+      const { data: pkg } = await supabase
+        .from("mcp_packages")
+        .select("author_user_id")
+        .eq("id", id)
+        .single()
+
+      if (!pkg || pkg.author_user_id !== userId) {
+        return NextResponse.json(
+          { error: "You can only delete your own packages" },
+          { status: 403 }
+        )
+      }
+    }
 
     const { error } = await supabase
       .from("mcp_packages")
