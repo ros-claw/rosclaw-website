@@ -205,9 +205,9 @@
       "content": "curl http://localhost:3000/_next/static/chunks/main.js.map",
       "summary": "检查 source map 是否禁用",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.53,
+      "confidence": 0.56,
       "pageRank": 0.19711858363020157,
-      "accessCount": 1,
+      "accessCount": 2,
       "words": [
         "curl",
         "http",
