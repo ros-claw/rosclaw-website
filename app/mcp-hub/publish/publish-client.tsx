@@ -750,9 +750,9 @@ export default function PublishMcpPackagePage() {
             <div className="max-w-xl mx-auto mb-6">
               <div className="p-4 rounded-lg bg-black/40 border border-glass-border">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-text-muted">Install from URL:</span>
+                  <span className="text-sm text-text-muted">Install command:</span>
                   <button
-                    onClick={() => copyToClipboard(`install mcp https://rosclaw.io/mcp-hub/${formData.name.toLowerCase().replace(/\//g, '-')}`)}
+                    onClick={() => copyToClipboard(`rosclaw install mcp ${formData.name}`)}
                     className="flex items-center gap-1 text-xs text-cognitive-cyan hover:text-cognitive-cyan/80"
                   >
                     {copied ? <CheckCircle className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
@@ -760,13 +760,13 @@ export default function PublishMcpPackagePage() {
                   </button>
                 </div>
                 <code className="block p-3 rounded bg-glass-bg text-foreground font-mono text-sm">
-                  install mcp https://rosclaw.io/mcp-hub/{formData.name.toLowerCase().replace(/\//g, '-')}
+                  rosclaw install mcp {formData.name}
                 </code>
 
                 <div className="mt-4 pt-4 border-t border-glass-border">
                   <p className="text-xs text-text-muted mb-2">Or install from GitHub directly:</p>
                   <code className="block p-2 rounded bg-black/40 text-xs text-cognitive-cyan font-mono">
-                    install mcp from {formData.githubUrl}
+                    rosclaw install mcp from {formData.githubUrl}
                   </code>
                 </div>
               </div>
