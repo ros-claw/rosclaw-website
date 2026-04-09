@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Package, ExternalLink, Loader2 } from "lucide-react";
+import { CheckCircle, XCircle, Package, ExternalLink, Loader2, Lock } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 interface PendingPackage {
@@ -22,17 +21,35 @@ interface PendingPackage {
 }
 
 export default function AdminMcpPage() {
-  const router = useRouter();
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+
   const [packages, setPackages] = useState<PendingPackage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [processing, setProcessing] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPendingPackages();
-  }, []);
+    if (authenticated) {
+      fetchPendingPackages();
+    }
+  }, [authenticated]);
+
+  const handleAuth = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Check against ADMIN_API_KEY from env (injected at build time)
+    const adminKey = process.env.NEXT_PUBLIC_ADMIN_KEY || "";
+    if (password === adminKey && adminKey !== "") {
+      setAuthenticated(true);
+      setAuthError("");
+    } else {
+      setAuthError("Invalid password");
+    }
+  };
 
   const fetchPendingPackages = async () => {
+    setLoading(true);
     try {
       const supabase = getSupabaseClient();
       const { data, error } = await supabase
@@ -88,14 +105,56 @@ export default function AdminMcpPage() {
     }
   };
 
-  if (loading) {
+  // Auth screen
+  if (!authenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-cognitive-cyan" />
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <div className="glass rounded-2xl p-8 border border-white/10">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-cognitive-cyan/10 flex items-center justify-center">
+                <Lock className="w-8 h-8 text-cognitive-cyan" />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground">Admin Access</h1>
+              <p className="text-text-secondary mt-2">Enter admin password to continue</p>
+            </div>
+
+            <form onSubmit={handleAuth} className="space-y-4">
+              <div>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Admin password"
+                  className="w-full px-4 py-3 rounded-lg bg-black/40 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50"
+                  autoFocus
+                />
+              </div>
+
+              {authError && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                  {authError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full px-4 py-3 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all"
+              >
+                Access Admin Panel
+              </button>
+            </form>
+          </div>
+        </motion.div>
       </div>
     );
   }
 
+  // Main content
   return (
     <div className="min-h-screen bg-background pt-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
@@ -115,8 +174,16 @@ export default function AdminMcpPage() {
                 Review and approve pending MCP packages
               </p>
             </div>
-            <div className="text-sm text-text-muted">
-              {packages.length} pending
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-text-muted">
+                {packages.length} pending
+              </span>
+              <button
+                onClick={() => setAuthenticated(false)}
+                className="text-sm text-text-muted hover:text-foreground"
+              >
+                Logout
+              </button>
             </div>
           </div>
 
@@ -126,7 +193,11 @@ export default function AdminMcpPage() {
             </div>
           )}
 
-          {packages.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-cognitive-cyan" />
+            </div>
+          ) : packages.length === 0 ? (
             <div className="text-center py-12 text-text-muted">
               <Package className="w-12 h-12 mx-auto mb-4 opacity-50" />
               <p>No pending packages to review</p>
