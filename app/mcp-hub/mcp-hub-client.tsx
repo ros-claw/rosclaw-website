@@ -1,10 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Filter, Download, Star, Terminal, Cpu, ExternalLink, Github, Trash2 } from "lucide-react";
+import { Search, Filter, Download, Star, Terminal, Cpu, ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getSupabaseClient } from "@/lib/supabase/client";
 
 interface McpPackage {
   id: string;
@@ -74,8 +73,6 @@ export function McpHubClient() {
   const [packages, setPackages] = useState<McpPackage[]>([]);
   const [githubData, setGithubData] = useState<Record<string, { stars: number; updatedAt: string }>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-
   // Load packages from API
   useEffect(() => {
     async function loadPackages() {
@@ -94,14 +91,6 @@ export function McpHubClient() {
 
     loadPackages();
   }, [activeCategory, searchQuery]);
-
-  // Get current user
-  useEffect(() => {
-    const supabase = getSupabaseClient();
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setCurrentUserId(session?.user?.id || null);
-    });
-  }, []);
 
   // Fetch GitHub stars
   useEffect(() => {
@@ -142,27 +131,6 @@ export function McpHubClient() {
       isMounted = false;
     };
   }, [packages]);
-
-  // Delete package
-  async function handleDelete(pkgId: string) {
-    if (!confirm("Are you sure you want to delete this package?")) return;
-
-    try {
-      const res = await fetch(`/api/mcp-packages?id=${pkgId}`, {
-        method: "DELETE",
-      });
-
-      if (res.ok) {
-        setPackages((prev) => prev.filter((p) => p.id !== pkgId));
-      } else {
-        const err = await res.json();
-        alert(err.error || "Failed to delete package");
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-      alert("Failed to delete package");
-    }
-  }
 
   // Format number
   function formatNumber(num: number): string {
@@ -276,7 +244,6 @@ export function McpHubClient() {
                   {packages.map((pkg) => {
                     const ghData = githubData[pkg.id];
                     const stars = ghData?.stars || 0;
-                    const canDelete = currentUserId && pkg.author_user_id === currentUserId;
 
                     return (
                       <motion.div
@@ -347,15 +314,6 @@ export function McpHubClient() {
                                 <ExternalLink className="w-4 h-4" />
                                 Details
                               </Link>
-                              {canDelete && (
-                                <button
-                                  onClick={() => handleDelete(pkg.id)}
-                                  className="p-1.5 rounded text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-colors"
-                                  title="Delete package"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              )}
                             </div>
                           </div>
                         </div>

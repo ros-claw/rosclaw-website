@@ -71,22 +71,11 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check for API key authentication
+    // Check for API key authentication (required)
     const apiKey = req.headers.get("x-api-key")
-    let userId = null
 
-    if (apiKey) {
-      if (apiKey !== process.env.ADMIN_API_KEY) {
-        return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
-      }
-      body.status = "approved"
-    } else {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
-        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-      }
-      userId = session.user.id
-      body.status = "pending"
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 })
     }
 
     // Check if skill name already exists
@@ -103,7 +92,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Insert new skill
+    // Insert new skill (API key only)
     const { data, error } = await supabase
       .from("skills")
       .insert({
@@ -113,7 +102,6 @@ export async function POST(req: NextRequest) {
         long_description: body.long_description,
         category: body.category,
         version: body.version || "1.0.0",
-        author_user_id: userId,
         author_name: body.author_name,
         author_url: body.author_url,
         github_repo_url: body.github_repo_url,
@@ -121,7 +109,7 @@ export async function POST(req: NextRequest) {
         tags: body.tags || [],
         compatible_robots: body.compatible_robots || [],
         dependencies: body.dependencies || [],
-        status: body.status,
+        status: "approved",
         icon_url: body.icon_url,
       })
       .select()
@@ -152,7 +140,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// DELETE /api/skills?id=xxx - Delete a skill
+// DELETE /api/skills?id=xxx - Delete a skill (API key only)
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -165,33 +153,13 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseServer()
-
+    // Check API key authentication (required)
     const apiKey = req.headers.get("x-api-key")
-    let userId = null
-
-    if (apiKey && apiKey === process.env.ADMIN_API_KEY) {
-      // Admin can delete any skill
-    } else {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
-        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-      }
-      userId = session.user.id
-
-      const { data: skill } = await supabase
-        .from("skills")
-        .select("author_user_id")
-        .eq("id", id)
-        .single()
-
-      if (!skill || skill.author_user_id !== userId) {
-        return NextResponse.json(
-          { error: "You can only delete your own skills" },
-          { status: 403 }
-        )
-      }
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 })
     }
+
+    const supabase = getSupabaseServer()
 
     const { error } = await supabase
       .from("skills")

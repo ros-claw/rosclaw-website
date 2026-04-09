@@ -75,27 +75,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Check for API key authentication (for external integrations)
+    // Check for API key authentication (required)
     const apiKey = req.headers.get("x-api-key")
-    let userId = null
 
-    if (apiKey) {
-      // Validate API key against environment variable
-      if (apiKey !== process.env.ADMIN_API_KEY) {
-        return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
-      }
-      // For API key auth, auto-approve the package
-      body.status = "approved"
-    } else {
-      // Check user authentication via session/cookie
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
-        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-      }
-      userId = session.user.id
-      // For regular users, set status to pending
-      body.status = "pending"
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 })
     }
+
+    // API key auth auto-approves the package
+    body.status = "approved"
 
     // Check if package name already exists
     const { data: existing } = await supabase
@@ -111,7 +99,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Insert new package
+    // Insert new package (no author_user_id for API-created packages)
     const { data, error } = await supabase
       .from("mcp_packages")
       .insert({
@@ -120,13 +108,13 @@ export async function POST(req: NextRequest) {
         long_description: body.long_description,
         category: body.category,
         version: body.version || "1.0.0",
-        author_user_id: userId,
         author_name: body.author_name,
         github_repo_url: body.github_repo_url,
         robot_type: body.robot_type,
         tags: body.tags || [],
         tools: body.tools || [],
-        status: body.status,
+        status: "approved",
+        is_verified: false,
       })
       .select()
       .single()
@@ -156,7 +144,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// DELETE /api/mcp-packages?id=xxx - Delete a package
+// DELETE /api/mcp-packages?id=xxx - Delete a package (API key only)
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
@@ -169,35 +157,13 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseServer()
-
-    // Check API key or user authentication
+    // Check API key authentication (required)
     const apiKey = req.headers.get("x-api-key")
-    let userId = null
-
-    if (apiKey && apiKey === process.env.ADMIN_API_KEY) {
-      // Admin can delete any package
-    } else {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
-        return NextResponse.json({ error: "Authentication required" }, { status: 401 })
-      }
-      userId = session.user.id
-
-      // Check if user owns this package
-      const { data: pkg } = await supabase
-        .from("mcp_packages")
-        .select("author_user_id")
-        .eq("id", id)
-        .single()
-
-      if (!pkg || pkg.author_user_id !== userId) {
-        return NextResponse.json(
-          { error: "You can only delete your own packages" },
-          { status: 403 }
-        )
-      }
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 })
     }
+
+    const supabase = getSupabaseServer()
 
     const { error } = await supabase
       .from("mcp_packages")
