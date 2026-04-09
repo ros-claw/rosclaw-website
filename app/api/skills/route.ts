@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { createServerClient } from "@supabase/ssr"
 
-// Create supabase client with request cookies
-function getSupabaseClient(req: NextRequest) {
-  const cookie = req.headers.get("cookie") || ""
-  return createClient(
+// Helper to create Supabase client from request cookies
+function createClient(req: NextRequest) {
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      global: {
-        headers: {
-          cookie,
+      cookies: {
+        get(name) {
+          return req.cookies.get(name)?.value
+        },
+        set(name, value, options) {
+          // Not setting cookies in API route
+        },
+        remove(name, options) {
+          // Not removing cookies in API route
         },
       },
     }
@@ -24,10 +29,7 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get("search")
 
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    )
+    const supabase = createClient(req)
 
     let query = supabase
       .from("skills")
@@ -77,7 +79,7 @@ export async function GET(req: NextRequest) {
 // POST /api/skills - Create a new skill
 export async function POST(req: NextRequest) {
   try {
-    const supabase = getSupabaseClient(req)
+    const supabase = createClient(req)
     const body = await req.json()
 
     // Validate required fields
@@ -187,7 +189,7 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient(req)
+    const supabase = createClient(req)
 
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
