@@ -1,16 +1,39 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getSupabaseServer } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 
+// Create supabase client with request cookies
+function getSupabaseClient(req: NextRequest) {
+  const cookie = req.headers.get("cookie") || ""
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          cookie,
+        },
+      },
+    }
+  )
+}
+
+// GET /api/skills - List all approved skills
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const category = searchParams.get("category")
   const search = searchParams.get("search")
 
   try {
-    const supabase = getSupabaseServer()
-    let query = supabase.from("skills").select("*").eq("status", "approved").order("downloads_count", {
-      ascending: false,
-    })
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
+    let query = supabase
+      .from("skills")
+      .select("*")
+      .eq("status", "approved")
+      .order("downloads_count", { ascending: false })
 
     if (category && category !== "all") {
       query = query.eq("category", category)
@@ -21,7 +44,6 @@ export async function GET(req: NextRequest) {
     }
 
     const { data, error } = await query
-
     if (error) throw error
 
     const skills = (data || []).map((s) => ({
@@ -43,8 +65,6 @@ export async function GET(req: NextRequest) {
       dependencies: s.dependencies || [],
       installCommand: s.install_command,
       iconUrl: s.icon_url,
-      createdAt: s.created_at,
-      updatedAt: s.updated_at,
     }))
 
     return NextResponse.json(skills)
@@ -57,7 +77,7 @@ export async function GET(req: NextRequest) {
 // POST /api/skills - Create a new skill
 export async function POST(req: NextRequest) {
   try {
-    const supabase = getSupabaseServer()
+    const supabase = getSupabaseClient(req)
     const body = await req.json()
 
     // Validate required fields
@@ -76,19 +96,19 @@ export async function POST(req: NextRequest) {
     let userId: string | null = null
 
     if (apiKey) {
-      // API key authentication (for external integrations)
+      // API key authentication
       if (apiKey !== process.env.ADMIN_API_KEY) {
         return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
       }
-      body.status = "approved"  // API key creates approved skills
+      body.status = "approved"
     } else {
-      // Session authentication (for web users)
+      // Session authentication
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
       if (sessionError || !session) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
       userId = session.user.id
-      body.status = "pending"  // Web users create pending skills
+      body.status = "pending"
     }
 
     // Check if skill name already exists
@@ -167,9 +187,8 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseServer()
+    const supabase = getSupabaseClient(req)
 
-    // Check API key or session authentication
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
 

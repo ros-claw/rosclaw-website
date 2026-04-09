@@ -1,5 +1,21 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getSupabaseServer } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
+
+// Create supabase client with request cookies
+function getSupabaseClient(req: NextRequest) {
+  const cookie = req.headers.get("cookie") || ""
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      global: {
+        headers: {
+          cookie,
+        },
+      },
+    }
+  )
+}
 
 // GET /api/mcp-packages - List all approved packages
 export async function GET(req: NextRequest) {
@@ -8,7 +24,11 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get("search")
 
   try {
-    const supabase = getSupabaseServer()
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+
     let query = supabase
       .from("mcp_packages")
       .select("*")
@@ -29,26 +49,18 @@ export async function GET(req: NextRequest) {
     const packages = (data || []).map((p) => ({
       id: p.id,
       name: p.name,
-      displayName: p.display_name,
       description: p.description,
-      category: p.category,
-      version: p.version,
       authorName: p.author_name,
-      verified: p.verified,
+      author_user_id: p.author_user_id,
       githubRepoUrl: p.github_repo_url,
+      verified: p.is_verified,
+      category: p.category,
+      robotType: p.robot_type,
+      version: p.version,
       downloadsCount: p.downloads_count,
       rating: p.rating,
-      reviewCount: p.review_count,
-      rosVersion: p.ros_version,
-      safetyCert: p.safety_cert,
-      pythonVersion: p.python_version,
-      status: p.status,
-      robotType: p.robot_type,
       tags: p.tags || [],
       tools: p.tools || [],
-      installCommand: p.install_command,
-      createdAt: p.created_at,
-      updatedAt: p.updated_at,
     }))
 
     return NextResponse.json(packages)
@@ -61,7 +73,7 @@ export async function GET(req: NextRequest) {
 // POST /api/mcp-packages - Create a new MCP package
 export async function POST(req: NextRequest) {
   try {
-    const supabase = getSupabaseServer()
+    const supabase = getSupabaseClient(req)
     const body = await req.json()
 
     // Validate required fields
@@ -86,7 +98,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
       }
       isApiKeyAuth = true
-      body.status = "approved"  // API key creates approved packages
+      body.status = "approved"
     } else {
       // Session authentication (for web users)
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
@@ -94,7 +106,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
       userId = session.user.id
-      body.status = "pending"  // Web users create pending packages
+      body.status = "pending"
     }
 
     // Check if package name already exists
@@ -127,7 +139,7 @@ export async function POST(req: NextRequest) {
         tags: body.tags || [],
         tools: body.tools || [],
         status: body.status,
-        is_verified: isApiKeyAuth,  // API key creates verified packages
+        is_verified: isApiKeyAuth,
       })
       .select()
       .single()
@@ -170,7 +182,7 @@ export async function DELETE(req: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseServer()
+    const supabase = getSupabaseClient(req)
 
     // Check API key or session authentication
     const apiKey = req.headers.get("x-api-key")
