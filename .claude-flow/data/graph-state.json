@@ -48,8 +48,8 @@
     "mem-security-fixes-2026-04-05----source-map-----": {
       "id": "mem-security-fixes-2026-04-05----source-map-----",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.5900000000000001,
-      "accessCount": 3,
+      "confidence": 0.6200000000000001,
+      "accessCount": 4,
       "createdAt": 1775544485681
     },
     "insight-1775639163974-fdxf": {

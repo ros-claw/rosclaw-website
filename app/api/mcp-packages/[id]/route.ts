@@ -22,7 +22,7 @@ function createClient(req: NextRequest) {
   )
 }
 
-// GET /api/mcp-packages/[id] - Get a single package by ID
+// GET /api/mcp-packages/[id] - Get a single package by ID or name slug
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -31,25 +31,49 @@ export async function GET(
     const supabase = createClient(req)
     const { id } = params
 
-    // Try to find by ID first, then by name
-    let query = supabase
+    // Try to find by ID first
+    let { data, error } = await supabase
       .from("mcp_packages")
       .select("*")
       .eq("id", id)
       .single()
 
-    let { data, error } = await query
-
-    // If not found by ID, try by name
+    // If not found by ID, try by exact name
     if (error || !data) {
-      const { data: dataByName, error: errorByName } = await supabase
+      const result = await supabase
         .from("mcp_packages")
         .select("*")
         .eq("name", id)
         .single()
+      data = result.data
+      error = result.error
+    }
 
-      data = dataByName
-      error = errorByName
+    // If still not found, try by slug (replace - with / for owner/repo format)
+    if (error || !data) {
+      // Convert slug back to name (ros-claw-librealsense-mcp -> ros-claw/librealsense-mcp)
+      // But be careful: some names might have multiple slashes
+      // Try different combinations
+      const slugVariations = [
+        id.replace(/-/g, "/"), // ros-claw/librealsense/mcp -> try full replacement
+      ]
+
+      // Also try finding by checking if any package name contains this pattern
+      const { data: allPackages } = await supabase
+        .from("mcp_packages")
+        .select("*")
+
+      if (allPackages) {
+        // Find package where slug matches
+        const matched = allPackages.find(pkg => {
+          const pkgSlug = pkg.name.replace(/\//g, "-")
+          return pkgSlug === id
+        })
+        if (matched) {
+          data = matched
+          error = null
+        }
+      }
     }
 
     if (error || !data) {
@@ -61,7 +85,6 @@ export async function GET(
 
     // Only return approved packages (unless admin or owner)
     if (data.status !== "approved") {
-      // Check if user is admin or owner
       const { data: { session } } = await supabase.auth.getSession()
       const apiKey = req.headers.get("x-api-key")
 

@@ -405,7 +405,6 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                     {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
                   </button>
                 </div>
-                <p className="text-xs text-text-muted">Or use GitHub URL directly</p>
               </div>
             </div>
 

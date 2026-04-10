@@ -47,6 +47,7 @@ export default function ProfilePage() {
     try {
       const res = await fetch(`/api/mcp-packages?id=${pkgId}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (res.ok) {
@@ -67,6 +68,7 @@ export default function ProfilePage() {
     try {
       const res = await fetch(`/api/skills?id=${skillId}`, {
         method: "DELETE",
+        credentials: "include",
       });
 
       if (res.ok) {
@@ -212,7 +214,7 @@ export default function ProfilePage() {
                     className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                   >
                     <a
-                      href={`/mcp-hub/${pkg.id}`}
+                      href={`/mcp-hub/${pkg.name.replace(/\//g, "-")}`}
                       className="flex-1"
                     >
                       <p className="font-medium text-foreground">{pkg.name}</p>
@@ -233,7 +235,7 @@ export default function ProfilePage() {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
-                      <a href={`/mcp-hub/${pkg.id}`}>
+                      <a href={`/mcp-hub/${pkg.name.replace(/\//g, "-")}`}>
                         <ExternalLink className="w-4 h-4 text-text-muted" />
                       </a>
                     </div>
