@@ -188,9 +188,9 @@
       "content": "curl -I http://localhost:3000/ | grep -i \"content-security-policy\"",
       "summary": "检查响应头",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.5,
+      "confidence": 0.53,
       "pageRank": 0.20316627254471092,
-      "accessCount": 0,
+      "accessCount": 1,
       "words": [
         "curl",
         "http",
@@ -205,9 +205,9 @@
       "content": "curl http://localhost:3000/_next/static/chunks/main.js.map",
       "summary": "检查 source map 是否禁用",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.56,
+      "confidence": 0.5900000000000001,
       "pageRank": 0.19711858363020157,
-      "accessCount": 2,
+      "accessCount": 3,
       "words": [
         "curl",
         "http",

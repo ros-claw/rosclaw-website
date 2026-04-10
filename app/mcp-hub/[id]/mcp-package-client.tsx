@@ -1,12 +1,30 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Download, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, FileText, GitBranch, MessageSquare } from "lucide-react";
+import { Download, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, GitBranch, MessageSquare, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getPackageById, type McpPackage } from "@/lib/data";
+
+interface McpPackage {
+  id: string;
+  name: string;
+  description: string;
+  longDescription?: string;
+  authorName: string;
+  author_user_id: string;
+  githubRepoUrl: string;
+  verified: boolean;
+  category: string;
+  robotType: string;
+  version: string;
+  downloadsCount: number;
+  rating: number;
+  tags: string[];
+  tools: { name: string; description: string }[];
+  status: string;
+}
 
 interface McpPackageClientProps {
   id: string;
@@ -20,7 +38,6 @@ async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; fork
 
     const [, owner, repo] = match;
 
-    // Fetch repo data and readme in parallel
     const [repoRes, readmeRes] = await Promise.all([
       fetch(`https://api.github.com/repos/${owner}/${repo}`, {
         headers: { Accept: "application/vnd.github+json" },
@@ -65,26 +82,53 @@ async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; fork
   }
 }
 
+// Fetch package from API
+async function fetchPackage(id: string): Promise<McpPackage | null> {
+  try {
+    const res = await fetch(`/api/mcp-packages/${id}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 export function McpPackageClient({ id }: McpPackageClientProps) {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<"readme" | "tools" | "install">("readme");
+  const [packageData, setPackageData] = useState<McpPackage | null>(null);
   const [githubData, setGithubData] = useState<{ stars: number; forks: number; updatedAt: string; readme: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  // Get package data
-  const packageData = getPackageById(id);
-
-  // Fetch GitHub data
   useEffect(() => {
-    if (!packageData) return;
-
     let isMounted = true;
 
     async function loadData() {
       setIsLoading(true);
-      const data = await fetchGitHubData(packageData!.githubUrl);
+
+      // Fetch package from API
+      const pkg = await fetchPackage(id);
+
+      if (!isMounted) return;
+
+      if (!pkg) {
+        setNotFound(true);
+        setIsLoading(false);
+        return;
+      }
+
+      setPackageData(pkg);
+
+      // Fetch GitHub data
+      if (pkg.githubRepoUrl) {
+        const ghData = await fetchGitHubData(pkg.githubRepoUrl);
+        if (isMounted) {
+          setGithubData(ghData);
+        }
+      }
+
       if (isMounted) {
-        setGithubData(data);
         setIsLoading(false);
       }
     }
@@ -94,23 +138,20 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
     return () => {
       isMounted = false;
     };
-  }, [packageData]);
+  }, [id]);
 
-  // Handle copy
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Format number
   function formatNumber(num: number): string {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
     if (num >= 1000) return (num / 1000).toFixed(1) + "k";
     return num.toString();
   }
 
-  // Format date
   function formatDate(dateStr: string): string {
     if (!dateStr) return "";
     const date = new Date(dateStr);
@@ -121,7 +162,15 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
     });
   }
 
-  if (!packageData) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background pt-24 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-cognitive-cyan" />
+      </div>
+    );
+  }
+
+  if (notFound || !packageData) {
     return (
       <div className="min-h-screen bg-background pt-24">
         <div className="max-w-6xl mx-auto px-4 text-center">
@@ -136,12 +185,13 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
     );
   }
 
-  // URL-based install commands
   const installUrl = `https://rosclaw.io/mcp-hub/${id}`;
-  const installCommand = `install mcp ${installUrl}`;
-  const githubInstallCommand = `install mcp from ${packageData.githubUrl}`;
-  const stars = githubData?.stars || packageData.stars || 0;
-  const readmeContent = githubData?.readme || packageData.description;
+  const installCommand = `rosclaw install mcp ${packageData.name}`;
+  const githubInstallCommand = `rosclaw install mcp from ${packageData.githubRepoUrl}`;
+  const stars = githubData?.stars || 0;
+  const readmeContent = githubData?.readme || packageData.longDescription || packageData.description;
+  const authorUrl = `https://github.com/${packageData.name.split('/')[0]}`;
+  const isOfficial = packageData.verified || false;
 
   return (
     <div className="min-h-screen bg-background">
@@ -164,7 +214,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-2xl md:text-3xl font-bold text-foreground font-mono">{packageData.name}</h1>
-                  {packageData.isOfficial ? (
+                  {isOfficial ? (
                     <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-medium">
                       Official
                     </span>
@@ -178,11 +228,11 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                   <code className="text-sm text-text-muted">{packageData.name}</code>
                   <span className="text-text-muted">•</span>
                   <Link
-                    href={packageData.authorUrl}
+                    href={authorUrl}
                     target="_blank"
                     className="text-cognitive-cyan hover:underline"
                   >
-                    {packageData.author}
+                    {packageData.authorName}
                   </Link>
                   <span className="text-text-muted">•</span>
                   <span className="text-text-muted">v{packageData.version}</span>
@@ -193,12 +243,12 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
                 <Star className="w-4 h-4 fill-current" />
-                <span className="font-medium">{isLoading ? "—" : formatNumber(stars)}</span>
+                <span className="font-medium">{formatNumber(stars)}</span>
                 <span className="text-yellow-500/70 text-sm">GitHub</span>
               </div>
               <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary">
                 <Download className="w-4 h-4" />
-                <span>{formatNumber(packageData.downloads)}</span>
+                <span>{formatNumber(packageData.downloadsCount)}</span>
               </div>
             </div>
           </div>
@@ -206,16 +256,18 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
           <p className="text-text-secondary mt-4 max-w-3xl">{packageData.description}</p>
 
           {/* Tags */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {packageData.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-2.5 py-1 rounded-full bg-glass-bg text-text-secondary text-sm"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          {packageData.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {packageData.tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="px-2.5 py-1 rounded-full bg-glass-bg text-text-secondary text-sm"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -294,6 +346,9 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                     </div>
                   </div>
                 ))}
+                {packageData.tools.length === 0 && (
+                  <div className="text-text-muted">No tools defined for this package.</div>
+                )}
               </motion.div>
             )}
 
@@ -379,7 +434,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm">
                   <Star className="w-4 h-4 text-yellow-500" />
-                  <span className="text-text-secondary">{isLoading ? "Loading..." : formatNumber(stars)} stars</span>
+                  <span className="text-text-secondary">{formatNumber(stars)} stars</span>
                 </div>
                 {githubData && githubData.forks > 0 && (
                   <div className="flex items-center gap-2 text-sm">
@@ -408,9 +463,9 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                   <span className="text-text-secondary">v{packageData.version}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Shield className={`w-4 h-4 ${packageData.isOfficial ? "text-green-500" : "text-cognitive-cyan"}`} />
-                  <span className={packageData.isOfficial ? "text-green-500" : "text-cognitive-cyan"}>
-                    {packageData.isOfficial ? "Official Package" : "Community Package"}
+                  <Shield className={`w-4 h-4 ${isOfficial ? "text-green-500" : "text-cognitive-cyan"}`} />
+                  <span className={isOfficial ? "text-green-500" : "text-cognitive-cyan"}>
+                    {isOfficial ? "Official Package" : "Community Package"}
                   </span>
                 </div>
               </div>
@@ -421,7 +476,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
               <h3 className="text-sm font-semibold text-foreground mb-3">Links</h3>
               <div className="space-y-2">
                 <Link
-                  href={packageData.githubUrl}
+                  href={packageData.githubRepoUrl}
                   target="_blank"
                   className="flex items-center gap-2 text-sm text-text-secondary hover:text-foreground transition-colors"
                 >
@@ -429,13 +484,6 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                   GitHub Repository
                 </Link>
               </div>
-            </div>
-
-            {/* Last Updated */}
-            <div className="p-4 rounded-lg bg-glass-bg text-center">
-              <p className="text-xs text-text-muted">
-                Last updated: {formatDate(packageData.updatedAt)}
-              </p>
             </div>
           </div>
         </div>
