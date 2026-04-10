@@ -256,7 +256,7 @@ export function McpHubClient() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate font-mono text-sm">
-                                <Link href={`/mcp-hub/${pkg.id}`}>{pkg.name}</Link>
+                                <Link href={`/mcp-hub/${pkg.name}`}>{pkg.name}</Link>
                               </h3>
                               {pkg.verified ? (
                                 <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium">
@@ -308,7 +308,7 @@ export function McpHubClient() {
                                 <span>{stars > 0 ? formatNumber(stars) : "—"}</span>
                               </div>
                               <Link
-                                href={`/mcp-hub/${pkg.id}`}
+                                href={`/mcp-hub/${pkg.name}`}
                                 className="flex items-center gap-1 text-cognitive-cyan text-sm ml-auto hover:underline"
                               >
                                 <ExternalLink className="w-4 h-4" />

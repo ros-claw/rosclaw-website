@@ -187,7 +187,6 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
 
   const installUrl = `https://rosclaw.io/mcp-hub/${id}`;
   const installCommand = `rosclaw install mcp ${packageData.name}`;
-  const githubInstallCommand = `rosclaw install mcp from ${packageData.githubRepoUrl}`;
   const stars = githubData?.stars || 0;
   const readmeContent = githubData?.readme || packageData.longDescription || packageData.description;
   const authorUrl = `https://github.com/${packageData.name.split('/')[0]}`;
@@ -376,24 +375,6 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                   </div>
                 </div>
 
-                {/* Alternative: Install from GitHub */}
-                <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <GitBranch className="w-4 h-4 text-cognitive-cyan" />
-                    Install from GitHub Directly
-                  </h3>
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
-                    <code className="flex-1 text-text-secondary">{githubInstallCommand}</code>
-                    <button
-                      onClick={() => handleCopy(githubInstallCommand)}
-                      className="p-1.5 rounded hover:bg-white/10 transition-colors"
-                      title="Copy to clipboard"
-                    >
-                      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
-                    </button>
-                  </div>
-                </div>
-
                 {/* Natural Language */}
                 <div className="p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
                   <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
@@ -401,7 +382,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                     Natural Language
                   </h3>
                   <p className="text-sm text-text-secondary">
-                    Simply tell your agent: <em>&quot;Install the {packageData.name} MCP package&quot;</em>
+                    Simply tell your agent: <em>&quot;Install the https://rosclaw.io/mcp-hub/{packageData.name} MCP package&quot;</em>
                   </p>
                 </div>
               </motion.div>
