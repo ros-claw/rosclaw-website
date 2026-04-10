@@ -377,13 +377,25 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
 
                 {/* Natural Language */}
                 <div className="p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
-                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
                     <MessageSquare className="w-4 h-4 text-cognitive-cyan" />
                     Natural Language
                   </h3>
-                  <p className="text-sm text-text-secondary">
-                    Simply tell your agent: <em>&quot;Install the https://rosclaw.io/mcp-hub/{packageData.name} MCP package&quot;</em>
+                  <p className="text-sm text-text-secondary mb-2">
+                    Simply tell your agent:
                   </p>
+                  <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40">
+                    <code className="flex-1 text-sm text-cognitive-cyan">
+                      Install the https://rosclaw.io/mcp-hub/{packageData.name} MCP package
+                    </code>
+                    <button
+                      onClick={() => handleCopy(`Install the https://rosclaw.io/mcp-hub/${packageData.name} MCP package`)}
+                      className="p-1.5 rounded hover:bg-white/10 transition-colors"
+                      title="Copy to clipboard"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             )}

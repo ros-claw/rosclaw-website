@@ -214,7 +214,7 @@ export default function ProfilePage() {
                     className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
                   >
                     <a
-                      href={`/mcp-hub/${pkg.name.replace(/\//g, "-")}`}
+                      href={`/mcp-hub/${pkg.name}`}
                       className="flex-1"
                     >
                       <p className="font-medium text-foreground">{pkg.name}</p>
@@ -235,7 +235,7 @@ export default function ProfilePage() {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
-                      <a href={`/mcp-hub/${pkg.name.replace(/\//g, "-")}`}>
+                      <a href={`/mcp-hub/${pkg.name}`}>
                         <ExternalLink className="w-4 h-4 text-text-muted" />
                       </a>
                     </div>
