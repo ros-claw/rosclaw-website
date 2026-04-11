@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 
-// Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,31 +10,27 @@ function createClient(req: NextRequest) {
         get(name) {
           return req.cookies.get(name)?.value
         },
-        set(name, value, options) {
-          // Not setting cookies in API route
-        },
-        remove(name, options) {
-          // Not removing cookies in API route
-        },
+        set(name, value, options) {},
+        remove(name, options) {},
       },
     }
   )
 }
 
-// GET /api/mcp-packages/[id] - Get a single package by ID or name slug
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string[] } }
 ) {
   try {
     const supabase = createClient(req)
-    const { id } = params
+    // Join the path segments back together (e.g., ['shaoxiang', 'librealsense-mcp'] -> 'shaoxiang/librealsense-mcp')
+    const fullPath = params.id.join("/")
 
     // Try to find by ID first
     let { data, error } = await supabase
       .from("mcp_packages")
       .select("*")
-      .eq("id", id)
+      .eq("id", fullPath)
       .single()
 
     // If not found by ID, try by exact name
@@ -43,37 +38,10 @@ export async function GET(
       const result = await supabase
         .from("mcp_packages")
         .select("*")
-        .eq("name", id)
+        .eq("name", fullPath)
         .single()
       data = result.data
       error = result.error
-    }
-
-    // If still not found, try by slug (replace - with / for owner/repo format)
-    if (error || !data) {
-      // Convert slug back to name (ros-claw-librealsense-mcp -> ros-claw/librealsense-mcp)
-      // But be careful: some names might have multiple slashes
-      // Try different combinations
-      const slugVariations = [
-        id.replace(/-/g, "/"), // ros-claw/librealsense/mcp -> try full replacement
-      ]
-
-      // Also try finding by checking if any package name contains this pattern
-      const { data: allPackages } = await supabase
-        .from("mcp_packages")
-        .select("*")
-
-      if (allPackages) {
-        // Find package where slug matches
-        const matched = allPackages.find(pkg => {
-          const pkgSlug = pkg.name.replace(/\//g, "-")
-          return pkgSlug === id
-        })
-        if (matched) {
-          data = matched
-          error = null
-        }
-      }
     }
 
     if (error || !data) {
