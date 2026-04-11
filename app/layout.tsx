@@ -4,6 +4,7 @@ import { JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
@@ -87,6 +88,7 @@ export default function RootLayout({
           <SmoothScroll />
           <Navbar />
           {children}
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
