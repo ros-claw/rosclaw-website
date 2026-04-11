@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Filter, Download, Star, Terminal, Cpu, ExternalLink, Github } from "lucide-react";
+import { Search, Filter, Eye, Star, Terminal, Cpu, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -18,6 +18,8 @@ interface McpPackage {
   robotType: string;
   version: string;
   downloadsCount: number;
+  viewsCount: number;
+  githubStars: number;
   rating: number;
   tags: string[];
   tools: { name: string; description: string }[];
@@ -224,8 +226,8 @@ export function McpHubClient() {
               {/* Data Source Note */}
               <div className="p-3 rounded-lg bg-glass-bg text-xs text-text-muted">
                 <p className="flex items-center gap-1.5">
-                  <Github className="w-3.5 h-3.5" />
-                  Stars fetched from GitHub in real-time
+                  <Eye className="w-3.5 h-3.5" />
+                  Views tracked on page visit
                 </p>
               </div>
             </div>
@@ -299,13 +301,13 @@ export function McpHubClient() {
 
                             {/* Stats */}
                             <div className="flex items-center gap-4 mt-4 pt-4 border-t border-glass-border">
-                              <div className="flex items-center gap-1 text-text-muted text-sm">
-                                <Download className="w-4 h-4" />
-                                <span>{formatNumber(pkg.downloadsCount)}</span>
+                              <div className="flex items-center gap-1 text-text-muted text-sm" title="Views">
+                                <Eye className="w-4 h-4" />
+                                <span>{formatNumber(pkg.viewsCount || 0)}</span>
                               </div>
-                              <div className="flex items-center gap-1 text-yellow-500 text-sm">
+                              <div className="flex items-center gap-1 text-yellow-500 text-sm" title="GitHub Stars">
                                 <Star className="w-4 h-4 fill-current" />
-                                <span>{stars > 0 ? formatNumber(stars) : "—"}</span>
+                                <span>{(pkg.githubStars || 0) > 0 ? formatNumber(pkg.githubStars) : (stars > 0 ? formatNumber(stars) : "—")}</span>
                               </div>
                               <Link
                                 href={`/mcp-hub/${pkg.name}`}

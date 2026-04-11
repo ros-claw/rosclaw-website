@@ -75,6 +75,8 @@ export async function GET(req: NextRequest) {
       robotType: p.robot_type,
       version: p.version,
       downloadsCount: p.downloads_count,
+      viewsCount: p.views_count || 0,
+      githubStars: p.github_stars || 0,
       rating: p.rating,
       tags: p.tags || [],
       tools: p.tools || [],

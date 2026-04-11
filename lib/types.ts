@@ -36,6 +36,8 @@ export interface McpPackage {
   verified: boolean
   githubRepoUrl: string
   downloadsCount: number
+  viewsCount: number
+  githubStars: number
   rating: number
   reviewCount: number
   rosVersion: string

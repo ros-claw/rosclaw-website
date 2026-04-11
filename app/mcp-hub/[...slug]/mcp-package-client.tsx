@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Download, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, GitBranch, MessageSquare, Loader2 } from "lucide-react";
+import { Eye, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, GitBranch, MessageSquare, Loader2 } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
@@ -20,6 +20,8 @@ interface McpPackage {
   robotType: string;
   version: string;
   downloadsCount: number;
+  viewsCount: number;
+  githubStars: number;
   rating: number;
   tags: string[];
   tools: { name: string; description: string }[];
@@ -93,6 +95,17 @@ async function fetchPackage(id: string): Promise<McpPackage | null> {
   }
 }
 
+// Increment view count
+async function incrementViews(id: string): Promise<void> {
+  try {
+    await fetch(`/api/mcp-packages/${id}?action=view`, {
+      method: "POST",
+    });
+  } catch {
+    // Silently fail - views are not critical
+  }
+}
+
 export function McpPackageClient({ id }: McpPackageClientProps) {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<"readme" | "tools" | "install">("readme");
@@ -120,7 +133,10 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
 
       setPackageData(pkg);
 
-      // Fetch GitHub data
+      // Increment view count when package is viewed
+      incrementViews(id);
+
+      // Fetch GitHub data (for README and other real-time data)
       if (pkg.githubRepoUrl) {
         const ghData = await fetchGitHubData(pkg.githubRepoUrl);
         if (isMounted) {
@@ -187,7 +203,8 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
 
   const installUrl = `https://rosclaw.io/mcp-hub/${id}`;
   const installCommand = `rosclaw install mcp ${packageData.name}`;
-  const stars = githubData?.stars || 0;
+  // Use cached github_stars from DB, fallback to real-time fetch if not available
+  const stars = packageData.githubStars || githubData?.stars || 0;
   const readmeContent = githubData?.readme || packageData.longDescription || packageData.description;
   const authorUrl = `https://github.com/${packageData.name.split('/')[0]}`;
   const isOfficial = packageData.verified || false;
@@ -240,14 +257,13 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500" title="GitHub Stars">
                 <Star className="w-4 h-4 fill-current" />
                 <span className="font-medium">{formatNumber(stars)}</span>
-                <span className="text-yellow-500/70 text-sm">GitHub</span>
               </div>
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary">
-                <Download className="w-4 h-4" />
-                <span>{formatNumber(packageData.downloadsCount)}</span>
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary" title="Views">
+                <Eye className="w-4 h-4" />
+                <span>{formatNumber(packageData.viewsCount)}</span>
               </div>
             </div>
           </div>

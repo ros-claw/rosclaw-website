@@ -17,6 +17,21 @@ function createClient(req: NextRequest) {
   )
 }
 
+// Helper to create Supabase admin client (service role - bypasses RLS)
+function createAdminClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        get() { return undefined },
+        set() {},
+        remove() {},
+      },
+    }
+  )
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string[] } }
@@ -80,6 +95,8 @@ export async function GET(
       robotType: data.robot_type,
       version: data.version,
       downloadsCount: data.downloads_count,
+      viewsCount: data.views_count || 0,
+      githubStars: data.github_stars || 0,
       rating: data.rating,
       tags: data.tags || [],
       tools: data.tools || [],
@@ -93,5 +110,65 @@ export async function GET(
       { error: "Failed to fetch package" },
       { status: 500 }
     )
+  }
+}
+
+// POST /api/mcp-packages/[...id]/view - Increment view count
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  try {
+    const fullPath = params.id.join("/")
+    const { searchParams } = new URL(req.url)
+    const action = searchParams.get("action")
+
+    if (action !== "view") {
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 })
+    }
+
+    // Use admin client to bypass RLS for incrementing views
+    const adminClient = createAdminClient()
+
+    // Try to find by ID first, then by name
+    let result = await adminClient
+      .from("mcp_packages")
+      .select("id")
+      .eq("id", fullPath)
+      .single()
+
+    if (!result.data) {
+      result = await adminClient
+        .from("mcp_packages")
+        .select("id")
+        .eq("name", fullPath)
+        .single()
+    }
+
+    if (!result.data) {
+      return NextResponse.json({ error: "Package not found" }, { status: 404 })
+    }
+
+    // Increment views_count
+    const { data: current } = await adminClient
+      .from("mcp_packages")
+      .select("views_count")
+      .eq("id", result.data.id)
+      .single()
+
+    const { error } = await adminClient
+      .from("mcp_packages")
+      .update({ views_count: (current?.views_count || 0) + 1 })
+      .eq("id", result.data.id)
+
+    if (error) {
+      console.error("Failed to increment views:", error)
+      return NextResponse.json({ error: "Failed to increment views" }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (err: any) {
+    console.error("MCP Package POST error:", err.message)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
