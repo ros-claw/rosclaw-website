@@ -115,6 +115,39 @@ export function Footer() {
           ))}
         </div>
 
+        {/* Academic Partners */}
+        <div className="py-8 border-t border-white/10">
+          <p className="text-white/40 text-sm text-center mb-6">Supported by</p>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+            <a
+              href="https://www.tongji.edu.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
+            >
+              <img
+                src="/同济大学logo.png"
+                alt="Tongji University"
+                className="h-12 w-auto"
+              />
+              <span className="text-white/80 text-sm font-medium">Tongji University</span>
+            </a>
+            <a
+              href="https://srias.tongji.edu.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
+            >
+              <img
+                src="/上海自主智能无人系统科学中心logo.png"
+                alt="Shanghai Research Institute of Autonomous Intelligent Unmanned Systems"
+                className="h-12 w-auto"
+              />
+              <span className="text-white/80 text-sm font-medium">Shanghai Research Institute of Autonomous Intelligent Unmanned Systems</span>
+            </a>
+          </div>
+        </div>
+
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-white/40 text-sm">
