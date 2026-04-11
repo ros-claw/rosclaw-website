@@ -295,3 +295,234 @@ select option {
     transform: none;
   }
 }
+
+/* GitHub-style Markdown Body */
+.markdown-body {
+  color: var(--foreground);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Headings */
+.markdown-body h1 {
+  font-size: 2em;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--foreground);
+}
+
+.markdown-body h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--foreground);
+}
+
+.markdown-body h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin-top: 1.25em;
+  margin-bottom: 0.5em;
+  color: var(--foreground);
+}
+
+.markdown-body h4 {
+  font-size: 1em;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  color: var(--foreground);
+}
+
+.markdown-body h5,
+.markdown-body h6 {
+  font-size: 0.875em;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  color: var(--foreground);
+}
+
+/* Paragraphs */
+.markdown-body p {
+  margin-bottom: 1em;
+  color: var(--text-secondary);
+}
+
+/* Links */
+.markdown-body a {
+  color: var(--cognitive-cyan);
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+/* Lists */
+.markdown-body ul,
+.markdown-body ol {
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+.markdown-body li {
+  margin-bottom: 0.25em;
+  color: var(--text-secondary);
+}
+
+.markdown-body li > ul,
+.markdown-body li > ol {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+/* Code */
+.markdown-body code {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  padding: 0.2em 0.4em;
+  background-color: var(--glass-bg);
+  border-radius: 4px;
+  color: var(--cognitive-cyan);
+}
+
+.markdown-body pre {
+  background-color: #0d1117;
+  border-radius: 8px;
+  padding: 1em;
+  overflow-x: auto;
+  margin-bottom: 1em;
+  border: 1px solid var(--glass-border);
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.9em;
+  color: #e6edf3;
+  display: block;
+  line-height: 1.5;
+}
+
+/* Syntax highlighting colors */
+.markdown-body .hljs-keyword,
+.markdown-body .hljs-selector-tag,
+.markdown-body .hljs-subst {
+  color: #ff7b72;
+}
+
+.markdown-body .hljs-string,
+.markdown-body .hljs-attr,
+.markdown-body .hljs-property {
+  color: #a5d6ff;
+}
+
+.markdown-body .hljs-number,
+.markdown-body .hljs-literal {
+  color: #79c0ff;
+}
+
+.markdown-body .hljs-comment {
+  color: #8b949e;
+}
+
+.markdown-body .hljs-function {
+  color: #d2a8ff;
+}
+
+.markdown-body .hljs-params {
+  color: #e6edf3;
+}
+
+/* Blockquotes */
+.markdown-body blockquote {
+  border-left: 4px solid var(--cognitive-cyan);
+  padding-left: 1em;
+  margin-left: 0;
+  margin-bottom: 1em;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Tables */
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1em;
+  overflow-x: auto;
+  display: block;
+}
+
+.markdown-body th,
+.markdown-body td {
+  padding: 0.5em 1em;
+  border: 1px solid var(--glass-border);
+  text-align: left;
+}
+
+.markdown-body th {
+  background-color: var(--glass-bg);
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.markdown-body td {
+  color: var(--text-secondary);
+}
+
+.markdown-body tr:nth-child(2n) {
+  background-color: var(--glass-bg);
+}
+
+/* Horizontal Rule */
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--glass-border);
+  margin: 2em 0;
+}
+
+/* Images */
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1em 0;
+}
+
+/* Task Lists */
+.markdown-body input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: var(--cognitive-cyan);
+}
+
+/* Strong and Emphasis */
+.markdown-body strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.markdown-body em {
+  font-style: italic;
+}
+
+/* Line breaks in code */
+.markdown-body br {
+  display: block;
+  content: "";
+  margin-top: 0.5em;
+}
+
+/* Nested list spacing */
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}

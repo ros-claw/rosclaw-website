@@ -313,7 +313,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="prose prose-invert prose-sm max-w-none prose-headings:text-foreground prose-headings:font-semibold prose-a:text-cognitive-cyan prose-a:no-underline hover:prose-a:underline prose-code:text-cognitive-cyan prose-code:bg-black/40 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-black/40 prose-pre:border prose-pre:border-glass-border prose-img:rounded-lg"
+                className="markdown-body"
               >
                 {readmeContent ? (
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
