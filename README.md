@@ -4,6 +4,8 @@
 
 The official website for ROSClaw - The Universal OS for Embodied AI.
 
+**Live Site**: [rosclaw.io](https://rosclaw.io)
+
 ## Phase 1: Hero Section (Complete)
 
 - [x] Video background component
@@ -14,32 +16,21 @@ The official website for ROSClaw - The Universal OS for Embodied AI.
 
 ## Design System
 
-- **Background**:  (Deep black)
-- **Cognitive Cyan**:  (AI/Digital)
-- **Physical Orange**:  (ROS/Physics)
+- **Background**: Deep black (`#000000`)
+- **Cognitive Cyan**: AI/Digital accent (`#00D4FF`)
+- **Physical Orange**: ROS/Physics accent (`#FF6B00`)
 - **Typography**: Geist (headings) + JetBrains Mono (code)
 
 ## Development
 
+```bash
+# Install dependencies
+npm install
 
-added 1 package, and audited 112 packages in 10s
+# Start development server
+npm run dev
 
-24 packages are looking for funding
-  run `npm fund` for details
-
-1 high severity vulnerability
-
-To address all issues (including breaking changes), run:
-  npm audit fix --force
-
-Run `npm audit` for details.
-
-> rosclaw-website@1.0.0 dev
-> next dev
-
-## Build
-
-
-> rosclaw-website@1.0.0 build
-> next build
+# Build for production
+npm run build
+```
 
