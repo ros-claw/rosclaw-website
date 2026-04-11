@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Download, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, GitBranch, MessageSquare, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -316,7 +316,33 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                 className="markdown-body"
               >
                 {readmeContent ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
+                        // Convert relative links to GitHub absolute URLs
+                        let finalHref = href || '';
+                        if (href && !href.startsWith('http') && !href.startsWith('#') && packageData?.githubRepoUrl) {
+                          const baseUrl = packageData.githubRepoUrl.replace(/\/+$/, '');
+                          finalHref = `${baseUrl}/blob/main/${href}`;
+                        }
+                        return (
+                          <a href={finalHref} target="_blank" rel="noopener noreferrer" className="text-cognitive-cyan hover:underline">
+                            {children}
+                          </a>
+                        );
+                      },
+                      img: ({ src, alt }: { src?: string; alt?: string }) => {
+                        // Convert relative image paths to GitHub raw URLs
+                        let finalSrc = src || '';
+                        if (src && !src.startsWith('http') && packageData?.githubRepoUrl) {
+                          const baseUrl = packageData.githubRepoUrl.replace(/\/+$/, '');
+                          finalSrc = `${baseUrl}/raw/main/${src}`;
+                        }
+                        return <img src={finalSrc} alt={alt} className="max-w-full rounded-lg my-4" />;
+                      }
+                    }}
+                  >
                     {readmeContent}
                   </ReactMarkdown>
                 ) : (
