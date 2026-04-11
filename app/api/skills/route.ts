@@ -22,6 +22,21 @@ function createClient(req: NextRequest) {
   )
 }
 
+// Helper to create Supabase admin client (service role - bypasses RLS)
+function createAdminClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        get() { return undefined },
+        set() {},
+        remove() {},
+      },
+    }
+  )
+}
+
 // GET /api/skills - List all approved skills
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -221,7 +236,9 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    const { error } = await supabase
+    // Use admin client to bypass RLS for delete operation
+    const adminClient = createAdminClient()
+    const { error } = await adminClient
       .from("skills")
       .delete()
       .eq("id", id)

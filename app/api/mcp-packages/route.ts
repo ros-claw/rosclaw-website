@@ -22,6 +22,21 @@ function createClient(req: NextRequest) {
   )
 }
 
+// Helper to create Supabase admin client (service role - bypasses RLS)
+function createAdminClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        get() { return undefined },
+        set() {},
+        remove() {},
+      },
+    }
+  )
+}
+
 // GET /api/mcp-packages - List all approved packages
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -206,7 +221,7 @@ export async function DELETE(req: NextRequest) {
       }
       userId = session.user.id
 
-      // Check if user owns this package
+      // Check if user owns this package (using session client for RLS-compliant read)
       const { data: pkg } = await supabase
         .from("mcp_packages")
         .select("author_user_id")
@@ -221,7 +236,9 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    const { error } = await supabase
+    // Use admin client to bypass RLS for delete operation
+    const adminClient = createAdminClient()
+    const { error } = await adminClient
       .from("mcp_packages")
       .delete()
       .eq("id", id)
