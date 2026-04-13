@@ -69,27 +69,27 @@ setup_directories() {
     success "Created ~/.rosclaw/ directory structure"
 }
 
-# Install rosclaw-core
+# Install rosclaw
 install_core() {
-    info "Installing rosclaw-core..."
+    info "Installing rosclaw..."
 
     # For now, clone from GitHub (will be pip installable in v0.2.0)
-    ROSCLAW_CORE_URL="https://github.com/ros-claw/rosclaw-core.git"
-    ROSCLAW_CORE_DIR="\${HOME}/.rosclaw/lib/rosclaw-core"
+    ROSCLAW_URL="https://github.com/ros-claw/rosclaw.git"
+    ROSCLAW_DIR="\${HOME}/.rosclaw/lib/rosclaw"
 
-    if [ -d "\${ROSCLAW_CORE_DIR}" ]; then
-        info "rosclaw-core already exists. Updating..."
-        cd "\${ROSCLAW_CORE_DIR}"
-        git pull --quiet || warn "Failed to update rosclaw-core"
+    if [ -d "\${ROSCLAW_DIR}" ]; then
+        info "rosclaw already exists. Updating..."
+        cd "\${ROSCLAW_DIR}"
+        git pull --quiet || warn "Failed to update rosclaw"
     else
-        info "Cloning rosclaw-core repository..."
-        git clone --quiet "\${ROSCLAW_CORE_URL}" "\${ROSCLAW_CORE_DIR}" || \\
-            error "Failed to clone rosclaw-core. Check your internet connection."
+        info "Cloning rosclaw repository..."
+        git clone --quiet "\${ROSCLAW_URL}" "\${ROSCLAW_DIR}" || \\
+            error "Failed to clone rosclaw. Check your internet connection."
     fi
 
     # Install dependencies
     info "Installing Python dependencies..."
-    cd "\${ROSCLAW_CORE_DIR}"
+    cd "\${ROSCLAW_DIR}"
 
     if command -v pip3 &> /dev/null; then
         pip3 install -q -e . 2>/dev/null || pip3 install -q -e . --break-system-packages 2>/dev/null || \\
@@ -99,7 +99,7 @@ install_core() {
             warn "pip install failed. You may need to install manually."
     fi
 
-    success "rosclaw-core installed"
+    success "rosclaw installed"
 }
 
 # Create wrapper script
@@ -113,7 +113,7 @@ create_wrapper() {
 # ROSClaw CLI Wrapper
 
 export ROSCLAW_HOME="\${HOME}/.rosclaw"
-export PYTHONPATH="\${ROSCLAW_HOME}/lib/rosclaw-core:\${PYTHONPATH}"
+export PYTHONPATH="\${ROSCLAW_HOME}/lib/rosclaw:\${PYTHONPATH}"
 
 # Run the actual CLI
 exec python3 -m rosclaw.cli "$@"
