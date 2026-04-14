@@ -148,12 +148,12 @@ export function SkillsClient() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
-                          <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate">
-                            <Link href={`/skills/${skill.name}`}>{skill.displayName || skill.name}</Link>
+                          <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate font-mono text-sm">
+                            <Link href={`/skills/${skill.name.replace(/\//g, '-')}`}>{skill.name}</Link>
                           </h3>
                           <span className="text-xs text-text-muted flex-shrink-0">v{skill.version}</span>
                         </div>
-                        <p className="text-sm text-text-secondary mt-1">{skill.authorName}</p>
+                        <p className="text-sm text-text-secondary mt-1">{skill.displayName || skill.description.slice(0, 50)}</p>
                         <p className="text-sm text-text-muted mt-2 line-clamp-2">{skill.description}</p>
 
                         {/* Tags */}

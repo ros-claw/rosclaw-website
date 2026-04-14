@@ -173,7 +173,10 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
                 <Cpu className="w-8 h-8 text-cognitive-cyan" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground">{skill.displayName || skill.name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground font-mono">{skill.name}</h1>
+                {skill.displayName && skill.displayName !== skill.name && (
+                  <p className="text-text-secondary text-lg">{skill.displayName}</p>
+                )}
                 <div className="flex items-center gap-2 mt-1">
                   <Link
                     href={skill.authorUrl || "#"}

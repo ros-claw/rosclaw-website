@@ -150,10 +150,13 @@ export default function PublishSkillPage() {
         if (text.includes("go2")) robotTypesList.push("unitree-go2");
       }
 
+      // Use owner/repo format for skill name (consistent with MCP packages)
+      const fullRepoName = `${owner}/${repo}`;
+
       // Auto-fill all fields
       setFormData({
         ...formData,
-        name: repo,
+        name: fullRepoName,
         description: repoData.description || "",
         skillMd: readmeContent,
         category: llmAnalysis?.category || "",
