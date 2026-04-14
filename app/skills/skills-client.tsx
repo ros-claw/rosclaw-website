@@ -149,7 +149,7 @@ export function SkillsClient() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2">
                           <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate font-mono text-sm">
-                            <Link href={`/skills/${skill.name.replace(/\//g, '-')}`}>{skill.name}</Link>
+                            <Link href={`/skills/${skill.name}`}>{skill.name}</Link>
                           </h3>
                           <span className="text-xs text-text-muted flex-shrink-0">v{skill.version}</span>
                         </div>
