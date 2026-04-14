@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Search, Filter, Download, Star, GitBranch, Cpu, Eye, Loader2 } from "lucide-react";
+import { Search, Filter, Eye, Star, GitBranch, Cpu, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -13,7 +13,8 @@ interface Skill {
   category: string;
   version: string;
   authorName: string;
-  downloadsCount: number;
+  viewsCount: number;
+  githubStars: number;
   rating: number;
   reviewCount: number;
   tags: string[];
@@ -170,18 +171,13 @@ export function SkillsClient() {
 
                         {/* Stats */}
                         <div className="flex items-center gap-4 mt-4 pt-4 border-t border-glass-border">
-                          <div className="flex items-center gap-1 text-text-muted text-sm">
-                            <Download className="w-4 h-4" />
-                            <span>{skill.downloadsCount.toLocaleString()}</span>
-                          </div>
-                          <div className="flex items-center gap-1 text-yellow-500 text-sm">
+                          <div className="flex items-center gap-1 text-yellow-500 text-sm" title="GitHub Stars">
                             <Star className="w-4 h-4 fill-current" />
-                            <span>{skill.rating?.toFixed(1) || "0.0"}</span>
-                            <span className="text-text-muted text-xs">({skill.reviewCount || 0})</span>
+                            <span>{skill.githubStars > 0 ? skill.githubStars.toLocaleString() : "—"}</span>
                           </div>
-                          <div className="flex items-center gap-1 text-text-muted text-sm ml-auto">
+                          <div className="flex items-center gap-1 text-text-muted text-sm" title="Views">
                             <Eye className="w-4 h-4" />
-                            <span>View</span>
+                            <span>{(skill.viewsCount || 0).toLocaleString()}</span>
                           </div>
                         </div>
                       </div>

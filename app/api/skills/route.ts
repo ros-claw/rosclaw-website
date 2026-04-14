@@ -74,6 +74,8 @@ export async function GET(req: NextRequest) {
       authorUrl: s.author_url,
       githubRepoUrl: s.github_repo_url,
       downloadsCount: s.downloads_count,
+      viewsCount: s.views_count || 0,
+      githubStars: s.github_stars || 0,
       rating: s.rating,
       reviewCount: s.review_count,
       status: s.status,
