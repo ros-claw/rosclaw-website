@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Download, Star, GitBranch, Copy, Check, ChevronLeft, ExternalLink, Clock, Shield, Loader2, Cpu } from "lucide-react";
+import { Eye, Star, GitBranch, Copy, Check, ChevronLeft, ExternalLink, Shield, Loader2, Cpu } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
@@ -16,7 +16,8 @@ interface Skill {
   authorName: string;
   authorUrl?: string;
   githubRepoUrl?: string;
-  downloadsCount: number;
+  viewsCount: number;
+  githubStars: number;
   rating: number;
   reviewCount: number;
   version: string;
@@ -74,6 +75,17 @@ async function fetchSkill(id: string): Promise<Skill | null> {
   }
 }
 
+// Increment view count
+async function incrementViews(id: string): Promise<void> {
+  try {
+    await fetch(`/api/skills/${encodeURIComponent(id)}?action=view`, {
+      method: "POST",
+    });
+  } catch {
+    // Silently fail - views are not critical
+  }
+}
+
 export function SkillDetailClient({ id }: SkillDetailClientProps) {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<"readme" | "changelog">("readme");
@@ -99,6 +111,9 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
       }
 
       setSkill(skillData);
+
+      // Increment view count when skill is viewed
+      incrementViews(id);
 
       // Fetch GitHub README if available
       if (skillData.githubRepoUrl) {
@@ -194,14 +209,13 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500">
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500" title="GitHub Stars">
                 <Star className="w-4 h-4 fill-current" />
-                <span className="font-medium">{skill.rating?.toFixed(1) || "0.0"}</span>
-                <span className="text-yellow-500/70 text-sm">({skill.reviewCount || 0})</span>
+                <span className="font-medium">{skill.githubStars > 0 ? skill.githubStars.toLocaleString() : "—"}</span>
               </div>
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary">
-                <Download className="w-4 h-4" />
-                <span>{skill.downloadsCount.toLocaleString()}</span>
+              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary" title="Views">
+                <Eye className="w-4 h-4" />
+                <span>{(skill.viewsCount || 0).toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -257,12 +271,51 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="markdown-body"
+                className="prose prose-invert prose-lg max-w-none"
               >
                 {displayDescription ? (
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
+                      h1: ({ children }: { children?: React.ReactNode }) => (
+                        <h1 className="text-3xl font-bold text-foreground mt-8 mb-4 pb-2 border-b border-glass-border">{children}</h1>
+                      ),
+                      h2: ({ children }: { children?: React.ReactNode }) => (
+                        <h2 className="text-2xl font-semibold text-foreground mt-6 mb-3">{children}</h2>
+                      ),
+                      h3: ({ children }: { children?: React.ReactNode }) => (
+                        <h3 className="text-xl font-semibold text-foreground mt-4 mb-2">{children}</h3>
+                      ),
+                      p: ({ children }: { children?: React.ReactNode }) => (
+                        <p className="text-text-secondary mb-4 leading-relaxed">{children}</p>
+                      ),
+                      ul: ({ children }: { children?: React.ReactNode }) => (
+                        <ul className="list-disc list-inside mb-4 text-text-secondary space-y-1">{children}</ul>
+                      ),
+                      ol: ({ children }: { children?: React.ReactNode }) => (
+                        <ol className="list-decimal list-inside mb-4 text-text-secondary space-y-1">{children}</ol>
+                      ),
+                      li: ({ children }: { children?: React.ReactNode }) => (
+                        <li className="text-text-secondary">{children}</li>
+                      ),
+                      code: ({ children, className }: { children?: React.ReactNode; className?: string }) => {
+                        const isInline = !className;
+                        return isInline ? (
+                          <code className="px-1.5 py-0.5 rounded bg-glass-bg text-cognitive-cyan font-mono text-sm">{children}</code>
+                        ) : (
+                          <pre className="bg-black/50 border border-glass-border rounded-lg p-4 overflow-x-auto my-4">
+                            <code className={`${className} font-mono text-sm`}>{children}</code>
+                          </pre>
+                        );
+                      },
+                      pre: ({ children }: { children?: React.ReactNode }) => (
+                        <div className="my-4">{children}</div>
+                      ),
+                      blockquote: ({ children }: { children?: React.ReactNode }) => (
+                        <blockquote className="border-l-4 border-cognitive-cyan/50 pl-4 py-2 my-4 text-text-secondary italic bg-glass-bg/30 rounded-r">
+                          {children}
+                        </blockquote>
+                      ),
                       a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
                         let finalHref = href || '';
                         if (href && !href.startsWith('http') && !href.startsWith('#') && skill?.githubRepoUrl) {
@@ -282,7 +335,21 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
                           finalSrc = `${baseUrl}/raw/main/${src}`;
                         }
                         return <img src={finalSrc} alt={alt} className="max-w-full rounded-lg my-4" />;
-                      }
+                      },
+                      table: ({ children }: { children?: React.ReactNode }) => (
+                        <div className="overflow-x-auto my-4">
+                          <table className="w-full border-collapse border border-glass-border">
+                            {children}
+                          </table>
+                        </div>
+                      ),
+                      th: ({ children }: { children?: React.ReactNode }) => (
+                        <th className="border border-glass-border px-4 py-2 bg-glass-bg text-foreground font-semibold">{children}</th>
+                      ),
+                      td: ({ children }: { children?: React.ReactNode }) => (
+                        <td className="border border-glass-border px-4 py-2 text-text-secondary">{children}</td>
+                      ),
+                      hr: () => <hr className="border-glass-border my-6" />,
                     }}
                   >
                     {displayDescription}

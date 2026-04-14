@@ -17,6 +17,21 @@ function createClient(req: NextRequest) {
   )
 }
 
+// Helper to create Supabase admin client (service role - bypasses RLS)
+function createAdminClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      cookies: {
+        get() { return undefined },
+        set() {},
+        remove() {},
+      },
+    }
+  )
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string[] } }
@@ -93,7 +108,8 @@ export async function GET(
       authorName: data.author_name,
       authorUrl: data.author_url,
       githubRepoUrl: data.github_repo_url,
-      downloadsCount: data.downloads_count,
+      viewsCount: data.views_count || 0,
+      githubStars: data.github_stars || 0,
       rating: data.rating,
       reviewCount: data.review_count,
       status: data.status,
@@ -112,5 +128,62 @@ export async function GET(
       { error: "Failed to fetch skill" },
       { status: 500 }
     )
+  }
+}
+
+// POST /api/skills/[...id]?action=view - Increment view count
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  try {
+    const fullPath = params.id.join("/")
+    const { searchParams } = new URL(req.url)
+    const action = searchParams.get("action")
+
+    if (action !== "view") {
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 })
+    }
+
+    // Convert dash format to slash format
+    const slashPath = fullPath.replace(/^([^-]+)-(.+)$/, "$1/$2")
+
+    // Use admin client to bypass RLS
+    const adminClient = createAdminClient()
+
+    // Try to find skill by name (both formats)
+    let result = await adminClient
+      .from("skills")
+      .select("id, views_count")
+      .eq("name", fullPath)
+      .single()
+
+    if (!result.data && slashPath !== fullPath) {
+      result = await adminClient
+        .from("skills")
+        .select("id, views_count")
+        .eq("name", slashPath)
+        .single()
+    }
+
+    if (!result.data) {
+      return NextResponse.json({ error: "Skill not found" }, { status: 404 })
+    }
+
+    // Increment views_count
+    const { error } = await adminClient
+      .from("skills")
+      .update({ views_count: (result.data.views_count || 0) + 1 })
+      .eq("id", result.data.id)
+
+    if (error) {
+      console.error("Failed to increment views:", error)
+      return NextResponse.json({ error: "Failed to increment views" }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (err: any) {
+    console.error("Skill POST error:", err.message)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
