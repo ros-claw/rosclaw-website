@@ -25,6 +25,9 @@ export async function GET(
     const supabase = createClient(req)
     const fullPath = params.id.join("/")
 
+    // Convert dash format to slash format (e.g., "owner-repo" -> "owner/repo")
+    const slashPath = fullPath.replace(/^([^-]+)-(.+)$/, "$1/$2")
+
     // Try to find by ID first
     let { data, error } = await supabase
       .from("skills")
@@ -32,7 +35,7 @@ export async function GET(
       .eq("id", fullPath)
       .single()
 
-    // If not found by ID, try by name
+    // If not found by ID, try by name (dash format)
     if (error || !data) {
       const result = await supabase
         .from("skills")
@@ -41,6 +44,19 @@ export async function GET(
         .single()
       data = result.data
       error = result.error
+    }
+
+    // If still not found, try by name with slash format
+    if ((!data && slashPath !== fullPath) || (error && slashPath !== fullPath)) {
+      const result = await supabase
+        .from("skills")
+        .select("*")
+        .eq("name", slashPath)
+        .single()
+      if (result.data) {
+        data = result.data
+        error = null
+      }
     }
 
     if (error || !data) {
