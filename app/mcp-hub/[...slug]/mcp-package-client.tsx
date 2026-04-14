@@ -6,6 +6,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface McpPackage {
   id: string;
@@ -334,6 +335,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                 {readmeContent ? (
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
                     components={{
                       a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
                         // Convert relative links to GitHub absolute URLs

@@ -6,6 +6,7 @@ import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
 
 interface Skill {
   id: string;
@@ -31,36 +32,50 @@ interface SkillDetailClientProps {
   id: string;
 }
 
-// Fetch GitHub README
-async function fetchGitHubReadme(githubUrl: string): Promise<string> {
+// Fetch GitHub data (README + stars)
+async function fetchGitHubData(githubUrl: string): Promise<{ readme: string; stars: number }> {
   try {
     const match = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
-    if (!match) return "";
+    if (!match) return { readme: "", stars: 0 };
 
     const [, owner, repo] = match;
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
-      headers: { Accept: "application/vnd.github+json" },
-    });
 
-    if (!res.ok) return "";
+    const [repoRes, readmeRes] = await Promise.all([
+      fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+        headers: { Accept: "application/vnd.github+json" },
+      }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+        headers: { Accept: "application/vnd.github+json" },
+      }),
+    ]);
 
-    const data = await res.json();
-    if (data.content) {
-      try {
-        const base64Content = data.content.replace(/\n/g, "");
-        const binaryString = atob(base64Content);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
+    let stars = 0;
+    if (repoRes.ok) {
+      const data = await repoRes.json();
+      stars = data.stargazers_count || 0;
+    }
+
+    let readme = "";
+    if (readmeRes.ok) {
+      const data = await readmeRes.json();
+      if (data.content) {
+        try {
+          const base64Content = data.content.replace(/\n/g, "");
+          const binaryString = atob(base64Content);
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          readme = new TextDecoder("utf-8").decode(bytes);
+        } catch {
+          readme = "";
         }
-        return new TextDecoder("utf-8").decode(bytes);
-      } catch {
-        return "";
       }
     }
-    return "";
+
+    return { readme, stars };
   } catch {
-    return "";
+    return { readme: "", stars: 0 };
   }
 }
 
@@ -91,6 +106,7 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
   const [activeTab, setActiveTab] = useState<"readme" | "changelog">("readme");
   const [skill, setSkill] = useState<Skill | null>(null);
   const [readmeContent, setReadmeContent] = useState<string>("");
+  const [githubStars, setGithubStars] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -115,12 +131,15 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
       // Increment view count when skill is viewed
       incrementViews(id);
 
-      // Fetch GitHub README if available
+      // Fetch GitHub data (README + stars) if available
       if (skillData.githubRepoUrl) {
-        const readme = await fetchGitHubReadme(skillData.githubRepoUrl);
+        const ghData = await fetchGitHubData(skillData.githubRepoUrl);
         if (isMounted) {
-          setReadmeContent(readme);
+          setReadmeContent(ghData.readme);
+          setGithubStars(ghData.stars || skillData.githubStars || 0);
         }
+      } else {
+        setGithubStars(skillData.githubStars || 0);
       }
 
       if (isMounted) {
@@ -211,7 +230,7 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500" title="GitHub Stars">
                 <Star className="w-4 h-4 fill-current" />
-                <span className="font-medium">{skill.githubStars > 0 ? skill.githubStars.toLocaleString() : "—"}</span>
+                <span className="font-medium">{githubStars > 0 ? githubStars.toLocaleString() : "—"}</span>
               </div>
               <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary" title="Views">
                 <Eye className="w-4 h-4" />
@@ -276,6 +295,7 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
                 {displayDescription ? (
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
+                    rehypePlugins={[rehypeRaw]}
                     components={{
                       h1: ({ children }: { children?: React.ReactNode }) => (
                         <h1 className="text-3xl font-bold text-foreground mt-8 mb-4 pb-2 border-b border-glass-border">{children}</h1>
