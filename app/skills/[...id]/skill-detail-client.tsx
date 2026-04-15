@@ -258,9 +258,9 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid lg:grid-cols-5 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-4">
             {/* Tabs */}
             <div className="flex gap-4 border-b border-glass-border mb-6">
               <button
@@ -397,15 +397,18 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6 lg:col-span-1">
+          <div className="space-y-6 lg:col-span-1 min-w-[260px] lg:pl-4">
             {/* Install Box */}
-            <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Install</h3>
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
-                <code className="flex-1 text-text-secondary text-xs">{installCommand}</code>
+            <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/40 border border-cognitive-cyan/20 shadow-lg shadow-cognitive-cyan/5">
+              <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-cognitive-cyan" />
+                Install
+              </h3>
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-black/60 font-mono text-sm border border-white/5">
+                <code className="flex-1 text-text-secondary text-xs truncate">{installCommand}</code>
                 <button
                   onClick={handleCopy}
-                  className="p-1.5 rounded hover:bg-white/10 transition-colors"
+                  className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex-shrink-0"
                   title="Copy to clipboard"
                 >
                   {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
@@ -415,16 +418,16 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
 
             {/* Compatible Robots */}
             {skill.compatibleRobots.length > 0 && (
-              <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
+              <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/20 border border-glass-border hover:border-green-500/20 transition-colors">
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
+                  <Shield className="w-4 h-4 text-green-500" />
                   Compatible Robots
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {skill.compatibleRobots.map((robot) => (
                     <span
                       key={robot}
-                      className="px-2 py-1 rounded-full bg-green-500/10 text-green-500 text-xs"
+                      className="px-2.5 py-1 rounded-full bg-green-500/10 text-green-500 text-xs font-medium border border-green-500/20"
                     >
                       {robot}
                     </span>
@@ -435,12 +438,15 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
 
             {/* Dependencies */}
             {skill.dependencies.length > 0 && (
-              <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-                <h3 className="text-sm font-semibold text-foreground mb-3">Dependencies</h3>
+              <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/20 border border-glass-border">
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <GitBranch className="w-4 h-4 text-text-muted" />
+                  Dependencies
+                </h3>
                 <div className="space-y-2">
                   {skill.dependencies.map((dep) => (
-                    <div key={dep} className="flex items-center gap-2 text-sm">
-                      <GitBranch className="w-3.5 h-3.5 text-text-muted" />
+                    <div key={dep} className="flex items-center gap-2 text-sm p-1.5 rounded hover:bg-white/5 transition-colors">
+                      <div className="w-1.5 h-1.5 rounded-full bg-cognitive-cyan/60" />
                       <span className="text-text-secondary">{dep}</span>
                     </div>
                   ))}
@@ -449,17 +455,24 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
             )}
 
             {/* Links */}
-            <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Links</h3>
-              <div className="space-y-2">
+            <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/20 border border-glass-border">
+              <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                <ExternalLink className="w-4 h-4 text-text-muted" />
+                Links
+              </h3>
+              <div className="space-y-1">
                 {skill.githubRepoUrl && (
                   <Link
                     href={skill.githubRepoUrl}
                     target="_blank"
-                    className="flex items-center gap-2 text-sm text-text-secondary hover:text-foreground transition-colors"
+                    className="flex items-center gap-2 text-sm text-text-secondary hover:text-cognitive-cyan transition-colors p-2 -mx-2 rounded-lg hover:bg-cognitive-cyan/5"
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    GitHub Repository
+                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                      </svg>
+                    </div>
+                    <span>GitHub Repository</span>
                   </Link>
                 )}
               </div>

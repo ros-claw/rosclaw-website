@@ -288,9 +288,9 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid lg:grid-cols-5 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-4">
             {/* Tabs */}
             <div className="flex gap-4 border-b border-glass-border mb-6">
               <button
@@ -446,7 +446,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6 lg:col-span-1">
+          <div className="space-y-6 lg:col-span-1 min-w-[220px]">
             {/* Install Box */}
             <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
               <h3 className="text-sm font-semibold text-foreground mb-3">Install</h3>

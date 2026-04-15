@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "computedAt": 1775891686488,
+  "computedAt": 1776145422384,
   "entries": [
     {
       "id": "mem-css-layout-lessons-----",
@@ -205,9 +205,9 @@
       "content": "curl http://localhost:3000/_next/static/chunks/main.js.map",
       "summary": "检查 source map 是否禁用",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.53,
+      "confidence": 0.5,
       "pageRank": 0.19711858363020157,
-      "accessCount": 1,
+      "accessCount": 0,
       "words": [
         "curl",
         "http",
