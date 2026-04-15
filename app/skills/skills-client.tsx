@@ -41,6 +41,44 @@ export function SkillsClient() {
     fetchSkills();
   }, [activeCategory, searchQuery]);
 
+  // Fetch GitHub stars for skills that don't have them
+  useEffect(() => {
+    if (skills.length === 0) return;
+
+    const fetchGitHubStars = async () => {
+      const updatedSkills = [...skills];
+      let hasUpdates = false;
+
+      for (let i = 0; i < updatedSkills.length; i++) {
+        const skill = updatedSkills[i];
+        // Only fetch if no stars and has GitHub URL
+        if ((!skill.githubStars || skill.githubStars === 0) && skill.name.includes('/')) {
+          try {
+            const [owner, repo] = skill.name.split('/');
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+              headers: { Accept: "application/vnd.github+json" },
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.stargazers_count) {
+                updatedSkills[i] = { ...skill, githubStars: data.stargazers_count };
+                hasUpdates = true;
+              }
+            }
+          } catch {
+            // Silently fail for individual skills
+          }
+        }
+      }
+
+      if (hasUpdates) {
+        setSkills(updatedSkills);
+      }
+    };
+
+    fetchGitHubStars();
+  }, [skills]);
+
   const fetchSkills = async () => {
     setLoading(true);
     try {
