@@ -18,7 +18,68 @@ cd scripts
 pip install -r requirements.txt
 ```
 
+## 工具说明
+
+- `bulk_import.py` - 从 URL 列表或 JSON 文件批量导入
+- `github_crawler.py` - 自动爬取 GitHub 仓库并导入
+
 ## 使用方法
+
+### 方式一：GitHub 自动爬取（推荐）
+
+自动搜索 GitHub 仓库并导入：
+
+```bash
+# 搜索 MCP 相关仓库
+python github_crawler.py \
+  --type mcp \
+  --query "mcp server ros" \
+  --limit 50 \
+  --token YOUR_GITHUB_TOKEN \
+  --api-key YOUR_ADMIN_API_KEY
+
+# 搜索 ROS2 Skills
+python github_crawler.py \
+  --type skill \
+  --query "ros2 manipulation robot" \
+  --min-stars 10 \
+  --limit 100
+```
+
+#### Crawler 参数
+
+| 参数 | 说明 | 必需 |
+|------|------|------|
+| `--type` | 导入类型：`mcp` 或 `skill` | 是 |
+| `--query` | GitHub 搜索关键词 | 是 |
+| `--limit` | 最大获取数量 | 否 (默认: 50) |
+| `--min-stars` | 最低 Stars 数 | 否 |
+| `--language` | 编程语言过滤 | 否 |
+| `--require-topics` | 必须包含的 topics | 否 |
+| `--exclude` | 排除的关键词 | 否 |
+| `--token` | GitHub Personal Access Token | 否 |
+| `--api-key` | ROSClaw Admin API Key | 否 |
+| `--dry-run` | 只搜索，不导入 | 否 |
+| `--save` | 保存搜索结果到 JSON | 否 |
+
+#### 常用搜索词
+
+```bash
+# MCP 相关
+"mcp server"
+"model context protocol"
+"anthropic mcp"
+"mcp ros2"
+
+# Skills 相关
+"ros2 skill"
+"ros manipulation"
+"robot navigation"
+"computer vision ros"
+"gazebo simulation"
+```
+
+### 方式二：从文件批量导入
 
 ### 1. 创建示例文件
 
