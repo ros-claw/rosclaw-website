@@ -187,3 +187,94 @@ export async function POST(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
+// PUT /api/skills/[...id] - Update skill (for sync)
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  try {
+    const fullPath = params.id.join("/")
+    const body = await req.json()
+
+    // Check API key
+    const apiKey = req.headers.get("x-api-key")
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json(
+        { error: "Invalid or missing API key" },
+        { status: 401 }
+      )
+    }
+
+    const adminClient = createAdminClient()
+
+    // Find skill by ID or name
+    let { data: existing } = await adminClient
+      .from("skills")
+      .select("id")
+      .eq("id", fullPath)
+      .single()
+
+    if (!existing) {
+      const result = await adminClient
+        .from("skills")
+        .select("id")
+        .eq("name", fullPath)
+        .single()
+      existing = result.data
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Skill not found" },
+        { status: 404 }
+      )
+    }
+
+    // Build update data
+    const updateData: any = {
+      updated_at: new Date().toISOString(),
+    }
+
+    // Only update provided fields
+    if (body.description !== undefined) updateData.description = body.description
+    if (body.long_description !== undefined) updateData.long_description = body.long_description
+    if (body.readme_content !== undefined) updateData.readme_content = body.readme_content
+    if (body.display_name !== undefined) updateData.display_name = body.display_name
+    if (body.github_stars !== undefined) updateData.github_stars = body.github_stars
+    if (body.category !== undefined) updateData.category = body.category
+    if (body.robot_types !== undefined) updateData.robot_types = body.robot_types
+    if (body.tags !== undefined) updateData.tags = body.tags
+    if (body.version !== undefined) updateData.version = body.version
+    if (body.status !== undefined) updateData.status = body.status
+
+    const { data, error } = await adminClient
+      .from("skills")
+      .update(updateData)
+      .eq("id", existing.id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Update error:", error)
+      return NextResponse.json(
+        { error: "Failed to update skill" },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      id: data.id,
+      name: data.name,
+      message: "Skill updated successfully",
+      updated_fields: Object.keys(updateData),
+    })
+
+  } catch (err: any) {
+    console.error("Skill PUT error:", err.message)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}

@@ -172,3 +172,96 @@ export async function POST(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
+// PUT /api/mcp-packages/[...id] - Update package (for sync)
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  try {
+    const fullPath = params.id.join("/")
+    const body = await req.json()
+
+    // Check API key
+    const apiKey = req.headers.get("x-api-key")
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json(
+        { error: "Invalid or missing API key" },
+        { status: 401 }
+      )
+    }
+
+    const adminClient = createAdminClient()
+
+    // Find package by ID or name
+    let { data: existing } = await adminClient
+      .from("mcp_packages")
+      .select("id")
+      .eq("id", fullPath)
+      .single()
+
+    if (!existing) {
+      const result = await adminClient
+        .from("mcp_packages")
+        .select("id")
+        .eq("name", fullPath)
+        .single()
+      existing = result.data
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Package not found" },
+        { status: 404 }
+      )
+    }
+
+    // Build update data
+    const updateData: any = {
+      updated_at: new Date().toISOString(),
+    }
+
+    // Only update provided fields
+    if (body.description !== undefined) updateData.description = body.description
+    if (body.long_description !== undefined) updateData.long_description = body.long_description
+    if (body.readme_content !== undefined) updateData.readme_content = body.readme_content
+    if (body.github_stars !== undefined) updateData.github_stars = body.github_stars
+    if (body.github_forks !== undefined) updateData.github_forks = body.github_forks
+    if (body.category !== undefined) updateData.category = body.category
+    if (body.robot_type !== undefined) updateData.robot_type = body.robot_type
+    if (body.tags !== undefined) updateData.tags = body.tags
+    if (body.tools !== undefined) updateData.tools = body.tools
+    if (body.version !== undefined) updateData.version = body.version
+    if (body.last_synced_at !== undefined) updateData.last_synced_at = body.last_synced_at
+    if (body.status !== undefined) updateData.status = body.status
+
+    const { data, error } = await adminClient
+      .from("mcp_packages")
+      .update(updateData)
+      .eq("id", existing.id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error("Update error:", error)
+      return NextResponse.json(
+        { error: "Failed to update package" },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      id: data.id,
+      name: data.name,
+      message: "Package updated successfully",
+      updated_fields: Object.keys(updateData),
+    })
+
+  } catch (err: any) {
+    console.error("MCP Package PUT error:", err.message)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
