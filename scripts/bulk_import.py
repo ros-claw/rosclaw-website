@@ -5,7 +5,7 @@ ROSClaw Bulk Import Script
 
 功能：
 - 从 GitHub URL 自动获取仓库信息
-- 自动推断分类、标签、机器人类型
+- 自动推断分类、标签、机器人类型（支持本地规则或 LLM）
 - 去重检查（基于 name 字段）
 - 使用 API Key 直接发布（跳过审核）
 - 支持批量导入和错误重试
@@ -13,10 +13,12 @@ ROSClaw Bulk Import Script
 使用方法：
     python bulk_import.py --type mcp --file mcp_repos.txt
     python bulk_import.py --type skill --file skill_repos.txt --api-key YOUR_API_KEY
+    python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --use-llm --llm-api-key BAILIAN_KEY
 """
 
 import argparse
 import json
+import os
 import re
 import sys
 import time
@@ -30,11 +32,170 @@ import requests
 BASE_URL = "https://www.rosclaw.io"
 # BASE_URL = "http://localhost:3000"  # 本地开发时使用
 
+# LLM 配置
+BAILIAN_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+BAILIAN_MODEL = "qwen-turbo"
+
+
+class LLMAnalyzer:
+    """LLM 分析器 - 使用大模型分析 README 提取结构化信息"""
+
+    def __init__(self, api_key: Optional[str] = None, base_url: str = BAILIAN_BASE_URL):
+        self.api_key = api_key or os.environ.get("BAILIAN_API_KEY")
+        self.base_url = base_url.rstrip("/")
+
+    def analyze(self, repo_name: str, description: str, readme_content: str, item_type: str = "mcp") -> Optional[dict]:
+        """
+        使用 LLM 分析仓库 README
+
+        Args:
+            repo_name: 仓库名称 (owner/repo)
+            description: 仓库描述
+            readme_content: README 内容
+            item_type: "mcp" 或 "skill"
+
+        Returns:
+            {
+                "category": str,
+                "robot_type": str,
+                "tags": list[str],
+                "tools": list[dict]  # MCP 类型特有
+            }
+        """
+        if not self.api_key:
+            print("    ⚠️  未提供 LLM API Key，跳过 LLM 分析")
+            return None
+
+        try:
+            # 构建 prompt
+            if item_type == "mcp":
+                system_prompt = "You are an expert at analyzing robotics and MCP (Model Context Protocol) server documentation. Extract structured information accurately."
+                user_prompt = f"""Analyze this GitHub repository and extract MCP tools information.
+
+Repository: {repo_name}
+Description: {description or "N/A"}
+
+README Content:
+{readme_content[:8000]}
+
+Please analyze the README and extract:
+1. MCP Tools: List of functions/tools this MCP server provides (name and description)
+2. Category: The hardware/software category (e.g., Manipulators, Cameras, Sensors)
+3. Robot Type: Specific robot/hardware this works with (e.g., UR5, Franka, G1)
+4. Tags: Relevant keywords for searching
+
+Respond ONLY in this JSON format:
+{{
+  "tools": [
+    {{"name": "tool_name", "description": "What this tool does"}}
+  ],
+  "category": "Category Name",
+  "robotType": "Robot/Hardware Name",
+  "tags": ["tag1", "tag2"]
+}}
+
+If you cannot determine a field, use empty string or empty array."""
+            else:  # skill
+                system_prompt = "You are an expert at analyzing robotics skills and ROS packages. Extract structured information accurately."
+                user_prompt = f"""Analyze this GitHub repository and extract skill information.
+
+Repository: {repo_name}
+Description: {description or "N/A"}
+
+README Content:
+{readme_content[:8000]}
+
+Please analyze the README and extract:
+1. Category: The skill category (e.g., manipulation, vision, navigation, simulation, control)
+2. Robot Types: List of robot types this skill supports (e.g., ["manipulator", "mobile"])
+3. Compatible Robots: Specific robot models (e.g., ["UR5", "Franka Panda"])
+4. Tags: Relevant keywords for searching
+5. Dependencies: ROS packages this skill depends on
+
+Respond ONLY in this JSON format:
+{{
+  "category": "category_name",
+  "robotTypes": ["type1", "type2"],
+  "compatibleRobots": ["Robot Model 1", "Robot Model 2"],
+  "tags": ["tag1", "tag2"],
+  "dependencies": ["dependency1", "dependency2"]
+}}
+
+If you cannot determine a field, use empty string or empty array."""
+
+            # 调用 LLM API
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}",
+                },
+                json={
+                    "model": BAILIAN_MODEL,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "temperature": 0.3,
+                    "max_tokens": 2000,
+                },
+                timeout=60
+            )
+
+            if not response.ok:
+                print(f"    ⚠️  LLM API 错误: {response.status_code}")
+                return None
+
+            result = response.json()
+            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+            if not content:
+                print("    ⚠️  LLM 返回空内容")
+                return None
+
+            # 解析 JSON
+            try:
+                # 尝试从 markdown 代码块中提取
+                json_match = re.search(r'```json\s*([\s\S]*?)\s*```', content) or \
+                            re.search(r'```\s*([\s\S]*?)\s*```', content)
+                json_str = json_match.group(1) if json_match else content
+                parsed = json.loads(json_str)
+
+                # 标准化返回格式
+                if item_type == "mcp":
+                    return {
+                        "category": parsed.get("category", ""),
+                        "robot_type": parsed.get("robotType", ""),
+                        "tags": parsed.get("tags", []),
+                        "tools": parsed.get("tools", []),
+                    }
+                else:  # skill
+                    return {
+                        "category": parsed.get("category", ""),
+                        "robot_types": parsed.get("robotTypes", []),
+                        "compatible_robots": parsed.get("compatibleRobots", []),
+                        "tags": parsed.get("tags", []),
+                        "dependencies": parsed.get("dependencies", []),
+                    }
+
+            except json.JSONDecodeError as e:
+                print(f"    ⚠️  无法解析 LLM 响应: {e}")
+                print(f"    原始响应: {content[:200]}...")
+                return None
+
+        except Exception as e:
+            print(f"    ⚠️  LLM 分析失败: {e}")
+            return None
+
 
 class RosclawImporter:
-    def __init__(self, api_key: Optional[str] = None, base_url: str = BASE_URL):
+    def __init__(self, api_key: Optional[str] = None, base_url: str = BASE_URL,
+                 use_llm: bool = False, llm_api_key: Optional[str] = None):
         self.api_key = api_key
         self.base_url = base_url.rstrip("/")
+        self.use_llm = use_llm
+        self.llm_analyzer = LLMAnalyzer(llm_api_key) if use_llm else None
+
         self.session = requests.Session()
         self.session.headers.update({
             "Content-Type": "application/json",
@@ -109,11 +270,43 @@ class RosclawImporter:
             # 提取 topics 作为 tags
             tags = repo_data.get("topics", []) or []
 
-            # 推断机器人类型
+            # 推断机器人类型和分类
             robot_type = self.infer_robot_type(repo, tags, readme_content)
-
-            # 推断分类
             category = self.infer_category(repo, tags, readme_content)
+
+            # 初始化 LLM 分析结果
+            llm_tools = []
+            llm_tags = []
+            llm_robot_types = []
+            llm_compatible_robots = []
+            llm_dependencies = []
+
+            # 如果启用 LLM，使用 LLM 分析
+            if self.use_llm and self.llm_analyzer:
+                print(f"  🤖 使用 LLM 分析...")
+                llm_result = self.llm_analyzer.analyze(
+                    f"{owner}/{repo}",
+                    repo_data.get("description", ""),
+                    readme_content,
+                    "mcp"  # 先尝试作为 MCP 分析
+                )
+
+                if llm_result:
+                    print(f"    ✅ LLM 分析完成")
+                    # 合并 LLM 结果
+                    if llm_result.get("category"):
+                        category = llm_result["category"]
+                    if llm_result.get("robot_type"):
+                        robot_type = llm_result["robot_type"]
+                    if llm_result.get("tags"):
+                        llm_tags = llm_result["tags"]
+                    if llm_result.get("tools"):
+                        llm_tools = llm_result["tools"]
+                else:
+                    print(f"    ⚠️  LLM 分析失败，使用本地规则")
+
+            # 合并 tags（GitHub topics + LLM tags）
+            all_tags = list(set(tags + llm_tags))[:10]
 
             return {
                 "name": f"{owner}/{repo}",
@@ -123,13 +316,17 @@ class RosclawImporter:
                 "github_repo_url": repo_data.get("html_url", repo_url),
                 "author_name": repo_data.get("owner", {}).get("login", owner),
                 "author_url": repo_data.get("owner", {}).get("html_url", ""),
-                "tags": tags[:10],  # 限制标签数量
+                "tags": all_tags,
                 "github_stars": repo_data.get("stargazers_count", 0),
                 "github_forks": repo_data.get("forks_count", 0),
                 "robot_type": robot_type,
                 "category": category,
                 "version": self.extract_version(readme_content) or "1.0.0",
                 "license": repo_data.get("license", {}).get("name", ""),
+                "llm_tools": llm_tools,
+                "llm_robot_types": llm_robot_types,
+                "llm_compatible_robots": llm_compatible_robots,
+                "llm_dependencies": llm_dependencies,
             }
 
         except Exception as e:
@@ -228,13 +425,16 @@ class RosclawImporter:
                     "name": data["name"],
                     "description": data["description"],
                     "long_description": data["long_description"],
+                    "readme_content": data["long_description"],
                     "github_repo_url": data["github_repo_url"],
                     "author_name": data["author_name"],
                     "category": data["category"],
                     "robot_type": data["robot_type"],
                     "tags": data["tags"],
                     "version": data["version"],
-                    "tools": [],  # TODO: 可以尝试解析 MCP 工具定义
+                    "github_stars": data["github_stars"],
+                    "github_forks": data["github_forks"],
+                    "tools": data.get("llm_tools", []),  # 使用 LLM 分析的工具
                 }
                 endpoint = "mcp-packages"
             else:  # skill
@@ -243,15 +443,17 @@ class RosclawImporter:
                     "display_name": data["display_name"],
                     "description": data["description"],
                     "long_description": data["long_description"],
+                    "readme_content": data["long_description"],
                     "github_repo_url": data["github_repo_url"],
                     "author_name": data["author_name"],
                     "author_url": data["author_url"],
                     "category": data["category"],
-                    "robot_types": [data["robot_type"]] if data["robot_type"] != "universal" else [],
+                    "robot_types": data.get("llm_robot_types", [data["robot_type"]] if data["robot_type"] != "universal" else []),
                     "tags": data["tags"],
                     "version": data["version"],
-                    "compatible_robots": [],
-                    "dependencies": [],
+                    "github_stars": data["github_stars"],
+                    "compatible_robots": data.get("llm_compatible_robots", []),
+                    "dependencies": data.get("llm_dependencies", []),
                 }
                 endpoint = "skills"
 
@@ -437,6 +639,13 @@ def main():
   # 使用自定义 JSON 数据导入
   python bulk_import.py --type mcp --json-file custom_import.json --api-key YOUR_KEY
 
+  # 使用 LLM 分析（提高准确度）
+  python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --use-llm --llm-api-key BAILIAN_KEY
+
+  # 使用环境变量设置 LLM API Key
+  export BAILIAN_API_KEY=your_key
+  python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --use-llm
+
   # 创建示例文件
   python bulk_import.py --init
         """,
@@ -480,6 +689,16 @@ def main():
         action="store_true",
         help="创建示例输入文件",
     )
+    parser.add_argument(
+        "--use-llm",
+        action="store_true",
+        help="使用 LLM 分析 README（提高准确度）",
+    )
+    parser.add_argument(
+        "--llm-api-key",
+        default=os.environ.get("BAILIAN_API_KEY"),
+        help="LLM API Key（百炼/Bailian），默认从环境变量 BAILIAN_API_KEY 读取",
+    )
 
     args = parser.parse_args()
 
@@ -492,11 +711,15 @@ def main():
         print("   如需直接发布，请提供 --api-key")
         print()
 
+    if args.use_llm and not args.llm_api_key:
+        print("⚠️  警告: 启用 LLM 但未提供 API Key，尝试从环境变量 BAILIAN_API_KEY 读取")
+        print()
+
     if args.json_file:
-        importer = RosclawImporter(args.api_key, args.base_url)
+        importer = RosclawImporter(args.api_key, args.base_url, args.use_llm, args.llm_api_key)
         importer.import_from_json(args.json_file, args.type)
     elif args.file and args.type:
-        importer = RosclawImporter(args.api_key, args.base_url)
+        importer = RosclawImporter(args.api_key, args.base_url, args.use_llm, args.llm_api_key)
         importer.import_from_file(args.file, args.type, args.force, args.delay)
     else:
         parser.print_help()
