@@ -13,6 +13,7 @@ interface McpPackage {
   name: string;
   description: string;
   longDescription?: string;
+  readmeContent?: string;
   authorName: string;
   author_user_id: string;
   githubRepoUrl: string;
@@ -137,11 +138,23 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
       // Increment view count when package is viewed
       incrementViews(id);
 
-      // Fetch GitHub data (for README and other real-time data)
+      // Fetch GitHub data (for README fallback and real-time stats)
       if (pkg.githubRepoUrl) {
         const ghData = await fetchGitHubData(pkg.githubRepoUrl);
         if (isMounted) {
           setGithubData(ghData);
+        }
+      }
+
+      // Use cached readme_content if available, otherwise use GitHub data
+      if (isMounted) {
+        const cachedReadme = pkg.readmeContent;
+        const githubReadme = pkg.longDescription;
+
+        // Priority: cached readme > GitHub readme > empty
+        if (!cachedReadme && !githubReadme && pkg.githubRepoUrl) {
+          // If no cached data, trigger a background sync
+          console.log("No cached README, consider running sync script");
         }
       }
 
@@ -204,9 +217,10 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
 
   const installUrl = `https://rosclaw.io/mcp-hub/${id}`;
   const installCommand = `rosclaw install mcp ${packageData.name}`;
-  // Use cached github_stars from DB, fallback to real-time fetch if not available
+  // Use cached data from DB first, fallback to real-time GitHub fetch if not available
   const stars = packageData.githubStars || githubData?.stars || 0;
-  const readmeContent = githubData?.readme || packageData.longDescription || packageData.description;
+  // Priority: cached readme_content > GitHub API readme > long_description > description
+  const readmeContent = packageData.readmeContent || githubData?.readme || packageData.longDescription || packageData.description;
   const authorUrl = `https://github.com/${packageData.name.split('/')[0]}`;
   const isOfficial = packageData.verified || false;
 

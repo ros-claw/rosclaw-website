@@ -87,6 +87,7 @@ export async function GET(
       name: data.name,
       description: data.description,
       longDescription: data.long_description,
+      readmeContent: data.readme_content,
       authorName: data.author_name,
       author_user_id: data.author_user_id,
       githubRepoUrl: data.github_repo_url,

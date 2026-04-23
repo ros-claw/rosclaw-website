@@ -14,6 +14,7 @@ interface Skill {
   displayName: string;
   description: string;
   longDescription?: string;
+  readmeContent?: string;
   authorName: string;
   authorUrl?: string;
   githubRepoUrl?: string;
@@ -131,8 +132,13 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
       // Increment view count when skill is viewed
       incrementViews(id);
 
-      // Fetch GitHub data (README + stars) if available
-      if (skillData.githubRepoUrl) {
+      // Priority: cached readme_content > GitHub API > long_description
+      if (skillData.readmeContent) {
+        // Use cached README from database
+        setReadmeContent(skillData.readmeContent);
+        setGithubStars(skillData.githubStars || 0);
+      } else if (skillData.githubRepoUrl) {
+        // Fetch from GitHub API as fallback
         const ghData = await fetchGitHubData(skillData.githubRepoUrl);
         if (isMounted) {
           setReadmeContent(ghData.readme);

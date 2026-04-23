@@ -103,6 +103,7 @@ export async function GET(
       displayName: data.display_name,
       description: data.description,
       longDescription: data.long_description,
+      readmeContent: data.readme_content,
       category: data.category,
       version: data.version,
       authorName: data.author_name,
