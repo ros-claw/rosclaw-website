@@ -508,10 +508,12 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                   <Cpu className="w-4 h-4 text-text-muted" />
                   <span className="text-text-secondary">{packageData.robotType}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Terminal className="w-4 h-4 text-text-muted" />
-                  <span className="text-text-secondary">v{packageData.version}</span>
-                </div>
+                {githubData?.updatedAt && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <Terminal className="w-4 h-4 text-text-muted" />
+                    <span className="text-text-secondary">Updated {formatDate(githubData.updatedAt)}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2 text-sm">
                   <Shield className={`w-4 h-4 ${isOfficial ? "text-green-500" : "text-cognitive-cyan"}`} />
                   <span className={isOfficial ? "text-green-500" : "text-cognitive-cyan"}>

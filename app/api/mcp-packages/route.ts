@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
         tags: body.tags || [],
         tools: body.tools || [],
         status: body.status,
-        is_verified: isApiKeyAuth,
+        is_verified: false,  // Only manually set true for truly official packages
       })
       .select()
       .single()
