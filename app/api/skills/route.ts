@@ -155,6 +155,7 @@ export async function POST(req: NextRequest) {
         display_name: body.display_name,
         description: body.description,
         long_description: body.long_description,
+        readme_content: body.readme_content,
         category: body.category,
         version: body.version || "1.0.0",
         author_user_id: userId,
