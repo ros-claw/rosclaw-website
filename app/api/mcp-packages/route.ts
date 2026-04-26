@@ -110,6 +110,7 @@ export async function POST(req: NextRequest) {
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
     let isApiKeyAuth = false
+    let client = supabase
 
     if (apiKey) {
       // API key authentication (for external integrations)
@@ -118,6 +119,8 @@ export async function POST(req: NextRequest) {
       }
       isApiKeyAuth = true
       body.status = "approved"
+      // Use admin client to bypass RLS for API key auth
+      client = createAdminClient()
     } else {
       // Session authentication (for web users)
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
@@ -132,7 +135,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if package name already exists
-    const { data: existing } = await supabase
+    const { data: existing } = await client
       .from("mcp_packages")
       .select("name")
       .eq("name", body.name)
@@ -146,7 +149,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert new package
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from("mcp_packages")
       .insert({
         name: body.name,

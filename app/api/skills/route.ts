@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
     // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
+    let client = supabase
 
     if (apiKey) {
       // API key authentication
@@ -120,6 +121,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
       }
       body.status = "approved"
+      // Use admin client to bypass RLS for API key auth
+      client = createAdminClient()
     } else {
       // Session authentication
       const { data: { session }, error: sessionError } = await supabase.auth.getSession()
@@ -131,7 +134,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if skill name already exists
-    const { data: existing } = await supabase
+    const { data: existing } = await client
       .from("skills")
       .select("name")
       .eq("name", body.name)
@@ -145,7 +148,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert new skill
-    const { data, error } = await supabase
+    const { data, error } = await client
       .from("skills")
       .insert({
         name: body.name,
