@@ -586,5 +586,103 @@
         "accessCount": 0
       }
     ]
+  },
+  {
+    "timestamp": 1777159048528,
+    "nodes": 8,
+    "edges": 17,
+    "pageRankSum": 1,
+    "confidences": [
+      0.41000000000000003,
+      0.41000000000000003,
+      0.41000000000000003,
+      0.41000000000000003,
+      0.41000000000000003,
+      0.41000000000000003,
+      0.41000000000000003,
+      0.415
+    ],
+    "accessCounts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "topPatterns": [
+      {
+        "id": "mem-css-layout-lessons-----",
+        "summary": "问题背景",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.25098358431691775,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-css-layout-lessons-----",
+        "summary": "核心问题",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.25098358431691775,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-css-layout-lessons-----",
+        "summary": "修复清单",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.25098358431691775,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-css-layout-lessons-----",
+        "summary": "经验教训",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.25098358431691775,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-css-layout-lessons-----",
+        "summary": "常见陷阱",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.25098358431691775,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-css-layout-lessons-----",
+        "summary": "最佳实践",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.25098358431691775,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-security-fixes-2026-04-05-----",
+        "summary": "生产构建",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.21082625493619855,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-security-fixes-2026-04-05-----",
+        "summary": "相关文件",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.21082625493619855,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-security-fixes-2026-04-05------",
+        "summary": "检查响应头",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.20316627254471092,
+        "accessCount": 0
+      },
+      {
+        "id": "mem-security-fixes-2026-04-05----source-map-----",
+        "summary": "检查 source map 是否禁用",
+        "confidence": 0.41000000000000003,
+        "pageRank": 0.19711858363020157,
+        "accessCount": 0
+      }
+    ]
   }
 ]

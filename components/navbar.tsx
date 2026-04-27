@@ -9,8 +9,8 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 
 const navLinks = [
   { name: "Home", href: "/" },
-  { name: "MCP Hub", href: "/mcp-hub" },
-  { name: "Skill Market", href: "/skills" },
+  { name: "ROSClaw Hub", href: "/hub" },
+  { name: "Data Flywheel", href: "/flywheel" },
   { name: "Docs", href: "/#docs" },
 ];
 
