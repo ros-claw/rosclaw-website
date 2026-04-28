@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Cpu, ExternalLink, Play, ArrowLeft, Star, Download } from "lucide-react";
+import { Cpu, ExternalLink, Play, ArrowLeft, Star, Download, Plus } from "lucide-react";
 
 interface Skill {
   id: string;
@@ -115,22 +115,40 @@ export default function SkillsPage() {
             Back to Hub
           </Link>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-xl bg-physical-orange/10 border border-physical-orange/20 flex items-center justify-center">
-              <Cpu className="w-7 h-7 text-physical-orange" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-physical-orange/10 border border-physical-orange/20 flex items-center justify-center">
+                <Cpu className="w-7 h-7 text-physical-orange" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                  e-Skill Market
+                </h1>
+                <p className="text-physical-orange">Teach Once, Embody Anywhere.</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                e-Skill Market
-              </h1>
-              <p className="text-physical-orange">Teach Once, Embody Anywhere.</p>
-            </div>
+            <Link
+              href="/skills/publish"
+              className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-physical-orange/10 border border-physical-orange/30 text-physical-orange hover:bg-physical-orange/20 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Publish Skill
+            </Link>
           </div>
 
           <p className="text-text-secondary max-w-2xl">
             Download, share, and deploy physics-grounded skills. Transform your
             hardware instantly with community-driven VLA weights and behavior trees.
           </p>
+
+          {/* Mobile Publish Button */}
+          <Link
+            href="/skills/publish"
+            className="md:hidden inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-physical-orange/10 border border-physical-orange/30 text-physical-orange"
+          >
+            <Plus className="w-4 h-4" />
+            Publish Skill
+          </Link>
         </motion.div>
 
         {/* Skills Grid */}

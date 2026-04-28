@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Cpu, ExternalLink, Terminal, ArrowLeft } from "lucide-react";
+import { Cpu, ExternalLink, Terminal, ArrowLeft, Plus } from "lucide-react";
 
 interface McpPackage {
   id: string;
@@ -96,22 +96,40 @@ export default function McpsPage() {
             Back to Hub
           </Link>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-xl bg-cognitive-cyan/10 border border-cognitive-cyan/20 flex items-center justify-center">
-              <Terminal className="w-7 h-7 text-cognitive-cyan" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-cognitive-cyan/10 border border-cognitive-cyan/20 flex items-center justify-center">
+                <Terminal className="w-7 h-7 text-cognitive-cyan" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                  Hardware MCPs
+                </h1>
+                <p className="text-cognitive-cyan">Zero-Code Embodiment</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Hardware MCPs
-              </h1>
-              <p className="text-cognitive-cyan">Zero-Code Embodiment</p>
-            </div>
+            <Link
+              href="/mcp-hub/publish"
+              className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan hover:bg-cognitive-cyan/20 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              Publish MCP
+            </Link>
           </div>
 
           <p className="text-text-secondary max-w-2xl">
             Universal southbound drivers. Connect Unitree, UR5e, or ANY custom
             robot to AI agents instantly using the Model Context Protocol.
           </p>
+
+          {/* Mobile Publish Button */}
+          <Link
+            href="/mcp-hub/publish"
+            className="md:hidden inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan"
+          >
+            <Plus className="w-4 h-4" />
+            Publish MCP
+          </Link>
         </motion.div>
 
         {/* Package Grid */}
