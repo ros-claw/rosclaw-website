@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SkillsClient } from "../../../skills/[...id]/skills-client";
+import { SkillDetailClient } from "../../../skills/[...id]/skill-detail-client";
 
 interface SkillPageProps {
   params: { id: string[] };
@@ -23,5 +23,5 @@ export async function generateMetadata({ params }: SkillPageProps): Promise<Meta
 
 export default function SkillPage({ params }: SkillPageProps) {
   const fullPath = params.id.join("/");
-  return <SkillsClient id={fullPath} />;
+  return <SkillDetailClient id={fullPath} />;
 }
