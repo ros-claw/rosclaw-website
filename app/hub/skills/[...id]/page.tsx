@@ -1,0 +1,19 @@
+import type { Metadata } from "next";
+import { SkillsClient } from "../../../skills/[...id]/skills-client";
+
+interface SkillPageProps {
+  params: { id: string[] };
+}
+
+export async function generateMetadata({ params }: SkillPageProps): Promise<Metadata> {
+  const fullPath = params.id.join("/");
+  return {
+    title: `${fullPath} | e-Skill Market | ROSClaw`,
+    description: `${fullPath} - Robot Skill on ROSClaw`,
+  };
+}
+
+export default function SkillPage({ params }: SkillPageProps) {
+  const fullPath = params.id.join("/");
+  return <SkillsClient id={fullPath} />;
+}

@@ -182,9 +182,9 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-2xl font-bold text-foreground">Skill Not Found</h1>
           <p className="text-text-muted mt-2">The skill &quot;{id}&quot; does not exist.</p>
-          <Link href="/skills" className="inline-flex items-center gap-2 mt-4 text-cognitive-cyan hover:underline">
+          <Link href="/hub/skills" className="inline-flex items-center gap-2 mt-4 text-cognitive-cyan hover:underline">
             <ChevronLeft className="w-4 h-4" />
-            Back to Skills
+            Back to e-Skill Market
           </Link>
         </div>
       </div>
@@ -200,11 +200,11 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
       <div className="border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link
-            href="/skills"
+            href="/hub/skills"
             className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-foreground transition-colors mb-4"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back to Skills
+            Back to e-Skill Market
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">

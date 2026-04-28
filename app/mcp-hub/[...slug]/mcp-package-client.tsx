@@ -206,9 +206,9 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-2xl font-bold text-foreground">Package Not Found</h1>
           <p className="text-text-muted mt-2">The package &quot;{id}&quot; does not exist.</p>
-          <Link href="/mcp-hub" className="inline-flex items-center gap-2 mt-4 text-cognitive-cyan hover:underline">
+          <Link href="/hub/mcps" className="inline-flex items-center gap-2 mt-4 text-cognitive-cyan hover:underline">
             <ChevronLeft className="w-4 h-4" />
-            Back to MCP Hub
+            Back to Hardware MCPs
           </Link>
         </div>
       </div>
@@ -230,11 +230,11 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
       <div className="border-b border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link
-            href="/mcp-hub"
+            href="/hub/mcps"
             className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-foreground transition-colors mb-4"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back to MCP Hub
+            Back to Hardware MCPs
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
