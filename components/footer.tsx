@@ -118,7 +118,7 @@ export function Footer() {
         {/* Academic Partners */}
         <div className="py-8 border-t border-white/10">
           <p className="text-white/40 text-sm text-center mb-6">Supported by</p>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 flex-wrap">
             <a
               href="https://www.tongji.edu.cn/"
               target="_blank"
@@ -144,6 +144,18 @@ export function Footer() {
                 className="h-12 w-auto"
               />
               <span className="text-white/80 text-sm font-medium">Shanghai Research Institute of Autonomous Intelligent Unmanned Systems</span>
+            </a>
+            <a
+              href="https://www.lejurobot.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
+            >
+              <img
+                src="/乐聚机器人logo.png"
+                alt="乐聚机器人 Leju Robotics"
+                className="h-10 w-auto"
+              />
             </a>
           </div>
         </div>

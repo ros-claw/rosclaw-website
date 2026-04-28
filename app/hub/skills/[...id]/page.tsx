@@ -5,6 +5,14 @@ interface SkillPageProps {
   params: { id: string[] };
 }
 
+// Enable dynamic params for catch-all routes
+export const dynamicParams = true;
+
+// Generate static params (empty array = all paths generated on-demand)
+export async function generateStaticParams() {
+  return [];
+}
+
 export async function generateMetadata({ params }: SkillPageProps): Promise<Metadata> {
   const fullPath = params.id.join("/");
   return {
