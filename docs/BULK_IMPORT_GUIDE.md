@@ -368,18 +368,31 @@ python github_crawler.py \
 
 ### 5.2 定时数据同步
 
-保持网站数据与 GitHub 同步：
+保持网站数据与 GitHub 同步（版本号、Stars、Forks、README、MCP Tools）：
 
 ```bash
+# 基础同步（更新版本号、Stars、README）
 python sync_github.py \
   --api-key $ADMIN_API_KEY \
   --github-token $GITHUB_TOKEN
+
+# 完整同步（包含 LLM 分析 MCP Tools）
+python sync_github.py \
+  --api-key $ADMIN_API_KEY \
+  --github-token $GITHUB_TOKEN \
+  --llm-api-key $BAILIAN_API_KEY
 ```
+
+**同步内容**:
+- ✅ 版本号（基于 GitHub 更新时间 YYYY.MM.DD）
+- ✅ GitHub Stars / Forks
+- ✅ README 内容
+- ✅ MCP Tools（需配置 `--llm-api-key`）
 
 **建议配置定时任务**:
 ```cron
 # 每小时同步一次
-0 * * * * cd /path/to/scripts && python sync_github.py --api-key $ADMIN_API_KEY
+0 * * * * cd /path/to/scripts && python sync_github.py --api-key $ADMIN_API_KEY --llm-api-key $BAILIAN_API_KEY
 ```
 
 ### 5.3 从 JSON 导入

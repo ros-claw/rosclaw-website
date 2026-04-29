@@ -272,6 +272,40 @@ curl -X DELETE "https://www.rosclaw.io/api/skills/owner/repo" \
   -H "x-api-key: YOUR_ADMIN_KEY"
 ```
 
+---
+
+## 数据同步脚本 (sync_github.py)
+
+定期同步已导入项目的 GitHub 数据：
+
+```bash
+# 基础同步（版本号、Stars、Forks、README）
+python sync_github.py \
+  --api-key YOUR_KEY \
+  --github-token GITHUB_TOKEN
+
+# 完整同步（包含 LLM 分析 MCP Tools）
+python sync_github.py \
+  --api-key YOUR_KEY \
+  --github-token GITHUB_TOKEN \
+  --llm-api-key BAILIAN_KEY
+```
+
+**参数说明**:
+| 参数 | 说明 |
+|------|------|
+| `--api-key` | ROSClaw Admin API Key（必需） |
+| `--github-token` | GitHub Token（提高速率限制） |
+| `--llm-api-key` | Bailian LLM API Key（提取 MCP Tools） |
+| `--type` | 只同步 mcp 或 skill |
+| `--delay` | 请求间隔，默认 1.0 秒 |
+
+**定时任务配置**:
+```cron
+# 每小时同步一次
+0 * * * * cd /path/to/scripts && python sync_github.py --api-key $KEY --llm-api-key $LLM_KEY
+```
+
 ## 注意事项
 
 1. **GitHub API 限制**: 未认证请求每小时 60 次，请合理设置 `--delay`
