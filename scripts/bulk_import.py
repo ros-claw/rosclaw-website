@@ -321,7 +321,7 @@ class RosclawImporter:
                 "github_forks": repo_data.get("forks_count", 0),
                 "robot_type": robot_type,
                 "category": category,
-                "version": self.extract_version(readme_content) or "1.0.0",
+                "version": self.extract_version(repo_data),
                 "license": repo_data.get("license", {}).get("name", ""),
                 "llm_tools": llm_tools,
                 "llm_robot_types": llm_robot_types,
@@ -372,21 +372,18 @@ class RosclawImporter:
 
         return "general"
 
-    def extract_version(self, readme: str) -> Optional[str]:
-        """从 README 提取版本号"""
-        # 匹配常见的版本号格式
-        patterns = [
-            r"version[:\s]+v?(\d+\.\d+(?:\.\d+)?)",
-            r"v(\d+\.\d+(?:\.\d+)?)",
-            r"version\s*[=:]\s*['\"]?(\d+\.\d+(?:\.\d+)?)['\"]?",
-        ]
-
-        for pattern in patterns:
-            match = re.search(pattern, readme, re.IGNORECASE)
-            if match:
-                return match.group(1)
-
-        return None
+    def extract_version(self, repo_data: dict) -> str:
+        """从 GitHub 更新时间生成版本号 (YYYY.MM.DD)"""
+        updated_at = repo_data.get("updated_at") or repo_data.get("pushed_at")
+        if updated_at:
+            # Parse ISO 8601 format: 2024-01-15T08:30:00Z
+            try:
+                from datetime import datetime
+                dt = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+                return f"{dt.year}.{dt.month:02d}.{dt.day:02d}"
+            except Exception:
+                pass
+        return "1.0.0"
 
     def check_exists(self, name: str, item_type: str) -> bool:
         """检查项目是否已存在"""
@@ -690,9 +687,9 @@ def main():
         help="创建示例输入文件",
     )
     parser.add_argument(
-        "--use-llm",
+        "--skip-llm",
         action="store_true",
-        help="使用 LLM 分析 README（提高准确度）",
+        help="跳过 LLM 分析（默认启用）",
     )
     parser.add_argument(
         "--llm-api-key",
@@ -711,15 +708,15 @@ def main():
         print("   如需直接发布，请提供 --api-key")
         print()
 
-    if args.use_llm and not args.llm_api_key:
+    if not args.skip_llm and not args.llm_api_key:
         print("⚠️  警告: 启用 LLM 但未提供 API Key，尝试从环境变量 BAILIAN_API_KEY 读取")
         print()
 
     if args.json_file:
-        importer = RosclawImporter(args.api_key, args.base_url, args.use_llm, args.llm_api_key)
+        importer = RosclawImporter(args.api_key, args.base_url, not args.skip_llm, args.llm_api_key)
         importer.import_from_json(args.json_file, args.type)
     elif args.file and args.type:
-        importer = RosclawImporter(args.api_key, args.base_url, args.use_llm, args.llm_api_key)
+        importer = RosclawImporter(args.api_key, args.base_url, not args.skip_llm, args.llm_api_key)
         importer.import_from_file(args.file, args.type, args.force, args.delay)
     else:
         parser.print_help()
