@@ -52,7 +52,7 @@ Content-Type: application/json
 | `category` | string | 可选 | 分类: manipulation/vision/navigation/simulation/control/planning/communication/mcp_package/general |
 | `robot_type` | string | 可选 | 机器人类型: humanoid/manipulator/mobile/drone/legged/universal |
 | `tags` | string[] | 可选 | 标签数组 |
-| `version` | string | 可选 | 版本号，默认 1.0.0 |
+| `version` | string | 可选 | 版本号，格式 YYYY.MM.DD（基于 GitHub 更新时间） |
 | `tools` | object[] | 可选 | MCP 工具列表，每个包含 name 和 description |
 
 **响应**:
