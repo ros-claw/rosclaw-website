@@ -22,7 +22,28 @@ pip install -r requirements.txt
 
 ## 环境变量配置（推荐）
 
-脚本支持从环境变量自动读取配置，无需在命令行中重复输入：
+脚本支持从环境变量自动读取配置，无需在命令行中重复输入。
+
+### 方式一：使用 .env 文件（推荐）
+
+1. 复制示例文件：
+```bash
+cp .env.example .env
+```
+
+2. 编辑 `.env` 文件，填入你的 API Key：
+```bash
+ADMIN_API_KEY=your_rosclaw_admin_key
+BAILIAN_API_KEY=your_bailian_api_key
+GITHUB_TOKEN=your_github_token
+```
+
+3. 直接运行脚本（自动读取 .env）：
+```bash
+python bulk_import.py --type mcp --file urls.txt
+```
+
+### 方式二：导出到系统环境变量
 
 ```bash
 # 必需：设置 API Key（用于认证）
@@ -32,15 +53,8 @@ export NEXT_PUBLIC_ADMIN_KEY="your_rosclaw_admin_key"
 
 # 可选：设置 LLM API Key（用于智能分析）
 export BAILIAN_API_KEY="your_bailian_api_key"
-```
 
-设置后可以直接运行脚本，无需 `--api-key` 参数：
-
-```bash
-# 以前需要提供 --api-key
-python bulk_import.py --type mcp --file urls.txt --api-key KEY
-
-# 现在只需设置环境变量后
+# 运行脚本
 python bulk_import.py --type mcp --file urls.txt
 ```
 

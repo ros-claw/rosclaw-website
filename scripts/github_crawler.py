@@ -17,11 +17,16 @@ GitHub 仓库自动爬取工具
 
 import argparse
 import json
+import os
 import sys
 import time
 from typing import Optional
 
 import requests
+from dotenv import load_dotenv
+
+# 加载 .env 文件（如果存在）
+load_dotenv()
 
 from bulk_import import RosclawImporter
 

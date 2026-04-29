@@ -27,6 +27,10 @@ from typing import Optional
 from urllib.parse import urlparse
 
 import requests
+from dotenv import load_dotenv
+
+# 加载 .env 文件（如果存在）
+load_dotenv()
 
 # 配置
 BASE_URL = "https://www.rosclaw.io"

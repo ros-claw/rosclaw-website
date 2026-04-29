@@ -29,12 +29,18 @@ ROSClaw GitHub 数据同步脚本
 import argparse
 import base64
 import json
+import os
+import re
 import sys
 import time
 from datetime import datetime
 from typing import Optional
 
 import requests
+from dotenv import load_dotenv
+
+# 加载 .env 文件（如果存在）
+load_dotenv()
 
 
 

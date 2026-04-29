@@ -173,7 +173,13 @@ cd rosclaw-website/scripts
 # 2. 安装依赖
 pip install -r requirements.txt
 
-# 3. 配置环境变量（Vercel 中已配置，本地开发时需要设置）
+# 3. 配置环境变量（两种方式任选其一）
+
+# 方式一：使用 .env 文件（推荐，自动读取）
+cp .env.example .env
+# 然后编辑 .env 文件填入你的 API Key
+
+# 方式二：导出到系统环境变量
 export ADMIN_API_KEY="your_rosclaw_admin_key"
 # 或 export NEXT_PUBLIC_ADMIN_KEY="your_rosclaw_admin_key"
 export BAILIAN_API_KEY="your_aliyun_bailian_key"  # 可选，用于 LLM 分析
