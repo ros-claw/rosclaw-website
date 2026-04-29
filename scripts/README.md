@@ -5,9 +5,11 @@
 ## 功能特性
 
 - 🔗 **自动获取 GitHub 信息**: 从 GitHub API 自动抓取仓库描述、Topics、Stars、Forks
+- 🤖 **LLM 智能分析**: 默认使用 LLM 分析 README，自动提取 MCP Tools、标签、分类（可禁用）
 - 🏷️ **智能分类**: 根据仓库名称、Topics、README 自动推断分类和机器人类型
 - 🚫 **自动去重**: 基于 `name` 字段检查是否已存在，避免重复导入
 - 🔑 **API Key 支持**: 使用 API Key 直接发布，跳过审核流程
+- 📅 **自动版本号**: 基于 GitHub 最后更新时间生成版本号 (YYYY.MM.DD)
 - 📊 **导入统计**: 显示成功、跳过、失败的数量和详细错误日志
 - 📝 **多种输入格式**: 支持 URL 列表文件或自定义 JSON 数据
 
@@ -151,6 +153,48 @@ JSON 格式示例 (`custom_import.json`)：
 ]
 ```
 
+## LLM 智能分析（默认启用）
+
+批量导入工具默认使用 LLM（百炼/qwen-turbo）分析 README 内容，自动提取：
+
+- **MCP Tools**: 工具名称和描述
+- **分类 (category)**: 更准确的分类
+- **机器人类型 (robot_type)**: 具体机器型号
+- **标签 (tags)**: 相关关键词
+
+### 配置方法
+
+**方式一：环境变量（推荐）**
+```bash
+export BAILIAN_API_KEY=your_api_key_here
+python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_ADMIN_KEY
+```
+
+**方式二：命令行参数**
+```bash
+python bulk_import.py \
+  --type mcp \
+  --file mcp_repos.txt \
+  --api-key YOUR_ADMIN_KEY \
+  --llm-api-key YOUR_BAILIAN_KEY
+```
+
+**方式三：跳过 LLM 分析**
+```bash
+python bulk_import.py \
+  --type mcp \
+  --file mcp_repos.txt \
+  --api-key YOUR_ADMIN_KEY \
+  --skip-llm
+```
+
+### 版本号规则
+
+版本号自动基于 GitHub 仓库的最后更新时间生成：
+- 格式：`YYYY.MM.DD`
+- 示例：`2025.04.28`
+- 如需自定义版本号，请使用 `--json-file` 方式导入
+
 ## 参数说明
 
 | 参数 | 说明 | 必需 |
@@ -163,6 +207,8 @@ JSON 格式示例 (`custom_import.json`)：
 | `--force` | 强制导入，跳过已存在检查 | 否 |
 | `--delay` | 请求间隔（秒），默认 1.0 | 否 |
 | `--init` | 创建示例文件 | 否 |
+| `--skip-llm` | 跳过 LLM 分析（默认启用 LLM） | 否 |
+| `--llm-api-key` | LLM API Key（百炼/Bailian），默认从环境变量 `BAILIAN_API_KEY` 读取 | 否 |
 
 ## API Key 获取
 
@@ -207,9 +253,24 @@ JSON 格式示例 (`custom_import.json`)：
 
 ## 错误处理
 
+- 仓库不存在（404）会自动跳过并提示
 - 失败的导入会记录到 `import_errors_{timestamp}.json`
 - GitHub API 速率限制会自动检测并提示
 - 网络错误会重试，单个失败不影响其他项目
+
+## 删除错误导入的项目
+
+如果导入了不存在的项目（如已被删除的仓库），可以通过 API 删除：
+
+```bash
+# 删除 MCP 包
+curl -X DELETE "https://www.rosclaw.io/api/mcp-packages/owner/repo" \
+  -H "x-api-key: YOUR_ADMIN_KEY"
+
+# 删除 Skill
+curl -X DELETE "https://www.rosclaw.io/api/skills/owner/repo" \
+  -H "x-api-key: YOUR_ADMIN_KEY"
+```
 
 ## 注意事项
 
