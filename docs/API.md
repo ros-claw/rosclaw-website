@@ -109,9 +109,15 @@ Content-Type: application/json
 
 ### 4. 删除 MCP 包
 
-**Endpoint**: `DELETE /api/mcp-packages?id={id}`
+**Endpoint**: `DELETE /api/mcp-packages/{name}`
 
 **Headers**: `x-api-key: YOUR_ADMIN_API_KEY`
+
+**示例**:
+```bash
+curl -X DELETE "https://www.rosclaw.io/api/mcp-packages/owner/repo" \
+  -H "x-api-key: YOUR_ADMIN_API_KEY"
+```
 
 **响应**:
 ```json
@@ -188,8 +194,15 @@ Content-Type: application/json
 同 MCP 包:
 - `GET /api/skills/{name}` - 获取
 - `PUT /api/skills/{name}` - 更新
-- `DELETE /api/skills?id={id}` - 删除
+- `DELETE /api/skills/{name}` - 删除
 - `GET /api/skills` - 列表
+
+### 删除 Skill 示例
+
+```bash
+curl -X DELETE "https://www.rosclaw.io/api/skills/owner/repo" \
+  -H "x-api-key: YOUR_ADMIN_API_KEY"
+```
 
 ---
 

@@ -7,13 +7,14 @@
 
 ---
 
-> **⚠️ 重要提示（MCP 包导入必读）**
+> **✅ 更新提示（2026-04-29）**
 > 
-> 导入 MCP 包时，**务必使用 `--use-llm` 参数**，否则：
-> - MCP Tools 列表将为空或不完整
-> - 分类和机器人类型推断可能不准确
+> **LLM 分析现已默认启用**，无需手动添加参数：
+> - MCP Tools 会自动从 README 中提取
+> - 分类和机器人类型由 LLM 智能推断
+> - 如需禁用 LLM，请使用 `--skip-llm` 参数
 > 
-> 示例：`python bulk_import.py --type mcp --file urls.txt --api-key KEY --use-llm --llm-api-key BAILIAN_KEY`
+> 示例：`python bulk_import.py --type mcp --file urls.txt --api-key KEY`
 
 ---
 
@@ -61,15 +62,16 @@ GitHub URL
     │
     ▼
 ┌──────────────────────────────────────┐
-│ Step 2: 内容分析 (两种方式)           │
+│ Step 2: 内容分析 (默认 LLM)           │
 │                                      │
-│ 方式 A: 本地规则匹配                  │
-│ - 关键词匹配分类和机器人类型            │
-│ - 正则提取版本号                      │
-│                                      │
-│ 方式 B: LLM 智能分析 (推荐)           │
+│ 方式 A: LLM 智能分析 (默认启用)        │
 │ - 使用大模型理解 README 语义           │
 │ - 自动提取工具、依赖、标签             │
+│ - 准确率高，推荐用于 MCP 包            │
+│                                      │
+│ 方式 B: 本地规则匹配 (禁用 LLM 时)     │
+│ - 关键词匹配分类和机器人类型            │
+│ - 使用 `--skip-llm` 参数启用           │
 └──────────────────────────────────────┘
     │
     ▼
@@ -102,7 +104,7 @@ GitHub URL
 | `category` | string | 可选 | 分类: `manipulation`/`vision`/`navigation`/`simulation`/`control`/`planning`/`communication`/`mcp_package`/`general` |
 | `robot_type` | string | 可选 | 机器人类型: `humanoid`/`manipulator`/`mobile`/`drone`/`legged`/`universal` |
 | `tags` | string[] | 可选 | 标签数组，最多10个 |
-| `version` | string | 可选 | 版本号，默认 `1.0.0` |
+| `version` | string | 可选 | 版本号，自动从 GitHub 更新时间生成 (YYYY.MM.DD) |
 | `tools` | object[] | 可选 | MCP 工具列表，`{name, description}`。**必须使用 `--use-llm` 才能正确提取** |
 | `github_stars` | number | 可选 | GitHub Stars 数 |
 | `github_forks` | number | 可选 | GitHub Forks 数 |
@@ -195,7 +197,7 @@ https://github.com/ros-planning/moveit
 https://github.com/IntelRealSense/realsense-ros
 ```
 
-### 3.3 基础导入（本地规则）
+### 3.3 标准导入（默认启用 LLM）
 
 ```bash
 python bulk_import.py \
@@ -204,23 +206,27 @@ python bulk_import.py \
   --api-key $ADMIN_API_KEY
 ```
 
-### 3.4 高级导入（LLM 增强，**强烈推荐用于 MCP**）
+**默认行为：**
+- ✅ LLM 自动分析 README，提取 MCP Tools
+- ✅ 智能推断分类和机器人类型
+- ✅ 版本号基于 GitHub 更新时间 (YYYY.MM.DD)
 
-**对于 MCP 包，强烈建议使用此模式**，否则 MCP Tools 列表将为空：
+### 3.4 仅使用本地规则（跳过 LLM）
+
+如需禁用 LLM 分析（使用关键词匹配）：
 
 ```bash
 python bulk_import.py \
   --type mcp \
   --file mcp_repos.txt \
   --api-key $ADMIN_API_KEY \
-  --use-llm \
-  --llm-api-key $BAILIAN_API_KEY
+  --skip-llm
 ```
 
-**重要说明：**
-- **不使用 `--use-llm`**：MCP Tools 提取依赖简单的正则匹配，**结果通常为空或不完整**
-- **使用 `--use-llm`**：LLM 智能分析 README，**准确提取工具名称、描述和功能**
-- **推荐配置**：始终为 MCP 包启用 LLM 分析，Skill 可选
+**注意：**
+- **使用 `--skip-llm`**：MCP Tools 提取依赖简单的正则匹配，**结果通常为空或不完整**
+- **不使用 `--skip-llm`**：LLM 智能分析 README，**准确提取工具名称、描述和功能**
+- **推荐配置**：保持默认启用 LLM 分析
 
 ---
 
@@ -472,11 +478,11 @@ python bulk_import.py \
 **附录: 完整命令参考**
 
 ```bash
-# 基础导入
+# 标准导入（LLM 自动分析）
 python bulk_import.py --type mcp --file urls.txt --api-key KEY
 
-# LLM 增强导入
-python bulk_import.py --type mcp --file urls.txt --api-key KEY --use-llm
+# 跳过 LLM 分析
+python bulk_import.py --type mcp --file urls.txt --api-key KEY --skip-llm
 
 # GitHub 爬虫
 python github_crawler.py --type mcp --query "ros mcp" --limit 50 --api-key KEY
@@ -486,4 +492,8 @@ python sync_github.py --api-key KEY --github-token TOKEN
 
 # 强制重新导入
 python bulk_import.py --type mcp --file urls.txt --api-key KEY --force
+
+# 删除不存在的项目
+curl -X DELETE "https://www.rosclaw.io/api/mcp-packages/owner/repo" \
+  -H "x-api-key: YOUR_KEY"
 ```
