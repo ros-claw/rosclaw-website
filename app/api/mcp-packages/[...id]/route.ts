@@ -266,3 +266,72 @@ export async function PUT(
     )
   }
 }
+
+// DELETE /api/mcp-packages/[...id] - Delete package
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  try {
+    const fullPath = params.id.join("/")
+
+    // Check API key
+    const apiKey = req.headers.get("x-api-key")
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json(
+        { error: "Invalid or missing API key" },
+        { status: 401 }
+      )
+    }
+
+    const adminClient = createAdminClient()
+
+    // Find package by ID or name
+    let { data: existing } = await adminClient
+      .from("mcp_packages")
+      .select("id")
+      .eq("id", fullPath)
+      .single()
+
+    if (!existing) {
+      const result = await adminClient
+        .from("mcp_packages")
+        .select("id")
+        .eq("name", fullPath)
+        .single()
+      existing = result.data
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Package not found" },
+        { status: 404 }
+      )
+    }
+
+    // Delete the package
+    const { error } = await adminClient
+      .from("mcp_packages")
+      .delete()
+      .eq("id", existing.id)
+
+    if (error) {
+      console.error("Delete error:", error)
+      return NextResponse.json(
+        { error: "Failed to delete package" },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      message: "Package deleted successfully",
+      id: existing.id,
+    })
+  } catch (err: any) {
+    console.error("MCP Package DELETE error:", err.message)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}

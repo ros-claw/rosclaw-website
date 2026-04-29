@@ -279,3 +279,72 @@ export async function PUT(
     )
   }
 }
+
+// DELETE /api/skills/[...id] - Delete skill
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string[] } }
+) {
+  try {
+    const fullPath = params.id.join("/")
+
+    // Check API key
+    const apiKey = req.headers.get("x-api-key")
+    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+      return NextResponse.json(
+        { error: "Invalid or missing API key" },
+        { status: 401 }
+      )
+    }
+
+    const adminClient = createAdminClient()
+
+    // Find skill by ID or name
+    let { data: existing } = await adminClient
+      .from("skills")
+      .select("id")
+      .eq("id", fullPath)
+      .single()
+
+    if (!existing) {
+      const result = await adminClient
+        .from("skills")
+        .select("id")
+        .eq("name", fullPath)
+        .single()
+      existing = result.data
+    }
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Skill not found" },
+        { status: 404 }
+      )
+    }
+
+    // Delete the skill
+    const { error } = await adminClient
+      .from("skills")
+      .delete()
+      .eq("id", existing.id)
+
+    if (error) {
+      console.error("Delete error:", error)
+      return NextResponse.json(
+        { error: "Failed to delete skill" },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      message: "Skill deleted successfully",
+      id: existing.id,
+    })
+  } catch (err: any) {
+    console.error("Skill DELETE error:", err.message)
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
+  }
+}
