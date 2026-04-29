@@ -173,8 +173,9 @@ cd rosclaw-website/scripts
 # 2. 安装依赖
 pip install -r requirements.txt
 
-# 3. 准备 API Key
+# 3. 配置环境变量（Vercel 中已配置，本地开发时需要设置）
 export ADMIN_API_KEY="your_rosclaw_admin_key"
+# 或 export NEXT_PUBLIC_ADMIN_KEY="your_rosclaw_admin_key"
 export BAILIAN_API_KEY="your_aliyun_bailian_key"  # 可选，用于 LLM 分析
 ```
 
