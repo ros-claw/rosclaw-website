@@ -37,8 +37,89 @@ from typing import Optional
 import requests
 
 
+
+class LLMAnalyzer:
+    """LLM 分析器 - 使用大模型分析 README 提取 MCP Tools"""
+
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key
+        self.base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        self.model = "qwen-turbo"
+
+    def analyze_tools(self, repo_name: str, description: str, readme_content: str) -> list[dict]:
+        """使用 LLM 分析 README 提取 MCP Tools"""
+        if not self.api_key:
+            return []
+
+        try:
+            prompt = f"""Analyze this MCP (Model Context Protocol) server repository and extract all tools/functions it provides.
+
+Repository: {repo_name}
+Description: {description or "N/A"}
+
+README Content:
+{readme_content[:6000]}
+
+Extract ALL tools this MCP server provides. For each tool, provide:
+1. Tool name (function name)
+2. Brief description of what it does
+
+Respond ONLY in this JSON format:
+{{
+  "tools": [
+    {{"name": "tool_name", "description": "What this tool does"}}
+  ]
+}}
+
+If no tools are found, return empty array."""
+
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {self.api_key}",
+                },
+                json={
+                    "model": self.model,
+                    "messages": [
+                        {"role": "system", "content": "You are an expert at analyzing MCP (Model Context Protocol) servers and extracting tool definitions."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    "temperature": 0.3,
+                    "max_tokens": 2000,
+                },
+                timeout=60
+            )
+
+            if not response.ok:
+                print(f"    ⚠️  LLM API error: {response.status_code}")
+                return []
+
+            result = response.json()
+            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+
+            if not content:
+                return []
+
+            # Parse JSON
+            try:
+                json_match = re.search(r'```json\s*([\s\S]*?)\s*```', content) or \
+                            re.search(r'```\s*([\s\S]*?)\s*```', content)
+                json_str = json_match.group(1) if json_match else content
+                parsed = json.loads(json_str)
+                tools = parsed.get("tools", [])
+                print(f"    🤖 LLM extracted {len(tools)} tools")
+                return tools
+            except json.JSONDecodeError:
+                return []
+
+        except Exception as e:
+            print(f"    ⚠️  LLM analysis failed: {e}")
+            return []
+
+
 class GitHubSync:
-    def __init__(self, api_key: str, base_url: str, github_token: Optional[str] = None):
+    def __init__(self, api_key: str, base_url: str, github_token: Optional[str] = None, llm_api_key: Optional[str] = None):
         self.api_key = api_key
         self.base_url = base_url.rstrip("/")
         self.github_token = github_token
@@ -56,6 +137,8 @@ class GitHubSync:
         }
         if github_token:
             self.github_headers["Authorization"] = f"Bearer {github_token}"
+
+        self.llm_analyzer = LLMAnalyzer(llm_api_key) if llm_api_key else None
 
         # 统计
         self.stats = {
@@ -128,12 +211,23 @@ class GitHubSync:
                     except Exception:
                         pass
 
+            # 生成版本号 (YYYY.MM.DD) 基于 GitHub 更新时间
+            updated_at = repo_data.get("updated_at", "")
+            version = "1.0.0"
+            if updated_at:
+                try:
+                    dt = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+                    version = f"{dt.year}.{dt.month:02d}.{dt.day:02d}"
+                except Exception:
+                    pass
+
             return {
                 "stars": repo_data.get("stargazers_count", 0),
                 "forks": repo_data.get("forks_count", 0),
-                "updated_at": repo_data.get("updated_at", ""),
+                "updated_at": updated_at,
                 "readme": readme_content,
                 "description": repo_data.get("description", ""),
+                "version": version,
             }
 
         except Exception as e:
@@ -186,16 +280,34 @@ class GitHubSync:
         print(f"   ⭐ Stars: {gh_data['stars']}")
         print(f"   📝 README: {len(gh_data['readme'])} chars")
 
+        # 如果是 MCP 包且启用了 LLM，分析 tools
+        tools = []
+        if item_type == "mcp" and self.llm_analyzer and gh_data["readme"]:
+            print("   🤖 使用 LLM 分析 MCP Tools...")
+            tools = self.llm_analyzer.analyze_tools(
+                name,
+                item.get("description", ""),
+                gh_data["readme"]
+            )
+
         # 准备更新数据
         update_data = {
             "github_stars": gh_data["stars"],
+            "github_forks": gh_data["forks"],
             "readme_content": gh_data["readme"],
+            "version": gh_data["version"],
             "last_synced_at": datetime.now().isoformat(),
         }
+
+        # 添加 tools（如果有）
+        if tools:
+            update_data["tools"] = tools
 
         # 如果描述为空，使用 GitHub 描述
         if not item.get("description") and gh_data["description"]:
             update_data["description"] = gh_data["description"]
+
+        print(f"   🏷️  Version: {gh_data['version']}")
 
         # 更新
         if self.update_item(name, item_type, update_data):
@@ -265,6 +377,7 @@ def main():
     parser.add_argument("--base-url", default="https://www.rosclaw.io", help="API 基础 URL")
     parser.add_argument("--type", choices=["mcp", "skill"], help="只同步特定类型")
     parser.add_argument("--github-token", help="GitHub Personal Access Token")
+    parser.add_argument("--llm-api-key", default=None, help="Bailian LLM API Key (用于提取 MCP Tools)")
     parser.add_argument("--delay", type=float, default=1.0, help="请求间隔（秒）")
     parser.add_argument("--force", action="store_true", help="强制同步所有项目")
 
@@ -273,7 +386,7 @@ def main():
     print("🚀 ROSClaw GitHub 同步工具")
     print(f"📍 API: {args.base_url}")
 
-    sync = GitHubSync(args.api_key, args.base_url, args.github_token)
+    sync = GitHubSync(args.api_key, args.base_url, args.github_token, args.llm_api_key)
     sync.sync_all(args.type, args.force, args.delay)
 
 
