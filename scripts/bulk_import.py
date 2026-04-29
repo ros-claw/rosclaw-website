@@ -663,9 +663,8 @@ def main():
     )
     parser.add_argument(
         "--api-key",
-        help="API Key（用于直接发布，跳过审核）",
-    )
-    parser.add_argument(
+        default=os.environ.get("ADMIN_API_KEY") or os.environ.get("NEXT_PUBLIC_ADMIN_KEY"),
+        help="API Key（用于直接发布，跳过审核），默认从环境变量 ADMIN_API_KEY 或 NEXT_PUBLIC_ADMIN_KEY 读取",
         "--base-url",
         default=BASE_URL,
         help=f"API 基础 URL (默认: {BASE_URL})",

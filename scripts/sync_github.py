@@ -373,7 +373,7 @@ def main():
         """,
     )
 
-    parser.add_argument("--api-key", required=True, help="ROSClaw Admin API Key")
+    parser.add_argument("--api-key", default=os.environ.get("ADMIN_API_KEY") or os.environ.get("NEXT_PUBLIC_ADMIN_KEY"), help="ROSClaw Admin API Key，默认从环境变量 ADMIN_API_KEY 或 NEXT_PUBLIC_ADMIN_KEY 读取")
     parser.add_argument("--base-url", default="https://www.rosclaw.io", help="API 基础 URL")
     parser.add_argument("--type", choices=["mcp", "skill"], help="只同步特定类型")
     parser.add_argument("--github-token", help="GitHub Personal Access Token")
