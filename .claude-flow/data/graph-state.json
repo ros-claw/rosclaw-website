@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": 1777159129670,
+  "updatedAt": 1777453446016,
   "nodeCount": 8,
   "nodes": {
     "mem-MEMORY-project-knowledge": {
@@ -41,15 +41,15 @@
     "mem-security-fixes-2026-04-05------": {
       "id": "mem-security-fixes-2026-04-05------",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.5900000000000001,
-      "accessCount": 3,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1775544485681
     },
     "mem-security-fixes-2026-04-05----source-map-----": {
       "id": "mem-security-fixes-2026-04-05----source-map-----",
       "category": "security-fixes-2026-04-05",
-      "confidence": 0.56,
-      "accessCount": 2,
+      "confidence": 0.5,
+      "accessCount": 0,
       "createdAt": 1775544485681
     },
     "insight-1775639163974-fdxf": {
