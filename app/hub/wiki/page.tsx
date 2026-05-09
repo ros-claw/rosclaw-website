@@ -58,11 +58,11 @@ const typeColors: Record<string, string> = {
 };
 
 const typeLabels: Record<string, string> = {
-  entity: "实体",
-  property: "属性",
-  concept: "概念",
-  algorithm: "算法",
-  constraint: "约束",
+  entity: "Entity",
+  property: "Property",
+  concept: "Concept",
+  algorithm: "Algorithm",
+  constraint: "Constraint",
 };
 
 function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
@@ -216,7 +216,7 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
         >
           <p className="font-medium text-white text-sm">{hoveredNode.name}</p>
           <p className="text-xs" style={{ color: typeColors[hoveredNode.type] }}>
-            {typeLabels[hoveredNode.type]} · {hoveredNode.pages} 页面
+            {typeLabels[hoveredNode.type]} · {hoveredNode.pages} pages
           </p>
         </motion.div>
       )}
@@ -332,7 +332,7 @@ export default function WikiPage() {
                   ROSClaw Wiki
                 </h1>
                 <p className="text-purple-500 mt-1">
-                  具身智能物理常识中枢
+                  Embodied AI Physics Commonsense Hub
                 </p>
               </div>
             </div>
@@ -342,7 +342,7 @@ export default function WikiPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
               <input
                 type="text"
-                placeholder="搜索 Wiki 知识..."
+                placeholder="Search Wiki knowledge..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.07] transition-all"
@@ -351,14 +351,14 @@ export default function WikiPage() {
                 type="submit"
                 className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-500 text-sm hover:bg-purple-500/20 transition-colors"
               >
-                搜索
+                Search
               </button>
             </form>
           </div>
 
           <p className="text-text-secondary max-w-2xl mt-4">
             {stats?.description ||
-              "覆盖视觉语言导航、机器人控制、物理参数判据等核心领域的具身智能知识图谱。"}
+              "Knowledge graph covering visual language navigation, robot control, physical parameter judgments, and other core embodied AI domains."}
           </p>
 
           {/* Subtitle Stats */}
@@ -366,25 +366,25 @@ export default function WikiPage() {
             <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-text-muted">
               <span className="flex items-center gap-1.5">
                 <FileText className="w-4 h-4 text-cognitive-cyan" />
-                {globalStats.total_pages.toLocaleString()} 页面
+                {globalStats.total_pages.toLocaleString()} pages
               </span>
               <span className="flex items-center gap-1.5">
                 <Link2 className="w-4 h-4 text-cognitive-cyan" />
-                {globalStats.total_wikilinks.toLocaleString()} 连接
+                {globalStats.total_wikilinks.toLocaleString()} links
               </span>
               <span className="flex items-center gap-1.5">
                 <Scale className="w-4 h-4 text-cognitive-cyan" />
-                {globalStats.total_judgments.toLocaleString()} 判据
+                {globalStats.total_judgments.toLocaleString()} judgments
               </span>
               <span className="flex items-center gap-1.5">
                 <Box className="w-4 h-4 text-cognitive-cyan" />
-                {globalStats.robots_covered} 机器人
+                {globalStats.robots_covered} robots
               </span>
               {globalStats.last_updated && (
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-text-muted" />
-                  更新于{" "}
-                  {new Date(globalStats.last_updated).toLocaleDateString("zh-CN")}
+                  Updated{" "}
+                  {new Date(globalStats.last_updated).toLocaleDateString("en-US")}
                 </span>
               )}
             </div>
@@ -396,7 +396,7 @@ export default function WikiPage() {
           <div className="flex items-center justify-center py-20">
             <div className="flex items-center gap-3 text-text-muted">
               <div className="w-5 h-5 border-2 border-cognitive-cyan/30 border-t-cognitive-cyan rounded-full animate-spin" />
-              加载知识图谱中...
+              Loading knowledge graph...
             </div>
           </div>
         )}
@@ -404,13 +404,13 @@ export default function WikiPage() {
         {/* Error State */}
         {error && !loading && (
           <div className="p-6 rounded-xl bg-red-500/10 border border-red-500/20 text-center">
-            <p className="text-red-500 mb-2">加载失败</p>
+            <p className="text-red-500 mb-2">Failed to load</p>
             <p className="text-text-secondary text-sm">{error}</p>
             <button
               onClick={() => window.location.reload()}
               className="mt-4 px-4 py-2 rounded-lg bg-white/5 text-text-secondary hover:text-foreground transition-colors"
             >
-              重试
+              Retry
             </button>
           </div>
         )}
@@ -427,10 +427,10 @@ export default function WikiPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-foreground">
-                  关键词图谱
+                  Keyword Graph
                 </h2>
                 <span className="text-xs text-text-muted font-mono">
-                  {stats.keywords.length} 个关键词
+                  {stats.keywords.length} keywords
                 </span>
               </div>
               <KnowledgeGraph keywords={stats.keywords} />
@@ -444,43 +444,43 @@ export default function WikiPage() {
               className="mb-8"
             >
               <h2 className="text-lg font-semibold text-foreground mb-4">
-                知识库统计
+                Knowledge Base Stats
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <StatCard
                   icon={FileText}
                   value={globalStats?.total_pages || 0}
-                  label="Wiki 页面"
+                  label="Wiki Pages"
                   delay={0}
                 />
                 <StatCard
                   icon={Link2}
                   value={globalStats?.total_wikilinks || 0}
-                  label="交叉链接"
+                  label="Cross-links"
                   delay={0.05}
                 />
                 <StatCard
                   icon={Scale}
                   value={globalStats?.total_judgments || 0}
-                  label="物理判据"
+                  label="Physics Judgments"
                   delay={0.1}
                 />
                 <StatCard
                   icon={Database}
                   value={globalStats?.total_code_graph_nodes || 0}
-                  label="图谱节点"
+                  label="Graph Nodes"
                   delay={0.15}
                 />
                 <StatCard
                   icon={GitBranch}
                   value={globalStats?.total_code_graph_edges || 0}
-                  label="图谱边数"
+                  label="Graph Edges"
                   delay={0.2}
                 />
                 <StatCard
                   icon={Cpu}
                   value={globalStats?.robots_covered || 0}
-                  label="机器人型号"
+                  label="Robot Models"
                   delay={0.25}
                 />
               </div>
@@ -494,7 +494,7 @@ export default function WikiPage() {
               className="mb-8"
             >
               <h2 className="text-lg font-semibold text-foreground mb-4">
-                热门关键词
+                Trending Keywords
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 {Object.entries(stats.keyword_categories).map(
@@ -544,10 +544,10 @@ export default function WikiPage() {
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   <div>
                     <h3 className="text-lg font-semibold text-foreground mb-2">
-                      通过 API 访问 Wiki
+                      Access Wiki via API
                     </h3>
                     <p className="text-text-secondary text-sm">
-                      使用 ROSClaw Wiki API 在您的应用中集成具身智能知识图谱
+                      Integrate embodied AI knowledge graph into your applications using the ROSClaw Wiki API
                     </p>
                   </div>
                   <a
@@ -556,7 +556,7 @@ export default function WikiPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-500 font-medium hover:bg-purple-500/20 transition-all whitespace-nowrap"
                   >
-                    查看 API 文档
+                    View API Docs
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
