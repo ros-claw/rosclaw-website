@@ -2,152 +2,309 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { BookOpen, ArrowLeft, GitBranch, ExternalLink } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import {
+  BookOpen,
+  ArrowLeft,
+  ExternalLink,
+  Search,
+  Database,
+  GitBranch,
+  Scale,
+  Cpu,
+  Box,
+  Link2,
+  Clock,
+  FileText,
+  ChevronRight,
+} from "lucide-react";
 
-const wikiNodes = [
-  { id: "kinematics", label: "Kinematics", x: 100, y: 100, size: 20 },
-  { id: "dynamics", label: "Dynamics", x: 250, y: 80, size: 18 },
-  { id: "control", label: "Control Theory", x: 400, y: 120, size: 24 },
-  { id: "perception", label: "Perception", x: 180, y: 200, size: 16 },
-  { id: "planning", label: "Path Planning", x: 350, y: 220, size: 19 },
-  { id: "learning", label: "Reinforcement Learning", x: 500, y: 180, size: 22 },
-  { id: "simulation", label: "Simulation", x: 280, y: 300, size: 17 },
-  { id: "hardware", label: "Hardware APIs", x: 450, y: 320, size: 15 },
-  { id: "safety", label: "Safety", x: 120, y: 320, size: 18 },
-  { id: "vla", label: "VLA Models", x: 600, y: 250, size: 20 },
-];
+interface WikiStats {
+  status: string;
+  wiki_name: string;
+  description: string;
+  global_stats: {
+    total_pages: number;
+    total_wikilinks: number;
+    total_judgments: number;
+    total_code_graph_nodes: number;
+    total_code_graph_edges: number;
+    robots_covered: number;
+    entities_covered: number;
+    causal_chains: number;
+    last_updated: string;
+  };
+  keywords: {
+    name: string;
+    weight: number;
+    type: string;
+    pages: number;
+  }[];
+  keyword_categories: {
+    entity: { name: string; weight: number; pages: number }[];
+    concept: { name: string; weight: number; pages: number }[];
+    property: { name: string; weight: number; pages: number }[];
+    algorithm: { name: string; weight: number; pages: number }[];
+    constraint: { name: string; weight: number; pages: number }[];
+  };
+}
 
-const wikiArticles = [
-  {
-    title: "Inverse Kinematics for 6-DOF Arms",
-    excerpt: "Mathematical foundations for computing joint angles from Cartesian targets...",
-    sources: ["arXiv:2301.08458", "GitHub: ros-controls"],
-    updated: "2 days ago",
-  },
-  {
-    title: "Diffusion Policies in Practice",
-    excerpt: "Implementation guide for diffusion-based visuomotor policies...",
-    sources: ["arXiv:2405.12031"],
-    updated: "1 week ago",
-  },
-  {
-    title: "ROS 2 Control Architecture",
-    excerpt: "Deep dive into the ros2_control framework and hardware interfaces...",
-    sources: ["ROS 2 Docs", "GitHub: ros-controls"],
-    updated: "3 days ago",
-  },
-  {
-    title: "MuJoCo Contact Mechanics",
-    excerpt: "Understanding contact models and collision detection in MuJoCo...",
-    sources: ["arXiv:2108.12210"],
-    updated: "5 days ago",
-  },
-];
+const typeColors: Record<string, string> = {
+  entity: "#3b82f6", // blue
+  property: "#f59e0b", // amber
+  concept: "#06b6d4", // cyan
+  algorithm: "#10b981", // green
+  constraint: "#8b5cf6", // purple
+};
 
-const connections = [
-  ["kinematics", "dynamics"],
-  ["dynamics", "control"],
-  ["control", "planning"],
-  ["planning", "learning"],
-  ["perception", "vla"],
-  ["learning", "vla"],
-  ["simulation", "dynamics"],
-  ["hardware", "control"],
-  ["safety", "control"],
-  ["simulation", "planning"],
-];
+const typeLabels: Record<string, string> = {
+  entity: "实体",
+  property: "属性",
+  concept: "概念",
+  algorithm: "算法",
+  constraint: "约束",
+};
 
-function KnowledgeGraph() {
+function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [hoveredNode, setHoveredNode] = useState<WikiStats["keywords"][0] | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !keywords.length) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const resizeCanvas = () => {
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      if (rect) {
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+    };
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // Node positions - distribute in a spiral pattern
+    const nodes = keywords.slice(0, 30).map((keyword, i) => {
+      const angle = (i / Math.min(keywords.length, 30)) * Math.PI * 4;
+      const radius = 50 + (i * 8);
+      const x = canvas.width / 2 + Math.cos(angle) * radius;
+      const y = canvas.height / 2 + Math.sin(angle) * radius * 0.6;
+      const size = 4 + keyword.weight * 12;
+      return { ...keyword, x, y, size };
+    });
+
+    let animationId: number;
+    let time = 0;
+
+    const animate = () => {
+      time += 0.01;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw connections
+      nodes.forEach((node1, i) => {
+        nodes.forEach((node2, j) => {
+          if (i >= j) return;
+          const dx = node2.x - node1.x;
+          const dy = node2.y - node1.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx.beginPath();
+            ctx.moveTo(node1.x, node1.y);
+            ctx.lineTo(node2.x, node2.y);
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.1 * (1 - dist / 150)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        });
+      });
+
+      // Draw nodes
+      nodes.forEach((node) => {
+        const pulse = Math.sin(time * 2 + node.weight * 10) * 0.1 + 1;
+        const color = typeColors[node.type] || "#00F0FF";
+
+        // Glow effect
+        const gradient = ctx.createRadialGradient(
+          node.x, node.y, 0,
+          node.x, node.y, node.size * 2 * pulse
+        );
+        gradient.addColorStop(0, `${color}40`);
+        gradient.addColorStop(1, "transparent");
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.size * 2 * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Node circle
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        // Border for high weight nodes
+        if (node.weight >= 0.8) {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.size + 2, 0, Math.PI * 2);
+          ctx.strokeStyle = `${color}80`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        // Label for high weight nodes
+        if (node.weight >= 0.7) {
+          ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+          ctx.font = "10px sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(node.name.slice(0, 15), node.x, node.y + node.size + 12);
+        }
+      });
+
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    // Mouse interaction
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+
+      let found = null;
+      nodes.forEach((node) => {
+        const dx = x - node.x;
+        const dy = y - node.y;
+        if (Math.sqrt(dx * dx + dy * dy) < node.size + 5) {
+          found = node;
+        }
+      });
+      setHoveredNode(found);
+    };
+
+    canvas.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+      canvas.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(animationId);
+    };
+  }, [keywords]);
+
   return (
-    <div className="relative w-full h-80 bg-black/20 rounded-xl border border-white/10 overflow-hidden">
-      {/* Grid Background */}
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: "20px 20px",
-        }}
+    <div className="relative w-full h-96 bg-black/20 rounded-xl border border-white/10 overflow-hidden">
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full cursor-crosshair"
       />
 
-      {/* Connections */}
-      <svg className="absolute inset-0 w-full h-full">
-        {connections.map(([from, to], i) => {
-          const fromNode = wikiNodes.find((n) => n.id === from);
-          const toNode = wikiNodes.find((n) => n.id === to);
-          if (!fromNode || !toNode) return null;
-
-          return (
-            <motion.line
-              key={i}
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.3 }}
-              transition={{ duration: 1, delay: i * 0.1 }}
-              x1={fromNode.x}
-              y1={fromNode.y}
-              x2={toNode.x}
-              y2={toNode.y}
-              stroke="#00F0FF"
-              strokeWidth={1}
-            />
-          );
-        })}
-      </svg>
-
-      {/* Nodes */}
-      {wikiNodes.map((node, i) => (
+      {/* Tooltip */}
+      {hoveredNode && (
         <motion.div
-          key={node.id}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: i * 0.05, duration: 0.3 }}
-          className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
-          style={{ left: node.x, top: node.y }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="absolute pointer-events-none z-10 px-3 py-2 rounded-lg bg-black/80 border border-white/20 backdrop-blur-md"
+          style={{
+            left: mousePos.x + 10,
+            top: mousePos.y - 40,
+          }}
         >
-          <div
-            className="rounded-full bg-cognitive-cyan/20 border border-cognitive-cyan/50 flex items-center justify-center transition-all group-hover:scale-125 group-hover:bg-cognitive-cyan/40"
-            style={{ width: node.size * 2, height: node.size * 2 }}
-          >
-            <div className="w-2 h-2 rounded-full bg-cognitive-cyan" />
-          </div>
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 text-xs text-text-secondary whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-            {node.label}
-          </div>
+          <p className="font-medium text-white text-sm">{hoveredNode.name}</p>
+          <p className="text-xs" style={{ color: typeColors[hoveredNode.type] }}>
+            {typeLabels[hoveredNode.type]} · {hoveredNode.pages} 页面
+          </p>
         </motion.div>
-      ))}
+      )}
+
+      {/* Legend */}
+      <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
+        {Object.entries(typeLabels).map(([type, label]) => (
+          <div
+            key={type}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/40 border border-white/10"
+          >
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: typeColors[type] }}
+            />
+            <span className="text-xs text-white/70">{label}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-function ArticleCard({ article }: { article: typeof wikiArticles[0] }) {
+function StatCard({
+  icon: Icon,
+  value,
+  label,
+  delay = 0,
+}: {
+  icon: React.ElementType;
+  value: number | string;
+  label: string;
+  delay?: number;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -2 }}
-      className="group bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-6 hover:border-white/20 transition-all cursor-pointer"
+      transition={{ delay }}
+      className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md"
     >
-      <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-cognitive-cyan transition-colors">
-        {article.title}
-      </h3>
-      <p className="text-text-secondary text-sm mb-4">{article.excerpt}</p>
-
-      <div className="flex items-center justify-between pt-4 border-t border-white/5">
-        <div className="flex items-center gap-2">
-          <GitBranch className="w-4 h-4 text-text-muted" />
-          <span className="text-xs text-text-muted">
-            {article.sources.join(", ")}
-          </span>
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-8 h-8 rounded-lg bg-cognitive-cyan/10 flex items-center justify-center">
+          <Icon className="w-4 h-4 text-cognitive-cyan" />
         </div>
-        <span className="text-xs text-text-muted">{article.updated}</span>
+        <span className="text-2xl font-bold text-white">
+          {typeof value === "number" ? value.toLocaleString() : value}
+        </span>
       </div>
+      <p className="text-xs text-white/50">{label}</p>
     </motion.div>
   );
 }
 
 export default function WikiPage() {
+  const [stats, setStats] = useState<WikiStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    fetch("https://api.rosclaw.io/wiki/v1/hub/stats")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch stats");
+        return res.json();
+      })
+      .then((data) => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      window.open(
+        `https://api.rosclaw.io/wiki/v1/search?q=${encodeURIComponent(searchQuery)}`,
+        "_blank"
+      );
+    }
+  };
+
+  const globalStats = stats?.global_stats;
+
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -155,7 +312,7 @@ export default function WikiPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="mb-8"
         >
           <Link
             href="/hub"
@@ -165,96 +322,261 @@ export default function WikiPage() {
             Back to Hub
           </Link>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-              <BookOpen className="w-7 h-7 text-purple-500" />
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                <BookOpen className="w-8 h-8 text-purple-500" />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                  ROSClaw Wiki
+                </h1>
+                <p className="text-purple-500 mt-1">
+                  具身智能物理常识中枢
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Cognitive Wiki
-              </h1>
-              <p className="text-purple-500">The Shared Memory.</p>
-            </div>
+
+            {/* Search Box */}
+            <form onSubmit={handleSearch} className="relative w-full md:w-96">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+              <input
+                type="text"
+                placeholder="搜索 Wiki 知识..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.07] transition-all"
+              />
+              <button
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-500 text-sm hover:bg-purple-500/20 transition-colors"
+              >
+                搜索
+              </button>
+            </form>
           </div>
 
-          <p className="text-text-secondary max-w-2xl">
-            A persistent, LLM-generated knowledge graph of robotic physics,
-            limits, and control theory. Endowing agents with lifelong memory.
+          <p className="text-text-secondary max-w-2xl mt-4">
+            {stats?.description ||
+              "覆盖视觉语言导航、机器人控制、物理参数判据等核心领域的具身智能知识图谱。"}
           </p>
-        </motion.div>
 
-        {/* Knowledge Graph */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-8"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">
-              Knowledge Graph
-            </h2>
-            <span className="text-xs text-text-muted font-mono">
-              Interactive Visualization
-            </span>
-          </div>
-          <KnowledgeGraph />
-        </motion.div>
-
-        {/* Articles Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-foreground">
-              Recent Articles
-            </h2>
-            <code className="text-xs text-text-muted font-mono">
-              $ rosclaw wiki pull {"<"}concept{">"}
-            </code>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {wikiArticles.map((article) => (
-              <ArticleCard key={article.title} article={article} />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* CLI Reference */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-12"
-        >
-          <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-6">
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              CLI Commands
-            </h3>
-            <div className="space-y-3 font-mono text-sm">
-              <code className="block text-text-secondary">
-                <span className="text-cognitive-cyan">$</span> rosclaw wiki
-                search{" "}
-                <span className="text-physical-orange">
-                  "inverse kinematics"
+          {/* Subtitle Stats */}
+          {globalStats && (
+            <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-text-muted">
+              <span className="flex items-center gap-1.5">
+                <FileText className="w-4 h-4 text-cognitive-cyan" />
+                {globalStats.total_pages.toLocaleString()} 页面
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Link2 className="w-4 h-4 text-cognitive-cyan" />
+                {globalStats.total_wikilinks.toLocaleString()} 连接
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Scale className="w-4 h-4 text-cognitive-cyan" />
+                {globalStats.total_judgments.toLocaleString()} 判据
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Box className="w-4 h-4 text-cognitive-cyan" />
+                {globalStats.robots_covered} 机器人
+              </span>
+              {globalStats.last_updated && (
+                <span className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-text-muted" />
+                  更新于{" "}
+                  {new Date(globalStats.last_updated).toLocaleDateString("zh-CN")}
                 </span>
-              </code>
-              <code className="block text-text-secondary">
-                <span className="text-cognitive-cyan">$</span> rosclaw wiki
-                pull{" "}
-                <span className="text-physical-orange">dynamics</span>
-              </code>
-              <code className="block text-text-secondary">
-                <span className="text-cognitive-cyan">$</span> rosclaw wiki
-                graph{" "}
-                <span className="text-physical-orange">--visualize</span>
-              </code>
+              )}
+            </div>
+          )}
+        </motion.div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <div className="flex items-center gap-3 text-text-muted">
+              <div className="w-5 h-5 border-2 border-cognitive-cyan/30 border-t-cognitive-cyan rounded-full animate-spin" />
+              加载知识图谱中...
             </div>
           </div>
-        </motion.div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="p-6 rounded-xl bg-red-500/10 border border-red-500/20 text-center">
+            <p className="text-red-500 mb-2">加载失败</p>
+            <p className="text-text-secondary text-sm">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 rounded-lg bg-white/5 text-text-secondary hover:text-foreground transition-colors"
+            >
+              重试
+            </button>
+          </div>
+        )}
+
+        {/* Content */}
+        {!loading && !error && stats && (
+          <>
+            {/* Knowledge Graph */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mb-8"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-foreground">
+                  关键词图谱
+                </h2>
+                <span className="text-xs text-text-muted font-mono">
+                  {stats.keywords.length} 个关键词
+                </span>
+              </div>
+              <KnowledgeGraph keywords={stats.keywords} />
+            </motion.div>
+
+            {/* Stats Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-8"
+            >
+              <h2 className="text-lg font-semibold text-foreground mb-4">
+                知识库统计
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <StatCard
+                  icon={FileText}
+                  value={globalStats?.total_pages || 0}
+                  label="Wiki 页面"
+                  delay={0}
+                />
+                <StatCard
+                  icon={Link2}
+                  value={globalStats?.total_wikilinks || 0}
+                  label="交叉链接"
+                  delay={0.05}
+                />
+                <StatCard
+                  icon={Scale}
+                  value={globalStats?.total_judgments || 0}
+                  label="物理判据"
+                  delay={0.1}
+                />
+                <StatCard
+                  icon={Database}
+                  value={globalStats?.total_code_graph_nodes || 0}
+                  label="图谱节点"
+                  delay={0.15}
+                />
+                <StatCard
+                  icon={GitBranch}
+                  value={globalStats?.total_code_graph_edges || 0}
+                  label="图谱边数"
+                  delay={0.2}
+                />
+                <StatCard
+                  icon={Cpu}
+                  value={globalStats?.robots_covered || 0}
+                  label="机器人型号"
+                  delay={0.25}
+                />
+              </div>
+            </motion.div>
+
+            {/* Top Keywords by Category */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-8"
+            >
+              <h2 className="text-lg font-semibold text-foreground mb-4">
+                热门关键词
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                {Object.entries(stats.keyword_categories).map(
+                  ([type, items]) => (
+                    <div
+                      key={type}
+                      className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md"
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: typeColors[type] }}
+                        />
+                        <h3 className="font-medium text-foreground">
+                          {typeLabels[type]}
+                        </h3>
+                      </div>
+                      <div className="space-y-2">
+                        {items.slice(0, 5).map((item) => (
+                          <div
+                            key={item.name}
+                            className="flex items-center justify-between text-sm"
+                          >
+                            <span className="text-text-secondary truncate flex-1">
+                              {item.name}
+                            </span>
+                            <span className="text-text-muted text-xs">
+                              {item.pages}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </motion.div>
+
+            {/* API Docs Link */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-12"
+            >
+              <div className="bg-gradient-to-br from-purple-500/5 to-transparent backdrop-blur-md rounded-2xl border border-white/10 p-6">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      通过 API 访问 Wiki
+                    </h3>
+                    <p className="text-text-secondary text-sm">
+                      使用 ROSClaw Wiki API 在您的应用中集成具身智能知识图谱
+                    </p>
+                  </div>
+                  <a
+                    href="https://api.rosclaw.io/docs"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-500 font-medium hover:bg-purple-500/20 transition-all whitespace-nowrap"
+                  >
+                    查看 API 文档
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+
+                {/* Code Example */}
+                <div className="mt-4 p-4 rounded-lg bg-black/40 font-mono text-sm overflow-x-auto">
+                  <code className="text-text-secondary">
+                    <span className="text-purple-500">curl</span>{" "}
+                    <span className="text-cognitive-cyan">
+                      "https://api.rosclaw.io/wiki/v1/search?q=navigation"
+                    </span>{" "}
+                    <span className="text-physical-orange">
+                      -H "Authorization: Bearer YOUR_API_KEY"
+                    </span>
+                  </code>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
       </div>
     </div>
   );

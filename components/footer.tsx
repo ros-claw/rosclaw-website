@@ -157,6 +157,30 @@ export function Footer() {
                 className="h-10 w-auto"
               />
             </a>
+            <a
+              href="https://www.nvidia.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
+            >
+              <img
+                src="/Nvidia_logo.png"
+                alt="NVIDIA"
+                className="h-10 w-auto"
+              />
+            </a>
+            <a
+              href="https://www.oceanbase.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
+            >
+              <img
+                src="/oceanbase_log.png"
+                alt="OceanBase"
+                className="h-10 w-auto"
+              />
+            </a>
           </div>
         </div>
 
