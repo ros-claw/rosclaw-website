@@ -16,8 +16,6 @@ import {
   EyeOff,
   Copy,
   Check,
-  Terminal,
-  BarChart3,
 } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
@@ -211,7 +209,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Wiki API Key Section */}
-          {wikiInfo && (
+          {wikiInfo ? (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -300,16 +298,37 @@ export default function ProfilePage() {
                   </code>
                 </div>
               </div>
+            </motion.div>
+          ) : (
+            /* API Key Not Available - Placeholder */
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mb-8 p-6 rounded-xl bg-gradient-to-br from-purple-500/5 to-transparent border border-purple-500/20 border-dashed"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                  <Key className="w-5 h-5 text-purple-500" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">
+                    ROSClaw Wiki API Key
+                  </h2>
+                  <p className="text-sm text-text-secondary">
+                    用于访问 Wiki API 的知识图谱数据
+                  </p>
+                </div>
+              </div>
 
-              {/* Dashboard Link */}
-              <div className="mt-4 flex gap-3">
-                <a
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-500 text-sm font-medium hover:bg-purple-500/20 transition-all"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  查看详细用量
-                </a>
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-text-secondary text-sm mb-2">
+                  API Key 暂不可用
+                </p>
+                <p className="text-text-muted text-xs">
+                  Wiki 服务正在准备中，上线后您的 API Key 将自动显示在此处。
+                  如有疑问请联系管理员。
+                </p>
               </div>
             </motion.div>
           )}
