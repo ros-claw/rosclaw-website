@@ -16,6 +16,7 @@ import {
   EyeOff,
   Copy,
   Check,
+  RefreshCw,
 } from "lucide-react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
@@ -32,6 +33,9 @@ interface WikiUserInfo {
   daily_limit: number;
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.rosclaw.io";
+const API_KEY_STORAGE_KEY = "rosclaw_api_key";
+
 export default function ProfilePage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
@@ -39,8 +43,12 @@ export default function ProfilePage() {
   const [userSkills, setUserSkills] = useState<any[]>([]);
   const [userPackages, setUserPackages] = useState<any[]>([]);
   const [wikiInfo, setWikiInfo] = useState<WikiUserInfo | null>(null);
+  const [apiKey, setApiKey] = useState<string>("");
+  const [apiKeyMasked, setApiKeyMasked] = useState<string>("");
   const [showApiKey, setShowApiKey] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [wikiLoading, setWikiLoading] = useState(false);
+  const [wikiError, setWikiError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = getSupabaseClient();
@@ -56,10 +64,65 @@ export default function ProfilePage() {
       // Fetch user's skills and packages
       fetchUserContent(session.user.id);
 
-      // Fetch Wiki user info
-      fetchWikiUserInfo(session.access_token);
+      // Check for API key from cookie (set during login) or localStorage
+      checkAndLoadApiKey(session.user.email);
     });
   }, [router]);
+
+  const checkAndLoadApiKey = async (email: string | undefined) => {
+    // First check localStorage
+    let key = localStorage.getItem(API_KEY_STORAGE_KEY);
+
+    // If not in localStorage, check cookie
+    if (!key) {
+      const cookieMatch = document.cookie.match(/rosclaw_api_key=([^;]+)/);
+      if (cookieMatch) {
+        key = decodeURIComponent(cookieMatch[1]);
+        localStorage.setItem(API_KEY_STORAGE_KEY, key);
+        // Clear the cookie after reading
+        document.cookie = "rosclaw_api_key=; Max-Age=0; path=/";
+      }
+    }
+
+    if (key) {
+      setApiKey(key);
+      setApiKeyMasked(`${key.slice(0, 8)}****${key.slice(-4)}`);
+      await fetchWikiUserInfo(key);
+    } else if (email) {
+      // Try to exchange email for API key
+      await exchangeEmailForApiKey(email);
+    }
+  };
+
+  const exchangeEmailForApiKey = async (email: string) => {
+    setWikiLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/wiki/v1/auth/exchange`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.api_key) {
+          localStorage.setItem(API_KEY_STORAGE_KEY, data.api_key);
+          setApiKey(data.api_key);
+          setApiKeyMasked(`${data.api_key.slice(0, 8)}****${data.api_key.slice(-4)}`);
+          await fetchWikiUserInfo(data.api_key);
+        } else if (data.exists) {
+          setWikiError("API key already exists. Please check your browser storage or contact support.");
+        }
+      } else {
+        setWikiError("Failed to retrieve API key. Please try again later.");
+      }
+    } catch (err) {
+      console.error("Failed to exchange for API key:", err);
+      setWikiError("Wiki service is currently unavailable.");
+    } finally {
+      setWikiLoading(false);
+    }
+  };
 
   const fetchUserContent = async (userId: string) => {
     const supabase = getSupabaseClient();
@@ -73,28 +136,47 @@ export default function ProfilePage() {
     if (packagesRes.data) setUserPackages(packagesRes.data);
   };
 
-  const fetchWikiUserInfo = async (accessToken: string) => {
+  const fetchWikiUserInfo = async (key: string) => {
+    setWikiLoading(true);
+    setWikiError(null);
     try {
-      const res = await fetch("https://api.rosclaw.io/wiki/v1/auth/me", {
+      const res = await fetch(`${API_BASE}/wiki/v1/auth/me`, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          "X-API-Key": key,
         },
       });
+
       if (res.ok) {
         const data = await res.json();
         setWikiInfo(data);
+      } else if (res.status === 401) {
+        // API key invalid, clear it
+        localStorage.removeItem(API_KEY_STORAGE_KEY);
+        setApiKey("");
+        setWikiError("API key is invalid. Please log in again.");
+      } else {
+        setWikiError("Failed to fetch Wiki info.");
       }
     } catch (err) {
       console.error("Failed to fetch wiki info:", err);
+      setWikiError("Wiki service is currently unavailable.");
+    } finally {
+      setWikiLoading(false);
     }
   };
 
   const handleCopyApiKey = () => {
-    if (wikiInfo?.api_key) {
-      navigator.clipboard.writeText(wikiInfo.api_key);
+    if (apiKey) {
+      navigator.clipboard.writeText(apiKey);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
+  };
+
+  const handleRegenerateKey = async () => {
+    if (!user?.email) return;
+    if (!confirm("Are you sure you want to regenerate your API key? The old key will be invalidated.")) return;
+    await exchangeEmailForApiKey(user.email);
   };
 
   const handleDeletePackage = async (pkgId: string) => {
@@ -142,6 +224,7 @@ export default function ProfilePage() {
   const handleSignOut = async () => {
     const supabase = getSupabaseClient();
     await supabase.auth.signOut();
+    localStorage.removeItem(API_KEY_STORAGE_KEY);
     router.push("/");
   };
 
@@ -209,32 +292,42 @@ export default function ProfilePage() {
           </div>
 
           {/* Wiki API Key Section */}
-          {wikiInfo ? (
+          {apiKey ? (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               className="mb-8 p-6 rounded-xl bg-gradient-to-br from-purple-500/5 to-transparent border border-purple-500/20"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                  <Key className="w-5 h-5 text-purple-500" />
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <Key className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-foreground">
+                      ROSClaw Wiki API Key
+                    </h2>
+                    <p className="text-sm text-text-secondary">
+                      Use this key to access the Wiki API
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-foreground">
-                    ROSClaw Wiki API Key
-                  </h2>
-                  <p className="text-sm text-text-secondary">
-                    用于访问 Wiki API 的知识图谱数据
-                  </p>
-                </div>
+                <button
+                  onClick={handleRegenerateKey}
+                  disabled={wikiLoading}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 text-text-secondary text-sm hover:bg-white/10 transition-colors disabled:opacity-50"
+                >
+                  <RefreshCw className={`w-4 h-4 ${wikiLoading ? "animate-spin" : ""}`} />
+                  Refresh
+                </button>
               </div>
 
               {/* API Key Display */}
               <div className="mb-4">
                 <div className="flex items-center gap-3 p-4 rounded-lg bg-black/40 border border-white/10 font-mono text-sm">
                   <code className="flex-1 text-foreground truncate">
-                    {showApiKey ? wikiInfo.api_key : wikiInfo.api_key_masked}
+                    {showApiKey ? apiKey : apiKeyMasked}
                   </code>
                   <button
                     onClick={() => setShowApiKey(!showApiKey)}
@@ -262,30 +355,45 @@ export default function ProfilePage() {
               </div>
 
               {/* Usage Progress */}
-              <div className="mb-4">
-                <div className="flex items-center justify-between text-sm mb-2">
-                  <span className="text-text-secondary">今日用量</span>
-                  <span className="text-foreground">
-                    {wikiInfo.usage_today} / {wikiInfo.daily_limit} 次
-                  </span>
+              {wikiInfo && (
+                <div className="mb-4">
+                  <div className="flex items-center justify-between text-sm mb-2">
+                    <span className="text-text-secondary">Today's Usage</span>
+                    <span className="text-foreground">
+                      {wikiInfo.usage_today} / {wikiInfo.daily_limit} calls
+                    </span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        usagePercent > 80
+                          ? "bg-red-500"
+                          : usagePercent > 50
+                          ? "bg-yellow-500"
+                          : "bg-cognitive-cyan"
+                      }`}
+                      style={{ width: `${usagePercent}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      usagePercent > 80
-                        ? "bg-red-500"
-                        : usagePercent > 50
-                        ? "bg-yellow-500"
-                        : "bg-cognitive-cyan"
-                    }`}
-                    style={{ width: `${usagePercent}%` }}
-                  />
+              )}
+
+              {wikiLoading && (
+                <div className="flex items-center gap-2 text-text-muted text-sm mb-4">
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Loading...
                 </div>
-              </div>
+              )}
+
+              {wikiError && (
+                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm mb-4">
+                  {wikiError}
+                </div>
+              )}
 
               {/* Code Examples */}
               <div className="space-y-3">
-                <p className="text-sm text-text-secondary">使用示例：</p>
+                <p className="text-sm text-text-secondary">Usage Example:</p>
                 <div className="p-3 rounded-lg bg-black/40 font-mono text-xs overflow-x-auto">
                   <code className="text-text-secondary">
                     <span className="text-purple-500">curl</span>{" "}
@@ -293,14 +401,14 @@ export default function ProfilePage() {
                       "https://api.rosclaw.io/wiki/v1/search?q=navigation"
                     </span>{" "}
                     <span className="text-physical-orange">
-                      -H "Authorization: Bearer {wikiInfo.api_key.slice(0, 20)}..."
+                      -H "X-API-Key: {apiKey.slice(0, 12)}..."
                     </span>
                   </code>
                 </div>
               </div>
             </motion.div>
           ) : (
-            /* API Key Not Available - Placeholder */
+            /* API Key Not Available */
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -316,20 +424,36 @@ export default function ProfilePage() {
                     ROSClaw Wiki API Key
                   </h2>
                   <p className="text-sm text-text-secondary">
-                    用于访问 Wiki API 的知识图谱数据
+                    Use this key to access the Wiki API
                   </p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <p className="text-text-secondary text-sm mb-2">
-                  API Key 暂不可用
-                </p>
-                <p className="text-text-muted text-xs">
-                  Wiki 服务正在准备中，上线后您的 API Key 将自动显示在此处。
-                  如有疑问请联系管理员。
-                </p>
-              </div>
+              {wikiLoading ? (
+                <div className="flex items-center gap-2 text-text-muted">
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Fetching API key...
+                </div>
+              ) : wikiError ? (
+                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <p className="text-red-500 text-sm mb-2">{wikiError}</p>
+                  <button
+                    onClick={() => user?.email && exchangeEmailForApiKey(user.email)}
+                    className="text-sm text-cognitive-cyan hover:underline"
+                  >
+                    Try again
+                  </button>
+                </div>
+              ) : (
+                <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                  <p className="text-text-secondary text-sm mb-2">
+                    API Key not available
+                  </p>
+                  <p className="text-text-muted text-xs">
+                    Wiki service is currently unavailable. Please try again later or contact support.
+                  </p>
+                </div>
+              )}
             </motion.div>
           )}
 
