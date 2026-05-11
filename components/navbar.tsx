@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { Github, Menu, X, User, LogOut } from "lucide-react";
+import { Github, Menu, X, User, LogOut, Database } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
@@ -14,12 +14,25 @@ const navLinks = [
   { name: "Docs", href: "/#docs" },
 ];
 
+interface HealthStatus {
+  status: string;
+  backend: string;
+  wiki_pages: number;
+  judgments: number;
+}
+
+type BackendState = "seekdb" | "sqlite_compat" | "offline";
+
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [health, setHealth] = useState<HealthStatus | null>(null);
+  const [showHealthTooltip, setShowHealthTooltip] = useState(false);
   const { scrollY } = useScroll();
+
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.rosclaw.io";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
@@ -37,9 +50,58 @@ export function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Fetch health status
+  useEffect(() => {
+    const fetchHealth = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/v1/health`);
+        if (res.ok) {
+          const data = await res.json();
+          setHealth(data);
+        }
+      } catch {
+        setHealth(null);
+      }
+    };
+    fetchHealth();
+    const interval = setInterval(fetchHealth, 30000);
+    return () => clearInterval(interval);
+  }, [API_BASE]);
+
   const handleSignOut = async () => {
     const supabase = getSupabaseClient();
     await supabase.auth.signOut();
+  };
+
+  const getBackendState = (): BackendState => {
+    if (!health) return "offline";
+    if (health.backend === "seekdb") return "seekdb";
+    if (health.backend === "sqlite_compat") return "sqlite_compat";
+    return "offline";
+  };
+
+  const getStatusColor = () => {
+    const state = getBackendState();
+    switch (state) {
+      case "seekdb":
+        return "bg-green-500";
+      case "sqlite_compat":
+        return "bg-yellow-500";
+      default:
+        return "bg-red-500";
+    }
+  };
+
+  const getStatusLabel = () => {
+    const state = getBackendState();
+    switch (state) {
+      case "seekdb":
+        return "SeekDB Active";
+      case "sqlite_compat":
+        return "Degraded Mode";
+      default:
+        return "Service Offline";
+    }
   };
 
   return (
@@ -87,6 +149,35 @@ export function Navbar() {
               >
                 <Github className="w-5 h-5" />
               </a>
+
+              {/* Health Status Indicator */}
+              <div
+                className="hidden md:flex items-center gap-2 relative"
+                onMouseEnter={() => setShowHealthTooltip(true)}
+                onMouseLeave={() => setShowHealthTooltip(false)}
+              >
+                <div className={`w-2 h-2 rounded-full ${getStatusColor()} animate-pulse`} />
+                <span className="text-xs text-text-secondary">SeekDB</span>
+
+                {/* Health Tooltip */}
+                {showHealthTooltip && health && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute top-full right-0 mt-2 px-3 py-2 rounded-lg bg-black/90 border border-white/10 backdrop-blur-md z-50 min-w-[160px]"
+                  >
+                    <p className="text-xs text-text-secondary mb-1">{getStatusLabel()}</p>
+                    <div className="flex items-center gap-2 text-xs">
+                      <Database className="w-3 h-3 text-cognitive-cyan" />
+                      <span className="text-white">{health.wiki_pages?.toLocaleString() || 0} pages</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs mt-1">
+                      <span className="w-3 h-3 flex items-center justify-center text-physical-orange">⚖</span>
+                      <span className="text-white">{health.judgments?.toLocaleString() || 0} judgments</span>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
 
               {!loading && (
                 <>

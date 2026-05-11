@@ -55,6 +55,7 @@ const typeColors: Record<string, string> = {
   concept: "#06b6d4", // cyan
   algorithm: "#10b981", // green
   constraint: "#8b5cf6", // purple
+  skill: "#ec4899", // pink
 };
 
 const typeLabels: Record<string, string> = {
@@ -63,12 +64,14 @@ const typeLabels: Record<string, string> = {
   concept: "Concept",
   algorithm: "Algorithm",
   constraint: "Constraint",
+  skill: "Skill",
 };
 
 function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredNode, setHoveredNode] = useState<WikiStats["keywords"][0] | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const nodesRef = useRef<(WikiStats["keywords"][0] & { x: number; y: number; size: number })[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -97,6 +100,7 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
       const size = 4 + keyword.weight * 12;
       return { ...keyword, x, y, size };
     });
+    nodesRef.current = nodes;
 
     let animationId: number;
     let time = 0;
@@ -187,11 +191,32 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
       setHoveredNode(found);
     };
 
+    // Click interaction - navigate to wiki page
+    const handleClick = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const clickedNode = nodes.find((node) => {
+        const dx = x - node.x;
+        const dy = y - node.y;
+        return Math.sqrt(dx * dx + dy * dy) < node.size + 5;
+      });
+
+      if (clickedNode) {
+        // Convert node name to wiki URL slug
+        const slug = clickedNode.name.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+        window.open(`https://wiki.rosclaw.io/${slug}`, "_blank");
+      }
+    };
+
     canvas.addEventListener("mousemove", handleMouseMove);
+    canvas.addEventListener("click", handleClick);
 
     return () => {
       window.removeEventListener("resize", resizeCanvas);
       canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("click", handleClick);
       cancelAnimationFrame(animationId);
     };
   }, [keywords]);
@@ -200,7 +225,7 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
     <div className="relative w-full h-96 bg-black/20 rounded-xl border border-white/10 overflow-hidden">
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full cursor-crosshair"
+        className={`absolute inset-0 w-full h-full ${hoveredNode ? "cursor-pointer" : "cursor-crosshair"}`}
       />
 
       {/* Tooltip */}
@@ -216,7 +241,7 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
         >
           <p className="font-medium text-white text-sm">{hoveredNode.name}</p>
           <p className="text-xs" style={{ color: typeColors[hoveredNode.type] }}>
-            {typeLabels[hoveredNode.type]} · {hoveredNode.pages} pages
+            {typeLabels[hoveredNode.type]} · {hoveredNode.pages} pages · Click to view
           </p>
         </motion.div>
       )}
@@ -245,28 +270,41 @@ function StatCard({
   value,
   label,
   delay = 0,
+  warning,
+  tooltip,
 }: {
   icon: React.ElementType;
   value: number | string;
   label: string;
   delay?: number;
+  warning?: boolean;
+  tooltip?: string;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md"
+      className="p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md relative group"
+      title={tooltip}
     >
       <div className="flex items-center gap-3 mb-2">
         <div className="w-8 h-8 rounded-lg bg-cognitive-cyan/10 flex items-center justify-center">
           <Icon className="w-4 h-4 text-cognitive-cyan" />
         </div>
-        <span className="text-2xl font-bold text-white">
+        <span className="text-2xl font-bold text-white flex items-center gap-2">
           {typeof value === "number" ? value.toLocaleString() : value}
+          {warning && (
+            <span className="text-yellow-500 text-sm" title={tooltip}>⚠️</span>
+          )}
         </span>
       </div>
       <p className="text-xs text-white/50">{label}</p>
+      {tooltip && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 rounded-lg bg-black/80 border border-white/10 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+          {tooltip}
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -380,6 +418,22 @@ export default function WikiPage() {
                 <Box className="w-4 h-4 text-cognitive-cyan" />
                 {globalStats.robots_covered} robots
               </span>
+              <span className="flex items-center gap-1.5" title={globalStats.entities_covered === 0 ? "Entity graph data is being imported" : undefined}>
+                <Database className="w-4 h-4 text-cognitive-cyan" />
+                {globalStats.entities_covered === 0 ? (
+                  <span className="text-text-secondary">Pending Build</span>
+                ) : (
+                  `${globalStats.entities_covered} entities`
+                )}
+              </span>
+              <span className="flex items-center gap-1.5" title={globalStats.causal_chains === 0 ? "Physical causal chains are being imported" : undefined}>
+                <GitBranch className="w-4 h-4 text-cognitive-cyan" />
+                {globalStats.causal_chains === 0 ? (
+                  <span className="text-text-secondary">Pending Build</span>
+                ) : (
+                  `${globalStats.causal_chains} chains`
+                )}
+              </span>
               {globalStats.last_updated && (
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-text-muted" />
@@ -470,12 +524,16 @@ export default function WikiPage() {
                   value={globalStats?.total_code_graph_nodes || 0}
                   label="Graph Nodes"
                   delay={0.15}
+                  warning={!!globalStats?.total_code_graph_nodes}
+                  tooltip="Contains google-research noise, will be filtered soon"
                 />
                 <StatCard
                   icon={GitBranch}
                   value={globalStats?.total_code_graph_edges || 0}
                   label="Graph Edges"
                   delay={0.2}
+                  warning={!!globalStats?.total_code_graph_edges}
+                  tooltip="Contains google-research noise, will be filtered soon"
                 />
                 <StatCard
                   icon={Cpu}
