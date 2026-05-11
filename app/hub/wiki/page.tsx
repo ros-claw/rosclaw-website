@@ -243,8 +243,12 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
             }
 
             const opacity = (1 - dist / 200) * (sameType ? 0.4 : 0.2);
+            let edgeColor = typeColors[node1.type] || "#888888";
+            if (edgeColor.length === 4) {
+              edgeColor = `#${edgeColor[1]}${edgeColor[1]}${edgeColor[2]}${edgeColor[2]}${edgeColor[3]}${edgeColor[3]}`;
+            }
             ctx.strokeStyle = sameType
-              ? `${typeColors[node1.type]}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`
+              ? `${edgeColor}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`
               : `rgba(100, 120, 140, ${opacity * 0.5})`;
             ctx.lineWidth = sameType ? 1.5 * zoom : 0.8 * zoom;
             ctx.stroke();
@@ -260,8 +264,13 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
         if (x < -100 || x > canvas.width + 100 || y < -100 || y > canvas.height + 100) return;
 
         const pulse = Math.sin(time * 1.5 + node.weight * 8 + i * 0.15) * 0.1 + 1;
-        const color = typeColors[node.type] || "#888";
         const size = node.size * zoom * pulse;
+
+        // Ensure 6-digit hex color for glow effect
+        let color = typeColors[node.type] || "#888888";
+        if (color.length === 4) {
+          color = `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`;
+        }
 
         // Glow effect
         const glowSize = size * 3;
