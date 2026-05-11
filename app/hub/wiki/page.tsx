@@ -309,11 +309,21 @@ function StatCard({
   );
 }
 
+const searchTypes = [
+  { value: "hybrid", label: "Hybrid", desc: "Keyword + Semantic (Default)" },
+  { value: "keyword", label: "Keyword", desc: "Exact term matching" },
+  { value: "semantic", label: "Semantic", desc: "Synonym association" },
+  { value: "expanded", label: "Expanded", desc: "LLM query expansion" },
+  { value: "judgment", label: "Judgment", desc: "Physical parameter search" },
+];
+
 export default function WikiPage() {
   const [stats, setStats] = useState<WikiStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchType, setSearchType] = useState("hybrid");
+  const [showSearchTypeMenu, setShowSearchTypeMenu] = useState(false);
 
   useEffect(() => {
     fetch("https://api.rosclaw.io/wiki/v1/hub/stats")
@@ -334,8 +344,10 @@ export default function WikiPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      const apiKey = typeof window !== "undefined" ? localStorage.getItem("rosclaw_api_key") : "";
+      const headers = apiKey ? ` -H "X-API-Key: ${apiKey.slice(0, 12)}..."` : "";
       window.open(
-        `https://api.rosclaw.io/wiki/v1/search?q=${encodeURIComponent(searchQuery)}`,
+        `https://api.rosclaw.io/wiki/v1/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}`,
         "_blank"
       );
     }
@@ -376,22 +388,69 @@ export default function WikiPage() {
             </div>
 
             {/* Search Box */}
-            <form onSubmit={handleSearch} className="relative w-full md:w-96">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
-              <input
-                type="text"
-                placeholder="Search Wiki knowledge..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.07] transition-all"
-              />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-500 text-sm hover:bg-purple-500/20 transition-colors"
-              >
-                Search
-              </button>
-            </form>
+            <div className="relative w-full md:w-[500px]">
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+                  <input
+                    type="text"
+                    placeholder="Search Wiki knowledge..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-purple-500/50 focus:bg-white/[0.07] transition-all"
+                  />
+                </div>
+
+                {/* Search Type Selector */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowSearchTypeMenu(!showSearchTypeMenu)}
+                    className="h-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground text-sm hover:bg-white/[0.07] transition-all min-w-[100px]"
+                  >
+                    {searchTypes.find((t) => t.value === searchType)?.label}
+                  </button>
+
+                  {showSearchTypeMenu && (
+                    <div className="absolute top-full right-0 mt-2 w-56 rounded-xl bg-black/90 border border-white/10 backdrop-blur-md overflow-hidden z-20">
+                      {searchTypes.map((type) => (
+                        <button
+                          key={type.value}
+                          type="button"
+                          onClick={() => {
+                            setSearchType(type.value);
+                            setShowSearchTypeMenu(false);
+                          }}
+                          className={`w-full px-4 py-3 text-left hover:bg-white/5 transition-colors ${
+                            searchType === type.value
+                              ? "bg-purple-500/10 text-purple-500"
+                              : "text-foreground"
+                          }`}
+                        >
+                          <div className="font-medium text-sm">{type.label}</div>
+                          <div className="text-xs text-text-muted">{type.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  className="px-6 py-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-500 font-medium hover:bg-purple-500/20 transition-all"
+                >
+                  Search
+                </button>
+              </form>
+
+              {/* Click outside to close */}
+              {showSearchTypeMenu && (
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setShowSearchTypeMenu(false)}
+                />
+              )}
+            </div>
           </div>
 
           <p className="text-text-secondary max-w-2xl mt-4">
