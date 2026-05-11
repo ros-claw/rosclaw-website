@@ -16,7 +16,10 @@ import {
   Link2,
   Clock,
   FileText,
-  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Move,
 } from "lucide-react";
 
 interface WikiStats {
@@ -50,12 +53,12 @@ interface WikiStats {
 }
 
 const typeColors: Record<string, string> = {
-  entity: "#3b82f6", // blue
-  property: "#f59e0b", // amber
-  concept: "#06b6d4", // cyan
-  algorithm: "#10b981", // green
-  constraint: "#8b5cf6", // purple
-  skill: "#ec4899", // pink
+  entity: "#3b82f6",
+  property: "#f59e0b",
+  concept: "#06b6d4",
+  algorithm: "#10b981",
+  constraint: "#8b5cf6",
+  skill: "#ec4899",
 };
 
 const typeLabels: Record<string, string> = {
@@ -67,28 +70,19 @@ const typeLabels: Record<string, string> = {
   skill: "Skill",
 };
 
-// Connection colors by relationship strength (inspired by GitNexus)
-// Using more subtle colors to not interfere with text readability
-const getConnectionStyle = (node1: any, node2: any, distance: number) => {
-  // Same type = stronger connection
-  const sameType = node1.type === node2.type;
-  // Similar weight = stronger connection
-  const weightDiff = Math.abs(node1.weight - node2.weight);
-  const similarWeight = weightDiff < 0.3;
-
-  // Subtle gray-blue tones that don't interfere with text
-  if (sameType && similarWeight) {
-    return { color: "rgba(100, 120, 140, 0.35)", width: 1.0, opacity: 0.6 };
-  } else if (sameType || similarWeight) {
-    return { color: "rgba(100, 120, 140, 0.22)", width: 0.7, opacity: 0.4 };
-  }
-  return { color: "rgba(100, 120, 140, 0.12)", width: 0.5, opacity: 0.25 };
-};
-
 function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<WikiStats["keywords"][0] | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Camera state for zoom/pan
+  const cameraRef = useRef({ x: 0, y: 0, zoom: 1 });
+  const [camera, setCamera] = useState({ x: 0, y: 0, zoom: 1 });
+
+  // Nodes data
   const nodesRef = useRef<(WikiStats["keywords"][0] & { x: number; y: number; size: number; vx: number; vy: number })[]>([]);
   const animationRef = useRef<number>(0);
   const timeRef = useRef(0);
@@ -99,7 +93,7 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
     if (!canvas || !keywords.length) return;
 
     const resizeCanvas = () => {
-      const rect = canvas.parentElement?.getBoundingClientRect();
+      const rect = containerRef.current?.getBoundingClientRect();
       if (rect) {
         canvas.width = rect.width;
         canvas.height = rect.height;
@@ -109,27 +103,28 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 
-    // Initialize nodes with spiral layout + some randomness
-    const nodes = keywords.slice(0, 40).map((keyword, i) => {
-      const angle = (i / Math.min(keywords.length, 40)) * Math.PI * 4;
-      const radius = 60 + (i * 6);
-      const x = canvas.width / 2 + Math.cos(angle) * radius + (Math.random() - 0.5) * 30;
-      const y = canvas.height / 2 + Math.sin(angle) * radius * 0.6 + (Math.random() - 0.5) * 30;
-      const size = 4 + keyword.weight * 12;
+    // Initialize more nodes (80 instead of 40)
+    const nodeCount = Math.min(keywords.length, 80);
+    const nodes = keywords.slice(0, nodeCount).map((keyword, i) => {
+      const angle = (i / nodeCount) * Math.PI * 6;
+      const radius = 80 + (i * 10);
+      const x = Math.cos(angle) * radius + (Math.random() - 0.5) * 50;
+      const y = Math.sin(angle) * radius * 0.7 + (Math.random() - 0.5) * 50;
+      const size = 5 + keyword.weight * 14;
       return { ...keyword, x, y, size, vx: 0, vy: 0 };
     });
 
-    // Run simple force-directed layout to spread nodes
-    const iterations = 100;
+    // Run force-directed layout
+    const iterations = 150;
     for (let iter = 0; iter < iterations; iter++) {
-      // Repulsion between all nodes
+      // Repulsion
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
           const a = nodes[i], b = nodes[j];
           let dx = a.x - b.x, dy = a.y - b.y;
           let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-          if (dist < 200) {
-            const f = 800 / (dist * dist);
+          if (dist < 250) {
+            const f = 1200 / (dist * dist);
             const fx = (dx / dist) * f;
             const fy = (dy / dist) * f;
             a.vx += fx; a.vy += fy;
@@ -138,17 +133,17 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
         }
       }
 
-      // Attraction between connected nodes (same type or similar weight)
+      // Attraction for same type
       nodes.forEach((node1, i) => {
         nodes.forEach((node2, j) => {
           if (i >= j) return;
           const sameType = node1.type === node2.type;
           const weightDiff = Math.abs(node1.weight - node2.weight);
-          if (sameType || weightDiff < 0.2) {
+          if (sameType || weightDiff < 0.15) {
             let dx = node2.x - node1.x, dy = node2.y - node1.y;
             let dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            const targetDist = sameType ? 80 : 120;
-            const f = (dist - targetDist) * 0.0005;
+            const targetDist = sameType ? 100 : 150;
+            const f = (dist - targetDist) * 0.0003;
             const fx = (dx / dist) * f;
             const fy = (dy / dist) * f;
             node1.vx += fx; node1.vy += fy;
@@ -157,26 +152,16 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
         });
       });
 
-      // Apply velocity + damping + stronger center gravity to prevent nodes flying away
+      // Center gravity
       nodes.forEach(n => {
-        n.vx *= 0.7;
-        n.vy *= 0.7;
-        // Stronger center gravity (was 0.0005, now 0.002)
-        n.vx -= n.x * 0.002;
-        n.vy -= n.y * 0.002;
+        n.vx *= 0.75;
+        n.vy *= 0.75;
+        n.vx -= n.x * 0.003;
+        n.vy -= n.y * 0.003;
         n.x += n.vx;
         n.y += n.vy;
       });
     }
-
-    // Clamp nodes to canvas bounds with padding
-    const padding = 50;
-    nodes.forEach(n => {
-      const maxX = canvas.width - padding;
-      const maxY = canvas.height - padding;
-      n.x = Math.max(padding, Math.min(maxX, n.x));
-      n.y = Math.max(padding, Math.min(maxY, n.y));
-    });
 
     nodesRef.current = nodes;
 
@@ -195,131 +180,152 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
     if (!ctx) return;
 
     const animate = () => {
-      timeRef.current += 0.015;
+      timeRef.current += 0.01;
       const time = timeRef.current;
       const nodes = nodesRef.current;
+      const { x: camX, y: camY, zoom } = cameraRef.current;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0a0a0f";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw connections with varying styles based on relationship
+      // Draw grid background
+      const gridSize = 50 * zoom;
+      const gridOffsetX = camX % gridSize;
+      const gridOffsetY = camY % gridSize;
+      ctx.strokeStyle = "rgba(100, 100, 120, 0.05)";
+      ctx.lineWidth = 1;
+      for (let x = gridOffsetX; x < canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = gridOffsetY; y < canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
+      // Draw connections
       nodes.forEach((node1, i) => {
         nodes.forEach((node2, j) => {
           if (i >= j) return;
+          const sameType = node1.type === node2.type;
           const dx = node2.x - node1.x;
           const dy = node2.y - node1.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          // Only draw connections within range
-          if (dist < 180) {
-            const style = getConnectionStyle(node1, node2, dist);
-            const opacity = style.opacity * (1 - dist / 180);
+          if (dist < 200) {
+            const x1 = centerX + (node1.x + camX) * zoom;
+            const y1 = centerY + (node1.y + camY) * zoom;
+            const x2 = centerX + (node2.x + camX) * zoom;
+            const y2 = centerY + (node2.y + camY) * zoom;
+
+            if (x1 < -50 || x1 > canvas.width + 50 || y1 < -50 || y1 > canvas.height + 50) return;
+            if (x2 < -50 || x2 > canvas.width + 50 || y2 < -50 || y2 > canvas.height + 50) return;
 
             ctx.beginPath();
-
-            // Curved lines for same-type connections (GitNexus-inspired)
-            const sameType = node1.type === node2.type;
-            if (sameType && dist > 50) {
-              // Calculate control point for quadratic curve
-              const midX = (node1.x + node2.x) / 2;
-              const midY = (node1.y + node2.y) / 2;
-              const curvature = Math.sin(time * 0.5 + i * 0.1) * 10;
-              const perpX = -dy / dist * curvature;
-              const perpY = dx / dist * curvature;
-              ctx.moveTo(node1.x, node1.y);
-              ctx.quadraticCurveTo(midX + perpX, midY + perpY, node2.x, node2.y);
+            if (sameType && dist > 60) {
+              const midX = (x1 + x2) / 2;
+              const midY = (y1 + y2) / 2;
+              const curvature = Math.sin(time * 0.3 + i * 0.1) * 15 * zoom;
+              const perpX = -(y2 - y1) / (dist * zoom || 1) * curvature;
+              const perpY = (x2 - x1) / (dist * zoom || 1) * curvature;
+              ctx.moveTo(x1, y1);
+              ctx.quadraticCurveTo(midX + perpX, midY + perpY, x2, y2);
             } else {
-              ctx.moveTo(node1.x, node1.y);
-              ctx.lineTo(node2.x, node2.y);
+              ctx.moveTo(x1, y1);
+              ctx.lineTo(x2, y2);
             }
 
-            ctx.strokeStyle = style.color.replace(/[\d.]+\)$/, `${opacity})`);
-            ctx.lineWidth = style.width;
+            const opacity = (1 - dist / 200) * (sameType ? 0.4 : 0.2);
+            ctx.strokeStyle = sameType
+              ? `${typeColors[node1.type]}${Math.floor(opacity * 255).toString(16).padStart(2, '0')}`
+              : `rgba(100, 120, 140, ${opacity * 0.5})`;
+            ctx.lineWidth = sameType ? 1.5 * zoom : 0.8 * zoom;
             ctx.stroke();
           }
         });
       });
 
-      // Draw nodes with pulse effect
+      // Draw nodes
       nodes.forEach((node, i) => {
-        const pulse = Math.sin(time * 2 + node.weight * 10 + i * 0.2) * 0.15 + 1;
-        const color = typeColors[node.type] || "#00F0FF";
+        const x = centerX + (node.x + camX) * zoom;
+        const y = centerY + (node.y + camY) * zoom;
 
-        // Glow effect - larger for high-weight nodes
-        const glowSize = node.size * 2.5 * pulse;
-        const gradient = ctx.createRadialGradient(
-          node.x, node.y, 0,
-          node.x, node.y, glowSize
-        );
-        gradient.addColorStop(0, `${color}30`);
-        gradient.addColorStop(0.5, `${color}10`);
+        if (x < -100 || x > canvas.width + 100 || y < -100 || y > canvas.height + 100) return;
+
+        const pulse = Math.sin(time * 1.5 + node.weight * 8 + i * 0.15) * 0.1 + 1;
+        const color = typeColors[node.type] || "#888";
+        const size = node.size * zoom * pulse;
+
+        // Glow effect
+        const glowSize = size * 3;
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, glowSize);
+        gradient.addColorStop(0, `${color}40`);
+        gradient.addColorStop(0.5, `${color}15`);
         gradient.addColorStop(1, "transparent");
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(node.x, node.y, glowSize, 0, Math.PI * 2);
+        ctx.arc(x, y, glowSize, 0, Math.PI * 2);
         ctx.fill();
 
-        // Node circle with slight animation
+        // Node circle
         ctx.beginPath();
-        ctx.arc(node.x, node.y, node.size * (0.9 + pulse * 0.1), 0, Math.PI * 2);
+        ctx.arc(x, y, size * 0.95, 0, Math.PI * 2);
         ctx.fillStyle = color;
         ctx.fill();
 
-        // Inner highlight
+        // Highlight
         ctx.beginPath();
-        ctx.arc(node.x - node.size * 0.3, node.y - node.size * 0.3, node.size * 0.3, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255,0.3)";
+        ctx.arc(x - size * 0.3, y - size * 0.3, size * 0.35, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.25)";
         ctx.fill();
 
-        // Border for high weight nodes
-        if (node.weight >= 0.7) {
+        // Border for important nodes
+        if (node.weight >= 0.75) {
           ctx.beginPath();
-          ctx.arc(node.x, node.y, node.size + 3, 0, Math.PI * 2);
-          ctx.strokeStyle = `${color}60`;
-          ctx.lineWidth = 2;
+          ctx.arc(x, y, size + 3 * zoom, 0, Math.PI * 2);
+          ctx.strokeStyle = `${color}80`;
+          ctx.lineWidth = 2 * zoom;
           ctx.stroke();
         }
 
-        // Label for high weight nodes with improved readability
-        if (node.weight >= 0.75) {
-          const labelText = node.name.slice(0, 18);
-          const fontSize = node.weight >= 0.85 ? 13 : 12;
-          ctx.font = `bold ${fontSize}px system-ui, -apple-system, sans-serif`;
+        // Label
+        if (node.weight >= 0.7 && zoom > 0.5) {
+          const labelText = node.name.slice(0, 16);
+          const fontSize = Math.max(10, (node.weight >= 0.85 ? 13 : 11) * zoom);
+          ctx.font = `600 ${fontSize}px system-ui, -apple-system, sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
 
-          const textY = node.y + node.size + 16;
-          const textMetrics = ctx.measureText(labelText);
-          const textWidth = textMetrics.width;
-          const textHeight = fontSize;
+          const textY = y + size + 14 * zoom;
+          const textWidth = ctx.measureText(labelText).width;
 
-          // Draw background pill for better contrast
-          const paddingX = 6;
-          const paddingY = 3;
-          const cornerRadius = 4;
-          ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+          // Background pill
+          const paddingX = 5 * zoom;
+          const paddingY = 2 * zoom;
+          ctx.fillStyle = "rgba(0, 0, 0, 0.75)";
           ctx.beginPath();
           ctx.roundRect(
-            node.x - textWidth / 2 - paddingX,
-            textY - textHeight / 2 - paddingY,
+            x - textWidth / 2 - paddingX,
+            textY - fontSize / 2 - paddingY,
             textWidth + paddingX * 2,
-            textHeight + paddingY * 2,
-            cornerRadius
+            fontSize + paddingY * 2,
+            4 * zoom
           );
           ctx.fill();
 
-          // Draw white text with shadow for extra clarity
-          ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
-          ctx.shadowBlur = 3;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 1;
+          // Text with shadow
+          ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
+          ctx.shadowBlur = 4;
           ctx.fillStyle = "#ffffff";
-          ctx.fillText(labelText, node.x, textY);
-
-          // Reset shadow
-          ctx.shadowColor = "transparent";
+          ctx.fillText(labelText, x, textY);
           ctx.shadowBlur = 0;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 0;
         }
       });
 
@@ -328,46 +334,107 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
 
     animate();
 
-    return () => {
-      cancelAnimationFrame(animationRef.current);
+    return () => cancelAnimationFrame(animationRef.current);
+  }, []);
+
+  // Mouse handling
+  const getWorldPos = useCallback((clientX: number, clientY: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+    const rect = canvas.getBoundingClientRect();
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    return {
+      x: (clientX - rect.left - centerX) / cameraRef.current.zoom - cameraRef.current.x,
+      y: (clientY - rect.top - centerY) / cameraRef.current.zoom - cameraRef.current.y,
     };
   }, []);
 
-  // Mouse interaction
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setMousePos({ x, y });
+    const clientX = e.clientX - rect.left;
+    const clientY = e.clientY - rect.top;
+    setMousePos({ x: clientX, y: clientY });
 
+    if (isDragging) {
+      const dx = e.clientX - dragStart.x;
+      const dy = e.clientY - dragStart.y;
+      cameraRef.current.x += dx / cameraRef.current.zoom;
+      cameraRef.current.y += dy / cameraRef.current.zoom;
+      setDragStart({ x: e.clientX, y: e.clientY });
+      setCamera({ ...cameraRef.current });
+      return;
+    }
+
+    // Find hovered node
+    const worldPos = getWorldPos(e.clientX, e.clientY);
     let found = null;
-    nodesRef.current.forEach((node) => {
-      const dx = x - node.x;
-      const dy = y - node.y;
-      if (Math.sqrt(dx * dx + dy * dy) < node.size + 6) {
+    for (const node of nodesRef.current) {
+      const dx = worldPos.x - node.x;
+      const dy = worldPos.y - node.y;
+      if (Math.sqrt(dx * dx + dy * dy) < node.size + 5) {
         found = node;
+        break;
       }
-    });
+    }
     setHoveredNode(found);
-  }, []);
+  }, [isDragging, dragStart, getWorldPos]);
 
-  const handleClick = useCallback(() => {
-    if (hoveredNode) {
-      const slug = hoveredNode.name.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
-      window.open(`https://wiki.rosclaw.io/${slug}`, "_blank");
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (!hoveredNode) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX, y: e.clientY });
     }
   }, [hoveredNode]);
 
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleClick = useCallback(() => {
+    if (hoveredNode && !isDragging) {
+      const slug = hoveredNode.name.toLowerCase().replace(/\s+/g, "_").replace(/[^a-z0-9_]/g, "");
+      window.open(`https://wiki.rosclaw.io/${slug}`, "_blank");
+    }
+  }, [hoveredNode, isDragging]);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    const newZoom = Math.max(0.3, Math.min(3, cameraRef.current.zoom * delta));
+    cameraRef.current.zoom = newZoom;
+    setCamera({ ...cameraRef.current });
+  }, []);
+
+  const zoomIn = useCallback(() => {
+    cameraRef.current.zoom = Math.min(3, cameraRef.current.zoom * 1.2);
+    setCamera({ ...cameraRef.current });
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    cameraRef.current.zoom = Math.max(0.3, cameraRef.current.zoom / 1.2);
+    setCamera({ ...cameraRef.current });
+  }, []);
+
+  const resetView = useCallback(() => {
+    cameraRef.current = { x: 0, y: 0, zoom: 1 };
+    setCamera({ x: 0, y: 0, zoom: 1 });
+  }, []);
+
   return (
-    <div className="relative w-full h-96 bg-black/20 rounded-xl border border-white/10 overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-[500px] bg-[#0a0a0f] rounded-xl border border-white/10 overflow-hidden">
       <canvas
         ref={canvasRef}
         onMouseMove={handleMouseMove}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
         onClick={handleClick}
-        className={`absolute inset-0 w-full h-full ${hoveredNode ? "cursor-pointer" : "cursor-crosshair"}`}
+        onWheel={handleWheel}
+        className={`absolute inset-0 w-full h-full ${hoveredNode ? "cursor-pointer" : isDragging ? "cursor-grabbing" : "cursor-grab"}`}
       />
 
       {/* Tooltip */}
@@ -377,31 +444,70 @@ function KnowledgeGraph({ keywords }: { keywords: WikiStats["keywords"] }) {
           animate={{ opacity: 1, scale: 1 }}
           className="absolute pointer-events-none z-10 px-3 py-2 rounded-lg bg-black/80 border border-white/20 backdrop-blur-md"
           style={{
-            left: Math.min(mousePos.x + 10, (canvasRef.current?.width || 400) - 150),
-            top: Math.max(mousePos.y - 50, 10),
+            left: Math.min(mousePos.x + 10, (containerRef.current?.clientWidth || 800) - 180),
+            top: Math.max(mousePos.y - 60, 10),
           }}
         >
           <p className="font-medium text-white text-sm">{hoveredNode.name}</p>
           <p className="text-xs" style={{ color: typeColors[hoveredNode.type] }}>
-            {typeLabels[hoveredNode.type]} · {hoveredNode.pages} pages · Click to view
+            {typeLabels[hoveredNode.type]} · {hoveredNode.pages} pages
           </p>
+          <p className="text-xs text-white/50 mt-1">Click to open wiki</p>
         </motion.div>
       )}
 
+      {/* Controls */}
+      <div className="absolute top-4 right-4 flex flex-col gap-2">
+        <button
+          onClick={zoomIn}
+          className="p-2 rounded-lg bg-black/60 border border-white/10 text-white/70 hover:bg-black/80 hover:text-white transition-colors"
+          title="Zoom In"
+        >
+          <ZoomIn className="w-4 h-4" />
+        </button>
+        <button
+          onClick={zoomOut}
+          className="p-2 rounded-lg bg-black/60 border border-white/10 text-white/70 hover:bg-black/80 hover:text-white transition-colors"
+          title="Zoom Out"
+        >
+          <ZoomOut className="w-4 h-4" />
+        </button>
+        <button
+          onClick={resetView}
+          className="p-2 rounded-lg bg-black/60 border border-white/10 text-white/70 hover:bg-black/80 hover:text-white transition-colors"
+          title="Reset View"
+        >
+          <Maximize2 className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Zoom indicator */}
+      <div className="absolute bottom-4 right-4 px-2 py-1 rounded bg-black/60 border border-white/10 text-xs text-white/50 font-mono">
+        {Math.round(camera.zoom * 100)}%
+      </div>
+
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 flex flex-wrap gap-2">
+      <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 max-w-[70%]">
         {Object.entries(typeLabels).map(([type, label]) => (
           <div
             key={type}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/40 border border-white/10"
+            className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/60 border border-white/10"
           >
             <div
-              className="w-2 h-2 rounded-full"
+              className="w-2.5 h-2.5 rounded-full"
               style={{ backgroundColor: typeColors[type] }}
             />
             <span className="text-xs text-white/70">{label}</span>
           </div>
         ))}
+      </div>
+
+      {/* Instructions */}
+      <div className="absolute top-4 left-4 px-3 py-2 rounded-lg bg-black/60 border border-white/10 text-xs text-white/50">
+        <div className="flex items-center gap-2">
+          <Move className="w-3 h-3" />
+          <span>Drag to pan · Scroll to zoom · Click node to open</span>
+        </div>
       </div>
     </div>
   );
@@ -683,7 +789,7 @@ export default function WikiPage() {
                   Keyword Graph
                 </h2>
                 <span className="text-xs text-text-muted font-mono">
-                  {stats.keywords.length} keywords
+                  {Math.min(stats.keywords.length, 80)} keywords
                 </span>
               </div>
               <KnowledgeGraph keywords={stats.keywords} />
