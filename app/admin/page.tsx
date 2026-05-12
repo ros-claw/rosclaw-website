@@ -676,7 +676,19 @@ function BatchTab() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ batch_id: batchId }),
       });
-      if (!res.ok) throw new Error("Failed to merge");
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || data.status !== "ok") {
+        throw new Error(data?.message || `Failed to merge (HTTP ${res.status})`);
+      }
+      const r = data.result || {};
+      alert(
+        `Merge succeeded: ${r.batch_name || batchId}\n` +
+          `wiki pages: ${r.wiki_merged ?? 0} merged, ${r.wiki_conflicts ?? 0} overwrites\n` +
+          `wiki_pages table: ${r.wiki_pages_imported ?? 0} rows\n` +
+          `judgments: ${r.judgments_imported ?? 0}\n` +
+          `code_graph: ${r.code_graph_merged ? "merged" : "skipped"}\n` +
+          `errors: ${(r.errors || []).length}`
+      );
       await fetchBatches();
       setPreviewData(null);
     } catch (err: any) {
@@ -695,7 +707,11 @@ function BatchTab() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ batch_id: batchId }),
       });
-      if (!res.ok) throw new Error("Failed to reject");
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data || data.status !== "ok") {
+        throw new Error(data?.message || `Failed to reject (HTTP ${res.status})`);
+      }
+      alert(`Rejected: ${batchId}`);
       await fetchBatches();
     } catch (err: any) {
       alert("Reject failed: " + err.message);
