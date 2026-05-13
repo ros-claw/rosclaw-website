@@ -587,7 +587,7 @@ export default function WikiPage() {
   const [showSearchTypeMenu, setShowSearchTypeMenu] = useState(false);
 
   useEffect(() => {
-    fetch("https://api.rosclaw.io/wiki/v1/hub/stats")
+    fetch("https://api.rosclaw.io/v1/hub/stats")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch stats");
         return res.json();
@@ -606,7 +606,7 @@ export default function WikiPage() {
     e.preventDefault();
     if (searchQuery.trim()) {
       window.open(
-        `https://api.rosclaw.io/wiki/v1/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}`,
+        `https://api.rosclaw.io/v1/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}`,
         "_blank"
       );
     }
@@ -990,7 +990,7 @@ export default function WikiPage() {
                   <code className="text-text-secondary">
                     <span className="text-purple-500">curl</span>{" "}
                     <span className="text-cognitive-cyan">
-                      "https://api.rosclaw.io/wiki/v1/search?q=navigation"
+                      "https://api.rosclaw.io/v1/search?q=navigation"
                     </span>{" "}
                     <span className="text-physical-orange">
                       -H "Authorization: Bearer YOUR_API_KEY"
