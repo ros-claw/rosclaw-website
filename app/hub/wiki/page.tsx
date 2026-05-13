@@ -30,8 +30,12 @@ interface WikiStats {
     total_pages: number;
     total_wikilinks: number;
     total_judgments: number;
+    wiki_graph_nodes: number;
+    wiki_graph_edges: number;
     total_code_graph_nodes: number;
     total_code_graph_edges: number;
+    core_code_graph_nodes: number;
+    core_code_graph_edges: number;
     robots_covered: number;
     entities_covered: number;
     causal_chains: number;
@@ -809,52 +813,100 @@ export default function WikiPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="mb-8"
+              className="mb-8 space-y-6"
             >
-              <h2 className="text-lg font-semibold text-foreground mb-4">
-                Knowledge Base Stats
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <StatCard
-                  icon={FileText}
-                  value={globalStats?.total_pages || 0}
-                  label="Wiki Pages"
-                  delay={0}
-                />
-                <StatCard
-                  icon={Link2}
-                  value={globalStats?.total_wikilinks || 0}
-                  label="Cross-links"
-                  delay={0.05}
-                />
-                <StatCard
-                  icon={Scale}
-                  value={globalStats?.total_judgments || 0}
-                  label="Physics Judgments"
-                  delay={0.1}
-                />
-                <StatCard
-                  icon={Database}
-                  value={globalStats?.total_code_graph_nodes || 0}
-                  label="Graph Nodes"
-                  delay={0.15}
-                  warning={!!globalStats?.total_code_graph_nodes}
-                  tooltip="Contains google-research noise, will be filtered soon"
-                />
-                <StatCard
-                  icon={GitBranch}
-                  value={globalStats?.total_code_graph_edges || 0}
-                  label="Graph Edges"
-                  delay={0.2}
-                  warning={!!globalStats?.total_code_graph_edges}
-                  tooltip="Contains google-research noise, will be filtered soon"
-                />
-                <StatCard
-                  icon={Cpu}
-                  value={globalStats?.robots_covered || 0}
-                  label="Robot Models"
-                  delay={0.25}
-                />
+              <div>
+                <h2 className="text-lg font-semibold text-foreground mb-4">
+                  Knowledge Base
+                </h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <StatCard
+                    icon={FileText}
+                    value={globalStats?.total_pages || 0}
+                    label="Wiki Pages"
+                    delay={0}
+                  />
+                  <StatCard
+                    icon={Link2}
+                    value={globalStats?.total_wikilinks || 0}
+                    label="Cross-links"
+                    delay={0.05}
+                  />
+                  <StatCard
+                    icon={Scale}
+                    value={globalStats?.total_judgments || 0}
+                    label="Physics Judgments"
+                    delay={0.1}
+                  />
+                  <StatCard
+                    icon={Cpu}
+                    value={globalStats?.robots_covered || 0}
+                    label="Robot Models"
+                    delay={0.15}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-lg font-semibold text-foreground mb-1">
+                  Wiki Concept Graph
+                </h2>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Nodes are wiki pages; edges are deduped <code>[[wikilink]]</code> references — what an Obsidian-style graph view shows.
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <StatCard
+                    icon={Database}
+                    value={globalStats?.wiki_graph_nodes || globalStats?.total_pages || 0}
+                    label="Concept Nodes"
+                    delay={0.2}
+                  />
+                  <StatCard
+                    icon={GitBranch}
+                    value={globalStats?.wiki_graph_edges || 0}
+                    label="Concept Edges"
+                    delay={0.25}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-lg font-semibold text-foreground mb-1">
+                  Underlying Code Graph
+                </h2>
+                <p className="text-xs text-muted-foreground mb-3">
+                  Python AST extracted from ingested research repositories. Nodes are modules/classes/functions; edges are imports and calls. <strong>Total</strong> includes generic monorepos (e.g.&nbsp;google-research); <strong>Core</strong> restricts to embodied-AI repos.
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <StatCard
+                    icon={Database}
+                    value={globalStats?.total_code_graph_nodes || 0}
+                    label="Code Nodes (Total)"
+                    delay={0.3}
+                    warning={!!globalStats?.total_code_graph_nodes}
+                    tooltip="Includes generic monorepos; see Core for embodied-AI subset."
+                  />
+                  <StatCard
+                    icon={GitBranch}
+                    value={globalStats?.total_code_graph_edges || 0}
+                    label="Code Edges (Total)"
+                    delay={0.35}
+                    warning={!!globalStats?.total_code_graph_edges}
+                    tooltip="Includes generic monorepos; see Core for embodied-AI subset."
+                  />
+                  <StatCard
+                    icon={Database}
+                    value={globalStats?.core_code_graph_nodes || 0}
+                    label="Code Nodes (Core)"
+                    delay={0.4}
+                  />
+                  <StatCard
+                    icon={GitBranch}
+                    value={globalStats?.core_code_graph_edges || 0}
+                    label="Code Edges (Core)"
+                    delay={0.45}
+                  />
+                </div>
               </div>
             </motion.div>
 
