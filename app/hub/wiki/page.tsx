@@ -578,6 +578,14 @@ const searchTypes = [
   { value: "judgment", label: "Judgment", desc: "Physical parameter search" },
 ];
 
+interface SearchResult {
+  id: string;
+  title: string;
+  content: string;
+  url: string;
+  score: number;
+}
+
 export default function WikiPage() {
   const [stats, setStats] = useState<WikiStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -585,6 +593,12 @@ export default function WikiPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchType, setSearchType] = useState("hybrid");
   const [showSearchTypeMenu, setShowSearchTypeMenu] = useState(false);
+
+  // Search state
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
     fetch("https://api.rosclaw.io/v1/hub/stats")
@@ -602,13 +616,41 @@ export default function WikiPage() {
       });
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      window.open(
+    if (!searchQuery.trim()) return;
+
+    setSearchLoading(true);
+    setSearchError(null);
+    setHasSearched(true);
+
+    try {
+      const res = await fetch(
         `https://api.rosclaw.io/v1/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}`,
-        "_blank"
+        { headers: { 'Accept': 'application/json' } }
       );
+
+      if (!res.ok) {
+        throw new Error(`Search failed: ${res.status} ${res.statusText}`);
+      }
+
+      const data = await res.json();
+
+      // Handle different response formats
+      if (Array.isArray(data)) {
+        setSearchResults(data);
+      } else if (data.results && Array.isArray(data.results)) {
+        setSearchResults(data.results);
+      } else if (data.data && Array.isArray(data.data)) {
+        setSearchResults(data.data);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (err: any) {
+      setSearchError(err.message || 'Search failed. Please try again.');
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
     }
   };
 
@@ -711,6 +753,107 @@ export default function WikiPage() {
               )}
             </div>
           </div>
+
+          {/* Search Results Panel */}
+          {hasSearched && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 p-4 rounded-xl bg-black/40 border border-white/10"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-white">
+                  Search Results
+                  {searchResults.length > 0 && (
+                    <span className="ml-2 text-xs text-text-muted">({searchResults.length} found)</span>
+                  )}
+                </h3>
+                <button
+                  onClick={() => {
+                    setHasSearched(false);
+                    setSearchResults([]);
+                    setSearchError(null);
+                  }}
+                  className="text-xs text-text-muted hover:text-white transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+
+              {/* Loading State */}
+              {searchLoading && (
+                <div className="flex items-center justify-center py-8">
+                  <div className="flex items-center gap-3 text-text-muted">
+                    <div className="w-4 h-4 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+                    Searching...
+                  </div>
+                </div>
+              )}
+
+              {/* Error State */}
+              {searchError && !searchLoading && (
+                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <p className="text-red-400 text-sm flex items-center gap-2">
+                    <span className="text-lg">⚠️</span>
+                    {searchError}
+                  </p>
+                  <p className="text-text-muted text-xs mt-2">
+                    Please check your connection or try again later.
+                  </p>
+                </div>
+              )}
+
+              {/* Empty Results */}
+              {!searchLoading && !searchError && searchResults.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-text-muted text-sm">No results found for "{searchQuery}"</p>
+                  <p className="text-text-muted/60 text-xs mt-2">
+                    Try different keywords or search types
+                  </p>
+                </div>
+              )}
+
+              {/* Results List */}
+              {!searchLoading && !searchError && searchResults.length > 0 && (
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {searchResults.map((result, idx) => (
+                    <a
+                      key={result.id || idx}
+                      href={result.url || `https://wiki.rosclaw.io/${result.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 transition-all group"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium text-white group-hover:text-purple-400 transition-colors truncate">
+                            {result.title || 'Untitled'}
+                          </h4>
+                          {result.content && (
+                            <p className="text-xs text-text-muted mt-1 line-clamp-2">
+                              {result.content}
+                            </p>
+                          )}
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-text-muted group-hover:text-purple-400 flex-shrink-0" />
+                      </div>
+                      {result.score && (
+                        <div className="mt-2 flex items-center gap-2">
+                          <div className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-purple-500 rounded-full"
+                              style={{ width: `${Math.min(100, result.score * 100)}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-text-muted">{Math.round(result.score * 100)}%</span>
+                        </div>
+                      )}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          )}
 
           <p className="text-text-secondary max-w-2xl mt-4">
             {stats?.description ||
