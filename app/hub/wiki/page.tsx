@@ -584,8 +584,10 @@ interface SearchResult {
   _id?: string;
   page_id?: string;
   slug?: string;
+  file_path?: string;
   title: string;
-  content: string;
+  content?: string;
+  snippet?: string;
   url?: string;
   score: number;
 }
@@ -937,7 +939,7 @@ export default function WikiPage() {
               {!searchLoading && !searchError && searchResults.length > 0 && (
                 <div className="space-y-3 max-h-80 overflow-y-auto">
                   {searchResults.map((result, idx) => {
-                    const identifier = result.id || result._id || result.page_id || result.slug;
+                    const identifier = result.id || result._id || result.page_id || result.slug || result.file_path;
                     const resultUrl = result.url || (identifier ? `https://wiki.rosclaw.io/${identifier}` : '#');
                     return (
                     <a
@@ -952,9 +954,9 @@ export default function WikiPage() {
                           <h4 className="text-sm font-medium text-white group-hover:text-purple-400 transition-colors truncate">
                             {result.title || 'Untitled'}
                           </h4>
-                          {result.content && (
+                          {(result.content || result.snippet) && (
                             <p className="text-xs text-text-muted mt-1 line-clamp-2">
-                              {result.content}
+                              {result.content || result.snippet}
                             </p>
                           )}
                         </div>
