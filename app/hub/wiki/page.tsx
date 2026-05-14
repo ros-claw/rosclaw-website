@@ -580,10 +580,13 @@ const searchTypes = [
 ];
 
 interface SearchResult {
-  id: string;
+  id?: string;
+  _id?: string;
+  page_id?: string;
+  slug?: string;
   title: string;
   content: string;
-  url: string;
+  url?: string;
   score: number;
 }
 
@@ -933,10 +936,13 @@ export default function WikiPage() {
               {/* Results List */}
               {!searchLoading && !searchError && searchResults.length > 0 && (
                 <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {searchResults.map((result, idx) => (
+                  {searchResults.map((result, idx) => {
+                    const identifier = result.id || result._id || result.page_id || result.slug;
+                    const resultUrl = result.url || (identifier ? `https://wiki.rosclaw.io/${identifier}` : '#');
+                    return (
                     <a
-                      key={result.id || idx}
-                      href={result.url || `https://wiki.rosclaw.io/${result.id}`}
+                      key={identifier || idx}
+                      href={resultUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block p-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 transition-all group"
@@ -966,7 +972,7 @@ export default function WikiPage() {
                         </div>
                       )}
                     </a>
-                  ))}
+                  )})}
                 </div>
               )}
             </motion.div>
