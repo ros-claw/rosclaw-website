@@ -625,10 +625,24 @@ export default function WikiPage() {
     setHasSearched(true);
 
     try {
-      const res = await fetch(
-        `https://api.rosclaw.io/v1/search?q=${encodeURIComponent(searchQuery)}&type=${searchType}`,
-        { headers: { 'Accept': 'application/json' } }
-      );
+      // Get API key from localStorage if available
+      const apiKey = typeof window !== 'undefined' ? localStorage.getItem('rosclaw_api_key') : null;
+
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      };
+      if (apiKey) headers['X-API-Key'] = apiKey;
+
+      const res = await fetch('https://api.rosclaw.io/v1/search', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          query: searchQuery,
+          search_type: searchType,
+          top_k: 10
+        })
+      });
 
       if (!res.ok) {
         throw new Error(`Search failed: ${res.status} ${res.statusText}`);
@@ -795,11 +809,19 @@ export default function WikiPage() {
                 <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                   <p className="text-red-400 text-sm flex items-center gap-2">
                     <span className="text-lg">⚠️</span>
-                    {searchError}
+                    {searchError.includes('API-Key') || searchError.includes('authentication')
+                      ? 'API Key required for search'
+                      : searchError}
                   </p>
-                  <p className="text-text-muted text-xs mt-2">
-                    Please check your connection or try again later.
-                  </p>
+                  {(searchError.includes('API-Key') || searchError.includes('authentication')) ? (
+                    <p className="text-text-muted text-xs mt-2">
+                      Search requires an API key. Please contact the administrator or check the API documentation.
+                    </p>
+                  ) : (
+                    <p className="text-text-muted text-xs mt-2">
+                      Please check your connection or try again later.
+                    </p>
+                  )}
                 </div>
               )}
 
