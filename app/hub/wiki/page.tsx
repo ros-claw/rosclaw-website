@@ -21,6 +21,7 @@ import {
   Maximize2,
   Move,
 } from "lucide-react";
+import { getSupabaseClient } from "@/lib/supabase/client";
 
 interface WikiStats {
   status: string;
@@ -586,6 +587,9 @@ interface SearchResult {
   score: number;
 }
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.rosclaw.io";
+const API_KEY_STORAGE_KEY = "rosclaw_api_key";
+
 export default function WikiPage() {
   const [stats, setStats] = useState<WikiStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -594,11 +598,82 @@ export default function WikiPage() {
   const [searchType, setSearchType] = useState("hybrid");
   const [showSearchTypeMenu, setShowSearchTypeMenu] = useState(false);
 
+  // User session and API key state
+  const [user, setUser] = useState<any>(null);
+  const [apiKey, setApiKey] = useState<string>("");
+
   // Search state
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+
+  // Check user session and load API key on mount
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        loadApiKey(session.user.email);
+      }
+    });
+
+    // Also listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        loadApiKey(session.user.email);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Load API key from localStorage, cookie, or exchange via API
+  const loadApiKey = async (email?: string) => {
+    // First check localStorage
+    let key = localStorage.getItem(API_KEY_STORAGE_KEY);
+
+    // If not in localStorage, check cookie
+    if (!key) {
+      const cookieMatch = document.cookie.match(/rosclaw_api_key=([^;]+)/);
+      if (cookieMatch) {
+        key = decodeURIComponent(cookieMatch[1]);
+        localStorage.setItem(API_KEY_STORAGE_KEY, key);
+        // Clear the cookie after reading
+        document.cookie = "rosclaw_api_key=; Max-Age=0; path=/";
+      }
+    }
+
+    if (key) {
+      setApiKey(key);
+    } else if (email) {
+      // Try to exchange email for API key
+      await exchangeEmailForApiKey(email);
+    }
+  };
+
+  const exchangeEmailForApiKey = async (email: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/wiki/v1/auth/exchange`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.api_key) {
+          localStorage.setItem(API_KEY_STORAGE_KEY, data.api_key);
+          setApiKey(data.api_key);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to exchange for API key:", err);
+    }
+  };
 
   useEffect(() => {
     fetch("https://api.rosclaw.io/v1/hub/stats")
@@ -624,15 +699,19 @@ export default function WikiPage() {
     setSearchError(null);
     setHasSearched(true);
 
-    try {
-      // Get API key from localStorage if available
-      const apiKey = typeof window !== 'undefined' ? localStorage.getItem('rosclaw_api_key') : null;
+    // Ensure we have the API key (load if not already loaded)
+    let currentApiKey = apiKey;
+    if (!currentApiKey && user?.email) {
+      await loadApiKey(user.email);
+      currentApiKey = localStorage.getItem(API_KEY_STORAGE_KEY) || "";
+    }
 
+    try {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       };
-      if (apiKey) headers['X-API-Key'] = apiKey;
+      if (currentApiKey) headers['X-API-Key'] = currentApiKey;
 
       const res = await fetch('https://api.rosclaw.io/v1/search', {
         method: 'POST',
@@ -814,9 +893,25 @@ export default function WikiPage() {
                       : searchError}
                   </p>
                   {(searchError.includes('API-Key') || searchError.includes('authentication')) ? (
-                    <p className="text-text-muted text-xs mt-2">
-                      Search requires an API key. Please contact the administrator or check the API documentation.
-                    </p>
+                    <div className="mt-2">
+                      {!user ? (
+                        <div>
+                          <p className="text-text-muted text-xs">
+                            Please log in to use the search feature.
+                          </p>
+                          <a
+                            href="/login"
+                            className="inline-block mt-2 text-xs text-purple-500 hover:text-purple-400 transition-colors"
+                          >
+                            Log in →
+                          </a>
+                        </div>
+                      ) : (
+                        <p className="text-text-muted text-xs">
+                          Unable to load your API key. Please visit your profile to refresh it.
+                        </p>
+                      )}
+                    </div>
                   ) : (
                     <p className="text-text-muted text-xs mt-2">
                       Please check your connection or try again later.
