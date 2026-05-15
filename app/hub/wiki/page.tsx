@@ -1252,25 +1252,6 @@ export default function WikiPage() {
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 </div>
-
-                {/* Code Example */}
-                <div className="mt-4 p-4 rounded-lg bg-black/40 font-mono text-sm overflow-x-auto">
-                  <code className="text-text-secondary">
-                    <span className="text-purple-500">curl</span>{" "}
-                    <span className="text-cognitive-cyan">
-                      -X POST "{API_BASE}/v1/search"
-                    </span>{" "}
-                    <span className="text-physical-orange">
-                      -H "Content-Type: application/json"
-                    </span>{" "}
-                    <span className="text-physical-orange">
-                      -H "X-API-Key: YOUR_API_KEY"
-                    </span>{" "}
-                    <span className="text-green-400">
-                      -d '{"{"'}query":"navigation","search_type":"hybrid","top_k":10{'}"'}'
-                    </span>
-                  </code>
-                </div>
               </div>
             </motion.div>
           </>
