@@ -681,7 +681,7 @@ export default function WikiPage() {
   };
 
   useEffect(() => {
-    fetch("https://api.rosclaw.io/v1/hub/stats")
+    fetch(`${API_BASE}/wiki/v1/hub/stats`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch stats");
         return res.json();
@@ -718,7 +718,7 @@ export default function WikiPage() {
       };
       if (currentApiKey) headers['X-API-Key'] = currentApiKey;
 
-      const res = await fetch('https://api.rosclaw.io/v1/search', {
+      const res = await fetch(`${API_BASE}/v1/search`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -1258,10 +1258,16 @@ export default function WikiPage() {
                   <code className="text-text-secondary">
                     <span className="text-purple-500">curl</span>{" "}
                     <span className="text-cognitive-cyan">
-                      "https://api.rosclaw.io/v1/search?q=navigation"
+                      -X POST "{API_BASE}/v1/search"
                     </span>{" "}
                     <span className="text-physical-orange">
-                      -H "Authorization: Bearer YOUR_API_KEY"
+                      -H "Content-Type: application/json"
+                    </span>{" "}
+                    <span className="text-physical-orange">
+                      -H "X-API-Key: YOUR_API_KEY"
+                    </span>{" "}
+                    <span className="text-green-400">
+                      -d '{"{"'}query":"navigation","search_type":"hybrid","top_k":10{'}"'}'
                     </span>
                   </code>
                 </div>
