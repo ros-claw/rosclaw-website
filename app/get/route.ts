@@ -131,6 +131,71 @@ WRAPPER_EOF
     success "Created rosclaw CLI at \${WRAPPER_PATH}"
 }
 
+# Configure e-URDF-Zoo and workspace
+configure_workspace() {
+    info "Configuring workspace..."
+
+    ROSCLAW_DIR="\${HOME}/.rosclaw/lib/rosclaw"
+    ZOO_SOURCE="\${ROSCLAW_DIR}/e-urdf-zoo"
+    ZOO_TARGET="\${HOME}/.rosclaw/e-urdf-zoo"
+    WORKSPACE_DIR="\${HOME}/.rosclaw"
+
+    # Link e-URDF-Zoo
+    if [[ -d "$ZOO_SOURCE" ]]; then
+        rm -f "$ZOO_TARGET"
+        ln -s "$ZOO_SOURCE" "$ZOO_TARGET" 2>/dev/null || cp -r "$ZOO_SOURCE" "$ZOO_TARGET"
+        success "e-URDF-Zoo linked at $ZOO_TARGET"
+    fi
+
+    # Create default rosclaw.yaml if not exists
+    if [[ ! -f "\${WORKSPACE_DIR}/rosclaw.yaml" ]]; then
+        cat > "\${WORKSPACE_DIR}/rosclaw.yaml" <<EOF
+workspace_dir: \${WORKSPACE_DIR}
+eurdf_zoo_path: \${ZOO_TARGET}
+runtime:
+  default_robot: ur5e
+  enable_firewall: true
+  enable_sandbox: true
+  enable_memory: true
+  enable_practice: true
+memory:
+  backend: seekdb
+  data_dir: \${WORKSPACE_DIR}/memory
+practice:
+  episodes_dir: \${WORKSPACE_DIR}/episodes
+  max_episode_history: 1000
+logging:
+  level: INFO
+  dir: \${WORKSPACE_DIR}/logs
+EOF
+        success "Created \${WORKSPACE_DIR}/rosclaw.yaml"
+    fi
+}
+
+# Verify installation
+verify_install() {
+    info "Verifying installation..."
+
+    export PATH="\${HOME}/.rosclaw/bin:\${PATH}"
+
+    # Check rosclaw command
+    if ! command -v rosclaw &>/dev/null && ! python3 -m rosclaw --version &>/dev/null; then
+        warn "rosclaw command not found. You may need to restart your terminal."
+        return
+    fi
+
+    # Run doctor
+    DOCTOR_OUTPUT=$(rosclaw doctor 2>&1) || true
+    echo "$DOCTOR_OUTPUT"
+
+    ISSUE_COUNT=$(echo "$DOCTOR_OUTPUT" | grep -c "❌" || true)
+    if [[ "$ISSUE_COUNT" -eq 0 ]]; then
+        success "All health checks passed."
+    else
+        warn "Installed with $ISSUE_COUNT warnings. Run 'rosclaw doctor' for details."
+    fi
+}
+
 # Add to PATH
 add_to_path() {
     info "Checking PATH configuration..."
@@ -163,13 +228,15 @@ add_to_path() {
 print_banner() {
     echo ""
     echo "\${GREEN}═══════════════════════════════════════════════════════\${RESET}"
-    echo "\${GREEN}  ✓ ROSClaw OS Kernel Installed Successfully!\${RESET}"
+    echo "\${GREEN}  ✓ ROSClaw v1.0.0 Installed Successfully!\${RESET}"
     echo "\${GREEN}═══════════════════════════════════════════════════════\${RESET}"
     echo ""
-    echo "    🦞 ROSClaw v1.0.0 🦞"
-    echo ""
-    echo "  Run \${CYAN}rosclaw --help\${RESET} to begin."
-    echo "  Run \${CYAN}rosclaw doctor\${RESET} to verify your installation."
+    echo "  Quick Start:"
+    echo "    \${CYAN}rosclaw --help\${RESET}      Show all commands"
+    echo "    \${CYAN}rosclaw doctor\${RESET}      Health diagnosis"
+    echo "    \${CYAN}rosclaw init\${RESET}        Initialize workspace"
+    echo "    \${CYAN}rosclaw robot list\${RESET}  List robots"
+    echo "    \${CYAN}rosclaw run\${RESET}         Start runtime"
     echo ""
     echo "  Documentation: https://docs.rosclaw.io"
     echo "  Community:     https://discord.gg/E6nPCDu6KJ"
@@ -180,15 +247,17 @@ print_banner() {
 
 # Main installation
 main() {
-    info "Starting ROSClaw OS Kernel installation..."
+    info "Starting ROSClaw v1.0.0 installation..."
     info "This will install ROSClaw to ~/.rosclaw/"
     echo ""
 
     check_dependencies
     setup_directories
     install_core
+    configure_workspace
     create_wrapper
     add_to_path
+    verify_install
 
     print_banner
 }
