@@ -91,9 +91,14 @@ install_core() {
     info "Installing Python dependencies..."
     cd "\${ROSCLAW_DIR}"
 
+    PIP_INSTALL="pip3 install -q -e ."
+    if ! pip3 install --dry-run pip &>/dev/null 2>&1; then
+        PIP_INSTALL="pip3 install -q -e . --break-system-packages"
+        warn "PEP668 externally-managed environment detected; using --break-system-packages"
+    fi
+
     if command -v pip3 &> /dev/null; then
-        pip3 install -q -e . 2>/dev/null || pip3 install -q -e . --break-system-packages 2>/dev/null || \\
-            warn "pip3 install failed. You may need to install manually."
+        $PIP_INSTALL 2>/dev/null || warn "pip3 install failed. You may need to install manually."
     elif command -v pip &> /dev/null; then
         pip install -q -e . 2>/dev/null || pip install -q -e . --break-system-packages 2>/dev/null || \\
             warn "pip install failed. You may need to install manually."
@@ -113,10 +118,13 @@ create_wrapper() {
 # ROSClaw CLI Wrapper
 
 export ROSCLAW_HOME="\${HOME}/.rosclaw"
-export PYTHONPATH="\${ROSCLAW_HOME}/lib/rosclaw:\${PYTHONPATH}"
 
-# Run the actual CLI
-exec python3 -m rosclaw.cli "$@"
+# Prefer installed entry point; fallback to python3 -m rosclaw
+if command -v rosclaw &> /dev/null; then
+    exec rosclaw "$@"
+else
+    exec python3 -m rosclaw "$@"
+fi
 WRAPPER_EOF
 
     chmod +x "\${WRAPPER_PATH}"
@@ -158,7 +166,7 @@ print_banner() {
     echo "\${GREEN}  ✓ ROSClaw OS Kernel Installed Successfully!\${RESET}"
     echo "\${GREEN}═══════════════════════════════════════════════════════\${RESET}"
     echo ""
-    echo "    🦞 ROSClaw OS Kernel v0.1.0 🦞"
+    echo "    🦞 ROSClaw v1.0.0 🦞"
     echo ""
     echo "  Run \${CYAN}rosclaw --help\${RESET} to begin."
     echo "  Run \${CYAN}rosclaw doctor\${RESET} to verify your installation."
