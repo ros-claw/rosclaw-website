@@ -8,10 +8,12 @@ import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
 const navLinks = [
-  { name: "Home", href: "/" },
-  { name: "ROSClaw Hub", href: "/hub" },
+  { name: "Runtime", href: "/#runtime-modules" },
+  { name: "First Embodiment", href: "/#first-embodiment" },
+  { name: "Hub", href: "/hub" },
   { name: "Data Flywheel", href: "/flywheel" },
-  { name: "Docs", href: "/#docs" },
+  { name: "Docs", href: "/docs" },
+  { name: "Contact", href: "mailto:ai@rosclaw.io" },
 ];
 
 interface HealthStatus {

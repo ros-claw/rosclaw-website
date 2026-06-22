@@ -166,7 +166,7 @@ print_banner() {
     echo "  Documentation: https://docs.rosclaw.io"
     echo "  Community:     https://discord.gg/E6nPCDu6KJ"
     echo ""
-    echo "\${CYAN}  Teach Once, Embody Anywhere. 🦞\${RESET}"
+    echo "\${CYAN}  Ground Once. Validate Always. Evolve Continuously. 🦞\${RESET}"
     echo ""
 }
 

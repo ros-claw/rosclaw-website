@@ -195,7 +195,7 @@ export default function SkillsPage() {
                 <h1 className="text-3xl md:text-4xl font-bold text-foreground">
                   e-Skill Market
                 </h1>
-                <p className="text-physical-orange mt-1">Teach Once, Embody Anywhere</p>
+                <p className="text-physical-orange mt-1">Versioned task policies for embodied agents</p>
               </div>
             </div>
 
@@ -209,8 +209,9 @@ export default function SkillsPage() {
           </div>
 
           <p className="text-text-secondary max-w-2xl mt-4">
-            Download, share, and deploy physics-grounded skills. Transform your
-            hardware instantly with community-driven VLA weights and behavior trees.
+            Download, share, and deploy versioned task policies. Skills include
+            behavior recipes, recovery strategies, parameter packs, and compatible
+            hardware constraints.
           </p>
         </motion.div>
 
