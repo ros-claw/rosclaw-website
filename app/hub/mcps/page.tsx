@@ -293,7 +293,7 @@ export default function McpsPage() {
                   Hardware MCPs
                 </h1>
                 <p className="text-cognitive-cyan mt-1">
-                  {packages.length} packages • Zero-Code Embodiment
+                  {packages.length} packages • Agent-facing robot interfaces
                 </p>
               </div>
             </div>
@@ -308,8 +308,9 @@ export default function McpsPage() {
           </div>
 
           <p className="text-text-secondary max-w-2xl mt-4">
-            Universal southbound drivers. Connect Unitree, UR5e, or ANY custom
-            robot to AI agents instantly using the Model Context Protocol.
+            Hardware MCPs are agent-facing interfaces for robot bodies, sensors,
+            tools, lab devices, and physical infrastructure. Each package includes
+            MCP tool schemas, safety placeholders, and sandbox test stubs.
           </p>
         </motion.div>
 
@@ -497,7 +498,7 @@ export default function McpsPage() {
               target="_blank"
               className="inline-flex items-center gap-2 text-cognitive-cyan hover:text-physical-orange transition-colors"
             >
-              Generate a driver instantly using our sdk_to_mcp Auto-Compiler
+              Generate a reviewable Hardware MCP scaffold from SDK manuals
               <ExternalLink className="w-4 h-4" />
             </Link>
           </div>

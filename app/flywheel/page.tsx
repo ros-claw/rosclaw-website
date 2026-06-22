@@ -2,104 +2,68 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Database, GitBranch, Shield, Cpu, Rocket } from "lucide-react";
+import {
+  Database,
+  Clock,
+  FileJson,
+  HardDrive,
+  RotateCcw,
+  BrainCircuit,
+  ShieldCheck,
+  ArrowRight,
+} from "lucide-react";
 
-const pipelineStages = [
-  {
-    id: "physical",
-    title: "Physical Interaction",
-    description: "Real robot executes task",
-    icon: Cpu,
-    color: "#00F0FF",
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] },
   },
-  {
-    id: "firewall",
-    title: "e-URDF Firewall",
-    description: "Safety interception layer",
-    icon: Shield,
-    color: "#FF3E00",
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
-  {
-    id: "kernel",
-    title: "ROSClaw OS Kernel",
-    description: "Event-driven ring buffer",
-    icon: Database,
-    color: "#00F0FF",
-  },
-  {
-    id: "dataset",
-    title: "LeRobot RLDS Format",
-    description: "Standardized dataset packaging",
-    icon: GitBranch,
-    color: "#00F0FF",
-  },
-  {
-    id: "huggingface",
-    title: "Hugging Face Repo",
-    description: "Community-shared training data",
-    icon: Rocket,
-    color: "#FF3E00",
-  },
+};
+
+const sources = [
+  "DDS",
+  "ROS 2 topics",
+  "Camera streams",
+  "Audio",
+  "Agent plans",
+  "Provider outputs",
+  "Sandbox decisions",
+  "Runtime actions",
+  "Robot states",
+  "Critic results",
+  "Failure events",
+  "Memory writes",
 ];
 
-function ParticleFlow() {
-  const [particles, setParticles] = useState<
-    Array<{ id: number; stage: number; offset: number }>
-  >([]);
+const traceEvents = [
+  { t: "0.0", label: "user task" },
+  { t: "0.2", label: "agent plan" },
+  { t: "0.4", label: "provider route" },
+  { t: "0.6", label: "sandbox decision" },
+  { t: "0.8", label: "robot state" },
+  { t: "1.1", label: "critic result" },
+  { t: "1.3", label: "memory write" },
+  { t: "1.5", label: "skill patch candidate" },
+];
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setParticles((prev) => {
-        const newParticles = prev
-          .map((p) => ({ ...p, stage: p.stage + 0.02 }))
-          .filter((p) => p.stage < pipelineStages.length - 1);
-
-        if (Math.random() > 0.7) {
-          newParticles.push({
-            id: Date.now(),
-            stage: 0,
-            offset: Math.random() * 20 - 10,
-          });
-        }
-
-        return newParticles.slice(-20);
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((particle) => {
-        const stageIndex = Math.floor(particle.stage);
-        const progress = particle.stage - stageIndex;
-        const stageWidth = 100 / (pipelineStages.length - 1);
-        const x = stageIndex * stageWidth + progress * stageWidth;
-
-        return (
-          <motion.div
-            key={particle.id}
-            className="absolute w-2 h-2 rounded-full"
-            style={{
-              left: `${x}%`,
-              top: `calc(50% + ${particle.offset}px)`,
-              backgroundColor:
-                stageIndex === 1 ? "#FF3E00" : "#00F0FF",
-              boxShadow: `0 0 10px ${
-                stageIndex === 1 ? "#FF3E00" : "#00F0FF"
-              }`,
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-          />
-        );
-      })}
-    </div>
-  );
-}
+const outputs = [
+  { icon: HardDrive, label: "MCAP", desc: "Native ROS 2 bag replay" },
+  { icon: Database, label: "Parquet", desc: "Columnar analytics" },
+  { icon: FileJson, label: "JSONL", desc: "Event logs" },
+  { icon: BrainCircuit, label: "RLDS / LeRobot", desc: "Training datasets" },
+  { icon: ShieldCheck, label: "Failure Case Bundle", desc: "Audit + regression" },
+  { icon: RotateCcw, label: "Skill Candidate Bundle", desc: "Evolution input" },
+];
 
 export default function FlywheelPage() {
   return (
@@ -114,147 +78,201 @@ export default function FlywheelPage() {
         >
           <div className="flex items-center justify-center gap-2 text-cognitive-cyan font-mono text-sm mb-4">
             <span className="text-physical-orange">&gt;_</span>
-            <span>THE AUTONOMOUS DATA FLYWHEEL</span>
+            <span>PRAXIS DATA FLYWHEEL</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Stop Manually Logging Data
+            Praxis Data Flywheel
           </h1>
           <p className="text-text-secondary text-lg max-w-3xl mx-auto">
-            Let the OS build your dataset while it works.
+            Turn every physical execution into replayable, queryable, and reusable
+            evidence.
           </p>
         </motion.div>
 
-        {/* Pipeline Visualization */}
+        {/* Sources */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="relative mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-16"
         >
-          <div className="relative bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 md:p-12 overflow-hidden">
-            <ParticleFlow />
-
-            {/* Pipeline Stages */}
-            <div className="relative z-10 grid grid-cols-1 md:grid-cols-5 gap-6">
-              {pipelineStages.map((stage, index) => {
-                const Icon = stage.icon;
-                return (
-                  <motion.div
-                    key={stage.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-                    className="relative"
-                  >
-                    {/* Connection Line */}
-                    {index < pipelineStages.length - 1 && (
-                      <div className="hidden md:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-cognitive-cyan/50 to-cognitive-cyan/20" />
-                    )}
-
-                    <div className="flex flex-col items-center text-center">
-                      <div
-                        className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 transition-all hover:scale-110"
-                        style={{
-                          borderColor: `${stage.color}30`,
-                          boxShadow: `0 0 20px ${stage.color}10`,
-                        }}
-                      >
-                        <Icon
-                          className="w-8 h-8"
-                          style={{ color: stage.color }}
-                        />
-                      </div>
-                      <h3 className="text-foreground font-semibold mb-2">
-                        {stage.title}
-                      </h3>
-                      <p className="text-text-secondary text-sm">
-                        {stage.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+          <h2 className="text-2xl font-bold text-foreground mb-6">Sources</h2>
+          <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6">
+            <div className="flex flex-wrap gap-2">
+              {sources.map((source) => (
+                <span
+                  key={source}
+                  className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/70 text-sm"
+                >
+                  {source}
+                </span>
+              ))}
             </div>
           </div>
         </motion.div>
 
-        {/* Explanation */}
+        {/* Timeline */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.6 }}
-          className="max-w-4xl mx-auto"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-16"
         >
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-8">
-            <p className="text-text-secondary leading-relaxed text-center">
-              Every physical movement, successful or blocked, is intercepted by
-              the{" "}
-              <span className="text-cognitive-cyan">Event-Driven Ring Buffer</span>
-              . ROSClaw automatically time-syncs{" "}
-              <span className="text-physical-orange">ROS 2 joint states</span>,{" "}
-              <span className="text-physical-orange">RGB-D streams</span>, and{" "}
-              <span className="text-physical-orange">LLM reasoning prompts</span>,
-              outputting standard{" "}
-              <span className="text-cognitive-cyan">RLDS datasets</span> for
-              offline VLA fine-tuning.
-            </p>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Physical Trace Timeline</h2>
+          <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6 md:p-8 overflow-x-auto">
+            <div className="flex items-center gap-3 min-w-max">
+              {traceEvents.map((event, i) => (
+                <div key={event.label} className="flex items-center gap-3">
+                  <div className="px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-center min-w-[120px]">
+                    <p className="text-cognitive-cyan font-mono text-xs mb-1">
+                      t={event.t}s
+                    </p>
+                    <p className="text-white/80 text-sm">{event.label}</p>
+                  </div>
+                  {i < traceEvents.length - 1 && (
+                    <ArrowRight className="w-4 h-4 text-white/20 flex-shrink-0" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
 
-        {/* Key Features */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
-          {[
-            {
-              title: "Automatic Collection",
-              description:
-                "No manual logging required. Every interaction is captured.",
-            },
-            {
-              title: "Time-Synchronized",
-              description:
-                "ROS 2 messages aligned with LLM chain-of-thought traces.",
-            },
-            {
-              title: "Standard Format",
-              description:
-                "Native LeRobot RLDS export for immediate training.",
-            },
-          ].map((feature, index) => (
+        {/* Trace Schema + Outputs */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl font-bold text-foreground mb-6">Trace Schema</h2>
+            <div className="rounded-2xl bg-black/60 border border-white/10 p-6 font-mono text-sm overflow-x-auto">
+              <pre className="text-white/70">
+                {`trace:
+  session_id: pick_cup_001
+  robot: unitree-g1
+  events:
+    - timestamp: 0.0
+      type: user_task
+      payload: { task: "pick red cup" }
+    - timestamp: 0.2
+      type: agent_plan
+      payload: { plan: [...] }
+    - timestamp: 0.6
+      type: sandbox_decision
+      payload: { decision: ALLOW }
+    - timestamp: 1.3
+      type: memory_write
+      payload: { key: grasp_near_red_cup }`}
+              </pre>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            <h2 className="text-2xl font-bold text-foreground mb-6">Export Formats</h2>
             <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3 + index * 0.1, duration: 0.5 }}
-              className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-6 hover:border-white/20 transition-colors"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
             >
-              <h3 className="text-foreground font-semibold mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-text-secondary text-sm">
-                {feature.description}
-              </p>
+              {outputs.map(({ icon: Icon, label, desc }) => (
+                <motion.div
+                  key={label}
+                  variants={fadeInUp}
+                  className="rounded-xl bg-white/[0.03] border border-white/[0.08] p-4 flex items-start gap-3"
+                >
+                  <Icon className="w-5 h-5 text-cognitive-cyan flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-white font-medium text-sm">{label}</p>
+                    <p className="text-white/50 text-xs">{desc}</p>
+                  </div>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
+          </motion.div>
+        </div>
+
+        {/* Memory Write + Replay */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <BrainCircuit className="w-6 h-6 text-cognitive-cyan" />
+              <h2 className="text-xl font-bold text-foreground">Memory Write</h2>
+            </div>
+            <p className="text-text-secondary leading-relaxed">
+              Physical traces are distilled into spatiotemporal memory: success
+              patterns, failure evidence, and recovery strategies that persist
+              across sessions.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <RotateCcw className="w-6 h-6 text-physical-orange" />
+              <h2 className="text-xl font-bold text-foreground">Replay</h2>
+            </div>
+            <p className="text-text-secondary leading-relaxed">
+              Re-run any physical trace in simulation or against real hardware to
+              reproduce failures, audit decisions, and validate fixes.
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Safety & Privacy */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-8 mb-16"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-6 h-6 text-cognitive-cyan" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-foreground mb-2">Safety & Privacy</h2>
+              <p className="text-text-secondary leading-relaxed">
+                Traces are stored locally by default. Cloud sync is opt-in and
+                encrypted. We record agent plans, tool calls, provider outputs,
+                and runtime decisions for safety audit. We do not record private
+                reasoning content or user prompts beyond what is required for
+                audit and replay.
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         {/* Back to Hub */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.6 }}
-          className="mt-16 text-center"
+          transition={{ delay: 1, duration: 0.6 }}
+          className="text-center"
         >
           <Link
             href="/hub"
             className="inline-flex items-center gap-2 text-text-secondary hover:text-foreground transition-colors"
           >
             <span className="text-physical-orange">←</span>
-            Back to ROSClaw Hub
+            Back to Physical-AI Asset Hub
           </Link>
         </motion.div>
       </div>

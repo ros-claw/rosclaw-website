@@ -2,93 +2,132 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Cpu, Brain, Plug, Box, BookOpen, ArrowUpRight } from "lucide-react";
+import {
+  Box,
+  Plug,
+  BrainCircuit,
+  Cuboid,
+  Cpu,
+  BookOpen,
+  BarChart3,
+  ArrowRight,
+  ShieldCheck,
+  Terminal,
+} from "lucide-react";
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.23, 1, 0.32, 1],
-    },
+    transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] },
   },
 };
 
-const hubCards = [
-  {
-    id: "skills",
-    title: "e-Skill Market",
-    subtitle: "Teach Once, Embody Anywhere.",
-    description:
-      "Download, share, and deploy physics-grounded skills. Transform your hardware instantly with community-driven VLA weights and behavior trees.",
-    cta: "Explore Skills",
-    href: "/hub/skills",
-    icon: Cpu,
-    span: "col-span-1 md:col-span-2",
-    gradient: "from-physical-orange/20 to-cognitive-cyan/10",
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
   },
+};
+
+const assets = [
   {
-    id: "models",
-    title: "Foundation Models",
-    subtitle: "The Cognitive Brain.",
-    description:
-      "Mount the world's most powerful Vision-Language-Action (VLA) models. Plug-and-play intelligence optimized for robotic inference.",
-    cta: "Browse Models",
-    href: "/hub/models",
-    icon: Brain,
-    span: "col-span-1",
-    gradient: "from-cognitive-cyan/20 to-transparent",
-  },
-  {
-    id: "mcps",
-    title: "Hardware MCPs",
-    subtitle: "Zero-Code Embodiment.",
-    description:
-      "Universal southbound drivers. Connect Unitree, UR5e, or ANY custom robot to AI agents instantly using the Model Context Protocol.",
-    cta: "View Drivers",
-    href: "/hub/mcps",
-    icon: Plug,
-    span: "col-span-1",
-    gradient: "from-physical-orange/20 to-transparent",
-  },
-  {
-    id: "twins",
-    title: "Digital Twins",
-    subtitle: "The Subconscious Sandbox.",
-    description:
-      "Predict the future. Intercept AI hallucinations before they break physical hardware with 100x-speed MuJoCo kinematic simulations.",
-    cta: "Enter Sandbox",
-    href: "/hub/twins",
+    id: "eurdf",
     icon: Box,
-    span: "col-span-1",
-    gradient: "from-green-500/20 to-transparent",
+    title: "e-URDF Zoo",
+    description:
+      "Robot embodiment definitions, safety envelopes, sensors, actuators, capabilities, and simulation metadata.",
+    status: "Experimental",
+  },
+  {
+    id: "mcp",
+    icon: Plug,
+    title: "Hardware MCP Hub",
+    description:
+      "Agent-facing interfaces for robot bodies, sensors, tools, lab devices, and physical infrastructure.",
+    status: "Template",
+  },
+  {
+    id: "provider",
+    icon: BrainCircuit,
+    title: "Provider Hub",
+    description:
+      "LLMs, VLMs, VLAs, VLNs, world models, critics, embeddings, classical robotics algorithms, and skill policies.",
+    status: "Planned",
+  },
+  {
+    id: "twin",
+    icon: Cuboid,
+    title: "Digital Twin Hub",
+    description:
+      "Simulation worlds, robot assets, validation scenes, replay environments, and regression tests.",
+    status: "Demo",
   },
   {
     id: "wiki",
-    title: "Cognitive Wiki",
-    subtitle: "The Shared Memory.",
-    description:
-      "A persistent, LLM-generated knowledge graph of robotic physics, limits, and control theory. Endowing agents with lifelong memory.",
-    cta: "Read the Wiki",
-    href: "/hub/wiki",
     icon: BookOpen,
-    span: "col-span-1",
-    gradient: "from-purple-500/20 to-transparent",
+    title: "Cognitive Wiki Hub",
+    description:
+      "Task cards, failure taxonomies, constraints, evidence, repair knowledge, and domain-specific robotics notes.",
+    status: "Demo",
+  },
+  {
+    id: "skill",
+    icon: Cpu,
+    title: "Skill Hub",
+    description:
+      "Versioned task policies, recovery strategies, parameter packs, and skill graphs.",
+    status: "Experimental",
+  },
+  {
+    id: "benchmark",
+    icon: BarChart3,
+    title: "Benchmark Hub",
+    description:
+      "Reproducible evaluation tasks, regression suites, and skill promotion criteria.",
+    status: "Planned",
   },
 ];
+
+const lifecycle = [
+  "Create",
+  "Validate",
+  "Sign",
+  "Publish",
+  "Sync",
+  "Install",
+  "Activate",
+  "Evaluate",
+  "Update / Rollback",
+  "Deprecate",
+];
+
+const cliExamples = [
+  "rosclaw hub login",
+  "rosclaw hub sync",
+  "rosclaw hub search g1",
+  "rosclaw hub install rosclaw://eurdf/rosclaw/unitree-g1@1.0.0",
+  "rosclaw hub list --installed",
+];
+
+function StatusBadge({ status }: { status: string }) {
+  const colors: Record<string, string> = {
+    Experimental: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",
+    Template: "bg-cognitive-cyan/10 border-cognitive-cyan/30 text-cognitive-cyan",
+    Planned: "bg-white/5 border-white/20 text-white/50",
+    Demo: "bg-green-500/10 border-green-500/30 text-green-400",
+  };
+
+  return (
+    <span
+      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${colors[status]}`}
+    >
+      {status}
+    </span>
+  );
+}
 
 export default function HubPage() {
   return (
@@ -99,91 +138,141 @@ export default function HubPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-          className="mb-12"
+          className="mb-16"
         >
           <div className="flex items-center gap-2 text-cognitive-cyan font-mono text-sm mb-4">
             <span className="text-physical-orange">&gt;_</span>
-            <span>THE EMBODIED ECOSYSTEM</span>
+            <span>PHYSICAL-AI ASSET HUB</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
-            The ROSClaw Universe
+            ROSClaw Physical-AI Asset Hub
           </h1>
-          <p className="text-text-secondary text-lg max-w-2xl">
-            Five pillars bridging artificial intelligence with the physical universe.
+          <p className="text-text-secondary text-lg max-w-3xl">
+            A versioned registry for the physical assets, models, memories, and
+            safety contexts embodied agents need.
           </p>
         </motion.div>
 
-        {/* Bento Grid */}
+        {/* Asset Grid */}
         <motion.div
-          variants={containerVariants}
+          variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20"
         >
-          {hubCards.map((card) => {
-            const Icon = card.icon;
+          {assets.map((asset) => {
+            const Icon = asset.icon;
             return (
               <motion.div
-                key={card.id}
-                variants={itemVariants}
-                className={`group relative ${card.span}`}
+                key={asset.id}
+                variants={fadeInUp}
+                className="group rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6 hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300"
               >
-                <Link href={card.href}>
-                  <div
-                    className={`
-                      relative h-full min-h-[280px] p-6 md:p-8 rounded-2xl
-                      bg-white/5 backdrop-blur-md
-                      border border-white/10
-                      transition-all duration-500
-                      hover:border-white/30 hover:bg-white/10
-                      hover:shadow-[0_0_40px_rgba(0,240,255,0.1)]
-                      overflow-hidden
-                    `}
-                  >
-                    {/* Background Gradient */}
-                    <div
-                      className={`
-                        absolute inset-0 bg-gradient-to-br ${card.gradient}
-                        opacity-0 group-hover:opacity-100
-                        transition-opacity duration-500
-                      `}
-                    />
-
-                    {/* Content */}
-                    <div className="relative z-10 h-full flex flex-col">
-                      {/* Icon & Title */}
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-cognitive-cyan/30 transition-colors">
-                          <Icon className="w-6 h-6 text-cognitive-cyan" />
-                        </div>
-                        <ArrowUpRight className="w-5 h-5 text-text-muted group-hover:text-cognitive-cyan transition-colors transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                      </div>
-
-                      <div className="flex-1">
-                        <h2 className="text-xl md:text-2xl font-bold text-foreground mb-1">
-                          {card.title}
-                        </h2>
-                        <p className="text-cognitive-cyan text-sm font-medium mb-3">
-                          {card.subtitle}
-                        </p>
-                        <p className="text-text-secondary text-sm leading-relaxed">
-                          {card.description}
-                        </p>
-                      </div>
-
-                      {/* CTA */}
-                      <div className="mt-6 pt-4 border-t border-white/5">
-                        <span className="inline-flex items-center gap-2 text-sm text-cognitive-cyan group-hover:text-physical-orange transition-colors">
-                          {card.cta}
-                          <ArrowUpRight className="w-4 h-4" />
-                        </span>
-                      </div>
-                    </div>
+                <div className="flex items-start justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Icon className="w-6 h-6 text-cognitive-cyan" />
                   </div>
-                </Link>
+                  <StatusBadge status={asset.status} />
+                </div>
+                <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-cognitive-cyan transition-colors">
+                  {asset.title}
+                </h2>
+                <p className="text-text-secondary text-sm leading-relaxed">{asset.description}</p>
               </motion.div>
             );
           })}
+        </motion.div>
+
+        {/* Lifecycle */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mb-20"
+        >
+          <h2 className="text-2xl font-bold text-foreground mb-8">Asset Lifecycle</h2>
+          <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6 md:p-8 overflow-x-auto">
+            <div className="flex items-center gap-2 min-w-max">
+              {lifecycle.map((stage, i) => (
+                <div key={stage} className="flex items-center gap-2">
+                  <span className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/80 text-sm whitespace-nowrap">
+                    {stage}
+                  </span>
+                  {i < lifecycle.length - 1 && (
+                    <ArrowRight className="w-4 h-4 text-white/20 flex-shrink-0" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* CLI Examples + Manifest */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+              <Terminal className="w-5 h-5 text-cognitive-cyan" />
+              CLI Examples
+            </h2>
+            <div className="rounded-2xl bg-black/60 border border-white/10 p-6 font-mono text-sm overflow-x-auto">
+              {cliExamples.map((cmd) => (
+                <div key={cmd} className="text-cognitive-cyan mb-2 last:mb-0">
+                  $ {cmd}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            <h2 className="text-2xl font-bold text-foreground mb-6">Manifest Preview</h2>
+            <div className="rounded-2xl bg-black/60 border border-white/10 p-6 font-mono text-sm overflow-x-auto">
+              <pre className="text-white/70">
+                {`name: rosclaw/unitree-g1
+type: e_urdf
+version: 1.0.0
+status: experimental
+capabilities:
+  - locomotion
+  - manipulation
+  - balance
+safety:
+  sandbox_required: true
+  human_approval_required: true`}
+              </pre>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Safety & Trust */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-8 mb-16"
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center flex-shrink-0">
+              <ShieldCheck className="w-6 h-6 text-cognitive-cyan" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-foreground mb-2">Safety & Trust</h2>
+              <p className="text-text-secondary leading-relaxed">
+                Every asset in the Hub is treated as a proposal until it passes
+                local validation, sandbox checks, and human review. Install
+                counts and download numbers are never fabricated; statuses are
+                labeled honestly as Experimental, Template, Demo, or Planned.
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         {/* Back to Home */}
@@ -191,7 +280,7 @@ export default function HubPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="mt-16 text-center"
+          className="text-center"
         >
           <Link
             href="/"

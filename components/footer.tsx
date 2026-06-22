@@ -1,38 +1,39 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, Twitter, MessageCircle, Mail, ArrowRight } from "lucide-react";
+import { Github, Mail, ArrowRight } from "lucide-react";
 
 const footerLinks = {
   Product: [
-    { name: "Features", href: "#" },
-    { name: "MCP Hub", href: "#mcp-hub" },
-    { name: "Skill Market", href: "#skill-market" },
+    { name: "Runtime", href: "/#runtime-modules" },
+    { name: "First Embodiment", href: "/#first-embodiment" },
+    { name: "Hub", href: "/hub" },
+    { name: "Data Flywheel", href: "/flywheel" },
+    { name: "Dashboard", href: "#" },
   ],
-  Resources: [
-    { name: "Documentation", href: "#docs" },
-    { name: "API Reference", href: "#" },
-    { name: "Tutorials", href: "#" },
-    { name: "Examples", href: "#" },
+  Developers: [
+    { name: "Docs", href: "/docs" },
+    { name: "GitHub", href: "https://github.com/ros-claw" },
+    { name: "CLI", href: "#" },
+    { name: "Architecture", href: "#" },
+    { name: "Safety", href: "#" },
+  ],
+  Assets: [
+    { name: "e-URDF", href: "/hub" },
+    { name: "Hardware MCPs", href: "/hub" },
+    { name: "Providers", href: "/hub" },
+    { name: "Digital Twins", href: "/hub" },
+    { name: "Skills", href: "/hub" },
+    { name: "Cognitive Wikis", href: "/hub" },
   ],
   Community: [
-    { name: "Discord", href: "https://discord.com/invite/E6nPCDu6KJ" },
-    { name: "GitHub", href: "https://github.com/ros-claw" },
-    { name: "Twitter", href: "#" },
-    { name: "Forum", href: "#" },
-  ],
-  Company: [
-    { name: "About", href: "#" },
-    { name: "Blog", href: "#" },
-    { name: "Careers", href: "#" },
     { name: "Contact", href: "mailto:ai@rosclaw.io" },
+    { name: "GitHub", href: "https://github.com/ros-claw" },
   ],
 };
 
 const socialLinks = [
   { name: "GitHub", icon: Github, href: "https://github.com/ros-claw" },
-  { name: "Twitter", icon: Twitter, href: "#" },
-  { name: "Discord", icon: MessageCircle, href: "https://discord.com/invite/E6nPCDu6KJ" },
 ];
 
 export function Footer() {
@@ -50,7 +51,7 @@ export function Footer() {
             <div>
               <h3 className="text-2xl font-bold text-white mb-2">Stay Updated</h3>
               <p className="text-white/60">
-                Get the latest updates on ROSClaw features, new robot integrations, and community highlights.
+                Get updates on ROSClaw runtime, safety models, physical memory, and self-evolving skills.
               </p>
             </div>
             <div className="flex gap-3">
@@ -78,7 +79,7 @@ export function Footer() {
               <span className="text-white font-semibold text-xl tracking-tight">ROSClaw</span>
             </a>
             <p className="text-white/50 text-sm mb-6 max-w-xs">
-              The Universal OS Bridging Multimodal AI Agents with the Physical World.
+              Self-evolving runtime infrastructure for Physical AI and embodied agents.
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (

@@ -7,6 +7,18 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "ROSClaw",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Linux, macOS, Windows WSL",
+  description:
+    "Self-evolving runtime infrastructure for Physical AI and embodied agents.",
+  url: "https://www.rosclaw.io/",
+  codeRepository: "https://github.com/ros-claw/rosclaw",
+};
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
@@ -14,25 +26,28 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ROSClaw | The Embodied AI Operating System",
+  title: "ROSClaw | Self-Evolving Runtime Infrastructure for Physical AI",
   description:
-    "Teach Once, Embody Anywhere. ROSClaw bridges Multimodal AI Agents with the Physical World through the Model Context Protocol (MCP).",
+    "ROSClaw is open runtime infrastructure for Physical AI and embodied agents. Ground AI agents into robot bodies through embodiment models, sandbox validation, capability routing, physical memory, praxis capture, runtime intervention, and skill evolution.",
   keywords: [
     "ROSClaw",
+    "Physical AI",
     "Embodied AI",
-    "Embodied Intelligence",
-    "Robotics",
-    "Robot Operating System",
-    "ROS 2",
-    "ROS2",
-    "MCP",
+    "Embodied Agent",
+    "Robot Runtime",
+    "Robot Safety",
+    "MCP Robotics",
     "Model Context Protocol",
-    "VLA Policy",
     "VLA",
     "Vision Language Action",
-    "LLM",
-    "Large Language Model",
-    "AI Agents",
+    "VLN",
+    "Digital Twin",
+    "Physical Memory",
+    "Robot Data Flywheel",
+    "Self-Evolving Skills",
+    "e-URDF",
+    "ROS 2",
+    "ROS2",
     "MuJoCo",
     "OpenClaw",
     "Unitree Robotics",
@@ -45,25 +60,24 @@ export const metadata: Metadata = {
     "Dexterous Manipulation",
     "Robot Learning",
     "Sim-to-Real",
-    "Digital Twin",
-    "ClawHub",
-    "Skill Market",
   ],
   authors: [{ name: "ROSClaw Team" }],
   creator: "ROSClaw",
   publisher: "ROSClaw",
   robots: "index, follow",
   openGraph: {
-    title: "ROSClaw | The Embodied AI Operating System",
-    description: "Teach Once, Embody Anywhere. Share Skills, Shape Reality.",
+    title: "ROSClaw — Runtime Infrastructure for Physical AI",
+    description:
+      "Ground AI agents into robot bodies. Validate every action. Learn from every trace. Evolve every skill.",
     type: "website",
     locale: "en_US",
     siteName: "ROSClaw",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ROSClaw | The Embodied AI Operating System",
-    description: "The Universal OS for Embodied AI. Bridge LLMs to physical robots.",
+    title: "ROSClaw | Self-Evolving Runtime Infrastructure for Physical AI",
+    description:
+      "Ground AI agents into robot bodies. Validate every action. Learn from every trace. Evolve every skill.",
     creator: "@rosclaw",
   },
   verification: {
@@ -84,6 +98,10 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${jetbrainsMono.variable} font-sans antialiased bg-background text-foreground`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         <ThemeProvider>
           <SmoothScroll />
           <Navbar />

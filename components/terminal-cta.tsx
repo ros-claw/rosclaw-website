@@ -4,51 +4,58 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Copy, Check } from "lucide-react";
 
-export function TerminalCTA() {
+const commands = [
+  { id: "install", label: "install", text: "curl -sSL https://rosclaw.io/get | bash" },
+  { id: "firstboot", label: "firstboot", text: "rosclaw firstboot" },
+];
+
+function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
-  const installCommand = "curl -sSL https://rosclaw.io/get | bash";
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(installCommand);
+      await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy:", err);
+    } catch {
+      // Copy failed silently; the button simply won't show "Copied!"
     }
   };
 
   return (
-    <div className="inline-block">
+    <motion.button
+      onClick={handleCopy}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="ml-auto p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+      aria-label={copied ? "Copied!" : "Copy command"}
+    >
+      {copied ? (
+        <Check className="w-4 h-4 text-green-400" />
+      ) : (
+        <Copy className="w-4 h-4 text-white/60 hover:text-cognitive-cyan" />
+      )}
+    </motion.button>
+  );
+}
+
+export function TerminalCTA() {
+  return (
+    <div className="inline-block text-left">
       <div className="glass rounded-xl p-1 glow-cyan">
-        <div className="flex items-center gap-4 px-6 py-4 font-mono text-sm sm:text-base">
-          <span className="text-white/40">$</span>
-          <span className="text-cognitive-cyan">{installCommand}</span>
-          <motion.button
-            onClick={handleCopy}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="ml-2 p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-            aria-label={copied ? "Copied!" : "Copy command"}
-          >
-            {copied ? (
-              <Check className="w-4 h-4 text-green-400" />
-            ) : (
-              <Copy className="w-4 h-4 text-white/60 hover:text-cognitive-cyan" />
-            )}
-          </motion.button>
+        <div className="flex flex-col gap-2 px-4 py-3 font-mono text-sm sm:text-base">
+          {commands.map((command) => (
+            <div
+              key={command.id}
+              className="flex items-center gap-3 min-w-0"
+            >
+              <span className="text-white/40">$</span>
+              <span className="text-cognitive-cyan truncate">{command.text}</span>
+              <CopyButton text={command.text} />
+            </div>
+          ))}
         </div>
       </div>
-      {copied && (
-        <motion.p
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className="text-center text-xs text-cognitive-cyan mt-2"
-        >
-          Copied to clipboard!
-        </motion.p>
-      )}
     </div>
   );
 }
