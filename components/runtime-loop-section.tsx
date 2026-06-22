@@ -6,63 +6,43 @@ import { useState } from "react";
 const runtimeNodes = [
   {
     id: "intent",
-    label: "Agent Intent",
+    label: "Intent",
     description: "A high-level task or goal expressed by an AI agent.",
   },
   {
     id: "body",
-    label: "Embodiment Context",
+    label: "Body",
     description: "The robot body, sensors, actuators, limits, and capabilities.",
   },
   {
-    id: "provider",
-    label: "Capability Routing",
+    id: "route",
+    label: "Route",
     description: "Route the task to the right provider: LLM, VLM, VLA, VLN, world model, or classical controller.",
   },
   {
     id: "sandbox",
-    label: "Sandbox Validation",
+    label: "Sandbox",
     description: "Validate the proposed action in a digital twin before hardware execution.",
   },
   {
-    id: "execution",
-    label: "Physical Execution",
+    id: "execute",
+    label: "Execute",
     description: "The validated action runs on the real robot under runtime guards.",
   },
   {
     id: "trace",
-    label: "Praxis Capture",
+    label: "Trace",
     description: "Record states, streams, decisions, failures, and recoveries as a physical trace.",
   },
   {
     id: "memory",
-    label: "Physical Memory",
+    label: "Memory",
     description: "Turn structured traces into spatiotemporal memory and reusable experience.",
   },
   {
-    id: "how",
-    label: "Runtime Intervention",
-    description: "Generate minimal, evidence-backed corrections when the agent is stuck or unsafe.",
-  },
-  {
-    id: "know",
-    label: "Knowledge Compilation",
-    description: "Compile successful repairs and patterns into reusable task knowledge.",
-  },
-  {
-    id: "auto",
-    label: "Auto Evolution",
-    description: "Patch skills and parameters based on accumulated memory and evidence.",
-  },
-  {
-    id: "darwin",
-    label: "Darwin Evaluation",
-    description: "Benchmark evolved skills across seeds and scenarios to detect regressions.",
-  },
-  {
-    id: "skill",
-    label: "Champion Skill",
-    description: "Promote the best validated skill for safer next execution.",
+    id: "evolve",
+    label: "Evolve",
+    description: "Evaluate, patch, benchmark, and promote skills through Darwin-style validation loops.",
   },
 ];
 
@@ -83,7 +63,7 @@ function RuntimeLoopDesktop() {
         viewBox="0 0 500 320"
         className="w-full max-w-3xl mx-auto"
         role="img"
-        aria-label="ROSClaw runtime loop from intent to champion skill"
+        aria-label="ROSClaw runtime loop from intent to evolved skill"
       >
         <defs>
           <linearGradient id="loopGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -112,7 +92,7 @@ function RuntimeLoopDesktop() {
             fill="#00F0FF"
             initial={{ offsetDistance: "0%" }}
             animate={{ offsetDistance: "100%" }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
             style={{ offsetPath: `path("${pathD}")` }}
           />
         )}
@@ -141,7 +121,7 @@ function RuntimeLoopDesktop() {
                 initial={{ opacity: 0, scale: 0 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.05, duration: 0.4 }}
+                transition={{ delay: i * 0.08, duration: 0.4 }}
               />
               <text
                 x={x}
@@ -158,7 +138,7 @@ function RuntimeLoopDesktop() {
                 y={y + (y > cy ? 34 : -24)}
                 textAnchor="middle"
                 fill={isHovered ? "#00F0FF" : "rgba(255,255,255,0.6)"}
-                fontSize="10"
+                fontSize="11"
                 fontFamily="var(--font-jetbrains-mono)"
               >
                 {node.label}
@@ -201,7 +181,7 @@ function RuntimeLoopMobile() {
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: i * 0.05 }}
+          transition={{ delay: i * 0.08 }}
           className="flex gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/[0.08]"
         >
           <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center text-cognitive-cyan font-mono text-sm">
@@ -257,6 +237,34 @@ export function RuntimeLoopSection() {
         <div className="md:hidden">
           <RuntimeLoopMobile />
         </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+          className="mt-10 text-center"
+        >
+          <a
+            href="/docs"
+            className="inline-flex items-center gap-1 text-sm text-cognitive-cyan hover:text-physical-orange transition-colors"
+          >
+            View full architecture
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 8l4 4m0 0l-4 4m4-4H3"
+              />
+            </svg>
+          </a>
+        </motion.div>
       </div>
     </section>
   );

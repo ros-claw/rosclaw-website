@@ -1,5 +1,6 @@
 export { HeroSection } from "./hero-section";
 export { TerminalCTA } from "./terminal-cta";
+export { EmailLink } from "./email-link";
 export { VideoBackground } from "./video-background";
 export { ParticleBackground } from "./particle-background";
 export { LogoTicker } from "./logo-ticker";

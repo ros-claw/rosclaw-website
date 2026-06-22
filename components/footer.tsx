@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Github, Mail, ArrowRight } from "lucide-react";
+import { EmailLink } from "./email-link";
 
 const footerLinks = {
   Product: [
@@ -103,12 +104,21 @@ export function Footer() {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-white/50 text-sm hover:text-white transition-colors"
-                    >
-                      {link.name}
-                    </a>
+                    {link.href.startsWith("mailto:") ? (
+                      <EmailLink
+                        email={link.href.replace("mailto:", "")}
+                        className="text-white/50 text-sm hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </EmailLink>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-white/50 text-sm hover:text-white transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -118,7 +128,7 @@ export function Footer() {
 
         {/* Academic Partners */}
         <div className="py-8 border-t border-white/10">
-          <p className="text-white/40 text-sm text-center mb-6">Supported by</p>
+          <p className="text-white/40 text-sm text-center mb-6">Ecosystem & Research Context</p>
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 flex-wrap">
             <a
               href="https://www.tongji.edu.cn/"

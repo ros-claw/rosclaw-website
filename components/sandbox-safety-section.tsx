@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const pipeline = [
   { id: "intent", label: "Agent Intent" },
@@ -11,8 +12,50 @@ const pipeline = [
   { id: "controller", label: "Robot Controller" },
 ];
 
+const scenarios: {
+  decision: "ALLOW" | "MODIFY" | "BLOCK";
+  proposal: string;
+  reasons: string[];
+  intervention: string;
+}[] = [
+  {
+    decision: "ALLOW",
+    proposal: "move_joint(elbow, +30deg)",
+    reasons: ["within_joint_limits", "no_collision_risk"],
+    intervention: "execute with default velocity",
+  },
+  {
+    decision: "MODIFY",
+    proposal: "move_joint(elbow, +90deg)",
+    reasons: ["within_joint_limits", "high_velocity_detected"],
+    intervention: "reduce velocity_scale to 0.35 and retry",
+  },
+  {
+    decision: "BLOCK",
+    proposal: "move_joint(elbow, +180deg)",
+    reasons: ["joint_limit_violation", "self_collision_risk"],
+    intervention: "reduce target angle to +42deg and retry",
+  },
+];
+
+const decisionColors = {
+  ALLOW: "bg-green-500/10 border-green-500/30 text-green-400",
+  MODIFY: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",
+  BLOCK: "bg-red-500/10 border-red-500/30 text-red-400",
+};
+
 function SafetyPipeline() {
   const prefersReducedMotion = useReducedMotion();
+  const [scenarioIndex, setScenarioIndex] = useState(0);
+  const scenario = scenarios[scenarioIndex];
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => {
+      setScenarioIndex((prev) => (prev + 1) % scenarios.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [prefersReducedMotion]);
 
   return (
     <div className="relative rounded-2xl bg-black/40 border border-white/10 p-6 md:p-8 overflow-hidden">
@@ -57,30 +100,28 @@ function SafetyPipeline() {
         ))}
       </div>
 
-      {/* Dangerous command blocked overlay */}
+      {/* Scenario card */}
       <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.8 }}
+        key={scenario.decision}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
         className="mt-8 grid md:grid-cols-2 gap-4"
       >
         <div className="rounded-xl bg-white/[0.03] border border-white/[0.08] p-4">
           <p className="text-white/40 text-xs uppercase tracking-wider mb-2 font-mono">
             Action Proposal
           </p>
-          <code className="text-sm font-mono text-white/80">
-            move_joint(elbow, +180deg)
-          </code>
+          <code className="text-sm font-mono text-white/80">{scenario.proposal}</code>
         </div>
-        <div className="rounded-xl bg-red-500/5 border border-red-500/20 p-4">
-          <p className="text-red-400 text-xs uppercase tracking-wider mb-2 font-mono">
+        <div className={`rounded-xl border p-4 ${decisionColors[scenario.decision]}`}>
+          <p className="text-xs uppercase tracking-wider mb-2 font-mono opacity-80">
             Sandbox Decision
           </p>
-          <div className="space-y-1 text-sm text-white/70">
-            <p><span className="text-red-400 font-mono">BLOCK</span></p>
-            <p className="text-white/50">Reason: joint_limit_violation, self_collision_risk</p>
-            <p className="text-cognitive-cyan">Intervention: reduce target angle to +42deg, retry with velocity_scale=0.35</p>
+          <div className="space-y-1 text-sm">
+            <p className="font-mono font-medium">{scenario.decision}</p>
+            <p className="opacity-70">Reason: {scenario.reasons.join(", ")}</p>
+            <p className="opacity-90">Intervention: {scenario.intervention}</p>
           </div>
         </div>
       </motion.div>

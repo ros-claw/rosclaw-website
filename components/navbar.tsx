@@ -130,15 +130,27 @@ export function Navbar() {
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-sm text-text-secondary hover:text-foreground transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isExternal =
+                  link.href.startsWith("mailto:") || link.href.startsWith("http");
+                return isExternal ? (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="text-sm text-text-secondary hover:text-foreground transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="text-sm text-text-secondary hover:text-foreground transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
@@ -232,16 +244,29 @@ export function Navbar() {
         }`}
       >
         <div className="px-4 py-6 space-y-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg text-text-secondary hover:text-foreground py-2"
-            >
-              {link.name}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isExternal =
+              link.href.startsWith("mailto:") || link.href.startsWith("http");
+            return isExternal ? (
+              <a
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-lg text-text-secondary hover:text-foreground py-2"
+              >
+                {link.name}
+              </a>
+            ) : (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-lg text-text-secondary hover:text-foreground py-2"
+              >
+                {link.name}
+              </Link>
+            );
+          })}
 
           {!loading && (
             <>

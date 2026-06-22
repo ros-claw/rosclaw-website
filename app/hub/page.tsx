@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState } from "react";
 import {
   Box,
   Plug,
@@ -13,6 +14,7 @@ import {
   ArrowRight,
   ShieldCheck,
   Terminal,
+  Search,
 } from "lucide-react";
 
 const fadeInUp = {
@@ -130,6 +132,24 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function HubPage() {
+  const [activeFilter, setActiveFilter] = useState("all");
+
+  const filters = [
+    { id: "all", label: "All" },
+    { id: "eurdf", label: "e-URDF" },
+    { id: "mcp", label: "Hardware MCP" },
+    { id: "provider", label: "Provider" },
+    { id: "twin", label: "Digital Twin" },
+    { id: "skill", label: "Skill" },
+    { id: "wiki", label: "Wiki" },
+    { id: "benchmark", label: "Benchmark" },
+  ];
+
+  const filteredAssets =
+    activeFilter === "all"
+      ? assets
+      : assets.filter((asset) => asset.id === activeFilter);
+
   return (
     <div className="min-h-screen bg-background pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -153,6 +173,41 @@ export default function HubPage() {
           </p>
         </motion.div>
 
+        {/* Search / Filter Mock */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.6 }}
+          className="mb-8"
+        >
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+              <input
+                type="text"
+                placeholder="Search assets..."
+                className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50 transition-all"
+                readOnly
+              />
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-4">
+            {filters.map((filter) => (
+              <button
+                key={filter.id}
+                onClick={() => setActiveFilter(filter.id)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  activeFilter === filter.id
+                    ? "bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan"
+                    : "bg-white/5 border border-white/10 text-white/60 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Asset Grid */}
         <motion.div
           variants={staggerContainer}
@@ -160,7 +215,7 @@ export default function HubPage() {
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20"
         >
-          {assets.map((asset) => {
+          {filteredAssets.map((asset) => {
             const Icon = asset.icon;
             return (
               <motion.div

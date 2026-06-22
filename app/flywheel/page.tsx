@@ -230,8 +230,9 @@ export default function FlywheelPage() {
               <h2 className="text-xl font-bold text-foreground">Replay</h2>
             </div>
             <p className="text-text-secondary leading-relaxed">
-              Re-run any physical trace in simulation or against real hardware to
-              reproduce failures, audit decisions, and validate fixes.
+              Replay traces in simulation to reproduce failures, audit decisions,
+              and validate fixes. Hardware revalidation must run through sandbox
+              checks, runtime guards, and explicit human approval.
             </p>
           </motion.div>
         </div>
@@ -250,11 +251,11 @@ export default function FlywheelPage() {
             <div>
               <h2 className="text-xl font-bold text-foreground mb-2">Safety & Privacy</h2>
               <p className="text-text-secondary leading-relaxed">
-                Traces are stored locally by default. Cloud sync is opt-in and
-                encrypted. We record agent plans, tool calls, provider outputs,
-                and runtime decisions for safety audit. We do not record private
-                reasoning content or user prompts beyond what is required for
-                audit and replay.
+                Traces are stored locally by default. Cloud sync is optional and
+                currently under active development. We record agent plans, tool
+                calls, provider outputs, and runtime decisions for safety audit.
+                We do not record private reasoning content or user prompts beyond
+                what is required for audit and replay.
               </p>
             </div>
           </div>

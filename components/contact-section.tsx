@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Mail, Github, ArrowRight, FlaskConical, Cog, Cpu, Briefcase } from "lucide-react";
+import { EmailLink } from "./email-link";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -79,13 +80,13 @@ export function ContactSection() {
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
           >
-            <a
-              href="mailto:ai@rosclaw.io"
+            <EmailLink
+              email="ai@rosclaw.io"
               className="group px-8 py-3 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 hover:border-cognitive-cyan/50 transition-all duration-300 flex items-center gap-2"
             >
               <Mail className="w-4 h-4" />
               Email ai@rosclaw.io
-            </a>
+            </EmailLink>
             <a
               href="https://github.com/ros-claw/rosclaw"
               target="_blank"

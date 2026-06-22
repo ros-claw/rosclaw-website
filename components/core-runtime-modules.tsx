@@ -58,7 +58,7 @@ const modules: {
     icon: <Route className="w-6 h-6 text-cognitive-cyan" />,
     oneLiner:
       "Route tasks across LLMs, VLMs, VLAs, VLNs, world models, critics, embeddings, classical robotics algorithms, and skill policies.",
-    command: "rosclaw route --intent pick --body unitree-g1",
+    command: "rosclaw provider route --capability vision_language_action",
     status: "Experimental",
   },
   {
@@ -66,7 +66,7 @@ const modules: {
     icon: <ClipboardList className="w-6 h-6 text-physical-orange" />,
     oneLiner:
       "Record robot states, sensor streams, action proposals, tool calls, sandbox decisions, failures, and recoveries.",
-    command: "rosclaw trace start --session pick_cup_001",
+    command: "rosclaw practice start --sources dds,ros2,camera,agent,provider,sandbox,runtime",
     status: "Current",
   },
   {
@@ -82,7 +82,7 @@ const modules: {
     icon: <AlertTriangle className="w-6 h-6 text-physical-orange" />,
     oneLiner:
       "Inject minimal, evidence-backed corrections when an embodied agent is stuck, unsafe, or regressing.",
-    command: "rosclaw intervene --session-id pick_cup_001 --reason overshoot",
+    command: "rosclaw how advise --task pick_cup --failure overshoot",
     status: "Research",
   },
   {
@@ -90,7 +90,7 @@ const modules: {
     icon: <GitBranch className="w-6 h-6 text-cognitive-cyan" />,
     oneLiner:
       "Evaluate, patch, benchmark, promote, and roll back skills through Darwin-style validation loops.",
-    command: "rosclaw skill evolve --task pick_cup --champion-threshold 0.95",
+    command: "rosclaw darwin eval --skill pick_cup",
     status: "Research",
   },
 ];

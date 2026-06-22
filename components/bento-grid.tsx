@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { X, Check, Shield } from "lucide-react";
+import { X, Check, Shield, Ban } from "lucide-react";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -43,6 +43,13 @@ const principles = [
   "Remembered.",
   "Repaired.",
   "Evolved.",
+];
+
+const notList = [
+  "Not LLM-to-ROS.",
+  "Not a robot app store.",
+  "Not a simulator replacement.",
+  "Not a ROS middleware replacement.",
 ];
 
 function Column({
@@ -136,7 +143,7 @@ export function BentoGrid() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
         >
           <Column
             title="Without ROSClaw"
@@ -156,6 +163,42 @@ export function BentoGrid() {
             items={principles}
             variant="principle"
           />
+        </motion.div>
+
+        {/* What ROSClaw is not */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 md:p-10"
+        >
+          <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-physical-orange/10 border border-physical-orange/30 flex items-center justify-center">
+                <Ban className="w-6 h-6 text-physical-orange" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-semibold text-white mb-3">
+                What ROSClaw Is Not
+              </h3>
+              <div className="flex flex-wrap gap-3 mb-4">
+                {notList.map((item) => (
+                  <span
+                    key={item}
+                    className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/70 text-sm"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+              <p className="text-white/60 leading-relaxed">
+                ROSClaw sits above ROS 2, simulators, model providers, and robot
+                controllers as a physical-agent runtime layer.
+              </p>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

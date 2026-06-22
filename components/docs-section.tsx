@@ -37,7 +37,7 @@ const steps = [
       "Next:",
       "  rosclaw firstboot",
     ],
-    passportPatch: { status: "cli installed" },
+    passportPatch: { CLI: "ready", Status: "cli installed" },
   },
   {
     id: "firstboot",
@@ -57,7 +57,7 @@ const steps = [
       "Next:",
       "  rosclaw body init --robot unitree-g1",
     ],
-    passportPatch: { mode: "local-only", memory: "namespace created", trace: "off" },
+    passportPatch: { Workspace: "~/.rosclaw", Mode: "local-only", Memory: "namespace created", Trace: "off", Status: "workspace ready" },
   },
   {
     id: "body",
@@ -80,10 +80,10 @@ const steps = [
       "  rosclaw sandbox run --robot sim_g1 --task stand_balance",
     ],
     passportPatch: {
-      robot: "Unitree G1",
-      profile: "e-urdf://unitree/g1@1.0.0",
-      safety: "envelope ready",
-      status: "body ready",
+      Robot: "Unitree G1",
+      Profile: "e-URDF",
+      Safety: "envelope loaded",
+      Status: "body ready",
     },
   },
   {
@@ -104,9 +104,9 @@ const steps = [
       "  rosclaw dashboard open",
     ],
     passportPatch: {
-      safety: "sandbox-before-reality",
-      trace: "recording",
-      status: "validated",
+      Decision: "ALLOW_WITH_LIMITS",
+      Trace: "first_embodiment_001.mcap",
+      Status: "validated",
     },
   },
   {
@@ -125,20 +125,30 @@ const steps = [
       "  Robot State    | Sandbox Decisions | Agent Plans",
       "  Provider Calls | Memory Writes     | Failure Events",
     ],
-    passportPatch: { status: "ready for embodiment", trace: "MCAP + Parquet" },
+    passportPatch: { Dashboard: "open", Memory: "enabled", Trace: "MCAP + Parquet", Status: "ready for embodiment" },
   },
 ];
 
 const initialPassport = {
+  CLI: "ready",
+  Workspace: "—",
+  Mode: "—",
   Robot: "—",
   Profile: "—",
-  Mode: "—",
   Safety: "—",
-  Memory: "—",
+  Decision: "—",
   Trace: "—",
-  Provider: "local / cloud optional",
+  Dashboard: "—",
+  Memory: "—",
   Status: "pending",
 };
+
+function fieldHighlight(value: string) {
+  if (value === "—" || value === "pending") return "text-white/30";
+  if (value === "ready" || value === "enabled" || value.includes("ALLOW")) return "text-green-400";
+  if (value.includes("local-only") || value.includes("envelope") || value.includes("loaded")) return "text-cognitive-cyan";
+  return "text-white/80";
+}
 
 function TerminalOutput({ lines }: { lines: string[] }) {
   return (
@@ -225,13 +235,7 @@ function EmbodimentPassport({
             className="flex justify-between items-center py-2 border-b border-white/5 last:border-0"
           >
             <span className="text-white/40">{key}</span>
-            <span
-              className={`text-right max-w-[60%] ${
-                key === "Status" && value !== "pending"
-                  ? "text-green-400"
-                  : "text-white/80"
-              }`}
-            >
+            <span className={`text-right max-w-[60%] ${fieldHighlight(value)}`}>
               {value}
             </span>
           </div>

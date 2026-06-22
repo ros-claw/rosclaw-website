@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { AlertTriangle, Database, Wrench, ShieldCheck, RotateCcw } from "lucide-react";
 
 const fadeInUp = {
@@ -60,6 +61,17 @@ const steps = [
 ];
 
 export function PhysicalMemorySection() {
+  const prefersReducedMotion = useReducedMotion();
+  const [activeStep, setActiveStep] = useState(0);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % steps.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [prefersReducedMotion]);
+
   return (
     <section id="memory" className="py-24 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto">
@@ -107,7 +119,11 @@ export function PhysicalMemorySection() {
               <motion.div
                 key={step.title}
                 variants={fadeInUp}
-                className={`relative rounded-2xl border ${step.bg} p-6 ${
+                className={`relative rounded-2xl border ${step.bg} p-6 transition-all duration-500 ${
+                  activeStep === i
+                    ? "ring-1 ring-cognitive-cyan/40 shadow-[0_0_24px_-6px_rgba(0,240,255,0.2)]"
+                    : ""
+                } ${
                   i < steps.length - 1
                     ? "md:after:content-['→'] md:after:absolute md:after:-right-4 md:after:top-1/2 md:after:-translate-y-1/2 md:after:text-white/20 md:after:text-xl"
                     : ""

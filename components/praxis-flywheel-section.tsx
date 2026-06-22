@@ -121,36 +121,89 @@ export function PraxisFlywheelSection() {
           {/* Flow */}
           <motion.div
             variants={fadeInUp}
-            className="lg:col-span-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6"
+            className="lg:col-span-6 rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6 relative"
           >
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="text-center">
-                <div className="w-14 h-14 rounded-2xl bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center mx-auto mb-2">
-                  <Clock className="w-6 h-6 text-cognitive-cyan" />
-                </div>
-                <p className="text-white font-medium text-sm">Time Sync</p>
+            <div className="relative">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center z-10"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center mx-auto mb-2">
+                    <Clock className="w-6 h-6 text-cognitive-cyan" />
+                  </div>
+                  <p className="text-white font-medium text-sm">Time Sync</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.15, duration: 0.5 }}
+                  className="z-10"
+                >
+                  <ArrowRight className="hidden md:block w-5 h-5 text-white/20" />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  className="text-center z-10"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-physical-orange/10 border border-physical-orange/30 flex items-center justify-center mx-auto mb-2">
+                    <FileJson className="w-6 h-6 text-physical-orange" />
+                  </div>
+                  <p className="text-white font-medium text-sm">Physical Trace</p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.45, duration: 0.5 }}
+                  className="z-10"
+                >
+                  <ArrowRight className="hidden md:block w-5 h-5 text-white/20" />
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.6, duration: 0.5 }}
+                  className="w-full md:w-auto z-10"
+                >
+                  <p className="text-white/40 text-xs uppercase tracking-wider mb-2 font-mono text-center md:text-left">
+                    Formats
+                  </p>
+                  <div className="space-y-2">
+                    {formats.map((format) => (
+                      <div
+                        key={format.name}
+                        className="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-sm"
+                      >
+                        <span className="text-cognitive-cyan font-mono">{format.name}</span>
+                        <span className="text-white/40 text-xs ml-2">{format.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
               </div>
-              <ArrowRight className="hidden md:block w-5 h-5 text-white/20" />
-              <div className="text-center">
-                <div className="w-14 h-14 rounded-2xl bg-physical-orange/10 border border-physical-orange/30 flex items-center justify-center mx-auto mb-2">
-                  <FileJson className="w-6 h-6 text-physical-orange" />
-                </div>
-                <p className="text-white font-medium text-sm">Physical Trace</p>
-              </div>
-              <ArrowRight className="hidden md:block w-5 h-5 text-white/20" />
-              <div className="w-full md:w-auto">
-                <p className="text-white/40 text-xs uppercase tracking-wider mb-2 font-mono">Formats</p>
-                <div className="space-y-2">
-                  {formats.map((format) => (
-                    <div
-                      key={format.name}
-                      className="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-sm"
-                    >
-                      <span className="text-cognitive-cyan font-mono">{format.name}</span>
-                      <span className="text-white/40 text-xs ml-2">{format.desc}</span>
-                    </div>
-                  ))}
-                </div>
+
+              {/* Timeline connector */}
+              <div className="hidden md:block absolute top-7 left-[12%] right-[35%] h-px bg-white/10">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-cognitive-cyan/40 to-physical-orange/40"
+                  initial={{ scaleX: 0, originX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, ease: "easeInOut", delay: 0.2 }}
+                />
               </div>
             </div>
           </motion.div>

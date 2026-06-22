@@ -12,6 +12,32 @@ const logos = [
   { name: "HuggingFace", color: "#FFD21E" },
 ];
 
+function LogoItem({
+  logo,
+  isDuplicate,
+}: {
+  logo: (typeof logos)[0];
+  isDuplicate: boolean;
+}) {
+  return (
+    <div
+      className="flex items-center gap-3 shrink-0"
+      aria-hidden={isDuplicate ? true : undefined}
+    >
+      <div
+        className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm"
+        style={{ backgroundColor: `${logo.color}20`, color: logo.color }}
+        aria-hidden="true"
+      >
+        {logo.name[0]}
+      </div>
+      <span className="text-white/60 font-medium whitespace-nowrap">
+        {logo.name}
+      </span>
+    </div>
+  );
+}
+
 export function LogoTicker() {
   return (
     <section className="py-12 border-y border-white/5 bg-black/30">
@@ -36,22 +62,13 @@ export function LogoTicker() {
           }}
           className="flex gap-16 items-center"
         >
-          {/* Double the logos for seamless loop */}
-          {[...logos, ...logos].map((logo, index) => (
-            <div
-              key={`${logo.name}-${index}`}
-              className="flex items-center gap-3 shrink-0"
-            >
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm"
-                style={{ backgroundColor: `${logo.color}20`, color: logo.color }}
-              >
-                {logo.name[0]}
-              </div>
-              <span className="text-white/60 font-medium whitespace-nowrap">
-                {logo.name}
-              </span>
-            </div>
+          {/* First copy: readable */}
+          {logos.map((logo) => (
+            <LogoItem key={logo.name} logo={logo} isDuplicate={false} />
+          ))}
+          {/* Second copy: visual loop only */}
+          {logos.map((logo) => (
+            <LogoItem key={`${logo.name}-dup`} logo={logo} isDuplicate={true} />
           ))}
         </motion.div>
       </div>

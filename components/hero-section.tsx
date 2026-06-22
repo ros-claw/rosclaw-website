@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { TerminalCTA } from "./terminal-cta";
 import { VideoBackground } from "./video-background";
+import { EmailLink } from "./email-link";
 
 function RuntimePulse() {
   const nodes = [
@@ -158,9 +159,11 @@ export function HeroSection() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-lg sm:text-xl md:text-2xl font-light text-white/80 mb-6"
             >
-              Ground AI agents into robot bodies.
-              <br className="hidden sm:block" />
-              Validate every action. Learn from every trace. Evolve every skill.
+              Ground the agent.
+              <span className="mx-2 text-cognitive-cyan">•</span>
+              Guard the action.
+              <span className="mx-2 text-cognitive-cyan">•</span>
+              Evolve the skill.
             </motion.p>
 
             {/* Description */}
@@ -206,12 +209,12 @@ export function HeroSection() {
               >
                 View on GitHub
               </a>
-              <a
-                href="mailto:ai@rosclaw.io"
+              <EmailLink
+                email="ai@rosclaw.io"
                 className="px-8 py-3 rounded-lg bg-white/5 border border-white/10 text-white/80 font-medium hover:bg-white/10 hover:text-white transition-all duration-300"
               >
                 Contact Us
-              </a>
+              </EmailLink>
             </motion.div>
           </div>
 
