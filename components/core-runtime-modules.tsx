@@ -1,111 +1,25 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  Anchor,
-  ShieldCheck,
-  Route,
-  ClipboardList,
-  Database,
-  AlertTriangle,
-  GitBranch,
-} from "lucide-react";
+import { Anchor, ShieldCheck, Route, ClipboardList, Database, AlertTriangle, GitBranch } from "lucide-react";
+import { runtimeCapabilities } from "@/content/cli";
+import { fadeInUp, staggerContainer, statusBadgeClasses } from "@/content/shared";
+import type { StatusLabel } from "@/content/shared";
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] },
-  },
+const iconMap: Record<string, React.ReactNode> = {
+  "Embodiment Grounding": <Anchor className="w-6 h-6 text-cognitive-cyan" />,
+  "Sandbox-before-Reality": <ShieldCheck className="w-6 h-6 text-physical-orange" />,
+  "Capability Routing": <Route className="w-6 h-6 text-cognitive-cyan" />,
+  "Praxis Capture": <ClipboardList className="w-6 h-6 text-physical-orange" />,
+  "Physical Memory": <Database className="w-6 h-6 text-cognitive-cyan" />,
+  "Runtime Intervention": <AlertTriangle className="w-6 h-6 text-physical-orange" />,
+  "Skill Evolution": <GitBranch className="w-6 h-6 text-cognitive-cyan" />,
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
-};
-
-type Status = "Current" | "Experimental" | "Research" | "Planned";
-
-const modules: {
-  title: string;
-  icon: React.ReactNode;
-  oneLiner: string;
-  command: string;
-  status: Status;
-}[] = [
-  {
-    title: "Embodiment Grounding",
-    icon: <Anchor className="w-6 h-6 text-cognitive-cyan" />,
-    oneLiner:
-      "Describe robot bodies, sensors, actuators, safety limits, capabilities, tool frames, and simulation metadata through e-URDF and body.yaml.",
-    command: "rosclaw body init --robot unitree-g1",
-    status: "Current",
-  },
-  {
-    title: "Sandbox-before-Reality",
-    icon: <ShieldCheck className="w-6 h-6 text-physical-orange" />,
-    oneLiner:
-      "Validate action proposals in digital twins before they touch real hardware.",
-    command: "rosclaw sandbox run --robot sim_g1 --task stand_balance",
-    status: "Current",
-  },
-  {
-    title: "Capability Routing",
-    icon: <Route className="w-6 h-6 text-cognitive-cyan" />,
-    oneLiner:
-      "Route tasks across LLMs, VLMs, VLAs, VLNs, world models, critics, embeddings, classical robotics algorithms, and skill policies.",
-    command: "rosclaw provider route --capability vision_language_action",
-    status: "Experimental",
-  },
-  {
-    title: "Praxis Capture",
-    icon: <ClipboardList className="w-6 h-6 text-physical-orange" />,
-    oneLiner:
-      "Record robot states, sensor streams, action proposals, tool calls, sandbox decisions, failures, and recoveries.",
-    command: "rosclaw practice start --sources dds,ros2,camera,agent,provider,sandbox,runtime",
-    status: "Current",
-  },
-  {
-    title: "Physical Memory",
-    icon: <Database className="w-6 h-6 text-cognitive-cyan" />,
-    oneLiner:
-      "Turn physical traces into spatiotemporal memory, failure evidence, success patterns, and reusable experience.",
-    command: "rosclaw memory query --near red_cup --failure grasp",
-    status: "Experimental",
-  },
-  {
-    title: "Runtime Intervention",
-    icon: <AlertTriangle className="w-6 h-6 text-physical-orange" />,
-    oneLiner:
-      "Inject minimal, evidence-backed corrections when an embodied agent is stuck, unsafe, or regressing.",
-    command: "rosclaw how advise --task pick_cup --failure overshoot",
-    status: "Research",
-  },
-  {
-    title: "Skill Evolution",
-    icon: <GitBranch className="w-6 h-6 text-cognitive-cyan" />,
-    oneLiner:
-      "Evaluate, patch, benchmark, promote, and roll back skills through Darwin-style validation loops.",
-    command: "rosclaw darwin eval --skill pick_cup",
-    status: "Research",
-  },
-];
-
-function StatusBadge({ status }: { status: Status }) {
-  const colors = {
-    Current: "bg-green-500/10 border-green-500/30 text-green-400",
-    Experimental: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",
-    Research: "bg-purple-500/10 border-purple-500/30 text-purple-400",
-    Planned: "bg-white/5 border-white/20 text-white/60",
-  };
-
+function StatusBadge({ status }: { status: StatusLabel }) {
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${colors[status]}`}
+      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${statusBadgeClasses[status]}`}
     >
       {status}
     </span>
@@ -114,9 +28,9 @@ function StatusBadge({ status }: { status: Status }) {
 
 export function CoreRuntimeModules() {
   return (
-    <section id="runtime-modules" className="py-24 px-4 sm:px-6 lg:px-8 bg-background">
+    <section id="runtime-modules" className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -130,7 +44,7 @@ export function CoreRuntimeModules() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6"
+            className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-6"
           >
             One Runtime. Seven Physical-AI Primitives.
           </motion.h2>
@@ -154,7 +68,7 @@ export function CoreRuntimeModules() {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {modules.map((module) => (
+          {runtimeCapabilities.map((module) => (
             <motion.div
               key={module.title}
               variants={fadeInUp}
@@ -162,7 +76,7 @@ export function CoreRuntimeModules() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                  {module.icon}
+                  {iconMap[module.title]}
                 </div>
                 <StatusBadge status={module.status} />
               </div>
@@ -170,12 +84,17 @@ export function CoreRuntimeModules() {
               <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-cognitive-cyan transition-colors">
                 {module.title}
               </h3>
-              <p className="text-white/60 text-sm leading-relaxed mb-4">
-                {module.oneLiner}
-              </p>
+              <p className="text-white/60 text-sm leading-relaxed mb-4">{module.oneLiner}</p>
 
-              <div className="rounded-lg bg-black/40 border border-white/10 p-3 font-mono text-xs text-cognitive-cyan overflow-x-auto">
-                {module.command}
+              <div className="space-y-2">
+                {module.commands.map((cmd) => (
+                  <div
+                    key={cmd}
+                    className="rounded-lg bg-black/40 border border-white/10 p-3 font-mono text-xs text-cognitive-cyan overflow-x-auto"
+                  >
+                    {cmd}
+                  </div>
+                ))}
               </div>
             </motion.div>
           ))}

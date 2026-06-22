@@ -2,83 +2,60 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
+import { runtimeLoopContent } from "@/content/home";
 
 const runtimeNodes = [
-  {
-    id: "intent",
-    label: "Intent",
-    description: "A high-level task or goal expressed by an AI agent.",
-  },
-  {
-    id: "body",
-    label: "Body",
-    description: "The robot body, sensors, actuators, limits, and capabilities.",
-  },
-  {
-    id: "route",
-    label: "Route",
-    description: "Route the task to the right provider: LLM, VLM, VLA, VLN, world model, or classical controller.",
-  },
-  {
-    id: "sandbox",
-    label: "Sandbox",
-    description: "Validate the proposed action in a digital twin before hardware execution.",
-  },
-  {
-    id: "execute",
-    label: "Execute",
-    description: "The validated action runs on the real robot under runtime guards.",
-  },
-  {
-    id: "trace",
-    label: "Trace",
-    description: "Record states, streams, decisions, failures, and recoveries as a physical trace.",
-  },
-  {
-    id: "memory",
-    label: "Memory",
-    description: "Turn structured traces into spatiotemporal memory and reusable experience.",
-  },
-  {
-    id: "evolve",
-    label: "Evolve",
-    description: "Evaluate, patch, benchmark, and promote skills through Darwin-style validation loops.",
-  },
+  { id: "intent", label: "Intent", description: "A high-level task or goal expressed by an AI agent." },
+  { id: "body", label: "Body", description: "The robot body, sensors, actuators, limits, and capabilities." },
+  { id: "route", label: "Route", description: "Route the task to the right provider or controller." },
+  { id: "sandbox", label: "Sandbox", description: "Validate the proposed action in a digital twin before hardware execution." },
+  { id: "execute", label: "Execute", description: "The validated action runs on the real robot under runtime guards." },
+  { id: "trace", label: "Trace", description: "Record states, streams, decisions, failures, and recoveries as a physical trace." },
+  { id: "memory", label: "Memory", description: "Turn structured traces into spatiotemporal memory and reusable experience." },
+  { id: "evolve", label: "Evolve", description: "Evaluate, patch, benchmark, and promote skills through validation loops." },
 ];
 
 function RuntimeLoopDesktop() {
   const prefersReducedMotion = useReducedMotion();
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
-  const cx = 250;
-  const cy = 160;
-  const rx = 220;
-  const ry = 120;
+  const cx = 360;
+  const cy = 220;
+  const rx = 300;
+  const ry = 160;
 
   const pathD = `M ${cx + rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx - rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx + rx} ${cy}`;
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-w-[860px] mx-auto">
       <svg
-        viewBox="0 0 500 320"
-        className="w-full max-w-3xl mx-auto"
+        viewBox="0 0 720 440"
+        className="w-full h-auto"
         role="img"
         aria-label="ROSClaw runtime loop from intent to evolved skill"
       >
         <defs>
-          <linearGradient id="loopGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00F0FF" stopOpacity="0.3" />
-            <stop offset="50%" stopColor="#FF3E00" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#00F0FF" stopOpacity="0.3" />
+          <linearGradient id="loopGradientV2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#00F0FF" stopOpacity="0.4" />
+            <stop offset="35%" stopColor="#3B82F6" stopOpacity="0.35" />
+            <stop offset="65%" stopColor="#F59E0B" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#00F0FF" stopOpacity="0.4" />
           </linearGradient>
+          <filter id="loopGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
         {/* Loop path */}
         <motion.path
           d={pathD}
           fill="none"
-          stroke="url(#loopGradient)"
-          strokeWidth="2"
+          stroke="url(#loopGradientV2)"
+          strokeWidth="2.5"
           strokeDasharray="6 6"
           initial={{ pathLength: 0, opacity: 0 }}
           animate={{ pathLength: 1, opacity: 1 }}
@@ -88,14 +65,53 @@ function RuntimeLoopDesktop() {
         {/* Moving pulse */}
         {!prefersReducedMotion && (
           <motion.circle
-            r="5"
+            r="6"
             fill="#00F0FF"
+            filter="url(#loopGlow)"
             initial={{ offsetDistance: "0%" }}
             animate={{ offsetDistance: "100%" }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
             style={{ offsetPath: `path("${pathD}")` }}
           />
         )}
+
+        {/* Center core */}
+        <g>
+          <motion.circle
+            cx={cx}
+            cy={cy}
+            r="48"
+            fill="rgba(5,5,5,0.9)"
+            stroke="#00F0FF"
+            strokeWidth="1.5"
+            strokeOpacity="0.5"
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          />
+          <text
+            x={cx}
+            y={cy - 4}
+            textAnchor="middle"
+            fill="#E5E7EB"
+            fontSize="11"
+            fontWeight="600"
+            fontFamily="var(--font-jetbrains-mono)"
+          >
+            ROSClaw
+          </text>
+          <text
+            x={cx}
+            y={cy + 12}
+            textAnchor="middle"
+            fill="rgba(255,255,255,0.6)"
+            fontSize="9"
+            fontFamily="var(--font-jetbrains-mono)"
+          >
+            Runtime
+          </text>
+        </g>
 
         {/* Nodes */}
         {runtimeNodes.map((node, i) => {
@@ -114,8 +130,8 @@ function RuntimeLoopDesktop() {
               <motion.circle
                 cx={x}
                 cy={y}
-                r={isHovered ? 22 : 16}
-                fill="rgba(5,5,5,0.9)"
+                r={isHovered ? 24 : 18}
+                fill="rgba(5,5,5,0.95)"
                 stroke={isHovered ? "#FF3E00" : "#00F0FF"}
                 strokeWidth="1.5"
                 initial={{ opacity: 0, scale: 0 }}
@@ -128,17 +144,17 @@ function RuntimeLoopDesktop() {
                 y={y + 4}
                 textAnchor="middle"
                 fill="#E5E7EB"
-                fontSize="8"
+                fontSize="9"
                 fontFamily="var(--font-jetbrains-mono)"
               >
                 {i + 1}
               </text>
               <text
                 x={x}
-                y={y + (y > cy ? 34 : -24)}
+                y={y + (y > cy ? 38 : -30)}
                 textAnchor="middle"
-                fill={isHovered ? "#00F0FF" : "rgba(255,255,255,0.6)"}
-                fontSize="11"
+                fill={isHovered ? "#00F0FF" : "rgba(255,255,255,0.7)"}
+                fontSize="12"
                 fontFamily="var(--font-jetbrains-mono)"
               >
                 {node.label}
@@ -149,7 +165,7 @@ function RuntimeLoopDesktop() {
       </svg>
 
       {/* Hover description panel */}
-      <div className="min-h-[4rem] text-center">
+      <div className="min-h-[4rem] text-center mt-4">
         {hoveredNode ? (
           <motion.div
             key={hoveredNode}
@@ -174,7 +190,7 @@ function RuntimeLoopDesktop() {
 
 function RuntimeLoopMobile() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {runtimeNodes.map((node, i) => (
         <motion.div
           key={node.id}
@@ -199,25 +215,28 @@ function RuntimeLoopMobile() {
 
 export function RuntimeLoopSection() {
   return (
-    <section id="runtime-loop" className="py-24 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+    <section
+      id="runtime-loop"
+      className="min-h-[92vh] flex items-center py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-background"
+    >
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="text-center mb-12">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-cognitive-cyan text-sm uppercase tracking-widest mb-4 font-mono"
           >
-            From Execution to Evolution
+            {runtimeLoopContent.eyebrow}
           </motion.p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6"
+            className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-6"
           >
-            Every Action Becomes Evidence
+            {runtimeLoopContent.title}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -226,8 +245,7 @@ export function RuntimeLoopSection() {
             transition={{ delay: 0.2 }}
             className="text-white/60 text-lg max-w-3xl mx-auto"
           >
-            Every physical action flows through validation, execution, capture,
-            memory, and evolution — making the next execution safer and stronger.
+            {runtimeLoopContent.description}
           </motion.p>
         </div>
 
@@ -246,10 +264,10 @@ export function RuntimeLoopSection() {
           className="mt-10 text-center"
         >
           <a
-            href="/docs"
+            href={runtimeLoopContent.cta.href}
             className="inline-flex items-center gap-1 text-sm text-cognitive-cyan hover:text-physical-orange transition-colors"
           >
-            View full architecture
+            {runtimeLoopContent.cta.label}
             <svg
               className="w-4 h-4"
               fill="none"

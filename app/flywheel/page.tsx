@@ -48,7 +48,7 @@ const sources = [
 const traceEvents = [
   { t: "0.0", label: "user task" },
   { t: "0.2", label: "agent plan" },
-  { t: "0.4", label: "provider route" },
+  { t: "0.4", label: "provider output" },
   { t: "0.6", label: "sandbox decision" },
   { t: "0.8", label: "robot state" },
   { t: "1.1", label: "critic result" },

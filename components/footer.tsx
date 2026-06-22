@@ -3,21 +3,23 @@
 import { motion } from "framer-motion";
 import { Github, Mail, ArrowRight } from "lucide-react";
 import { EmailLink } from "./email-link";
+import { footerEcosystem } from "@/content/ecosystem";
+import { githubDocLinks } from "@/content/cli";
+import { CONTACT_EMAIL, GITHUB_URL } from "@/content/shared";
 
 const footerLinks = {
   Product: [
-    { name: "Runtime", href: "/#runtime-modules" },
+    { name: "Runtime", href: "/runtime" },
     { name: "First Embodiment", href: "/#first-embodiment" },
     { name: "Hub", href: "/hub" },
-    { name: "Data Flywheel", href: "/flywheel" },
-    { name: "Dashboard", href: "#" },
+    { name: "Flywheel", href: "/flywheel" },
   ],
   Developers: [
     { name: "Docs", href: "/docs" },
-    { name: "GitHub", href: "https://github.com/ros-claw" },
-    { name: "CLI", href: "#" },
-    { name: "Architecture", href: "#" },
-    { name: "Safety", href: "#" },
+    { name: "GitHub", href: GITHUB_URL },
+    { name: "CLI", href: githubDocLinks.cli },
+    { name: "Architecture", href: githubDocLinks.architecture },
+    { name: "Safety", href: githubDocLinks.safety },
   ],
   Assets: [
     { name: "e-URDF", href: "/hub" },
@@ -25,59 +27,30 @@ const footerLinks = {
     { name: "Providers", href: "/hub" },
     { name: "Digital Twins", href: "/hub" },
     { name: "Skills", href: "/hub" },
-    { name: "Cognitive Wikis", href: "/hub" },
-  ],
-  Community: [
-    { name: "Contact", href: "mailto:ai@rosclaw.io" },
-    { name: "GitHub", href: "https://github.com/ros-claw" },
   ],
 };
 
 const socialLinks = [
-  { name: "GitHub", icon: Github, href: "https://github.com/ros-claw" },
+  { name: "GitHub", icon: Github, href: GITHUB_URL },
 ];
 
 export function Footer() {
   return (
     <footer className="bg-background border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Newsletter Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-16 p-8 rounded-2xl bg-gradient-to-br from-cognitive-cyan/5 to-physical-orange/5 border border-white/10"
-        >
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-2">Stay Updated</h3>
-              <p className="text-white/60">
-                Get updates on ROSClaw runtime, safety models, physical memory, and self-evolving skills.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg bg-black/40 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-cognitive-cyan/50"
-              />
-              <button className="px-6 py-3 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all flex items-center gap-2">
-                <span className="hidden sm:inline">Subscribe</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
           {/* Brand Column */}
           <div className="col-span-2">
-            <a href="#" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cognitive-cyan to-physical-orange flex items-center justify-center">
-                <span className="text-black font-bold text-lg">R</span>
+            <a href="/" className="flex items-center gap-2.5 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-white p-0.5 flex items-center justify-center overflow-hidden">
+                <img
+                  src="/rosclaw_logo.png"
+                  alt=""
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="text-white font-semibold text-xl tracking-tight">ROSClaw</span>
+              <span className="text-white font-semibold text-lg tracking-tight">ROSClaw</span>
             </a>
             <p className="text-white/50 text-sm mb-6 max-w-xs">
               Self-evolving runtime infrastructure for Physical AI and embodied agents.
@@ -89,7 +62,8 @@ export function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/20 transition-all"
+                  className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/20 transition-all"
+                  aria-label={social.name}
                 >
                   <social.icon className="w-5 h-5" />
                 </a>
@@ -100,8 +74,8 @@ export function Footer() {
           {/* Link Columns */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-white font-semibold mb-4">{category}</h4>
-              <ul className="space-y-3">
+              <h4 className="text-white font-semibold mb-4 text-sm">{category}</h4>
+              <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link.name}>
                     {link.href.startsWith("mailto:") ? (
@@ -114,6 +88,8 @@ export function Footer() {
                     ) : (
                       <a
                         href={link.href}
+                        target={link.href.startsWith("http") ? "_blank" : undefined}
+                        rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                         className="text-white/50 text-sm hover:text-white transition-colors"
                       >
                         {link.name}
@@ -124,74 +100,71 @@ export function Footer() {
               </ul>
             </div>
           ))}
+
+          {/* Contact */}
+          <div>
+            <h4 className="text-white font-semibold mb-4 text-sm">Contact</h4>
+            <ul className="space-y-2.5">
+              <li>
+                <EmailLink
+                  email={CONTACT_EMAIL}
+                  className="text-white/50 text-sm hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  {CONTACT_EMAIL}
+                </EmailLink>
+              </li>
+              <li>
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/50 text-sm hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <Github className="w-4 h-4" />
+                  GitHub
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        {/* Academic Partners */}
+        {/* Ecosystem Context */}
         <div className="py-8 border-t border-white/10">
           <p className="text-white/40 text-sm text-center mb-6">Ecosystem & Research Context</p>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 flex-wrap">
-            <a
-              href="https://www.tongji.edu.cn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <img
-                src="/同济大学logo.png"
-                alt="Tongji University"
-                className="h-12 w-auto"
-              />
-              <span className="text-white/80 text-sm font-medium">Tongji University</span>
-            </a>
-            <a
-              href="https://srias.tongji.edu.cn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <img
-                src="/上海自主智能无人系统科学中心logo.png"
-                alt="Shanghai Research Institute of Autonomous Intelligent Unmanned Systems"
-                className="h-12 w-auto"
-              />
-              <span className="text-white/80 text-sm font-medium">Shanghai Research Institute of Autonomous Intelligent Unmanned Systems</span>
-            </a>
-            <a
-              href="https://www.lejurobot.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <img
-                src="/乐聚机器人logo.png"
-                alt="乐聚机器人 Leju Robotics"
-                className="h-10 w-auto"
-              />
-            </a>
-            <a
-              href="https://www.nvidia.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <img
-                src="/Nvidia_logo.png"
-                alt="NVIDIA"
-                className="h-10 w-auto"
-              />
-            </a>
-            <a
-              href="https://www.oceanbase.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity"
-            >
-              <img
-                src="/oceanbase_log.png"
-                alt="OceanBase"
-                className="h-10 w-auto"
-              />
-            </a>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Research Context</h5>
+              <ul className="space-y-2">
+                {footerEcosystem.researchContext.map((name) => (
+                  <li key={name} className="text-white/50 text-sm">{name}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Robotics Ecosystem</h5>
+              <ul className="space-y-2">
+                {footerEcosystem.robotics.map((name) => (
+                  <li key={name} className="text-white/50 text-sm">{name}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Data & Infrastructure</h5>
+              <ul className="space-y-2">
+                {footerEcosystem.dataInfrastructure.map((name) => (
+                  <li key={name} className="text-white/50 text-sm">{name}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Model & Simulation</h5>
+              <ul className="space-y-2">
+                {footerEcosystem.modelSimulation.map((name) => (
+                  <li key={name} className="text-white/50 text-sm">{name}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -206,9 +179,6 @@ export function Footer() {
             </a>
             <a href="#" className="text-white/40 text-sm hover:text-white transition-colors">
               Terms of Service
-            </a>
-            <a href="#" className="text-white/40 text-sm hover:text-white transition-colors">
-              Cookies
             </a>
           </div>
         </div>

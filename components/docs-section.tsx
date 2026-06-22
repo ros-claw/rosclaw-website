@@ -3,150 +3,29 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import { Terminal, Check, Copy } from "lucide-react";
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] },
-  },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
-};
-
-const steps = [
-  {
-    id: "install",
-    title: "Install ROSClaw",
-    command: "curl -sSL https://rosclaw.io/get | bash",
-    description: "Install the ROSClaw CLI and create a local Physical-AI runtime workspace.",
-    terminal: [
-      "$ curl -sSL https://rosclaw.io/get | bash",
-      "",
-      "✓ Downloading ROSClaw installer",
-      "✓ Verifying checksum",
-      "✓ Installing rosclaw CLI to ~/.local/bin",
-      "",
-      "Next:",
-      "  rosclaw firstboot",
-    ],
-    passportPatch: { CLI: "ready", Status: "cli installed" },
-  },
-  {
-    id: "firstboot",
-    title: "First Boot",
-    command: "rosclaw firstboot",
-    description: "Initialize local-only mode, runtime config, providers, traces, and safety defaults.",
-    terminal: [
-      "$ rosclaw firstboot",
-      "",
-      "✓ Created ~/.rosclaw",
-      "✓ Runtime mode: local-only",
-      "✓ Generated config.yaml",
-      "✓ Initialized provider registry",
-      "✓ Created traces/ and memory/",
-      "✓ Safety defaults enabled",
-      "",
-      "Next:",
-      "  rosclaw body init --robot unitree-g1",
-    ],
-    passportPatch: { Workspace: "~/.rosclaw", Mode: "local-only", Memory: "namespace created", Trace: "off", Status: "workspace ready" },
-  },
-  {
-    id: "body",
-    title: "Create a Body",
-    command: "rosclaw body init --robot unitree-g1",
-    description: "Attach an embodiment profile: body structure, sensors, actuators, safety limits, and capabilities.",
-    terminal: [
-      "$ rosclaw body init --robot unitree-g1",
-      "",
-      "✓ Created body.yaml",
-      "✓ Linked e-URDF profile: unitree-g1",
-      "✓ Loaded joints, sensors, limits, capabilities",
-      "✓ Safety envelope ready",
-      "",
-      "$ rosclaw body link-eurdf unitree-g1",
-      "",
-      "✓ Verified e-URDF bindings",
-      "",
-      "Next:",
-      "  rosclaw sandbox run --robot sim_g1 --task stand_balance",
-    ],
-    passportPatch: {
-      Robot: "Unitree G1",
-      Profile: "e-URDF",
-      Safety: "envelope loaded",
-      Status: "body ready",
-    },
-  },
-  {
-    id: "sandbox",
-    title: "Validate Before Reality",
-    command: "rosclaw sandbox run --robot sim_g1 --task stand_balance",
-    description: "Validate the first physical action in a sandbox before real execution.",
-    terminal: [
-      "$ rosclaw sandbox run --robot sim_g1 --task stand_balance",
-      "",
-      "✓ Loaded digital twin",
-      "✓ Checked joint limits",
-      "✓ Simulated action proposal",
-      "✓ Decision: ALLOW_WITH_LIMITS",
-      "✓ Trace saved: traces/first_embodiment_001.mcap",
-      "",
-      "Next:",
-      "  rosclaw dashboard open",
-    ],
-    passportPatch: {
-      Decision: "ALLOW_WITH_LIMITS",
-      Trace: "first_embodiment_001.mcap",
-      Status: "validated",
-    },
-  },
-  {
-    id: "dashboard",
-    title: "Open the Physical Trace Viewer",
-    command: "rosclaw dashboard open",
-    description: "Inspect robot state, sandbox decisions, agent plans, provider calls, memory writes, and failure events.",
-    terminal: [
-      "$ rosclaw dashboard open",
-      "",
-      "✓ Starting dashboard on http://localhost:8080",
-      "✓ Connected to runtime",
-      "✓ Loaded first_embodiment_001.mcap",
-      "",
-      "Dashboard panels:",
-      "  Robot State    | Sandbox Decisions | Agent Plans",
-      "  Provider Calls | Memory Writes     | Failure Events",
-    ],
-    passportPatch: { Dashboard: "open", Memory: "enabled", Trace: "MCAP + Parquet", Status: "ready for embodiment" },
-  },
-];
+import { firstEmbodimentSteps } from "@/content/cli";
+import { fadeInUp, staggerContainer } from "@/content/shared";
 
 const initialPassport = {
-  CLI: "ready",
+  CLI: "—",
   Workspace: "—",
   Mode: "—",
   Robot: "—",
   Profile: "—",
+  Capabilities: "—",
   Safety: "—",
   Decision: "—",
   Trace: "—",
   Dashboard: "—",
-  Memory: "—",
+  Viewer: "—",
   Status: "pending",
+  Memory: "—",
 };
 
 function fieldHighlight(value: string) {
   if (value === "—" || value === "pending") return "text-white/30";
   if (value === "ready" || value === "enabled" || value.includes("ALLOW")) return "text-green-400";
-  if (value.includes("local-only") || value.includes("envelope") || value.includes("loaded")) return "text-cognitive-cyan";
+  if (value.includes("local-only") || value.includes("envelope") || value.includes("loaded") || value.includes("open")) return "text-cognitive-cyan";
   return "text-white/80";
 }
 
@@ -190,7 +69,7 @@ function CodeCopyButton({ code }: { code: string }) {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 1200);
     } catch {
       // silently fail
     }
@@ -203,11 +82,31 @@ function CodeCopyButton({ code }: { code: string }) {
       aria-label={copied ? "Copied" : "Copy command"}
     >
       {copied ? (
-        <Check className="w-3.5 h-3.5 text-green-400" />
+        <span className="flex items-center gap-1 text-xs text-green-400 font-medium">
+          <Check className="w-3.5 h-3.5" />
+          Copied
+        </span>
       ) : (
         <Copy className="w-3.5 h-3.5" />
       )}
     </button>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const colors: Record<string, string> = {
+    Stable: "bg-green-500/10 border-green-500/30 text-green-400",
+    Experimental: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",
+    Planned: "bg-white/5 border-white/20 text-white/60",
+    Research: "bg-purple-500/10 border-purple-500/30 text-purple-400",
+  };
+
+  return (
+    <span
+      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${colors[status] || colors.Stable}`}
+    >
+      {status}
+    </span>
   );
 }
 
@@ -250,12 +149,12 @@ export function DocsSection() {
   const [isPaused, setIsPaused] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  const currentStep = steps[activeStep];
+  const currentStep = firstEmbodimentSteps[activeStep];
 
   const buildPassport = useCallback(() => {
     const patches: Record<string, string> = {};
     for (let i = 0; i <= activeStep; i++) {
-      Object.assign(patches, steps[i].passportPatch);
+      Object.assign(patches, firstEmbodimentSteps[i].passport);
     }
     return { ...initialPassport, ...patches };
   }, [activeStep]);
@@ -264,7 +163,7 @@ export function DocsSection() {
     if (prefersReducedMotion || isPaused) return;
 
     const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % steps.length);
+      setActiveStep((prev) => (prev + 1) % firstEmbodimentSteps.length);
     }, 4000);
 
     return () => clearInterval(interval);
@@ -273,7 +172,7 @@ export function DocsSection() {
   return (
     <section
       id="first-embodiment"
-      className="py-24 px-4 sm:px-6 lg:px-8 bg-background"
+      className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-background"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -283,7 +182,7 @@ export function DocsSection() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <motion.p
             variants={fadeInUp}
@@ -293,7 +192,7 @@ export function DocsSection() {
           </motion.p>
           <motion.h2
             variants={fadeInUp}
-            className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6"
+            className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-6"
           >
             Give an AI Agent Its First Physical Body Context
           </motion.h2>
@@ -301,9 +200,9 @@ export function DocsSection() {
             variants={fadeInUp}
             className="text-white/60 text-lg max-w-3xl mx-auto"
           >
-            First Embodiment is the first time an AI agent receives a physical
-            body context: a body, a safety envelope, provider routes, memory, and
-            a trace stream.
+            First Embodiment turns a model-facing agent into a body-aware physical
+            agent: body profile, safety envelope, sandbox, memory namespace, and
+            trace stream.
           </motion.p>
         </motion.div>
 
@@ -316,7 +215,7 @@ export function DocsSection() {
         >
           {/* Stepper */}
           <motion.div variants={fadeInUp} className="lg:col-span-3 space-y-2">
-            {steps.map((step, index) => (
+            {firstEmbodimentSteps.map((step, index) => (
               <button
                 key={step.id}
                 onClick={() => setActiveStep(index)}
@@ -340,7 +239,7 @@ export function DocsSection() {
                       index + 1
                     )}
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p
                       className={`font-medium ${
                         activeStep === index ? "text-white" : "text-white/60"
@@ -361,9 +260,12 @@ export function DocsSection() {
                 <Terminal className="w-4 h-4 text-cognitive-cyan" />
                 <span className="text-sm">{currentStep.title}</span>
               </div>
-              <CodeCopyButton code={currentStep.command} />
+              <div className="flex items-center gap-2">
+                <StatusBadge status={currentStep.command.status} />
+                <CodeCopyButton code={currentStep.command.command} />
+              </div>
             </div>
-            <TerminalOutput lines={currentStep.terminal} />
+            <TerminalOutput lines={currentStep.terminalOutput} />
             <p className="text-white/40 text-sm mt-4">{currentStep.description}</p>
           </motion.div>
 

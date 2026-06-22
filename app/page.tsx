@@ -1,12 +1,8 @@
 import { HeroSection } from "@/components/hero-section";
 import { LogoTicker } from "@/components/logo-ticker";
 import { DocsSection } from "@/components/docs-section";
-import { BentoGrid } from "@/components/bento-grid";
 import { RuntimeLoopSection } from "@/components/runtime-loop-section";
-import { CoreRuntimeModules } from "@/components/core-runtime-modules";
-import { SandboxSafetySection } from "@/components/sandbox-safety-section";
-import { PraxisFlywheelSection } from "@/components/praxis-flywheel-section";
-import { PhysicalMemorySection } from "@/components/physical-memory-section";
+import { TripleValueSection } from "@/components/triple-value-section";
 import { AssetHubSection } from "@/components/asset-hub-section";
 import { BuiltForSection } from "@/components/built-for-section";
 import { ContactSection } from "@/components/contact-section";
@@ -15,40 +11,28 @@ import { Footer } from "@/components/footer";
 export default function Home() {
   return (
     <main className="relative min-h-screen">
-      {/* Hero Section */}
+      {/* 1. Hero */}
       <HeroSection />
 
-      {/* Logo Ticker */}
+      {/* 2. Compatible Ecosystem */}
       <LogoTicker />
 
-      {/* First Embodiment */}
+      {/* 3. First Embodiment */}
       <DocsSection />
 
-      {/* Why Physical AI Needs Runtime Infrastructure */}
-      <BentoGrid />
-
-      {/* Runtime Loop */}
+      {/* 4. Runtime Loop */}
       <RuntimeLoopSection />
 
-      {/* Core Runtime Modules */}
-      <CoreRuntimeModules />
+      {/* 5. Safety / Memory / Evolution */}
+      <TripleValueSection />
 
-      {/* Sandbox Before Reality */}
-      <SandboxSafetySection />
-
-      {/* Praxis Data Flywheel */}
-      <PraxisFlywheelSection />
-
-      {/* Physical Memory & Runtime Intervention */}
-      <PhysicalMemorySection />
-
-      {/* Physical-AI Asset Hub */}
+      {/* 6. Physical-AI Asset Hub Preview */}
       <AssetHubSection />
 
-      {/* Built For */}
+      {/* 7. Built For + Current Status */}
       <BuiltForSection />
 
-      {/* Contact */}
+      {/* 8. Contact */}
       <ContactSection />
 
       {/* Footer */}

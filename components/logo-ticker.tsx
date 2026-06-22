@@ -1,76 +1,71 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ecosystemGroups } from "@/content/ecosystem";
+import { ecosystemStripContent } from "@/content/home";
+import { statusBadgeClasses } from "@/content/shared";
 
-const logos = [
-  { name: "Claude", color: "#D4A574" },
-  { name: "OpenAI", color: "#10A37F" },
-  { name: "OpenClaw", color: "#FF6B6B" },
-  { name: "ROS 2", color: "#FF3E00" },
-  { name: "MuJoCo", color: "#00D4AA" },
-  { name: "LeRobot", color: "#FF9F43" },
-  { name: "HuggingFace", color: "#FFD21E" },
-];
-
-function LogoItem({
-  logo,
-  isDuplicate,
-}: {
-  logo: (typeof logos)[0];
-  isDuplicate: boolean;
-}) {
+function StatusBadge({ status }: { status: keyof typeof statusBadgeClasses }) {
   return (
-    <div
-      className="flex items-center gap-3 shrink-0"
-      aria-hidden={isDuplicate ? true : undefined}
+    <span
+      className={`px-1.5 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${statusBadgeClasses[status]}`}
     >
-      <div
-        className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm"
-        style={{ backgroundColor: `${logo.color}20`, color: logo.color }}
-        aria-hidden="true"
-      >
-        {logo.name[0]}
-      </div>
-      <span className="text-white/60 font-medium whitespace-nowrap">
-        {logo.name}
-      </span>
-    </div>
+      {status}
+    </span>
   );
 }
 
 export function LogoTicker() {
   return (
-    <section className="py-12 border-y border-white/5 bg-black/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-        <p className="text-center text-xs uppercase tracking-widest text-white/40">
-          Compatible with
-        </p>
-      </div>
-
-      <div className="relative overflow-hidden">
-        {/* Gradient masks */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
-
-        {/* Ticker */}
+    <section className="py-12 md:py-16 px-4 sm:px-6 lg:px-8 bg-background border-y border-white/5">
+      <div className="max-w-7xl mx-auto">
         <motion.div
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="flex gap-16 items-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
         >
-          {/* First copy: readable */}
-          {logos.map((logo) => (
-            <LogoItem key={logo.name} logo={logo} isDuplicate={false} />
-          ))}
-          {/* Second copy: visual loop only */}
-          {logos.map((logo) => (
-            <LogoItem key={`${logo.name}-dup`} logo={logo} isDuplicate={true} />
-          ))}
+          <p className="text-cognitive-cyan text-xs uppercase tracking-widest mb-2 font-mono">
+            {ecosystemStripContent.eyebrow}
+          </p>
+          <h2 className="text-xl md:text-2xl font-semibold text-white">
+            {ecosystemStripContent.title}
+          </h2>
+          <p className="text-white/50 text-sm mt-2 max-w-2xl mx-auto">
+            {ecosystemStripContent.description}
+          </p>
         </motion.div>
+
+        <div className="space-y-4">
+          {ecosystemGroups.map((group, groupIndex) => (
+            <motion.div
+              key={group.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: groupIndex * 0.1, duration: 0.5 }}
+              className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
+            >
+              <span className="text-white/40 text-xs uppercase tracking-wider font-mono sm:w-40 sm:text-right flex-shrink-0">
+                {group.title}
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {group.items.map((item) => (
+                  <div
+                    key={item.name}
+                    className="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] hover:bg-white/[0.05] transition-all"
+                  >
+                    <span className="text-sm text-white/80 group-hover:text-white transition-colors">
+                      {item.name}
+                    </span>
+                    <StatusBadge status={item.status} />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );

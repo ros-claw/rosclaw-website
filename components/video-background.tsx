@@ -3,11 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { ParticleBackground } from "./particle-background";
 
-// Video URLs - served through custom domain proxy
-const VIDEO_URLS = {
-  // Main video via redirect
-  hd: "/demo",
-};
+// Video URL - served through custom domain proxy
+const VIDEO_URL = "/demo";
 
 export function VideoBackground() {
   const [videoError, setVideoError] = useState(false);
@@ -23,10 +20,9 @@ export function VideoBackground() {
     setIsMobile(isMobileDevice);
 
     // Check for data saver mode
-    const connection = (navigator as any).connection;
+    const connection = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
     if (connection) {
-      const saveData = connection.saveData;
-      const effectiveType = connection.effectiveType;
+      const { saveData, effectiveType } = connection;
 
       // Skip video on slow connections or data saver
       if (saveData || effectiveType === "2g" || effectiveType === "slow-2g") {
@@ -34,73 +30,72 @@ export function VideoBackground() {
         setVideoError(true);
       }
     }
-
-    // iOS Safari: need user interaction for autoplay in some cases
-    // We handle this by trying to play, and falling back on error
   }, []);
 
-  // Try to play video on mount (especially for iOS)
   useEffect(() => {
-    if (videoRef.current && shouldLoadVideo) {
+    if (videoRef.current && shouldLoadVideo && !isMobile) {
       const playVideo = async () => {
         try {
-          // iOS Safari requires playsInline + muted for autoplay
           videoRef.current!.muted = true;
           videoRef.current!.playsInline = true;
           await videoRef.current!.play();
-        } catch (err) {
-          console.log("Autoplay prevented, showing fallback");
+        } catch {
           setVideoError(true);
         }
       };
       playVideo();
     }
-  }, [shouldLoadVideo]);
+  }, [shouldLoadVideo, isMobile]);
 
-  // If video failed to load or shouldn't load, show particle animation fallback
-  if (videoError || !shouldLoadVideo) {
+  // If video failed to load, is mobile, or shouldn't load, show atmospheric fallback
+  if (videoError || !shouldLoadVideo || isMobile) {
     return (
       <div className="absolute inset-0 z-0">
         <ParticleBackground />
-        <div className="absolute inset-0 bg-black/40 dark:opacity-100 opacity-60" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              radial-gradient(circle at 72% 40%, rgba(0, 224, 255, 0.12), transparent 34%),
+              radial-gradient(circle at 20% 80%, rgba(255, 62, 0, 0.08), transparent 30%),
+              linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.95) 100%)
+            `,
+          }}
+        />
       </div>
     );
   }
 
   return (
     <div className="absolute inset-0 z-0">
-      {/* Fallback shown while video loads or on mobile */}
+      {/* Fallback shown while video loads */}
       {(!videoLoaded || isMobile) && (
         <div className="absolute inset-0">
           <ParticleBackground />
         </div>
       )}
 
-      {/* Video - optimized for mobile */}
       <video
         ref={videoRef}
         autoPlay
         muted
         loop
         playsInline
-        preload={isMobile ? "metadata" : "auto"}
-        webkit-playsinline="true"
+        preload="auto"
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-          videoLoaded ? "opacity-60" : "opacity-0"
+          videoLoaded ? "opacity-100" : "opacity-0"
         }`}
-        onLoadedData={() => setVideoLoaded(true)}
-        onError={() => {
-          console.warn("Video failed to load, falling back to particles");
-          setVideoError(true);
+        style={{
+          opacity: 0.28,
+          filter: "saturate(0.75) contrast(0.9) brightness(0.55)",
         }}
+        onLoadedData={() => setVideoLoaded(true)}
+        onError={() => setVideoError(true)}
       >
-        <source
-          src={VIDEO_URLS.hd}
-          type="video/mp4"
-        />
+        <source src={VIDEO_URL} type="video/mp4" />
       </video>
 
-      {/* Grid overlay */}
+      {/* Subtle grid overlay */}
       <div
         className="absolute inset-0 opacity-[0.03]"
         style={{

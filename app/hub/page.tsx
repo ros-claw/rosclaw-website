@@ -16,23 +16,9 @@ import {
   Terminal,
   Search,
 } from "lucide-react";
-
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] },
-  },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
-  },
-};
+import { githubDocLinks } from "@/content/cli";
+import { fadeInUp, staggerContainer, statusBadgeClasses } from "@/content/shared";
+import type { StatusLabel } from "@/content/shared";
 
 const assets = [
   {
@@ -41,7 +27,10 @@ const assets = [
     title: "e-URDF Zoo",
     description:
       "Robot embodiment definitions, safety envelopes, sensors, actuators, capabilities, and simulation metadata.",
-    status: "Experimental",
+    status: "Experimental" as StatusLabel,
+    version: "1.0.0",
+    sandboxRequired: true,
+    localOnly: true,
   },
   {
     id: "mcp",
@@ -49,7 +38,10 @@ const assets = [
     title: "Hardware MCP Hub",
     description:
       "Agent-facing interfaces for robot bodies, sensors, tools, lab devices, and physical infrastructure.",
-    status: "Template",
+    status: "Experimental" as StatusLabel,
+    version: "0.6.0",
+    sandboxRequired: true,
+    localOnly: true,
   },
   {
     id: "provider",
@@ -57,7 +49,10 @@ const assets = [
     title: "Provider Hub",
     description:
       "LLMs, VLMs, VLAs, VLNs, world models, critics, embeddings, classical robotics algorithms, and skill policies.",
-    status: "Planned",
+    status: "Planned" as StatusLabel,
+    version: "—",
+    sandboxRequired: false,
+    localOnly: false,
   },
   {
     id: "twin",
@@ -65,7 +60,10 @@ const assets = [
     title: "Digital Twin Hub",
     description:
       "Simulation worlds, robot assets, validation scenes, replay environments, and regression tests.",
-    status: "Demo",
+    status: "Experimental" as StatusLabel,
+    version: "0.4.0",
+    sandboxRequired: true,
+    localOnly: true,
   },
   {
     id: "wiki",
@@ -73,7 +71,10 @@ const assets = [
     title: "Cognitive Wiki Hub",
     description:
       "Task cards, failure taxonomies, constraints, evidence, repair knowledge, and domain-specific robotics notes.",
-    status: "Demo",
+    status: "Experimental" as StatusLabel,
+    version: "0.3.0",
+    sandboxRequired: false,
+    localOnly: true,
   },
   {
     id: "skill",
@@ -81,7 +82,10 @@ const assets = [
     title: "Skill Hub",
     description:
       "Versioned task policies, recovery strategies, parameter packs, and skill graphs.",
-    status: "Experimental",
+    status: "Experimental" as StatusLabel,
+    version: "0.5.0",
+    sandboxRequired: true,
+    localOnly: true,
   },
   {
     id: "benchmark",
@@ -89,7 +93,10 @@ const assets = [
     title: "Benchmark Hub",
     description:
       "Reproducible evaluation tasks, regression suites, and skill promotion criteria.",
-    status: "Planned",
+    status: "Planned" as StatusLabel,
+    version: "—",
+    sandboxRequired: false,
+    localOnly: true,
   },
 ];
 
@@ -109,22 +116,15 @@ const lifecycle = [
 const cliExamples = [
   "rosclaw hub login",
   "rosclaw hub sync",
-  "rosclaw hub search g1",
-  "rosclaw hub install rosclaw://eurdf/rosclaw/unitree-g1@1.0.0",
+  "rosclaw hub search g1 --type e_urdf",
+  "rosclaw hub install rosclaw://hardware_mcp/rosclaw/unitree-g1@1.0.0 --yes",
   "rosclaw hub list --installed",
 ];
 
-function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    Experimental: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",
-    Template: "bg-cognitive-cyan/10 border-cognitive-cyan/30 text-cognitive-cyan",
-    Planned: "bg-white/5 border-white/20 text-white/50",
-    Demo: "bg-green-500/10 border-green-500/30 text-green-400",
-  };
-
+function StatusBadge({ status }: { status: StatusLabel }) {
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${colors[status]}`}
+      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${statusBadgeClasses[status]}`}
     >
       {status}
     </span>
@@ -158,7 +158,7 @@ export default function HubPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-          className="mb-16"
+          className="mb-12"
         >
           <div className="flex items-center gap-2 text-cognitive-cyan font-mono text-sm mb-4">
             <span className="text-physical-orange">&gt;_</span>
@@ -180,16 +180,14 @@ export default function HubPage() {
           transition={{ delay: 0.1, duration: 0.6 }}
           className="mb-8"
         >
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
-              <input
-                type="text"
-                placeholder="Search assets..."
-                className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50 transition-all"
-                readOnly
-              />
-            </div>
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+            <input
+              type="text"
+              placeholder="Search assets for a robot, task, or provider..."
+              className="w-full pl-12 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50 transition-all"
+              readOnly
+            />
           </div>
           <div className="flex flex-wrap gap-2 mt-4">
             {filters.map((filter) => (
@@ -213,7 +211,7 @@ export default function HubPage() {
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
         >
           {filteredAssets.map((asset) => {
             const Icon = asset.icon;
@@ -232,7 +230,24 @@ export default function HubPage() {
                 <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-cognitive-cyan transition-colors">
                   {asset.title}
                 </h2>
-                <p className="text-text-secondary text-sm leading-relaxed">{asset.description}</p>
+                <p className="text-text-secondary text-sm leading-relaxed mb-4">{asset.description}</p>
+
+                <div className="space-y-1.5 text-xs font-mono text-white/50 border-t border-white/5 pt-4">
+                  <div className="flex justify-between">
+                    <span>Version</span>
+                    <span className="text-white/80">{asset.version}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Sandbox</span>
+                    <span className={asset.sandboxRequired ? "text-physical-orange" : "text-white/80"}>
+                      {asset.sandboxRequired ? "required" : "optional"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Mode</span>
+                    <span className="text-white/80">{asset.localOnly ? "local-only" : "cloud-ready"}</span>
+                  </div>
+                </div>
               </motion.div>
             );
           })}
@@ -243,9 +258,9 @@ export default function HubPage() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-20"
+          className="mb-16"
         >
-          <h2 className="text-2xl font-bold text-foreground mb-8">Asset Lifecycle</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6">Asset Lifecycle</h2>
           <div className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6 md:p-8 overflow-x-auto">
             <div className="flex items-center gap-2 min-w-max">
               {lifecycle.map((stage, i) => (
@@ -263,7 +278,7 @@ export default function HubPage() {
         </motion.div>
 
         {/* CLI Examples + Manifest */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-20">
+        <div className="grid lg:grid-cols-2 gap-8 mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -322,20 +337,20 @@ safety:
               <h2 className="text-xl font-bold text-foreground mb-2">Safety & Trust</h2>
               <p className="text-text-secondary leading-relaxed">
                 Every asset in the Hub is treated as a proposal until it passes
-                local validation, sandbox checks, and human review. Install
-                counts and download numbers are never fabricated; statuses are
-                labeled honestly as Experimental, Template, Demo, or Planned.
+                local validation, sandbox checks, and human review. Install counts
+                and download numbers are never fabricated; statuses are labeled
+                honestly as Stable, Experimental, Planned, or Research.
               </p>
             </div>
           </div>
         </motion.div>
 
-        {/* Back to Home */}
+        {/* Back to Home + Asset Docs */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="text-center"
+          className="flex flex-col sm:flex-row items-center justify-center gap-6"
         >
           <Link
             href="/"
@@ -344,6 +359,15 @@ safety:
             <span className="text-physical-orange">←</span>
             Back to Home
           </Link>
+          <a
+            href={githubDocLinks.assets}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-cognitive-cyan hover:text-physical-orange transition-colors"
+          >
+            View Asset Docs
+            <ArrowRight className="w-4 h-4" />
+          </a>
         </motion.div>
       </div>
     </div>

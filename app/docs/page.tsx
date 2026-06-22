@@ -6,9 +6,6 @@ import {
   Rocket,
   BookOpen,
   Cpu,
-  Shield,
-  Boxes,
-  RotateCcw,
   Microscope,
   ArrowRight,
   Github,
@@ -16,6 +13,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { EmailLink } from "@/components/email-link";
+import { githubDocLinks } from "@/content/cli";
+import { CONTACT_EMAIL, GITHUB_URL } from "@/content/shared";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -34,49 +33,47 @@ const staggerContainer = {
   },
 };
 
-const githubRepo = "https://github.com/ros-claw/rosclaw";
-
 const groups = [
   {
     title: "Start",
     icon: Rocket,
     links: [
-      { label: "First Embodiment", href: "/#first-embodiment", internal: true },
-      { label: "Installation", href: `${githubRepo}#installation`, comingSoon: true },
-      { label: "CLI", href: `${githubRepo}/blob/main/docs/CLI.md`, comingSoon: true },
-      { label: "GitHub README", href: githubRepo, external: true },
+      { label: "Quick Start", href: githubDocLinks.quickstart, external: true },
+      { label: "Installation", href: githubDocLinks.install, external: true },
+      { label: "First Boot", href: githubDocLinks.firstboot, external: true },
+      { label: "CLI Reference", href: githubDocLinks.cli, external: true },
     ],
   },
   {
     title: "Understand",
     icon: BookOpen,
     links: [
-      { label: "Architecture", href: `${githubRepo}/blob/main/docs/ARCHITECTURE.md`, comingSoon: true },
-      { label: "Safety Model", href: `${githubRepo}/blob/main/docs/SAFETY.md`, comingSoon: true },
+      { label: "Architecture", href: githubDocLinks.architecture, external: true },
+      { label: "Safety Model", href: githubDocLinks.safety, external: true },
+      { label: "Physical-AI Assets", href: githubDocLinks.assets, external: true },
+      { label: "Hub", href: githubDocLinks.hub, external: true },
       { label: "Runtime Loop", href: "/#runtime-loop", internal: true },
-      { label: "Asset Hub", href: "/hub", internal: true },
     ],
   },
   {
     title: "Build",
     icon: Cpu,
     links: [
-      { label: "e-URDF", href: `${githubRepo}/blob/main/docs/EURDF.md`, comingSoon: true },
-      { label: "Hardware MCP", href: `${githubRepo}/blob/main/docs/HARDWARE_MCP.md`, comingSoon: true },
-      { label: "Provider", href: `${githubRepo}/blob/main/docs/PROVIDER.md`, comingSoon: true },
-      { label: "Sandbox", href: `${githubRepo}/blob/main/docs/SANDBOX.md`, comingSoon: true },
-      { label: "Memory", href: `${githubRepo}/blob/main/docs/MEMORY.md`, comingSoon: true },
-      { label: "Dashboard", href: `${githubRepo}/blob/main/docs/DASHBOARD.md`, comingSoon: true },
+      { label: "Body / e-URDF", href: "#", comingSoon: true },
+      { label: "MCP", href: "#", comingSoon: true },
+      { label: "Provider", href: "#", comingSoon: true },
+      { label: "Sandbox", href: "#", comingSoon: true },
+      { label: "Memory", href: "#", comingSoon: true },
+      { label: "Auto", href: "#", comingSoon: true },
     ],
   },
   {
     title: "Evaluate",
     icon: Microscope,
     links: [
-      { label: "Benchmarks", href: `${githubRepo}/blob/main/docs/BENCHMARKS.md`, comingSoon: true },
-      { label: "Trace Replay", href: `${githubRepo}/blob/main/docs/TRACE_REPLAY.md`, comingSoon: true },
-      { label: "Skill Promotion", href: `${githubRepo}/blob/main/docs/SKILL_PROMOTION.md`, comingSoon: true },
-      { label: "Regression Testing", href: `${githubRepo}/blob/main/docs/REGRESSION_TESTING.md`, comingSoon: true },
+      { label: "Practice Traces", href: "#", comingSoon: true },
+      { label: "Skill Champions", href: "#", comingSoon: true },
+      { label: "Regression Tests", href: "#", comingSoon: true },
     ],
   },
 ];
@@ -145,12 +142,10 @@ export default function DocsPage() {
             <span className="text-physical-orange">&gt;_</span>
             <span>DOCUMENTATION</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            ROSClaw Docs
-          </h1>
-          <p className="text-text-secondary text-lg max-w-3xl mx-auto">
-            Documentation is being consolidated on GitHub. Core concepts and
-            onboarding flows are live here; deep-dive guides are marked when
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-6">ROSClaw Docs</h1>
+          <p className="text-white/60 text-lg max-w-3xl mx-auto">
+            Documentation is being consolidated on GitHub. Core onboarding and
+            reference guides are linked below; deep-dive topics are marked when
             still in progress.
           </p>
         </motion.div>
@@ -174,7 +169,7 @@ export default function DocsPage() {
                   <div className="w-10 h-10 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center">
                     <Icon className="w-5 h-5 text-cognitive-cyan" />
                   </div>
-                  <h2 className="text-xl font-semibold text-foreground">{group.title}</h2>
+                  <h2 className="text-xl font-semibold text-white">{group.title}</h2>
                 </div>
                 <ul className="space-y-3">
                   {group.links.map((link) => (
@@ -195,8 +190,8 @@ export default function DocsPage() {
           viewport={{ once: true }}
           className="rounded-2xl bg-gradient-to-br from-cognitive-cyan/5 to-physical-orange/5 border border-white/10 p-8 md:p-12 text-center"
         >
-          <h2 className="text-2xl font-bold text-foreground mb-4">Ready to start?</h2>
-          <p className="text-text-secondary mb-8 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-bold text-white mb-4">Ready to start?</h2>
+          <p className="text-white/60 mb-8 max-w-2xl mx-auto">
             The fastest way to understand ROSClaw is to give an agent its first
             physical body context.
           </p>
@@ -208,7 +203,7 @@ export default function DocsPage() {
               Start First Embodiment
             </Link>
             <a
-              href={githubRepo}
+              href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="px-8 py-3 rounded-lg bg-white/5 border border-white/10 text-white/80 font-medium hover:bg-white/10 hover:text-white transition-all flex items-center gap-2"
@@ -217,7 +212,7 @@ export default function DocsPage() {
               View GitHub
             </a>
             <EmailLink
-              email="ai@rosclaw.io"
+              email={CONTACT_EMAIL}
               className="px-8 py-3 rounded-lg bg-white/5 border border-white/10 text-white/80 font-medium hover:bg-white/10 hover:text-white transition-all flex items-center gap-2"
             >
               <Mail className="w-4 h-4" />

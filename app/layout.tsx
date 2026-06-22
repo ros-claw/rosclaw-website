@@ -28,7 +28,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "ROSClaw | Self-Evolving Runtime Infrastructure for Physical AI",
   description:
-    "ROSClaw is open runtime infrastructure for Physical AI and embodied agents. Ground AI agents into robot bodies through embodiment models, sandbox validation, capability routing, physical memory, praxis capture, runtime intervention, and skill evolution.",
+    "ROSClaw grounds AI agents into robot bodies through embodiment context, sandbox validation, physical memory, praxis capture, and self-evolving skill runtime.",
   keywords: [
     "ROSClaw",
     "Physical AI",
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "ROSClaw — Runtime Infrastructure for Physical AI",
     description:
-      "Ground AI agents into robot bodies. Validate every action. Learn from every trace. Evolve every skill.",
+      "ROSClaw grounds AI agents into robot bodies through embodiment context, sandbox validation, physical memory, praxis capture, and self-evolving skill runtime.",
     type: "website",
     locale: "en_US",
     siteName: "ROSClaw",
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ROSClaw | Self-Evolving Runtime Infrastructure for Physical AI",
     description:
-      "Ground AI agents into robot bodies. Validate every action. Learn from every trace. Evolve every skill.",
+      "ROSClaw grounds AI agents into robot bodies through embodiment context, sandbox validation, physical memory, praxis capture, and self-evolving skill runtime.",
     creator: "@rosclaw",
   },
   verification: {

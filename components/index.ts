@@ -14,6 +14,8 @@ export { PhysicalMemorySection } from "./physical-memory-section";
 export { AssetHubSection } from "./asset-hub-section";
 export { BuiltForSection } from "./built-for-section";
 export { ContactSection } from "./contact-section";
+export { CurrentStatusSection } from "./current-status-section";
+export { TripleValueSection } from "./triple-value-section";
 export { Navbar } from "./navbar";
 export { Footer } from "./footer";
 export { SmoothScroll } from "./smooth-scroll";
