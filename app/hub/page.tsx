@@ -23,6 +23,7 @@ import type { StatusLabel } from "@/content/shared";
 const assets = [
   {
     id: "eurdf",
+    href: "/hub",
     icon: Box,
     title: "e-URDF Zoo",
     description:
@@ -34,6 +35,7 @@ const assets = [
   },
   {
     id: "mcp",
+    href: "/hub/mcps",
     icon: Plug,
     title: "Hardware MCP Hub",
     description:
@@ -45,6 +47,7 @@ const assets = [
   },
   {
     id: "provider",
+    href: "/hub",
     icon: BrainCircuit,
     title: "Provider Hub",
     description:
@@ -56,6 +59,7 @@ const assets = [
   },
   {
     id: "twin",
+    href: "/hub/twins",
     icon: Cuboid,
     title: "Digital Twin Hub",
     description:
@@ -67,6 +71,7 @@ const assets = [
   },
   {
     id: "wiki",
+    href: "/hub/wiki",
     icon: BookOpen,
     title: "Cognitive Wiki Hub",
     description:
@@ -78,6 +83,7 @@ const assets = [
   },
   {
     id: "skill",
+    href: "/hub/skills",
     icon: Cpu,
     title: "Skill Hub",
     description:
@@ -89,6 +95,7 @@ const assets = [
   },
   {
     id: "benchmark",
+    href: "/hub",
     icon: BarChart3,
     title: "Benchmark Hub",
     description:
@@ -215,11 +222,10 @@ export default function HubPage() {
         >
           {filteredAssets.map((asset) => {
             const Icon = asset.icon;
-            return (
+            const Card = (
               <motion.div
-                key={asset.id}
                 variants={fadeInUp}
-                className="group rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6 hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300"
+                className="group rounded-2xl bg-white/[0.03] border border-white/[0.08] p-6 hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300 h-full"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
@@ -227,8 +233,9 @@ export default function HubPage() {
                   </div>
                   <StatusBadge status={asset.status} />
                 </div>
-                <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-cognitive-cyan transition-colors">
+                <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-cognitive-cyan transition-colors flex items-center gap-2">
                   {asset.title}
+                  <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                 </h2>
                 <p className="text-text-secondary text-sm leading-relaxed mb-4">{asset.description}</p>
 
@@ -249,6 +256,14 @@ export default function HubPage() {
                   </div>
                 </div>
               </motion.div>
+            );
+
+            return asset.href ? (
+              <Link key={asset.id} href={asset.href} className="block">
+                {Card}
+              </Link>
+            ) : (
+              <div key={asset.id}>{Card}</div>
             );
           })}
         </motion.div>
