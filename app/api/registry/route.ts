@@ -57,18 +57,6 @@ const MOCK_PACKAGES: Record<string, {
     author: "ROSClaw Team",
     dependencies: ["unitree-sdk"],
   },
-  // Override until DB migration 004 is applied and the live record is synced.
-  "ros-claw/vicon-datastream-mcp": {
-    status: "success",
-    type: "mcp_server",
-    name: "ros-claw/vicon-datastream-mcp",
-    git_url: "https://github.com/ros-claw/vicon-datastream-mcp.git",
-    description: "Full-featured Vicon motion capture DataStream MCP server",
-    entry_point: "src/mcp_server.py",
-    version: "1.0.0",
-    author: "ROSClaw Team",
-    dependencies: ["mcp", "anyio", "uvicorn", "starlette"],
-  },
 };
 
 // Helper to create Supabase client
