@@ -95,6 +95,7 @@ export async function GET(
       category: data.category,
       robotType: data.robot_type,
       version: data.version,
+      entryPoint: data.entry_point || "server.py",
       downloadsCount: data.downloads_count,
       viewsCount: data.views_count || 0,
       githubStars: data.github_stars || 0,
