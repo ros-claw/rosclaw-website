@@ -233,6 +233,7 @@ export async function PUT(
     if (body.tags !== undefined) updateData.tags = body.tags
     if (body.tools !== undefined) updateData.tools = body.tools
     if (body.version !== undefined) updateData.version = body.version
+    if (body.entry_point !== undefined) updateData.entry_point = body.entry_point
     if (body.last_synced_at !== undefined) updateData.last_synced_at = body.last_synced_at
     if (body.status !== undefined) updateData.status = body.status
 
