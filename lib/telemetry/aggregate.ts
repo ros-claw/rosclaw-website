@@ -16,7 +16,14 @@ export type MetricName =
   | "module_adoption_by_name"
   | "version_distribution"
   | "os_distribution"
-  | "python_distribution";
+  | "python_distribution"
+  | "robot_type_distribution"
+  | "ros_distro_distribution"
+  | "cuda_available_count"
+  | "cuda_unavailable_count"
+  | "os_version_distribution"
+  | "gpu_info_distribution"
+  | "sensor_type_adoption";
 
 export interface DailyMetric {
   day: string;
@@ -73,6 +80,26 @@ export async function aggregateTelemetry(day?: string): Promise<void> {
     .lte("created_at", endOfDay);
 
   if (dayEventsError) throw dayEventsError;
+
+  // Fetch firstboot events with payload for device/environment metrics
+  const { data: firstbootEvents, error: firstbootError } = await admin
+    .from("telemetry_events")
+    .select("anonymous_installation_id, payload")
+    .eq("event_type", "firstboot_completed")
+    .gte("created_at", startOfDay)
+    .lte("created_at", endOfDay);
+
+  if (firstbootError) throw firstbootError;
+
+  // Fetch sensor events (any event with sensor_types in payload)
+  const { data: sensorEvents, error: sensorError } = await admin
+    .from("telemetry_events")
+    .select("payload")
+    .not("payload->sensor_types", "is", null)
+    .gte("created_at", startOfDay)
+    .lte("created_at", endOfDay);
+
+  if (sensorError) throw sensorError;
 
   const events = dayEvents || [];
 
@@ -200,6 +227,73 @@ export async function aggregateTelemetry(day?: string): Promise<void> {
   for (const [python, count] of Array.from(pythonMap.entries())) {
     await upsertMetric(targetDay, "python_distribution", { python }, count);
   }
+
+  // --- Device / Environment Aggregations ---
+  const robotTypeMap = new Map<string, Set<string>>();
+  const rosDistroMap = new Map<string, Set<string>>();
+  const cudaAvailableSet = new Set<string>();
+  const cudaUnavailableSet = new Set<string>();
+  const osVersionMap = new Map<string, Set<string>>();
+  const gpuInfoMap = new Map<string, Set<string>>();
+  const sensorTypeMap = new Map<string, number>();
+
+  for (const e of firstbootEvents || []) {
+    const id = e.anonymous_installation_id;
+    const p = (e.payload || {}) as Record<string, unknown>;
+
+    if (typeof p.robot_type === "string") {
+      const set = robotTypeMap.get(p.robot_type) || new Set<string>();
+      set.add(id);
+      robotTypeMap.set(p.robot_type, set);
+    }
+    if (typeof p.ros_distro_present === "string") {
+      const set = rosDistroMap.get(p.ros_distro_present) || new Set<string>();
+      set.add(id);
+      rosDistroMap.set(p.ros_distro_present, set);
+    }
+    if (p.cuda_available === true) cudaAvailableSet.add(id);
+    if (p.cuda_available === false) cudaUnavailableSet.add(id);
+    if (typeof p.os_version === "string") {
+      const set = osVersionMap.get(p.os_version) || new Set<string>();
+      set.add(id);
+      osVersionMap.set(p.os_version, set);
+    }
+    if (typeof p.gpu_info === "string") {
+      const set = gpuInfoMap.get(p.gpu_info) || new Set<string>();
+      set.add(id);
+      gpuInfoMap.set(p.gpu_info, set);
+    }
+  }
+
+  for (const e of sensorEvents || []) {
+    const p = (e.payload || {}) as Record<string, unknown>;
+    const sensors = p.sensor_types;
+    if (Array.isArray(sensors)) {
+      for (const sensor of sensors) {
+        if (typeof sensor === "string") {
+          sensorTypeMap.set(sensor, (sensorTypeMap.get(sensor) || 0) + 1);
+        }
+      }
+    }
+  }
+
+  for (const [robotType, ids] of Array.from(robotTypeMap.entries())) {
+    await upsertMetric(targetDay, "robot_type_distribution", { robot_type: robotType }, ids.size);
+  }
+  for (const [rosDistro, ids] of Array.from(rosDistroMap.entries())) {
+    await upsertMetric(targetDay, "ros_distro_distribution", { ros_distro: rosDistro }, ids.size);
+  }
+  await upsertMetric(targetDay, "cuda_available_count", { cuda_available: "true" }, cudaAvailableSet.size);
+  await upsertMetric(targetDay, "cuda_unavailable_count", { cuda_available: "false" }, cudaUnavailableSet.size);
+  for (const [osVersion, ids] of Array.from(osVersionMap.entries())) {
+    await upsertMetric(targetDay, "os_version_distribution", { os_version: osVersion }, ids.size);
+  }
+  for (const [gpuInfo, ids] of Array.from(gpuInfoMap.entries())) {
+    await upsertMetric(targetDay, "gpu_info_distribution", { gpu_info: gpuInfo }, ids.size);
+  }
+  for (const [sensorType, count] of Array.from(sensorTypeMap.entries())) {
+    await upsertMetric(targetDay, "sensor_type_adoption", { sensor_type: sensorType }, count);
+  }
 }
 
 export async function getSummaryMetrics(): Promise<Record<MetricName, number | Record<string, number>>> {
@@ -227,6 +321,13 @@ export async function getSummaryMetrics(): Promise<Record<MetricName, number | R
     version_distribution: {},
     os_distribution: {},
     python_distribution: {},
+    robot_type_distribution: {},
+    ros_distro_distribution: {},
+    cuda_available_count: {},
+    cuda_unavailable_count: {},
+    os_version_distribution: {},
+    gpu_info_distribution: {},
+    sensor_type_adoption: {},
   };
 
   const seenGlobal = new Set<MetricName>();

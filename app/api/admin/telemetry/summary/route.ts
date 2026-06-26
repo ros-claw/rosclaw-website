@@ -67,6 +67,13 @@ export async function GET(req: NextRequest) {
       os_distribution: Object.entries(osDistribution)
         .map(([os_family, count]) => ({ os_family, count }))
         .sort((a, b) => b.count - a.count),
+      robot_type_distribution: summary.robot_type_distribution,
+      ros_distro_distribution: summary.ros_distro_distribution,
+      cuda_available_count: summary.cuda_available_count,
+      cuda_unavailable_count: summary.cuda_unavailable_count,
+      os_version_distribution: summary.os_version_distribution,
+      gpu_info_distribution: summary.gpu_info_distribution,
+      sensor_type_adoption: summary.sensor_type_adoption,
       total_events: totalEvents ?? 0,
     });
   } catch (err: unknown) {

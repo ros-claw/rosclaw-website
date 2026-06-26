@@ -13,6 +13,9 @@ export async function GET(req: NextRequest) {
     const eventType = searchParams.get("event_type");
     const from = searchParams.get("from");
     const to = searchParams.get("to");
+    const robotType = searchParams.get("robot_type");
+    const rosDistro = searchParams.get("ros_distro");
+    const cudaAvailable = searchParams.get("cuda_available");
 
     const admin = getSupabaseAdmin();
     let query = admin
@@ -27,6 +30,11 @@ export async function GET(req: NextRequest) {
     if (eventType) query = query.eq("event_type", eventType);
     if (from) query = query.gte("created_at", from);
     if (to) query = query.lte("created_at", to);
+    if (robotType) query = query.filter("payload->>robot_type", "eq", robotType);
+    if (rosDistro) query = query.filter("payload->>ros_distro_present", "eq", rosDistro);
+    if (cudaAvailable !== null) {
+      query = query.filter("payload->>cuda_available", "eq", cudaAvailable === "true" ? "true" : "false");
+    }
 
     const { data, error, count } = await query;
 
