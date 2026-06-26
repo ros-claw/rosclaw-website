@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { Github, Menu, X, Mail } from "lucide-react";
+import { Github, Menu, X, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
@@ -83,6 +83,14 @@ export function Navbar() {
                 Contact
               </EmailLink>
 
+              <Link
+                href="/login"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
+              >
+                <User className="w-4 h-4" />
+                Sign In
+              </Link>
+
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="md:hidden p-2 text-text-secondary hover:text-foreground"
@@ -129,6 +137,14 @@ export function Navbar() {
             <Mail className="w-5 h-5" />
             Contact
           </EmailLink>
+          <Link
+            href="/login"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center gap-2 py-3 text-lg text-cognitive-cyan"
+          >
+            <User className="w-5 h-5" />
+            Sign In
+          </Link>
         </div>
       </motion.div>
     </>
