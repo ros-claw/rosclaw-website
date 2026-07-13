@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { getSupabaseAdmin } from "@/lib/supabase/admin"
+import { hashApiKey } from "@/lib/api-key"
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.rosclaw.io"
 
@@ -98,6 +100,21 @@ export async function GET(req: NextRequest) {
             sameSite: "lax",
             maxAge: 60 * 60 * 24 * 365, // 1 year
           })
+
+          // Store the key -> website user mapping for ownership checks (hashed)
+          try {
+            const adminClient = getSupabaseAdmin()
+            await adminClient.from("user_api_keys").upsert(
+              {
+                api_key_hash: hashApiKey(wikiData.api_key),
+                user_id: user.id,
+              },
+              { onConflict: "api_key_hash" }
+            )
+          } catch (mapErr) {
+            console.error("Failed to store API key mapping:", mapErr)
+            // Non-fatal: user can retry later via profile page
+          }
         }
       }
     } catch (wikiErr) {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { authenticateApiKey } from "@/lib/api-key"
 
 // Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
@@ -68,7 +69,6 @@ export async function GET(req: NextRequest) {
       name: p.name,
       description: p.description,
       authorName: p.author_name,
-      author_user_id: p.author_user_id,
       githubRepoUrl: p.github_repo_url,
       verified: p.is_verified,
       category: p.category,
@@ -109,16 +109,18 @@ export async function POST(req: NextRequest) {
     // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
-    let isApiKeyAuth = false
+    let status: string
     let client = supabase
 
     if (apiKey) {
-      // API key authentication (for external integrations)
-      if (apiKey !== process.env.ADMIN_API_KEY) {
+      const identity = await authenticateApiKey(apiKey)
+      if (!identity) {
         return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
       }
-      isApiKeyAuth = true
-      body.status = "approved"
+      if (identity.kind === "user") {
+        userId = identity.userId
+      }
+      status = "approved"
       // Use admin client to bypass RLS for API key auth
       client = createAdminClient()
     } else {
@@ -131,7 +133,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
       userId = session.user.id
-      body.status = "pending"
+      status = "pending"
     }
 
     // Check if package name already exists
@@ -164,7 +166,7 @@ export async function POST(req: NextRequest) {
         robot_type: body.robot_type,
         tags: body.tags || [],
         tools: body.tools || [],
-        status: body.status,
+        status,
         is_verified: false,  // Only manually set true for truly official packages
       })
       .select()
@@ -209,15 +211,29 @@ export async function DELETE(req: NextRequest) {
     }
 
     const supabase = createClient(req)
+    const adminClient = createAdminClient()
 
-    // Check API key or session authentication
     const apiKey = req.headers.get("x-api-key")
-    let userId: string | null = null
 
     if (apiKey) {
-      // API key authentication - can delete any package
-      if (apiKey !== process.env.ADMIN_API_KEY) {
+      const identity = await authenticateApiKey(apiKey)
+      if (!identity) {
         return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
+      }
+
+      if (identity.kind === "user") {
+        const { data: pkg } = await adminClient
+          .from("mcp_packages")
+          .select("author_user_id")
+          .eq("id", id)
+          .single()
+
+        if (!pkg || pkg.author_user_id !== identity.userId) {
+          return NextResponse.json(
+            { error: "You can only delete your own packages" },
+            { status: 403 }
+          )
+        }
       }
     } else {
       // Session authentication - can only delete own packages
@@ -225,16 +241,14 @@ export async function DELETE(req: NextRequest) {
       if (sessionError || !session) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
-      userId = session.user.id
 
-      // Check if user owns this package (using session client for RLS-compliant read)
       const { data: pkg } = await supabase
         .from("mcp_packages")
         .select("author_user_id")
         .eq("id", id)
         .single()
 
-      if (!pkg || pkg.author_user_id !== userId) {
+      if (!pkg || pkg.author_user_id !== session.user.id) {
         return NextResponse.json(
           { error: "You can only delete your own packages" },
           { status: 403 }
@@ -242,8 +256,6 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    // Use admin client to bypass RLS for delete operation
-    const adminClient = createAdminClient()
     const { error } = await adminClient
       .from("mcp_packages")
       .delete()

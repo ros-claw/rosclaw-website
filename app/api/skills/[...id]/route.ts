@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { authenticateApiKey } from "@/lib/api-key"
 
 function createClient(req: NextRequest) {
   return createServerClient(
@@ -85,9 +86,12 @@ export async function GET(
     if (data.status !== "approved") {
       const { data: { session } } = await supabase.auth.getSession()
       const apiKey = req.headers.get("x-api-key")
+      const identity = apiKey ? await authenticateApiKey(apiKey) : null
 
-      const isAdmin = apiKey === process.env.ADMIN_API_KEY
-      const isOwner = session?.user?.id === data.author_user_id
+      const isAdmin = identity?.kind === "admin"
+      const isOwner =
+        session?.user?.id === data.author_user_id ||
+        (identity?.kind === "user" && identity.userId === data.author_user_id)
 
       if (!isAdmin && !isOwner) {
         return NextResponse.json(
@@ -198,9 +202,9 @@ export async function PUT(
     const fullPath = params.id.join("/")
     const body = await req.json()
 
-    // Check API key
     const apiKey = req.headers.get("x-api-key")
-    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+    const identity = await authenticateApiKey(apiKey)
+    if (!identity) {
       return NextResponse.json(
         { error: "Invalid or missing API key" },
         { status: 401 }
@@ -212,14 +216,14 @@ export async function PUT(
     // Find skill by ID or name
     let { data: existing } = await adminClient
       .from("skills")
-      .select("id")
+      .select("id, author_user_id")
       .eq("id", fullPath)
       .single()
 
     if (!existing) {
       const result = await adminClient
         .from("skills")
-        .select("id")
+        .select("id, author_user_id")
         .eq("name", fullPath)
         .single()
       existing = result.data
@@ -232,8 +236,15 @@ export async function PUT(
       )
     }
 
+    if (identity.kind === "user" && existing.author_user_id !== identity.userId) {
+      return NextResponse.json(
+        { error: "You can only update your own skills" },
+        { status: 403 }
+      )
+    }
+
     // Build update data
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
     }
 
@@ -247,7 +258,11 @@ export async function PUT(
     if (body.robot_types !== undefined) updateData.robot_types = body.robot_types
     if (body.tags !== undefined) updateData.tags = body.tags
     if (body.version !== undefined) updateData.version = body.version
-    if (body.status !== undefined) updateData.status = body.status
+
+    // Only admins can change approval status
+    if (body.status !== undefined && identity.kind === "admin") {
+      updateData.status = body.status
+    }
 
     const { data, error } = await adminClient
       .from("skills")
@@ -288,9 +303,9 @@ export async function DELETE(
   try {
     const fullPath = params.id.join("/")
 
-    // Check API key
     const apiKey = req.headers.get("x-api-key")
-    if (!apiKey || apiKey !== process.env.ADMIN_API_KEY) {
+    const identity = await authenticateApiKey(apiKey)
+    if (!identity) {
       return NextResponse.json(
         { error: "Invalid or missing API key" },
         { status: 401 }
@@ -302,14 +317,14 @@ export async function DELETE(
     // Find skill by ID or name
     let { data: existing } = await adminClient
       .from("skills")
-      .select("id")
+      .select("id, author_user_id")
       .eq("id", fullPath)
       .single()
 
     if (!existing) {
       const result = await adminClient
         .from("skills")
-        .select("id")
+        .select("id, author_user_id")
         .eq("name", fullPath)
         .single()
       existing = result.data
@@ -322,7 +337,13 @@ export async function DELETE(
       )
     }
 
-    // Delete the skill
+    if (identity.kind === "user" && existing.author_user_id !== identity.userId) {
+      return NextResponse.json(
+        { error: "You can only delete your own skills" },
+        { status: 403 }
+      )
+    }
+
     const { error } = await adminClient
       .from("skills")
       .delete()

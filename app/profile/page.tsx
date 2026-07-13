@@ -65,11 +65,11 @@ export default function ProfilePage() {
       fetchUserContent(session.user.id);
 
       // Check for API key from cookie (set during login) or localStorage
-      checkAndLoadApiKey(session.user.email);
+      checkAndLoadApiKey(session.user.id, session.user.email);
     });
   }, [router]);
 
-  const checkAndLoadApiKey = async (email: string | undefined) => {
+  const checkAndLoadApiKey = async (userId: string, email: string | undefined) => {
     // First check localStorage
     let key = localStorage.getItem(API_KEY_STORAGE_KEY);
 
@@ -87,14 +87,49 @@ export default function ProfilePage() {
     if (key) {
       setApiKey(key);
       setApiKeyMasked(`${key.slice(0, 8)}****${key.slice(-4)}`);
+      await storeApiKeyMapping(userId, key);
       await fetchWikiUserInfo(key);
     } else if (email) {
       // Try to exchange email for API key
-      await exchangeEmailForApiKey(email);
+      await exchangeEmailForApiKey(userId, email);
     }
   };
 
-  const exchangeEmailForApiKey = async (email: string) => {
+  const hashApiKeyBrowser = async (key: string): Promise<string> => {
+    const encoder = new TextEncoder()
+    const buffer = await crypto.subtle.digest("SHA-256", encoder.encode(key))
+    return Array.from(new Uint8Array(buffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("")
+  };
+
+  const deleteApiKeyMapping = async (key: string) => {
+    try {
+      const supabase = getSupabaseClient();
+      const hash = await hashApiKeyBrowser(key);
+      await supabase.from("user_api_keys").delete().eq("api_key_hash", hash);
+    } catch (err) {
+      console.error("Failed to delete old API key mapping:", err);
+    }
+  };
+
+  const storeApiKeyMapping = async (userId: string, key: string) => {
+    try {
+      const supabase = getSupabaseClient();
+      const hash = await hashApiKeyBrowser(key);
+      await supabase.from("user_api_keys").upsert(
+        {
+          api_key_hash: hash,
+          user_id: userId,
+        },
+        { onConflict: "api_key_hash" }
+      );
+    } catch (err) {
+      console.error("Failed to store API key mapping:", err);
+    }
+  };
+
+  const exchangeEmailForApiKey = async (userId: string, email: string) => {
     setWikiLoading(true);
     try {
       const res = await fetch(`${API_BASE}/wiki/v1/auth/exchange`, {
@@ -109,6 +144,7 @@ export default function ProfilePage() {
           localStorage.setItem(API_KEY_STORAGE_KEY, data.api_key);
           setApiKey(data.api_key);
           setApiKeyMasked(`${data.api_key.slice(0, 8)}****${data.api_key.slice(-4)}`);
+          await storeApiKeyMapping(userId, data.api_key);
           await fetchWikiUserInfo(data.api_key);
         } else if (data.exists) {
           setWikiError("API key already exists. Please check your browser storage or contact support.");
@@ -174,9 +210,12 @@ export default function ProfilePage() {
   };
 
   const handleRegenerateKey = async () => {
-    if (!user?.email) return;
+    if (!user?.email || !user?.id) return;
     if (!confirm("Are you sure you want to regenerate your API key? The old key will be invalidated.")) return;
-    await exchangeEmailForApiKey(user.email);
+    if (apiKey) {
+      await deleteApiKeyMapping(apiKey);
+    }
+    await exchangeEmailForApiKey(user.id, user.email);
   };
 
   const handleDeletePackage = async (pkgId: string) => {
@@ -438,7 +477,7 @@ export default function ProfilePage() {
                 <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
                   <p className="text-red-500 text-sm mb-2">{wikiError}</p>
                   <button
-                    onClick={() => user?.email && exchangeEmailForApiKey(user.email)}
+                    onClick={() => user?.email && user?.id && exchangeEmailForApiKey(user.id, user.email)}
                     className="text-sm text-cognitive-cyan hover:underline"
                   >
                     Try again

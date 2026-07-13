@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { authenticateApiKey } from "@/lib/api-key"
 
 // Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
@@ -113,14 +114,18 @@ export async function POST(req: NextRequest) {
     // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
+    let status: string
     let client = supabase
 
     if (apiKey) {
-      // API key authentication
-      if (apiKey !== process.env.ADMIN_API_KEY) {
+      const identity = await authenticateApiKey(apiKey)
+      if (!identity) {
         return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
       }
-      body.status = "approved"
+      if (identity.kind === "user") {
+        userId = identity.userId
+      }
+      status = "approved"
       // Use admin client to bypass RLS for API key auth
       client = createAdminClient()
     } else {
@@ -130,7 +135,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
       userId = session.user.id
-      body.status = "pending"
+      status = "pending"
     }
 
     // Check if skill name already exists
@@ -166,7 +171,7 @@ export async function POST(req: NextRequest) {
         tags: body.tags || [],
         compatible_robots: body.compatible_robots || [],
         dependencies: body.dependencies || [],
-        status: body.status,
+        status,
         icon_url: body.icon_url,
       })
       .select()
@@ -211,14 +216,29 @@ export async function DELETE(req: NextRequest) {
     }
 
     const supabase = createClient(req)
+    const adminClient = createAdminClient()
 
     const apiKey = req.headers.get("x-api-key")
-    let userId: string | null = null
 
     if (apiKey) {
-      // API key authentication - can delete any skill
-      if (apiKey !== process.env.ADMIN_API_KEY) {
+      const identity = await authenticateApiKey(apiKey)
+      if (!identity) {
         return NextResponse.json({ error: "Invalid API key" }, { status: 401 })
+      }
+
+      if (identity.kind === "user") {
+        const { data: skill } = await adminClient
+          .from("skills")
+          .select("author_user_id")
+          .eq("id", id)
+          .single()
+
+        if (!skill || skill.author_user_id !== identity.userId) {
+          return NextResponse.json(
+            { error: "You can only delete your own skills" },
+            { status: 403 }
+          )
+        }
       }
     } else {
       // Session authentication - can only delete own skills
@@ -226,7 +246,6 @@ export async function DELETE(req: NextRequest) {
       if (sessionError || !session) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
-      userId = session.user.id
 
       const { data: skill } = await supabase
         .from("skills")
@@ -234,7 +253,7 @@ export async function DELETE(req: NextRequest) {
         .eq("id", id)
         .single()
 
-      if (!skill || skill.author_user_id !== userId) {
+      if (!skill || skill.author_user_id !== session.user.id) {
         return NextResponse.json(
           { error: "You can only delete your own skills" },
           { status: 403 }
@@ -242,8 +261,6 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    // Use admin client to bypass RLS for delete operation
-    const adminClient = createAdminClient()
     const { error } = await adminClient
       .from("skills")
       .delete()
