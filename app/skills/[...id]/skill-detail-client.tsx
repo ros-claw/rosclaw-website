@@ -1,491 +1,319 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Eye, Star, GitBranch, Copy, Check, ChevronLeft, ExternalLink, Shield, Loader2, Cpu } from "lucide-react";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  FileCode2,
+  Github,
+  GitBranch,
+  Loader2,
+  Plug,
+  ShieldCheck,
+  Terminal,
+  Workflow,
+} from "lucide-react";
+import { CopyCommand } from "@/components/hub/copy-command";
 
 interface Skill {
   id: string;
   name: string;
-  displayName: string;
+  displayName?: string;
   description: string;
   longDescription?: string;
   readmeContent?: string;
   authorName: string;
   authorUrl?: string;
   githubRepoUrl?: string;
-  viewsCount: number;
-  githubStars: number;
-  rating: number;
-  reviewCount: number;
-  version: string;
-  category: string;
-  tags: string[];
-  compatibleRobots: string[];
-  dependencies: string[];
+  viewsCount?: number;
+  githubStars?: number;
+  rating?: number;
+  reviewCount?: number;
+  version?: string;
+  category?: string;
+  tags?: string[];
+  robotTypes?: string[];
+  compatibleRobots?: string[];
+  dependencies?: string[];
+  status?: string;
 }
 
 interface SkillDetailClientProps {
   id: string;
 }
 
-// Fetch GitHub data (README + stars)
-async function fetchGitHubData(githubUrl: string): Promise<{ readme: string; stars: number }> {
-  try {
-    const match = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
-    if (!match) return { readme: "", stars: 0 };
-
-    const [, owner, repo] = match;
-
-    const [repoRes, readmeRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-        headers: { Accept: "application/vnd.github+json" },
-      }),
-      fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
-        headers: { Accept: "application/vnd.github+json" },
-      }),
-    ]);
-
-    let stars = 0;
-    if (repoRes.ok) {
-      const data = await repoRes.json();
-      stars = data.stargazers_count || 0;
-    }
-
-    let readme = "";
-    if (readmeRes.ok) {
-      const data = await readmeRes.json();
-      if (data.content) {
-        try {
-          const base64Content = data.content.replace(/\n/g, "");
-          const binaryString = atob(base64Content);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-          readme = new TextDecoder("utf-8").decode(bytes);
-        } catch {
-          readme = "";
-        }
-      }
-    }
-
-    return { readme, stars };
-  } catch {
-    return { readme: "", stars: 0 };
-  }
+function encodedPath(id: string) {
+  return id.split("/").map(encodeURIComponent).join("/");
 }
 
-// Fetch skill from API
 async function fetchSkill(id: string): Promise<Skill | null> {
   try {
-    const res = await fetch(`/api/skills/${encodeURIComponent(id)}`);
-    if (!res.ok) return null;
-    return await res.json();
+    const response = await fetch(`/api/skills/${encodedPath(id)}`);
+    if (!response.ok) return null;
+    return response.json();
   } catch {
     return null;
   }
 }
 
-// Increment view count
-async function incrementViews(id: string): Promise<void> {
+async function incrementViews(id: string) {
   try {
-    await fetch(`/api/skills/${encodeURIComponent(id)}?action=view`, {
-      method: "POST",
-    });
+    await fetch(`/api/skills/${encodedPath(id)}?action=view`, { method: "POST" });
   } catch {
-    // Silently fail - views are not critical
+    // A view counter must never block package content.
   }
 }
 
+function formatNumber(value = 0) {
+  return new Intl.NumberFormat("en", { notation: value >= 1_000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
+}
+
 export function SkillDetailClient({ id }: SkillDetailClientProps) {
-  const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"readme" | "changelog">("readme");
   const [skill, setSkill] = useState<Skill | null>(null);
-  const [readmeContent, setReadmeContent] = useState<string>("");
-  const [githubStars, setGithubStars] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
+    let active = true;
+    setLoading(true);
+    setNotFound(false);
 
-    async function loadData() {
-      setLoading(true);
-
-      const skillData = await fetchSkill(id);
-
-      if (!isMounted) return;
-
+    fetchSkill(id).then((skillData) => {
+      if (!active) return;
       if (!skillData) {
         setNotFound(true);
-        setLoading(false);
-        return;
-      }
-
-      setSkill(skillData);
-
-      // Increment view count when skill is viewed
-      incrementViews(id);
-
-      // Priority: cached readme_content > GitHub API > long_description
-      if (skillData.readmeContent) {
-        // Use cached README from database
-        setReadmeContent(skillData.readmeContent);
-        setGithubStars(skillData.githubStars || 0);
-      } else if (skillData.githubRepoUrl) {
-        // Fetch from GitHub API as fallback
-        const ghData = await fetchGitHubData(skillData.githubRepoUrl);
-        if (isMounted) {
-          setReadmeContent(ghData.readme);
-          setGithubStars(ghData.stars || skillData.githubStars || 0);
-        }
       } else {
-        setGithubStars(skillData.githubStars || 0);
+        setSkill(skillData);
+        incrementViews(id);
       }
+      setLoading(false);
+    });
 
-      if (isMounted) {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { active = false; };
   }, [id]);
 
-  const handleCopy = () => {
-    if (skill) {
-      navigator.clipboard.writeText(`rosclaw install skill ${skill.name}`);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+  if (loading) return <DetailLoading />;
+  if (notFound || !skill) return <DetailNotFound id={id} />;
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background pt-24 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-cognitive-cyan" />
-      </div>
-    );
-  }
-
-  if (notFound || !skill) {
-    return (
-      <div className="min-h-screen bg-background pt-24">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold text-foreground">Skill Not Found</h1>
-          <p className="text-text-muted mt-2">The skill &quot;{id}&quot; does not exist.</p>
-          <Link href="/hub/skills" className="inline-flex items-center gap-2 mt-4 text-cognitive-cyan hover:underline">
-            <ChevronLeft className="w-4 h-4" />
-            Back to e-Skill Market
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const displayDescription = readmeContent || skill.longDescription || skill.description;
+  const tags = skill.tags || [];
+  const bodyProfiles = Array.from(new Set([...(skill.compatibleRobots || []), ...(skill.robotTypes || [])].filter(Boolean)));
+  const dependencies = skill.dependencies || [];
+  const docs = skill.readmeContent || skill.longDescription || "";
   const installCommand = `rosclaw install skill ${skill.name}`;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Link
-            href="/hub/skills"
-            className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-foreground transition-colors mb-4"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Back to e-Skill Market
+    <main className="min-h-screen bg-background pb-20 pt-24">
+      <header className="runtime-grid border-b border-white/[0.08] px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <Link href="/hub/skills" className="focus-ring inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white">
+            <ArrowLeft className="h-4 w-4" /> Skills
           </Link>
 
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-xl bg-cognitive-cyan/10 flex items-center justify-center flex-shrink-0">
-                <Cpu className="w-8 h-8 text-cognitive-cyan" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground font-mono">{skill.name}</h1>
-                {skill.displayName && skill.displayName !== skill.name && (
-                  <p className="text-text-secondary text-lg">{skill.displayName}</p>
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-physical-orange">Behavior package</span>
+                {skill.category && (
+                  <span className="border border-physical-orange/25 bg-physical-orange/[0.05] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-physical-orange">{skill.category}</span>
                 )}
-                <div className="flex items-center gap-2 mt-1">
-                  <Link
-                    href={skill.authorUrl || "#"}
-                    target="_blank"
-                    className="text-cognitive-cyan hover:underline"
-                  >
-                    {skill.authorName}
-                  </Link>
-                  <span className="text-text-muted">•</span>
-                  <span className="text-text-muted">v{skill.version}</span>
-                  <span className="text-text-muted">•</span>
-                  <span className="text-text-muted">{skill.category}</span>
-                </div>
+              </div>
+              <h1 className="mt-4 break-words text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">{skill.displayName || skill.name}</h1>
+              {skill.displayName && skill.displayName !== skill.name && <p className="mt-2 break-words font-mono text-xs text-white/28">{skill.name}</p>}
+              <p className="mt-5 max-w-3xl text-pretty text-base leading-relaxed text-white/52 md:text-lg">{skill.description}</p>
+              <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/35">
+                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> {skill.authorName}</span>
+                <span className="font-mono text-xs">v{skill.version || "—"}</span>
+                <span>{bodyProfiles.length ? `${bodyProfiles.length} declared body profile${bodyProfiles.length === 1 ? "" : "s"}` : "Body profile not declared"}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500" title="GitHub Stars">
-                <Star className="w-4 h-4 fill-current" />
-                <span className="font-medium">{githubStars > 0 ? githubStars.toLocaleString() : "—"}</span>
-              </div>
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary" title="Views">
-                <Eye className="w-4 h-4" />
-                <span>{(skill.viewsCount || 0).toLocaleString()}</span>
-              </div>
+            <div className="grid grid-cols-3 border border-white/10 bg-[#050708] lg:min-w-[330px]">
+              {[
+                ["Bodies", bodyProfiles.length.toLocaleString()],
+                ["Stars", formatNumber(skill.githubStars)],
+                ["Views", formatNumber(skill.viewsCount)],
+              ].map(([label, value], index) => (
+                <div key={label} className={`p-4 text-center ${index < 2 ? "border-r border-white/10" : ""}`}>
+                  <div className="runtime-label">{label}</div>
+                  <div className="mt-2 font-mono text-base text-white">{value}</div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <p className="text-text-secondary mt-4 max-w-3xl">{skill.description}</p>
-
-          {/* Tags */}
-          {skill.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {skill.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-1 rounded-full bg-glass-bg text-text-secondary text-sm"
-                >
-                  {tag}
-                </span>
-              ))}
+          {tags.length > 0 && (
+            <div className="mt-8 flex flex-wrap gap-2">
+              {tags.map((tag) => <span key={tag} className="border border-white/10 bg-white/[0.025] px-2.5 py-1 text-xs text-white/38">{tag}</span>)}
             </div>
           )}
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-5 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-4">
-            {/* Tabs */}
-            <div className="flex gap-4 border-b border-glass-border mb-6">
-              <button
-                onClick={() => setActiveTab("readme")}
-                className={`pb-3 text-sm font-medium transition-colors ${
-                  activeTab === "readme"
-                    ? "text-cognitive-cyan border-b-2 border-cognitive-cyan"
-                    : "text-text-muted hover:text-foreground"
-                }`}
-              >
-                README
-              </button>
-              <button
-                onClick={() => setActiveTab("changelog")}
-                className={`pb-3 text-sm font-medium transition-colors ${
-                  activeTab === "changelog"
-                    ? "text-cognitive-cyan border-b-2 border-cognitive-cyan"
-                    : "text-text-muted hover:text-foreground"
-                }`}
-              >
-                Info
-              </button>
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_330px] lg:px-8 lg:py-14">
+        <div className="min-w-0 space-y-14">
+          <section aria-labelledby="deployment-heading">
+            <div className="border-b border-white/10 pb-4">
+              <p className="font-mono text-[0.68rem] uppercase tracking-[0.17em] text-physical-orange">Deployment contract</p>
+              <h2 id="deployment-heading" className="mt-3 text-2xl font-semibold tracking-[-0.025em] text-white">What this behavior expects</h2>
             </div>
 
-            {/* Tab Content */}
-            {activeTab === "readme" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="prose prose-invert prose-lg max-w-none"
-              >
-                {displayDescription ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeRaw]}
-                    components={{
-                      h1: ({ children }: { children?: React.ReactNode }) => (
-                        <h1 className="text-3xl font-bold text-foreground mt-8 mb-4 pb-2 border-b border-glass-border">{children}</h1>
-                      ),
-                      h2: ({ children }: { children?: React.ReactNode }) => (
-                        <h2 className="text-2xl font-semibold text-foreground mt-6 mb-3">{children}</h2>
-                      ),
-                      h3: ({ children }: { children?: React.ReactNode }) => (
-                        <h3 className="text-xl font-semibold text-foreground mt-4 mb-2">{children}</h3>
-                      ),
-                      p: ({ children }: { children?: React.ReactNode }) => (
-                        <p className="text-text-secondary mb-4 leading-relaxed">{children}</p>
-                      ),
-                      ul: ({ children }: { children?: React.ReactNode }) => (
-                        <ul className="list-disc list-inside mb-4 text-text-secondary space-y-1">{children}</ul>
-                      ),
-                      ol: ({ children }: { children?: React.ReactNode }) => (
-                        <ol className="list-decimal list-inside mb-4 text-text-secondary space-y-1">{children}</ol>
-                      ),
-                      li: ({ children }: { children?: React.ReactNode }) => (
-                        <li className="text-text-secondary">{children}</li>
-                      ),
-                      code: ({ children, className }: { children?: React.ReactNode; className?: string }) => {
-                        const isInline = !className;
-                        return isInline ? (
-                          <code className="px-1.5 py-0.5 rounded bg-glass-bg text-cognitive-cyan font-mono text-sm">{children}</code>
-                        ) : (
-                          <pre className="bg-black/50 border border-glass-border rounded-lg p-4 overflow-x-auto my-4">
-                            <code className={`${className} font-mono text-sm`}>{children}</code>
-                          </pre>
-                        );
-                      },
-                      pre: ({ children }: { children?: React.ReactNode }) => (
-                        <div className="my-4">{children}</div>
-                      ),
-                      blockquote: ({ children }: { children?: React.ReactNode }) => (
-                        <blockquote className="border-l-4 border-cognitive-cyan/50 pl-4 py-2 my-4 text-text-secondary italic bg-glass-bg/30 rounded-r">
-                          {children}
-                        </blockquote>
-                      ),
-                      a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
-                        let finalHref = href || '';
-                        if (href && !href.startsWith('http') && !href.startsWith('#') && skill?.githubRepoUrl) {
-                          const baseUrl = skill.githubRepoUrl.replace(/\/+$/, '');
-                          finalHref = `${baseUrl}/blob/main/${href}`;
-                        }
-                        return (
-                          <a href={finalHref} target="_blank" rel="noopener noreferrer" className="text-cognitive-cyan hover:underline">
-                            {children}
-                          </a>
-                        );
-                      },
-                      img: ({ src, alt }: { src?: string; alt?: string }) => {
-                        let finalSrc = src || '';
-                        if (src && !src.startsWith('http') && skill?.githubRepoUrl) {
-                          const baseUrl = skill.githubRepoUrl.replace(/\/+$/, '');
-                          finalSrc = `${baseUrl}/raw/main/${src}`;
-                        }
-                        return <img src={finalSrc} alt={alt} className="max-w-full rounded-lg my-4" />;
-                      },
-                      table: ({ children }: { children?: React.ReactNode }) => (
-                        <div className="overflow-x-auto my-4">
-                          <table className="w-full border-collapse border border-glass-border">
-                            {children}
-                          </table>
-                        </div>
-                      ),
-                      th: ({ children }: { children?: React.ReactNode }) => (
-                        <th className="border border-glass-border px-4 py-2 bg-glass-bg text-foreground font-semibold">{children}</th>
-                      ),
-                      td: ({ children }: { children?: React.ReactNode }) => (
-                        <td className="border border-glass-border px-4 py-2 text-text-secondary">{children}</td>
-                      ),
-                      hr: () => <hr className="border-glass-border my-6" />,
-                    }}
-                  >
-                    {displayDescription}
-                  </ReactMarkdown>
-                ) : (
-                  <div className="text-text-muted">No README available.</div>
-                )}
-              </motion.div>
-            )}
-
-            {activeTab === "changelog" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-4"
-              >
-                <div className="p-4 rounded-lg bg-card-bg border border-glass-border">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-mono text-cognitive-cyan">v{skill.version}</span>
-                    <span className="text-text-muted text-sm">• Current Version</span>
+            <div className="grid gap-px bg-white/10 md:grid-cols-2">
+              <article className="bg-[#080b0c] p-6 sm:p-7">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="h-5 w-5 text-physical-orange" />
+                  <h3 className="text-base font-medium text-white">Compatible bodies</h3>
+                </div>
+                {bodyProfiles.length > 0 ? (
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {bodyProfiles.map((body) => <span key={body} className="border border-physical-orange/20 bg-physical-orange/[0.04] px-2.5 py-1.5 text-xs text-physical-orange">{body}</span>)}
                   </div>
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6 lg:col-span-1 min-w-[260px] lg:pl-4">
-            {/* Install Box */}
-            <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/40 border border-cognitive-cyan/20 shadow-lg shadow-cognitive-cyan/5">
-              <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-cognitive-cyan" />
-                Install
-              </h3>
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-black/60 font-mono text-sm border border-white/5">
-                <code className="flex-1 text-text-secondary text-xs truncate">{installCommand}</code>
-                <button
-                  onClick={handleCopy}
-                  className="p-1.5 rounded-md hover:bg-white/10 transition-colors flex-shrink-0"
-                  title="Copy to clipboard"
-                >
-                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Compatible Robots */}
-            {skill.compatibleRobots.length > 0 && (
-              <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/20 border border-glass-border hover:border-green-500/20 transition-colors">
-                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-green-500" />
-                  Compatible Robots
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {skill.compatibleRobots.map((robot) => (
-                    <span
-                      key={robot}
-                      className="px-2.5 py-1 rounded-full bg-green-500/10 text-green-500 text-xs font-medium border border-green-500/20"
-                    >
-                      {robot}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Dependencies */}
-            {skill.dependencies.length > 0 && (
-              <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/20 border border-glass-border">
-                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <GitBranch className="w-4 h-4 text-text-muted" />
-                  Dependencies
-                </h3>
-                <div className="space-y-2">
-                  {skill.dependencies.map((dep) => (
-                    <div key={dep} className="flex items-center gap-2 text-sm p-1.5 rounded hover:bg-white/5 transition-colors">
-                      <div className="w-1.5 h-1.5 rounded-full bg-cognitive-cyan/60" />
-                      <span className="text-text-secondary">{dep}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Links */}
-            <div className="p-5 rounded-xl bg-gradient-to-br from-card-bg to-black/20 border border-glass-border">
-              <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                <ExternalLink className="w-4 h-4 text-text-muted" />
-                Links
-              </h3>
-              <div className="space-y-1">
-                {skill.githubRepoUrl && (
-                  <Link
-                    href={skill.githubRepoUrl}
-                    target="_blank"
-                    className="flex items-center gap-2 text-sm text-text-secondary hover:text-cognitive-cyan transition-colors p-2 -mx-2 rounded-lg hover:bg-cognitive-cyan/5"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                      </svg>
-                    </div>
-                    <span>GitHub Repository</span>
-                  </Link>
+                ) : (
+                  <p className="mt-5 text-sm leading-relaxed text-white/40">No body compatibility is declared. Verify the required capabilities manually before execution.</p>
                 )}
-              </div>
+              </article>
+
+              <article className="bg-[#080b0c] p-6 sm:p-7">
+                <div className="flex items-center gap-3">
+                  <GitBranch className="h-5 w-5 text-physical-orange" />
+                  <h3 className="text-base font-medium text-white">Dependencies</h3>
+                </div>
+                {dependencies.length > 0 ? (
+                  <ul className="mt-5 space-y-2">
+                    {dependencies.map((dependency) => <li key={dependency} className="break-words border-l border-physical-orange/35 pl-3 font-mono text-xs text-white/48">{dependency}</li>)}
+                  </ul>
+                ) : (
+                  <p className="mt-5 text-sm leading-relaxed text-white/40">No package dependencies are declared in the registry.</p>
+                )}
+              </article>
             </div>
-          </div>
+          </section>
+
+          <section aria-labelledby="docs-heading">
+            <div className="border-b border-white/10 pb-4">
+              <p className="font-mono text-[0.68rem] uppercase tracking-[0.17em] text-physical-orange">Package documentation</p>
+              <h2 id="docs-heading" className="mt-3 text-2xl font-semibold tracking-[-0.025em] text-white">README</h2>
+            </div>
+            {docs ? (
+              <div className="markdown-body markdown-body--skill mt-8 min-w-0">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
+                    let finalHref = href || "";
+                    if (href && !href.startsWith("http") && !href.startsWith("#") && skill.githubRepoUrl) {
+                      finalHref = `${skill.githubRepoUrl.replace(/\/+$/, "")}/blob/main/${href}`;
+                    }
+                    return <a href={finalHref} target="_blank" rel="noopener noreferrer">{children}</a>;
+                  },
+                  img: ({ src, alt }: { src?: string; alt?: string }) => {
+                    let finalSrc = src || "";
+                    if (src && !src.startsWith("http") && skill.githubRepoUrl) {
+                      finalSrc = `${skill.githubRepoUrl.replace(/\/+$/, "")}/raw/main/${src}`;
+                    }
+                    // eslint-disable-next-line @next/next/no-img-element
+                    return <img src={finalSrc} alt={alt || "Skill documentation"} loading="lazy" />;
+                  },
+                  }}
+                >
+                  {docs}
+                </ReactMarkdown>
+              </div>
+            ) : (
+              <div className="mt-8 border border-white/10 bg-[#080b0c] p-8 text-sm text-white/42">
+                No README has been indexed for this skill. Use the source link to inspect its behavior, parameters, and setup instructions.
+              </div>
+            )}
+          </section>
+        </div>
+
+        <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
+          <section className="industrial-panel p-5 sm:p-6">
+            <div className="flex items-center gap-3">
+              <Terminal className="h-5 w-5 text-physical-orange" />
+              <h2 className="text-base font-medium text-white">Install behavior</h2>
+            </div>
+            <p className="mt-3 text-xs leading-relaxed text-white/38">Pin the version after validating its dependencies and body contract.</p>
+            <div className="mt-5"><CopyCommand command={installCommand} tone="orange" /></div>
+          </section>
+
+          <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">
+            <div className="flex items-center gap-3">
+              <Workflow className="h-5 w-5 text-physical-orange" />
+              <h2 className="text-base font-medium text-white">Before execution</h2>
+            </div>
+            <ul className="mt-5 space-y-4 text-xs leading-relaxed text-white/42">
+              <li className="flex gap-3"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-physical-orange" /> Match required capabilities to an MCP.</li>
+              <li className="flex gap-3"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-physical-orange" /> Run the task in a sandbox or twin.</li>
+              <li className="flex gap-3"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-physical-orange" /> Inspect traces before promotion.</li>
+            </ul>
+          </section>
+
+          <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">
+            <p className="runtime-label">Package facts</p>
+            <dl className="mt-5 space-y-3 text-xs">
+              {[
+                ["Publisher", skill.authorName || "—"],
+                ["Category", skill.category || "Not declared"],
+                ["Version", skill.version || "—"],
+                ["Bodies", bodyProfiles.length ? bodyProfiles.length.toLocaleString() : "Not declared"],
+                ["Dependencies", dependencies.length.toLocaleString()],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-start justify-between gap-4 border-b border-white/[0.06] pb-3 last:border-0 last:pb-0">
+                  <dt className="text-white/28">{label}</dt>
+                  <dd className="max-w-[60%] text-right text-white/60">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            {skill.githubRepoUrl && (
+              <a href={skill.githubRepoUrl} target="_blank" rel="noopener noreferrer" className="focus-ring mt-6 flex items-center justify-between border-t border-white/[0.08] pt-4 text-sm text-white/50 transition-colors hover:text-physical-orange">
+                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> Source repository</span>
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
+            )}
+          </section>
+
+          <Link href="/hub/mcps" className="focus-ring group block border border-cognitive-cyan/25 bg-cognitive-cyan/[0.035] p-5 transition-colors hover:bg-cognitive-cyan/[0.07] sm:p-6">
+            <div className="flex items-center gap-3 text-cognitive-cyan"><Plug className="h-5 w-5" /><span className="font-mono text-[9px] uppercase tracking-[0.14em]">Required layer</span></div>
+            <h2 className="mt-4 text-base font-medium text-white">Connect a compatible body</h2>
+            <p className="mt-2 text-xs leading-relaxed text-white/38">Find an MCP that exposes this skill&apos;s required capabilities.</p>
+            <span className="mt-5 inline-flex items-center gap-2 text-sm text-cognitive-cyan">Browse MCPs <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+          </Link>
+        </aside>
+      </div>
+    </main>
+  );
+}
+
+function DetailLoading() {
+  return (
+    <main className="min-h-screen bg-background px-4 pb-20 pt-36 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <Loader2 className="h-6 w-6 animate-spin text-physical-orange" />
+        <div className="mt-8 h-12 max-w-2xl animate-pulse bg-white/[0.06]" />
+        <div className="mt-4 h-5 max-w-xl animate-pulse bg-white/[0.04]" />
+      </div>
+    </main>
+  );
+}
+
+function DetailNotFound({ id }: { id: string }) {
+  return (
+    <main className="runtime-grid min-h-screen px-4 pb-20 pt-36 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl border border-white/10 bg-[#080b0c] p-8 sm:p-12">
+        <FileCode2 className="h-8 w-8 text-physical-orange" />
+        <p className="mt-8 font-mono text-[0.68rem] uppercase tracking-[0.17em] text-physical-orange">404 / Skill not indexed</p>
+        <h1 className="mt-4 break-words text-3xl font-semibold text-white">{id}</h1>
+        <p className="mt-4 text-sm leading-relaxed text-white/45">This Skill is unavailable, unapproved, or has moved to a different registry path.</p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Link href="/hub/skills" className="focus-ring inline-flex items-center justify-center gap-2 bg-physical-orange px-5 py-3 text-sm font-semibold text-white">Browse Skills <ArrowRight className="h-4 w-4" /></Link>
+          <Link href="/skills/publish" className="focus-ring inline-flex items-center justify-center gap-2 border border-white/15 px-5 py-3 text-sm text-white/60">Publish a skill <ArrowUpRight className="h-4 w-4" /></Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

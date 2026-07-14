@@ -16,8 +16,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: McpPackagePageProps): Promise<Metadata> {
   const fullPath = params.id.join("/");
   return {
-    title: `${fullPath} | Hardware MCPs | ROSClaw`,
-    description: `${fullPath} - Hardware MCP Package on ROSClaw`,
+    title: `${fullPath} | Hardware MCP Registry | ROSClaw`,
+    description: `Inspect the tools, target hardware, source, and install contract for the ${fullPath} MCP package on ROSClaw.`,
   };
 }
 

@@ -16,8 +16,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: SkillPageProps): Promise<Metadata> {
   const fullPath = params.id.join("/");
   return {
-    title: `${fullPath} | e-Skill Market | ROSClaw`,
-    description: `${fullPath} - Robot Skill on ROSClaw`,
+    title: `${fullPath} | Skill Registry | ROSClaw`,
+    description: `Inspect the body compatibility, dependencies, source, and install contract for the ${fullPath} Skill on ROSClaw.`,
   };
 }
 

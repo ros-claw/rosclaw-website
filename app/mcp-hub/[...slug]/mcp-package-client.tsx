@@ -1,12 +1,28 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Eye, Star, Copy, Check, ChevronLeft, ExternalLink, Shield, Cpu, Terminal, GitBranch, MessageSquare, Loader2 } from "lucide-react";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  Cpu,
+  FileCode2,
+  Github,
+  Loader2,
+  ShieldCheck,
+  Terminal,
+  Wrench,
+} from "lucide-react";
+import { CopyCommand } from "@/components/hub/copy-command";
+
+interface McpTool {
+  name: string;
+  description?: string;
+}
 
 interface McpPackage {
   id: string;
@@ -15,531 +31,285 @@ interface McpPackage {
   longDescription?: string;
   readmeContent?: string;
   authorName: string;
-  author_user_id: string;
-  githubRepoUrl: string;
-  verified: boolean;
-  category: string;
-  robotType: string;
-  version: string;
-  downloadsCount: number;
-  viewsCount: number;
-  githubStars: number;
-  rating: number;
-  tags: string[];
-  tools: { name: string; description: string }[];
-  status: string;
+  githubRepoUrl?: string;
+  verified?: boolean;
+  category?: string;
+  robotType?: string;
+  version?: string;
+  viewsCount?: number;
+  githubStars?: number;
+  tags?: string[];
+  tools?: McpTool[];
+  status?: string;
 }
 
 interface McpPackageClientProps {
   id: string;
 }
 
-// Fetch GitHub data
-async function fetchGitHubData(githubUrl: string): Promise<{ stars: number; forks: number; updatedAt: string; readme: string }> {
-  try {
-    const match = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
-    if (!match) return { stars: 0, forks: 0, updatedAt: "", readme: "" };
-
-    const [, owner, repo] = match;
-
-    const [repoRes, readmeRes] = await Promise.all([
-      fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-        headers: { Accept: "application/vnd.github+json" },
-      }),
-      fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
-        headers: { Accept: "application/vnd.github+json" },
-      }),
-    ]);
-
-    let stars = 0;
-    let forks = 0;
-    let updatedAt = "";
-
-    if (repoRes.ok) {
-      const data = await repoRes.json();
-      stars = data.stargazers_count || 0;
-      forks = data.forks_count || 0;
-      updatedAt = data.updated_at || "";
-    }
-
-    let readme = "";
-    if (readmeRes.ok) {
-      const data = await readmeRes.json();
-      if (data.content) {
-        try {
-          const base64Content = data.content.replace(/\n/g, "");
-          const binaryString = atob(base64Content);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-          readme = new TextDecoder("utf-8").decode(bytes);
-        } catch {
-          readme = "";
-        }
-      }
-    }
-
-    return { stars, forks, updatedAt, readme };
-  } catch {
-    return { stars: 0, forks: 0, updatedAt: "", readme: "" };
-  }
+function encodedPath(id: string) {
+  return id.split("/").map(encodeURIComponent).join("/");
 }
 
-// Fetch package from API
 async function fetchPackage(id: string): Promise<McpPackage | null> {
   try {
-    const res = await fetch(`/api/mcp-packages/${id}`);
-    if (!res.ok) return null;
-    return await res.json();
+    const response = await fetch(`/api/mcp-packages/${encodedPath(id)}`);
+    if (!response.ok) return null;
+    return response.json();
   } catch {
     return null;
   }
 }
 
-// Increment view count
-async function incrementViews(id: string): Promise<void> {
+async function incrementViews(id: string) {
   try {
-    await fetch(`/api/mcp-packages/${id}?action=view`, {
-      method: "POST",
-    });
+    await fetch(`/api/mcp-packages/${encodedPath(id)}?action=view`, { method: "POST" });
   } catch {
-    // Silently fail - views are not critical
+    // A view counter must never block package content.
   }
 }
 
+function formatNumber(value = 0) {
+  return new Intl.NumberFormat("en", { notation: value >= 1_000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
+}
+
 export function McpPackageClient({ id }: McpPackageClientProps) {
-  const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"readme" | "tools" | "install">("readme");
   const [packageData, setPackageData] = useState<McpPackage | null>(null);
-  const [githubData, setGithubData] = useState<{ stars: number; forks: number; updatedAt: string; readme: string } | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
+    let active = true;
+    setLoading(true);
+    setNotFound(false);
 
-    async function loadData() {
-      setIsLoading(true);
-
-      // Fetch package from API
-      const pkg = await fetchPackage(id);
-
-      if (!isMounted) return;
-
+    fetchPackage(id).then((pkg) => {
+      if (!active) return;
       if (!pkg) {
         setNotFound(true);
-        setIsLoading(false);
-        return;
+      } else {
+        setPackageData(pkg);
+        incrementViews(id);
       }
+      setLoading(false);
+    });
 
-      setPackageData(pkg);
-
-      // Increment view count when package is viewed
-      incrementViews(id);
-
-      // Fetch GitHub data (for README fallback and real-time stats)
-      if (pkg.githubRepoUrl) {
-        const ghData = await fetchGitHubData(pkg.githubRepoUrl);
-        if (isMounted) {
-          setGithubData(ghData);
-        }
-      }
-
-      // Use cached readme_content if available, otherwise use GitHub data
-      if (isMounted) {
-        const cachedReadme = pkg.readmeContent;
-        const githubReadme = pkg.longDescription;
-
-        // Priority: cached readme > GitHub readme > empty
-        if (!cachedReadme && !githubReadme && pkg.githubRepoUrl) {
-          // If no cached data, trigger a background sync
-          console.log("No cached README, consider running sync script");
-        }
-      }
-
-      if (isMounted) {
-        setIsLoading(false);
-      }
-    }
-
-    loadData();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => { active = false; };
   }, [id]);
 
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  if (loading) return <DetailLoading />;
+  if (notFound || !packageData) return <DetailNotFound id={id} />;
 
-  function formatNumber(num: number): string {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-    if (num >= 1000) return (num / 1000).toFixed(1) + "k";
-    return num.toString();
-  }
-
-  function formatDate(dateStr: string): string {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background pt-24 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-cognitive-cyan" />
-      </div>
-    );
-  }
-
-  if (notFound || !packageData) {
-    return (
-      <div className="min-h-screen bg-background pt-24">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h1 className="text-2xl font-bold text-foreground">Package Not Found</h1>
-          <p className="text-text-muted mt-2">The package &quot;{id}&quot; does not exist.</p>
-          <Link href="/hub/mcps" className="inline-flex items-center gap-2 mt-4 text-cognitive-cyan hover:underline">
-            <ChevronLeft className="w-4 h-4" />
-            Back to Hardware MCPs
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const installUrl = `https://rosclaw.io/mcp-hub/${id}`;
+  const tools = packageData.tools || [];
+  const tags = packageData.tags || [];
+  const docs = packageData.readmeContent || packageData.longDescription || "";
   const installCommand = `rosclaw install mcp ${packageData.name}`;
-  // Use cached data from DB first, fallback to real-time GitHub fetch if not available
-  const stars = packageData.githubStars || githubData?.stars || 0;
-  // Priority: cached readme_content > GitHub API readme > long_description > description
-  const readmeContent = packageData.readmeContent || githubData?.readme || packageData.longDescription || packageData.description;
-  const authorUrl = `https://github.com/${packageData.name.split('/')[0]}`;
-  const isOfficial = packageData.verified || false;
+  const verified = Boolean(packageData.verified || packageData.authorName === "ros-claw" || packageData.name.startsWith("ros-claw/"));
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Link
-            href="/hub/mcps"
-            className="inline-flex items-center gap-1 text-sm text-text-muted hover:text-foreground transition-colors mb-4"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Back to Hardware MCPs
+    <main className="min-h-screen bg-background pb-20 pt-24">
+      <header className="runtime-grid border-b border-white/[0.08] px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <Link href="/hub/mcps" className="focus-ring inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white">
+            <ArrowLeft className="h-4 w-4" /> Hardware MCPs
           </Link>
 
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-xl bg-cognitive-cyan/10 flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl">🦾</span>
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-cognitive-cyan">Physical interface</span>
+                {verified && (
+                  <span className="inline-flex items-center gap-1.5 border border-cognitive-cyan/25 bg-cognitive-cyan/[0.05] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-cognitive-cyan">
+                    <CheckCircle2 className="h-3 w-3" /> Verified
+                  </span>
+                )}
               </div>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground font-mono">{packageData.name}</h1>
-                  {isOfficial ? (
-                    <span className="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-medium">
-                      Official
-                    </span>
-                  ) : (
-                    <span className="px-2 py-0.5 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-xs font-medium">
-                      Community
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <code className="text-sm text-text-muted">{packageData.name}</code>
-                  <span className="text-text-muted">•</span>
-                  <Link
-                    href={authorUrl}
-                    target="_blank"
-                    className="text-cognitive-cyan hover:underline"
-                  >
-                    {packageData.authorName}
-                  </Link>
-                  <span className="text-text-muted">•</span>
-                  <span className="text-text-muted">v{packageData.version}</span>
-                </div>
+              <h1 className="mt-4 break-words text-balance font-mono text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">{packageData.name}</h1>
+              <p className="mt-5 max-w-3xl text-pretty text-base leading-relaxed text-white/52 md:text-lg">{packageData.description}</p>
+              <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/35">
+                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> {packageData.authorName}</span>
+                <span className="font-mono text-xs">v{packageData.version || "—"}</span>
+                {packageData.category && <span>{packageData.category}</span>}
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-500" title="GitHub Stars">
-                <Star className="w-4 h-4 fill-current" />
-                <span className="font-medium">{formatNumber(stars)}</span>
-              </div>
-              <div className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-glass-bg text-text-secondary" title="Views">
-                <Eye className="w-4 h-4" />
-                <span>{formatNumber(packageData.viewsCount)}</span>
-              </div>
+            <div className="grid grid-cols-3 border border-white/10 bg-[#050708] lg:min-w-[330px]">
+              {[
+                ["Tools", tools.length.toLocaleString()],
+                ["Stars", formatNumber(packageData.githubStars)],
+                ["Views", formatNumber(packageData.viewsCount)],
+              ].map(([label, value], index) => (
+                <div key={label} className={`p-4 text-center ${index < 2 ? "border-r border-white/10" : ""}`}>
+                  <div className="runtime-label">{label}</div>
+                  <div className="mt-2 font-mono text-base text-white">{value}</div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <p className="text-text-secondary mt-4 max-w-3xl">{packageData.description}</p>
-
-          {/* Tags */}
-          {packageData.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {packageData.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-1 rounded-full bg-glass-bg text-text-secondary text-sm"
-                >
-                  {tag}
-                </span>
-              ))}
+          {tags.length > 0 && (
+            <div className="mt-8 flex flex-wrap gap-2">
+              {tags.map((tag) => <span key={tag} className="border border-white/10 bg-white/[0.025] px-2.5 py-1 text-xs text-white/38">{tag}</span>)}
             </div>
           )}
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-5 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-4">
-            {/* Tabs */}
-            <div className="flex gap-4 border-b border-glass-border mb-6">
-              <button
-                onClick={() => setActiveTab("readme")}
-                className={`pb-3 text-sm font-medium transition-colors ${
-                  activeTab === "readme"
-                    ? "text-cognitive-cyan border-b-2 border-cognitive-cyan"
-                    : "text-text-muted hover:text-foreground"
-                }`}
-              >
-                README
-              </button>
-              <button
-                onClick={() => setActiveTab("tools")}
-                className={`pb-3 text-sm font-medium transition-colors ${
-                  activeTab === "tools"
-                    ? "text-cognitive-cyan border-b-2 border-cognitive-cyan"
-                    : "text-text-muted hover:text-foreground"
-                }`}
-              >
-                MCP Tools ({packageData.tools.length})
-              </button>
-              <button
-                onClick={() => setActiveTab("install")}
-                className={`pb-3 text-sm font-medium transition-colors ${
-                  activeTab === "install"
-                    ? "text-cognitive-cyan border-b-2 border-cognitive-cyan"
-                    : "text-text-muted hover:text-foreground"
-                }`}
-              >
-                Install
-              </button>
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_330px] lg:px-8 lg:py-14">
+        <div className="min-w-0 space-y-14">
+          <section aria-labelledby="contract-heading">
+            <div className="flex items-end justify-between gap-4 border-b border-white/10 pb-4">
+              <div>
+                <p className="section-kicker">Interface contract</p>
+                <h2 id="contract-heading" className="mt-3 text-2xl font-semibold tracking-[-0.025em] text-white">What the agent can call</h2>
+              </div>
+              <span className="hidden font-mono text-[9px] uppercase tracking-[0.14em] text-white/25 sm:block">{tools.length} typed tools</span>
             </div>
 
-            {/* Tab Content */}
-            {activeTab === "readme" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="markdown-body"
-              >
-                {readmeContent ? (
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    rehypePlugins={[rehypeRaw]}
-                    components={{
-                      a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
-                        // Convert relative links to GitHub absolute URLs
-                        let finalHref = href || '';
-                        if (href && !href.startsWith('http') && !href.startsWith('#') && packageData?.githubRepoUrl) {
-                          const baseUrl = packageData.githubRepoUrl.replace(/\/+$/, '');
-                          finalHref = `${baseUrl}/blob/main/${href}`;
-                        }
-                        return (
-                          <a href={finalHref} target="_blank" rel="noopener noreferrer" className="text-cognitive-cyan hover:underline">
-                            {children}
-                          </a>
-                        );
-                      },
-                      img: ({ src, alt }: { src?: string; alt?: string }) => {
-                        // Convert relative image paths to GitHub raw URLs
-                        let finalSrc = src || '';
-                        if (src && !src.startsWith('http') && packageData?.githubRepoUrl) {
-                          const baseUrl = packageData.githubRepoUrl.replace(/\/+$/, '');
-                          finalSrc = `${baseUrl}/raw/main/${src}`;
-                        }
-                        return <img src={finalSrc} alt={alt} className="max-w-full rounded-lg my-4" />;
-                      }
-                    }}
-                  >
-                    {readmeContent}
-                  </ReactMarkdown>
-                ) : (
-                  <div className="text-text-muted">No README available.</div>
-                )}
-              </motion.div>
-            )}
-
-            {activeTab === "tools" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-3"
-              >
-                {packageData.tools.map((tool) => (
-                  <div
-                    key={tool.name}
-                    className="p-4 rounded-lg bg-card-bg border border-glass-border hover:border-cognitive-cyan/30 transition-colors"
-                  >
+            {tools.length > 0 ? (
+              <div className="grid gap-px bg-white/10 sm:grid-cols-2">
+                {tools.map((tool, index) => (
+                  <article key={`${tool.name}-${index}`} className="bg-[#080b0c] p-5 sm:p-6">
                     <div className="flex items-start gap-3">
-                      <Terminal className="w-5 h-5 text-cognitive-cyan mt-0.5" />
-                      <div>
-                        <code className="text-sm font-semibold text-cognitive-cyan">{tool.name}</code>
-                        <p className="text-sm text-text-secondary mt-1">{tool.description}</p>
+                      <span className="mt-0.5 font-mono text-[9px] text-cognitive-cyan">{String(index + 1).padStart(2, "0")}</span>
+                      <div className="min-w-0">
+                        <h3 className="break-words font-mono text-sm font-medium text-white">{tool.name}</h3>
+                        <p className="mt-2 text-sm leading-relaxed text-white/42">{tool.description || "No tool description declared."}</p>
                       </div>
                     </div>
-                  </div>
+                  </article>
                 ))}
-                {packageData.tools.length === 0 && (
-                  <div className="text-text-muted">No tools defined for this package.</div>
-                )}
-              </motion.div>
+              </div>
+            ) : (
+              <div className="border-x border-b border-white/10 bg-[#080b0c] p-8">
+                <Wrench className="h-5 w-5 text-cognitive-cyan" />
+                <h3 className="mt-4 text-base font-medium text-white">No tool schema indexed</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/40">Review the source repository before install; this package has not declared callable tools in the registry.</p>
+              </div>
             )}
+          </section>
 
-            {activeTab === "install" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-6"
-              >
-                {/* Main Install Command - URL based */}
-                <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <Terminal className="w-4 h-4 text-cognitive-cyan" />
-                    Install from ROSClaw Registry
-                  </h3>
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
-                    <code className="flex-1 text-text-secondary">{installCommand}</code>
-                    <button
-                      onClick={() => handleCopy(installCommand)}
-                      className="p-1.5 rounded hover:bg-white/10 transition-colors"
-                      title="Copy to clipboard"
-                    >
-                      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Natural Language */}
-                <div className="p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
-                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
-                    <MessageSquare className="w-4 h-4 text-cognitive-cyan" />
-                    Natural Language
-                  </h3>
-                  <p className="text-sm text-text-secondary mb-2">
-                    Simply tell your agent:
-                  </p>
-                  <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40">
-                    <code className="flex-1 text-sm text-cognitive-cyan">
-                      Install the https://rosclaw.io/mcp-hub/{packageData.name} MCP package
-                    </code>
-                    <button
-                      onClick={() => handleCopy(`Install the https://rosclaw.io/mcp-hub/${packageData.name} MCP package`)}
-                      className="p-1.5 rounded hover:bg-white/10 transition-colors"
-                      title="Copy to clipboard"
-                    >
-                      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6 lg:col-span-1 min-w-[220px]">
-            {/* Install Box */}
-            <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Install</h3>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-black/40 font-mono text-sm">
-                  <code className="flex-1 text-text-secondary text-xs">{installCommand}</code>
-                  <button
-                    onClick={() => handleCopy(installCommand)}
-                    className="p-1.5 rounded hover:bg-white/10 transition-colors"
-                    title="Copy to clipboard"
-                  >
-                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-text-muted" />}
-                  </button>
-                </div>
-              </div>
+          <section aria-labelledby="docs-heading">
+            <div className="border-b border-white/10 pb-4">
+              <p className="section-kicker">Package documentation</p>
+              <h2 id="docs-heading" className="mt-3 text-2xl font-semibold tracking-[-0.025em] text-white">README</h2>
             </div>
-
-            {/* GitHub Stats */}
-            <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-              <h3 className="text-sm font-semibold text-foreground mb-3">GitHub Stats</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <Star className="w-4 h-4 text-yellow-500" />
-                  <span className="text-text-secondary">{formatNumber(stars)} stars</span>
-                </div>
-                {githubData && githubData.forks > 0 && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <GitBranch className="w-4 h-4 text-text-muted" />
-                    <span className="text-text-secondary">{formatNumber(githubData.forks)} forks</span>
-                  </div>
-                )}
-                {githubData && githubData.updatedAt && (
-                  <div className="text-xs text-text-muted">
-                    Last updated: {formatDate(githubData.updatedAt)}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Requirements */}
-            <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Info</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <Cpu className="w-4 h-4 text-text-muted" />
-                  <span className="text-text-secondary">{packageData.robotType}</span>
-                </div>
-                {githubData?.updatedAt && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Terminal className="w-4 h-4 text-text-muted" />
-                    <span className="text-text-secondary">Updated {formatDate(githubData.updatedAt)}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2 text-sm">
-                  <Shield className={`w-4 h-4 ${isOfficial ? "text-green-500" : "text-cognitive-cyan"}`} />
-                  <span className={isOfficial ? "text-green-500" : "text-cognitive-cyan"}>
-                    {isOfficial ? "Official Package" : "Community Package"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Links */}
-            <div className="p-5 rounded-xl bg-card-bg border border-glass-border">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Links</h3>
-              <div className="space-y-2">
-                <Link
-                  href={packageData.githubRepoUrl}
-                  target="_blank"
-                  className="flex items-center gap-2 text-sm text-text-secondary hover:text-foreground transition-colors"
+            {docs ? (
+              <div className="markdown-body mt-8 min-w-0">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
+                    let finalHref = href || "";
+                    if (href && !href.startsWith("http") && !href.startsWith("#") && packageData.githubRepoUrl) {
+                      finalHref = `${packageData.githubRepoUrl.replace(/\/+$/, "")}/blob/main/${href}`;
+                    }
+                    return <a href={finalHref} target="_blank" rel="noopener noreferrer">{children}</a>;
+                  },
+                  img: ({ src, alt }: { src?: string; alt?: string }) => {
+                    let finalSrc = src || "";
+                    if (src && !src.startsWith("http") && packageData.githubRepoUrl) {
+                      finalSrc = `${packageData.githubRepoUrl.replace(/\/+$/, "")}/raw/main/${src}`;
+                    }
+                    // eslint-disable-next-line @next/next/no-img-element
+                    return <img src={finalSrc} alt={alt || "Package documentation"} loading="lazy" />;
+                  },
+                  }}
                 >
-                  <GitBranch className="w-4 h-4" />
-                  GitHub Repository
-                </Link>
+                  {docs}
+                </ReactMarkdown>
               </div>
+            ) : (
+              <div className="mt-8 border border-white/10 bg-[#080b0c] p-8 text-sm text-white/42">
+                No README has been indexed for this package. Use the source link to inspect its implementation and setup instructions.
+              </div>
+            )}
+          </section>
+        </div>
+
+        <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
+          <section className="industrial-panel p-5 sm:p-6">
+            <div className="flex items-center gap-3">
+              <Terminal className="h-5 w-5 text-cognitive-cyan" />
+              <h2 className="text-base font-medium text-white">Install into runtime</h2>
             </div>
-          </div>
+            <p className="mt-3 text-xs leading-relaxed text-white/38">Pin the package version in production after validating its interface contract.</p>
+            <div className="mt-5"><CopyCommand command={installCommand} /></div>
+          </section>
+
+          <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="h-5 w-5 text-cognitive-cyan" />
+              <h2 className="text-base font-medium text-white">Execution boundary</h2>
+            </div>
+            <ul className="mt-5 space-y-4 text-xs leading-relaxed text-white/42">
+              <li className="flex gap-3"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-cognitive-cyan" /> Inspect tool inputs and outputs.</li>
+              <li className="flex gap-3"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-cognitive-cyan" /> Test against a sandbox or twin first.</li>
+              <li className="flex gap-3"><CheckCircle2 className="mt-0.5 h-3.5 w-3.5 flex-none text-cognitive-cyan" /> Grant the smallest hardware scope.</li>
+            </ul>
+          </section>
+
+          <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">
+            <p className="runtime-label">Package facts</p>
+            <dl className="mt-5 space-y-3 text-xs">
+              {[
+                ["Publisher", packageData.authorName || "—"],
+                ["Target", packageData.robotType || "Not declared"],
+                ["Category", packageData.category || "Not declared"],
+                ["Version", packageData.version || "—"],
+                ["Status", verified ? "Verified" : "Community"],
+              ].map(([label, value]) => (
+                <div key={label} className="flex items-start justify-between gap-4 border-b border-white/[0.06] pb-3 last:border-0 last:pb-0">
+                  <dt className="text-white/28">{label}</dt>
+                  <dd className="max-w-[60%] text-right text-white/60">{value}</dd>
+                </div>
+              ))}
+            </dl>
+            {packageData.githubRepoUrl && (
+              <a href={packageData.githubRepoUrl} target="_blank" rel="noopener noreferrer" className="focus-ring mt-6 flex items-center justify-between border-t border-white/[0.08] pt-4 text-sm text-white/50 transition-colors hover:text-cognitive-cyan">
+                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> Source repository</span>
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
+            )}
+          </section>
+
+          <Link href="/hub/skills" className="focus-ring group block border border-physical-orange/25 bg-physical-orange/[0.035] p-5 transition-colors hover:bg-physical-orange/[0.07] sm:p-6">
+            <div className="flex items-center gap-3 text-physical-orange"><Cpu className="h-5 w-5" /><span className="font-mono text-[9px] uppercase tracking-[0.14em]">Next layer</span></div>
+            <h2 className="mt-4 text-base font-medium text-white">Find a Skill for this body</h2>
+            <p className="mt-2 text-xs leading-relaxed text-white/38">Combine physical access with a versioned task policy.</p>
+            <span className="mt-5 inline-flex items-center gap-2 text-sm text-physical-orange">Browse Skills <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></span>
+          </Link>
+        </aside>
+      </div>
+    </main>
+  );
+}
+
+function DetailLoading() {
+  return (
+    <main className="min-h-screen bg-background px-4 pb-20 pt-36 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <Loader2 className="h-6 w-6 animate-spin text-cognitive-cyan" />
+        <div className="mt-8 h-12 max-w-2xl animate-pulse bg-white/[0.06]" />
+        <div className="mt-4 h-5 max-w-xl animate-pulse bg-white/[0.04]" />
+      </div>
+    </main>
+  );
+}
+
+function DetailNotFound({ id }: { id: string }) {
+  return (
+    <main className="runtime-grid min-h-screen px-4 pb-20 pt-36 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl border border-white/10 bg-[#080b0c] p-8 sm:p-12">
+        <FileCode2 className="h-8 w-8 text-cognitive-cyan" />
+        <p className="section-kicker mt-8">404 / Interface not indexed</p>
+        <h1 className="mt-4 break-words text-3xl font-semibold text-white">{id}</h1>
+        <p className="mt-4 text-sm leading-relaxed text-white/45">This MCP package is unavailable, unapproved, or has moved to a different registry path.</p>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Link href="/hub/mcps" className="focus-ring inline-flex items-center justify-center gap-2 bg-cognitive-cyan px-5 py-3 text-sm font-semibold text-[#021012]">Browse Hardware MCPs <ArrowRight className="h-4 w-4" /></Link>
+          <Link href="/mcp-hub/publish" className="focus-ring inline-flex items-center justify-center gap-2 border border-white/15 px-5 py-3 text-sm text-white/60">Publish an interface <ArrowUpRight className="h-4 w-4" /></Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

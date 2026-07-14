@@ -1,36 +1,26 @@
 import Link from "next/link";
-import { ArrowUpRight, Box, Boxes, Plug } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Boxes, Cpu, Plug } from "lucide-react";
 
-const featuredEntries = [
-  {
-    icon: Box,
-    type: "Embodiment registry",
-    title: "e-URDF Zoo",
-    description: "Body definitions with joints, sensors, capabilities, simulation metadata, and safety limits.",
-    version: "v1.0.0",
-    mode: "local-first",
-    status: "Experimental",
-    href: "/hub",
-  },
+const primaryEntries = [
   {
     icon: Plug,
-    type: "Hardware interface",
-    title: "Hardware MCP Hub",
-    description: "Agent-facing adapters for robot bodies, sensors, tools, and physical infrastructure.",
-    version: "v0.6.0",
-    mode: "sandbox required",
-    status: "Experimental",
+    index: "01 / Connect",
+    type: "Hardware interface registry",
+    title: "Hardware MCPs",
+    description: "Typed tools that let agents inspect and control robot bodies, sensors, lab devices, and physical infrastructure.",
+    details: ["Tool schemas", "Body scopes", "Sandbox stubs"],
     href: "/hub/mcps",
+    accent: "cyan" as const,
   },
   {
-    icon: Boxes,
-    type: "Validation environment",
-    title: "Digital Twin Hub",
-    description: "Simulation worlds, replay environments, robot assets, and regression scenes.",
-    version: "v0.4.0",
-    mode: "local-first",
-    status: "Experimental",
-    href: "/hub/twins",
+    icon: Cpu,
+    index: "02 / Behave",
+    type: "Behavior package registry",
+    title: "Skills",
+    description: "Versioned task policies with recovery strategies, parameters, dependencies, and body compatibility.",
+    details: ["Task policy", "Recovery", "Compatibility"],
+    href: "/hub/skills",
+    accent: "orange" as const,
   },
 ] as const;
 
@@ -40,52 +30,53 @@ export function AssetHubSection() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
           <div>
-            <p className="section-kicker">05 / Physical-AI asset hub</p>
+            <p className="section-kicker">05 / Distribution layer</p>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl md:text-5xl">
-              Installable context for real bodies.
+              Connect a body. Install a behavior.
             </h2>
           </div>
           <div className="lg:justify-self-end">
             <p className="max-w-2xl text-pretty text-base leading-relaxed text-white/55 lg:text-lg">
-              The Hub is a versioned registry, not a category moodboard. These entries lead to the assets currently represented in the product surface.
+              The Hub has two primary artifacts: MCPs expose physical capabilities; Skills turn those capabilities into repeatable work.
             </p>
             <Link href="/hub" className="focus-ring mt-4 inline-flex items-center gap-2 text-sm text-cognitive-cyan transition-colors hover:text-white">
-              Browse the full Hub <ArrowUpRight className="h-3.5 w-3.5" />
+              Open the distribution Hub <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </div>
 
-        <div className="mt-12 grid border border-white/10 bg-[#050708] lg:grid-cols-3">
-          {featuredEntries.map(({ icon: Icon, type, title, description, version, mode, status, href }, index) => (
-            <Link
-              key={title}
-              href={href}
-              className={`focus-ring group relative flex min-h-[310px] flex-col p-6 transition-colors hover:bg-white/[0.035] sm:p-8 ${index < featuredEntries.length - 1 ? "border-b border-white/10 lg:border-b-0 lg:border-r" : ""}`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex h-11 w-11 items-center justify-center border border-cognitive-cyan/25 bg-cognitive-cyan/[0.05] text-cognitive-cyan">
-                  <Icon className="h-5 w-5" />
+        <div className="mt-12 grid border border-white/10 bg-[#050708] lg:grid-cols-2">
+          {primaryEntries.map(({ icon: Icon, index, type, title, description, details, href, accent }, itemIndex) => {
+            const isCyan = accent === "cyan";
+            return (
+              <Link
+                key={title}
+                href={href}
+                className={`focus-ring group relative flex min-h-[350px] flex-col overflow-hidden p-7 transition-colors hover:bg-white/[0.03] sm:p-9 ${itemIndex === 0 ? "border-b border-white/10 lg:border-b-0 lg:border-r" : ""}`}
+              >
+                <span className={`absolute inset-x-0 top-0 h-px ${isCyan ? "bg-cognitive-cyan" : "bg-physical-orange"}`} />
+                <div className="flex items-start justify-between gap-4">
+                  <div className={`flex h-11 w-11 items-center justify-center border ${isCyan ? "border-cognitive-cyan/30 bg-cognitive-cyan/[0.05] text-cognitive-cyan" : "border-physical-orange/30 bg-physical-orange/[0.05] text-physical-orange"}`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className={`font-mono text-[9px] uppercase tracking-[0.15em] ${isCyan ? "text-cognitive-cyan" : "text-physical-orange"}`}>{index}</span>
                 </div>
-                <span className="border border-amber-300/25 bg-amber-300/[0.05] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-amber-300">{status}</span>
-              </div>
-              <p className="mt-7 font-mono text-[9px] uppercase tracking-[0.16em] text-white/30">{type}</p>
-              <h3 className="mt-2 flex items-center gap-2 text-xl font-semibold text-white group-hover:text-cognitive-cyan">
-                {title}
-                <ArrowUpRight className="h-4 w-4 opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-white/[0.48]">{description}</p>
-              <dl className="mt-auto grid grid-cols-2 gap-4 border-t border-white/[0.08] pt-5 font-mono text-[9px] uppercase tracking-wider">
-                <div>
-                  <dt className="text-white/25">Version</dt>
-                  <dd className="mt-1 text-white/65">{version}</dd>
+                <p className="mt-8 font-mono text-[9px] uppercase tracking-[0.16em] text-white/30">{type}</p>
+                <h3 className={`mt-2 flex items-center gap-2 text-2xl font-semibold text-white transition-colors ${isCyan ? "group-hover:text-cognitive-cyan" : "group-hover:text-physical-orange"}`}>
+                  {title} <ArrowRight className="h-4 w-4" />
+                </h3>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/[0.48]">{description}</p>
+                <div className="mt-auto grid grid-cols-3 border-t border-white/[0.08] pt-5 font-mono text-[8px] uppercase tracking-[0.12em] text-white/30 sm:text-[9px]">
+                  {details.map((detail) => <span key={detail}>{detail}</span>)}
                 </div>
-                <div>
-                  <dt className="text-white/25">Runtime mode</dt>
-                  <dd className="mt-1 text-physical-orange">{mode}</dd>
-                </div>
-              </dl>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-col gap-3 border-x border-b border-white/10 px-5 py-4 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30 sm:flex-row sm:items-center sm:justify-between">
+          <span className="inline-flex items-center gap-2"><Boxes className="h-3.5 w-3.5" /> Supporting context</span>
+          <span>e-URDF · Digital Twins · Cognitive Wiki</span>
         </div>
       </div>
     </section>

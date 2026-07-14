@@ -191,6 +191,14 @@ textarea:focus-visible {
   text-wrap: pretty;
 }
 
+.hub-filter-row {
+  scrollbar-width: none;
+}
+
+.hub-filter-row::-webkit-scrollbar {
+  display: none;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -214,6 +222,7 @@ textarea:focus-visible {
   color: var(--foreground);
   font-size: 16px;
   line-height: 1.6;
+  overflow-wrap: anywhere;
 }
 
 /* Headings */
@@ -224,6 +233,25 @@ textarea:focus-visible {
   padding-bottom: 0.3em;
   border-bottom: 1px solid var(--glass-border);
   color: var(--foreground);
+}
+
+.markdown-body > h1:first-child,
+.markdown-body > h2:first-child,
+.markdown-body > h3:first-child {
+  margin-top: 0;
+}
+
+.markdown-body--skill a,
+.markdown-body--skill code {
+  color: var(--physical-orange);
+}
+
+.markdown-body--skill blockquote {
+  border-left-color: var(--physical-orange);
+}
+
+.markdown-body--skill input[type="checkbox"] {
+  accent-color: var(--physical-orange);
 }
 
 .markdown-body h2 {

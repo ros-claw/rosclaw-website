@@ -1,30 +1,23 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import {
-  Terminal,
   ArrowLeft,
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  ChevronDown,
+  Cpu,
+  Eye,
+  Github,
+  Layers3,
   Plus,
   Search,
+  ShieldCheck,
   Star,
-  Github,
-  Cpu,
-  Layers,
-  Zap,
-  ChevronRight,
-  ExternalLink,
-  TerminalSquare,
-  Award,
-  TrendingUp,
-  Box,
-  HardDrive,
-  Eye,
-  Navigation,
-  Settings,
-  Sparkles,
-  CheckCircle2,
+  Terminal,
+  Wrench,
 } from "lucide-react";
 
 interface McpPackage {
@@ -32,478 +25,307 @@ interface McpPackage {
   name: string;
   description: string;
   authorName: string;
-  githubRepoUrl: string;
+  githubRepoUrl?: string;
   verified: boolean;
-  category: string;
-  robotType: string;
-  version: string;
-  githubStars: number;
-  githubForks: number;
-  tags: string[];
-  tools: { name: string; description: string }[];
-  createdAt: string;
+  category?: string;
+  robotType?: string;
+  version?: string;
+  githubStars?: number;
+  viewsCount?: number;
+  tags?: string[];
+  tools?: { name: string; description: string }[];
 }
 
-const sidebarCategories = [
-  { id: "all", name: "All Hardware", icon: Layers, count: null },
-  { id: "official", name: "Official", icon: Award, count: null, special: true },
-  { id: "manipulation", name: "Manipulation", icon: Box, count: null },
-  { id: "humanoid", name: "Humanoids", icon: Zap, count: null },
-  { id: "mobile", name: "Mobile Robots", icon: Navigation, count: null },
-  { id: "vision", name: "Vision & Cameras", icon: Eye, count: null },
-  { id: "sensors", name: "Sensors", icon: HardDrive, count: null },
-  { id: "simulation", name: "Simulation", icon: Cpu, count: null },
-];
+const PAGE_SIZE = 24;
 
-const sortOptions = [
-  { id: "recommended", name: "Recommended", icon: Sparkles },
-  { id: "stars", name: "Most Stars", icon: Star },
-  { id: "newest", name: "Recently Added", icon: TrendingUp },
-];
+const categoryDefinitions = [
+  { id: "all", label: "All interfaces", keywords: [] },
+  { id: "official", label: "Verified", keywords: [] },
+  { id: "robots", label: "Robot bodies", keywords: ["robot", "humanoid", "mobile", "arm", "manipulation", "unitree", "ros2"] },
+  { id: "sensing", label: "Sensors & vision", keywords: ["sensor", "vision", "camera", "lidar", "realsense", "imu"] },
+  { id: "industrial", label: "Industrial & lab", keywords: ["plc", "industrial", "lab", "modbus", "canopen", "beckhoff", "device"] },
+  { id: "simulation", label: "Simulation", keywords: ["simulation", "simulator", "gazebo", "isaac", "mujoco", "digital twin"] },
+] as const;
 
-function PackageCard({ pkg, index, featured = false }: { pkg: McpPackage; index: number; featured?: boolean }) {
-  const toolsCount = pkg.tools?.length || 0;
-  const isOfficial = pkg.authorName === "ros-claw" || pkg.name.startsWith("ros-claw/");
+function isOfficial(pkg: McpPackage) {
+  return pkg.verified || pkg.authorName === "ros-claw" || pkg.name.startsWith("ros-claw/");
+}
+
+function searchableText(pkg: McpPackage) {
+  return [pkg.name, pkg.description, pkg.authorName, pkg.category, pkg.robotType, ...(pkg.tags || []), ...(pkg.tools || []).map((tool) => tool.name)]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function matchesCategory(pkg: McpPackage, categoryId: string) {
+  if (categoryId === "all") return true;
+  if (categoryId === "official") return isOfficial(pkg);
+  const category = categoryDefinitions.find((item) => item.id === categoryId);
+  if (!category) return true;
+  const text = searchableText(pkg);
+  return category.keywords.some((keyword) => text.includes(keyword));
+}
+
+function PackageCard({ pkg, number }: { pkg: McpPackage; number: number }) {
+  const official = isOfficial(pkg);
+  const tools = pkg.tools || [];
+  const tags = pkg.tags || [];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      whileHover={{ y: -4, scale: 1.01 }}
-      className="group relative"
+    <Link
+      href={`/hub/mcps/${pkg.name}`}
+      className="focus-ring group flex min-h-[320px] min-w-0 flex-col overflow-hidden border border-white/10 bg-[#080b0c] p-6 transition-colors hover:border-cognitive-cyan/40 hover:bg-cognitive-cyan/[0.025]"
     >
-      <Link href={`/hub/mcps/${pkg.name}`}>
-        <div className={`relative bg-gradient-to-br backdrop-blur-md rounded-2xl border overflow-hidden transition-all duration-300 ${
-          featured
-            ? "from-cognitive-cyan/[0.12] to-cognitive-cyan/[0.02] border-cognitive-cyan/30 hover:border-cognitive-cyan/50"
-            : "from-white/[0.08] to-white/[0.02] border-white/10 hover:border-cognitive-cyan/30"
-        }`}>
-          {/* Top gradient line */}
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cognitive-cyan/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="flex items-start justify-between gap-4">
+        <span className="font-mono text-[9px] tracking-[0.16em] text-white/25">MCP-{String(number).padStart(3, "0")}</span>
+        {official && (
+          <span className="inline-flex items-center gap-1.5 border border-cognitive-cyan/25 bg-cognitive-cyan/[0.04] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-cognitive-cyan">
+            <CheckCircle2 className="h-3 w-3" /> Verified
+          </span>
+        )}
+      </div>
 
-          {/* Official badge */}
-          {isOfficial && (
-            <div className="absolute top-0 right-0 px-3 py-1 bg-gradient-to-l from-cognitive-cyan/20 to-cognitive-cyan/5 border-b border-l border-cognitive-cyan/30 rounded-bl-lg">
-              <span className="flex items-center gap-1 text-xs font-medium text-cognitive-cyan">
-                <CheckCircle2 className="w-3 h-3" />
-                Official
-              </span>
-            </div>
-          )}
-
-          <div className="p-6">
-            {/* Header */}
-            <div className="flex items-start gap-4 mb-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all ${
-                featured
-                  ? "bg-gradient-to-br from-cognitive-cyan/30 to-cognitive-cyan/10 border border-cognitive-cyan/30"
-                  : "bg-gradient-to-br from-cognitive-cyan/20 to-cognitive-cyan/5 border border-cognitive-cyan/20 group-hover:from-cognitive-cyan/30 group-hover:to-cognitive-cyan/10"
-              }`}>
-                <Terminal className="w-6 h-6 text-cognitive-cyan" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate">
-                    {pkg.name}
-                  </h3>
-                  {pkg.verified && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium border border-green-500/20">
-                      ✓
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <Github className="w-3.5 h-3.5 text-text-muted" />
-                  <span className={`text-xs ${isOfficial ? "text-cognitive-cyan font-medium" : "text-text-muted"}`}>
-                    {pkg.authorName}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <p className="text-text-secondary text-sm mb-4 line-clamp-2 leading-relaxed">
-              {pkg.description}
-            </p>
-
-            {/* Tools count badge */}
-            {toolsCount > 0 && (
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cognitive-cyan/10 border border-cognitive-cyan/20">
-                  <TerminalSquare className="w-3.5 h-3.5 text-cognitive-cyan" />
-                  <span className="text-xs font-medium text-cognitive-cyan">
-                    {toolsCount} tool{toolsCount !== 1 ? 's' : ''}
-                  </span>
-                </div>
-                <span className="px-3 py-1.5 rounded-full bg-white/5 text-text-secondary text-xs border border-white/5">
-                  {pkg.robotType}
-                </span>
-              </div>
-            )}
-
-            {/* Tags */}
-            <div className="flex flex-wrap gap-1.5 mb-4">
-              {pkg.tags.slice(0, 4).map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2.5 py-1 rounded-full bg-white/5 text-text-secondary text-xs border border-white/5"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* Stats Footer */}
-            <div className="flex items-center justify-between pt-4 border-t border-white/5">
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1.5 text-sm text-text-muted">
-                  <Star className="w-4 h-4" />
-                  <span className="font-medium text-foreground">{pkg.githubStars || 0}</span>
-                </span>
-                <span className="text-sm text-text-muted">
-                  <span className="font-medium text-foreground">{pkg.githubForks || 0}</span> forks
-                </span>
-              </div>
-              <span className="text-xs text-text-muted font-mono">{pkg.version}</span>
-            </div>
-          </div>
-
-          {/* Hover glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-br from-cognitive-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+      <div className="mt-6 flex items-start gap-4">
+        <div className="flex h-11 w-11 flex-none items-center justify-center border border-cognitive-cyan/25 bg-cognitive-cyan/[0.05] text-cognitive-cyan">
+          <Terminal className="h-5 w-5" />
         </div>
-      </Link>
-    </motion.div>
+        <div className="min-w-0">
+          <h2 className="line-clamp-2 break-words text-lg font-semibold leading-snug text-white transition-colors group-hover:text-cognitive-cyan">
+            {pkg.name}
+          </h2>
+          <p className="mt-1 inline-flex items-center gap-1.5 text-xs text-white/35">
+            <Github className="h-3 w-3" /> {pkg.authorName || "Community publisher"}
+          </p>
+        </div>
+      </div>
+
+      <p className="mt-5 line-clamp-3 text-sm leading-relaxed text-white/48">{pkg.description || "No interface description provided."}</p>
+
+      <dl className="mt-6 grid grid-cols-2 border-y border-white/[0.08] py-4 font-mono text-[9px] uppercase tracking-[0.11em]">
+        <div>
+          <dt className="text-white/25">Exposed tools</dt>
+          <dd className="mt-1 text-cognitive-cyan">{tools.length}</dd>
+        </div>
+        <div>
+          <dt className="text-white/25">Target</dt>
+          <dd className="mt-1 truncate text-white/60">{pkg.robotType || "Not declared"}</dd>
+        </div>
+      </dl>
+
+      <div className="mt-4 flex min-h-6 flex-wrap gap-1.5">
+        {tags.slice(0, 3).map((tag) => (
+          <span key={tag} className="border border-white/[0.08] px-2 py-1 text-[10px] text-white/35">{tag}</span>
+        ))}
+      </div>
+
+      <div className="mt-auto flex items-center justify-between gap-4 pt-6 text-xs text-white/30">
+        <span className="flex items-center gap-4">
+          <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5" /> {pkg.githubStars || 0}</span>
+          <span className="inline-flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {pkg.viewsCount || 0}</span>
+        </span>
+        <span className="inline-flex items-center gap-1 font-mono text-[10px] text-white/45">
+          v{pkg.version || "—"} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+        </span>
+      </div>
+    </Link>
   );
 }
 
 export default function McpsPage() {
   const [packages, setPackages] = useState<McpPackage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const deferredSearch = useDeferredValue(searchQuery);
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortBy, setSortBy] = useState("recommended");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   useEffect(() => {
+    let active = true;
     fetch("/api/mcp-packages")
-      .then((res) => res.json())
-      .then((data) => {
-        setPackages(data);
-        setLoading(false);
+      .then((res) => {
+        if (!res.ok) throw new Error("Request failed");
+        return res.json();
       })
-      .catch(() => setLoading(false));
+      .then((data) => {
+        if (!active) return;
+        setPackages(Array.isArray(data) ? data : []);
+        setLoadError(false);
+      })
+      .catch(() => active && setLoadError(true))
+      .finally(() => active && setLoading(false));
+    return () => { active = false; };
   }, []);
 
-  // 智能排序和筛选逻辑
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [deferredSearch, activeCategory, sortBy]);
+
+  const categoryCounts = useMemo(() => Object.fromEntries(
+    categoryDefinitions.map((category) => [category.id, packages.filter((pkg) => matchesCategory(pkg, category.id)).length])
+  ), [packages]);
+
+  const availableCategories = categoryDefinitions.filter((category) => category.id === "all" || (categoryCounts[category.id] || 0) > 0);
+
   const processedPackages = useMemo(() => {
-    let filtered = [...packages];
+    const query = deferredSearch.trim().toLowerCase();
+    return packages
+      .filter((pkg) => matchesCategory(pkg, activeCategory))
+      .filter((pkg) => !query || searchableText(pkg).includes(query))
+      .sort((a, b) => {
+        if (sortBy === "stars") return (b.githubStars || 0) - (a.githubStars || 0);
+        if (sortBy === "tools") return (b.tools?.length || 0) - (a.tools?.length || 0);
+        const score = (pkg: McpPackage) => (isOfficial(pkg) ? 1_000_000 : 0) + (pkg.tools?.length || 0) * 100 + (pkg.githubStars || 0) * 10;
+        return score(b) - score(a);
+      });
+  }, [packages, deferredSearch, activeCategory, sortBy]);
 
-    // 分类筛选
-    if (activeCategory !== "all") {
-      if (activeCategory === "official") {
-        filtered = filtered.filter(
-          (p) => p.authorName === "ros-claw" || p.name.startsWith("ros-claw/")
-        );
-      } else {
-        filtered = filtered.filter(
-          (p) =>
-            p.category?.toLowerCase().includes(activeCategory.toLowerCase()) ||
-            p.robotType?.toLowerCase().includes(activeCategory.toLowerCase()) ||
-            p.tags.some((t) => t.toLowerCase().includes(activeCategory.toLowerCase()))
-        );
-      }
-    }
-
-    // 搜索筛选
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.name.toLowerCase().includes(query) ||
-          p.description.toLowerCase().includes(query) ||
-          p.tags.some((t) => t.toLowerCase().includes(query))
-      );
-    }
-
-    // 排序逻辑
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "stars":
-          return (b.githubStars || 0) - (a.githubStars || 0);
-        case "newest":
-          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
-        case "recommended":
-        default: {
-          // 推荐排序：官方优先 > Star数 > 工具数量
-          const aIsOfficial = a.authorName === "ros-claw" || a.name.startsWith("ros-claw/") ? 1000000 : 0;
-          const bIsOfficial = b.authorName === "ros-claw" || b.name.startsWith("ros-claw/") ? 1000000 : 0;
-          const aScore = aIsOfficial + (a.githubStars || 0) * 10 + (a.tools?.length || 0) * 100;
-          const bScore = bIsOfficial + (b.githubStars || 0) * 10 + (b.tools?.length || 0) * 100;
-          return bScore - aScore;
-        }
-      }
-    });
-  }, [packages, searchQuery, activeCategory, sortBy]);
-
-  // 计算每个分类的数量
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: packages.length };
-    sidebarCategories.forEach((cat) => {
-      if (cat.id === "all") return;
-      if (cat.id === "official") {
-        counts[cat.id] = packages.filter(
-          (p) => p.authorName === "ros-claw" || p.name.startsWith("ros-claw/")
-        ).length;
-      } else {
-        counts[cat.id] = packages.filter(
-          (p) =>
-            p.category?.toLowerCase().includes(cat.id.toLowerCase()) ||
-            p.robotType?.toLowerCase().includes(cat.id.toLowerCase()) ||
-            p.tags.some((t) => t.toLowerCase().includes(cat.id.toLowerCase()))
-        ).length;
-      }
-    });
-    return counts;
-  }, [packages]);
+  const totalTools = useMemo(() => packages.reduce((total, pkg) => total + (pkg.tools?.length || 0), 0), [packages]);
+  const verifiedCount = useMemo(() => packages.filter(isOfficial).length, [packages]);
+  const visiblePackages = processedPackages.slice(0, visibleCount);
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <Link
-            href="/hub"
-            className="inline-flex items-center gap-2 text-text-secondary hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Hub
-          </Link>
-
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cognitive-cyan/20 to-cognitive-cyan/5 border border-cognitive-cyan/20 flex items-center justify-center">
-                <Terminal className="w-8 h-8 text-cognitive-cyan" />
-              </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                  Hardware MCPs
-                </h1>
-                <p className="text-cognitive-cyan mt-1">
-                  {packages.length} packages • Agent-facing robot interfaces
-                </p>
-              </div>
+    <main className="min-h-screen bg-background pb-20 pt-24">
+      <section className="runtime-grid border-b border-white/[0.08] px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <Link href="/hub" className="focus-ring inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white">
+                <ArrowLeft className="h-4 w-4" /> Distribution Hub
+              </Link>
+              <p className="section-kicker mt-7 md:mt-10">01 / Physical interface registry</p>
+              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl md:text-6xl">Hardware MCPs</h1>
+              <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-white/50 md:text-lg">
+                Find the typed tools that connect an agent to a robot, sensor, device, or physical system. Inspect every interface before granting hardware access.
+              </p>
             </div>
-
-            <Link
-              href="/mcp-hub/publish"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all"
-            >
-              <Plus className="w-5 h-5" />
-              Publish MCP
-            </Link>
+            <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+              <Link href="/hub/skills" className="focus-ring inline-flex items-center justify-center gap-2 border border-white/15 px-5 py-3 text-sm text-white/60 transition-colors hover:border-physical-orange/40 hover:text-white">
+                Need behavior? Browse Skills <ArrowRight className="h-4 w-4 text-physical-orange" />
+              </Link>
+              <Link href="/mcp-hub/publish" className="focus-ring inline-flex items-center justify-center gap-2 bg-cognitive-cyan px-5 py-3 text-sm font-semibold text-[#021012] transition-colors hover:bg-white">
+                <Plus className="h-4 w-4" /> Publish MCP
+              </Link>
+            </div>
           </div>
 
-          <p className="text-text-secondary max-w-2xl mt-4">
-            Hardware MCPs are agent-facing interfaces for robot bodies, sensors,
-            tools, lab devices, and physical infrastructure. Each package includes
-            MCP tool schemas, safety placeholders, and sandbox test stubs.
-          </p>
-        </motion.div>
+          <dl className="mt-9 grid border border-white/10 bg-[#050708] sm:mt-12 sm:grid-cols-3">
+            {[
+              ["Registry packages", loading ? "—" : packages.length.toLocaleString()],
+              ["Exposed tools", loading ? "—" : totalTools.toLocaleString()],
+              ["Verified publishers", loading ? "—" : verifiedCount.toLocaleString()],
+            ].map(([label, value], index) => (
+              <div key={label} className={`p-5 sm:p-6 ${index < 2 ? "border-b border-white/10 sm:border-b-0 sm:border-r" : ""}`}>
+                <dt className="runtime-label">{label}</dt>
+                <dd className="mt-2 font-mono text-xl text-white">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
 
-        {/* Search and Sort Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-6"
-        >
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+      <section className="px-4 pt-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-3 md:grid-cols-[1fr_220px]">
+            <label className="relative block">
+              <span className="sr-only">Search Hardware MCPs</span>
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/30" />
               <input
-                type="text"
-                placeholder="Search MCPs by name, description, or tags..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-foreground placeholder:text-text-muted focus:outline-none focus:border-cognitive-cyan/50 focus:bg-white/[0.07] transition-all"
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Search interfaces, tools, hardware, or publishers"
+                className="h-14 w-full border border-white/10 bg-[#0a0e10] pl-12 pr-4 text-sm text-white placeholder:text-white/30 focus:border-cognitive-cyan/50 focus:outline-none"
               />
-            </div>
-
-            {/* Sort Options */}
-            <div className="flex gap-2">
-              {sortOptions.map((opt) => (
-                <button
-                  key={opt.id}
-                  onClick={() => setSortBy(opt.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    sortBy === opt.id
-                      ? "bg-cognitive-cyan/20 text-cognitive-cyan border border-cognitive-cyan/30"
-                      : "bg-white/5 text-text-secondary border border-white/10 hover:bg-white/10 hover:text-foreground"
-                  }`}
-                >
-                  <opt.icon className="w-4 h-4" />
-                  {opt.name}
-                </button>
-              ))}
-            </div>
+            </label>
+            <label className="relative block">
+              <span className="sr-only">Sort Hardware MCPs</span>
+              <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="h-14 w-full border border-white/10 bg-[#0a0e10] px-4 text-sm text-white/65 focus:border-cognitive-cyan/50 focus:outline-none">
+                <option value="recommended">Recommended</option>
+                <option value="tools">Most tools</option>
+                <option value="stars">Most GitHub stars</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+            </label>
           </div>
-        </motion.div>
 
-        {/* Main Content: Sidebar + Grid */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left Sidebar */}
-          <motion.aside
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="lg:w-64 flex-shrink-0"
-          >
-            <div className="sticky top-24 bg-gradient-to-br from-white/[0.05] to-transparent backdrop-blur-md rounded-2xl border border-white/10 p-4">
-              <h3 className="text-sm font-semibold text-foreground mb-4 px-2">
-                Categories
-              </h3>
-              <nav className="space-y-1">
-                {sidebarCategories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                      activeCategory === cat.id
-                        ? cat.special
-                          ? "bg-cognitive-cyan/20 text-cognitive-cyan border border-cognitive-cyan/30"
-                          : "bg-white/10 text-foreground border border-white/10"
-                        : "text-text-secondary hover:bg-white/5 hover:text-foreground"
-                    }`}
-                  >
-                    <cat.icon className={`w-4 h-4 ${cat.special ? "text-cognitive-cyan" : ""}`} />
-                    <span className="flex-1 text-left">{cat.name}</span>
-                    {categoryCounts[cat.id] !== undefined && (
-                      <span className={`text-xs ${
-                        activeCategory === cat.id
-                          ? cat.special ? "text-cognitive-cyan/70" : "text-text-muted"
-                          : "text-text-muted"
-                      }`}>
-                        {categoryCounts[cat.id]}
-                      </span>
-                    )}
+          <div className="hub-filter-row mt-4 flex gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible" aria-label="MCP categories">
+            {availableCategories.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => setActiveCategory(category.id)}
+                className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === category.id ? "border-cognitive-cyan/50 bg-cognitive-cyan/[0.08] text-cognitive-cyan" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}
+              >
+                {category.label} <span className="ml-2 font-mono text-[10px] opacity-60">{categoryCounts[category.id] || 0}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-10 flex items-center justify-between border-b border-white/[0.08] pb-4">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/30">
+              {loading ? "Indexing registry" : `${processedPackages.length.toLocaleString()} interfaces matched`}
+            </p>
+            <span className="hidden items-center gap-2 font-mono text-[9px] uppercase tracking-[0.12em] text-white/20 sm:inline-flex">
+              <ShieldCheck className="h-3.5 w-3.5" /> inspect before execute
+            </span>
+          </div>
+
+          {loading ? (
+            <div className="grid gap-px bg-white/10 md:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, index) => <div key={index} className="h-[320px] animate-pulse bg-[#080b0c]" />)}
+            </div>
+          ) : loadError ? (
+            <RegistryMessage icon={Cpu} title="Registry temporarily unavailable" description="The package index could not be loaded. Please retry in a moment." />
+          ) : visiblePackages.length > 0 ? (
+            <>
+              <div className="grid min-w-0 gap-px bg-white/10 md:grid-cols-2 xl:grid-cols-3">
+                {visiblePackages.map((pkg, index) => <PackageCard key={pkg.id} pkg={pkg} number={index + 1} />)}
+              </div>
+              {visibleCount < processedPackages.length && (
+                <div className="flex justify-center border-x border-b border-white/10 bg-[#080b0c] p-6">
+                  <button type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)} className="focus-ring inline-flex items-center gap-2 border border-white/15 px-6 py-3 text-sm text-white/60 transition-colors hover:border-cognitive-cyan/40 hover:text-white">
+                    Load {Math.min(PAGE_SIZE, processedPackages.length - visibleCount)} more <ArrowRight className="h-4 w-4" />
                   </button>
-                ))}
-              </nav>
-
-              {/* Info Box */}
-              <div className="mt-6 p-3 rounded-xl bg-white/5 border border-white/5">
-                <div className="flex items-start gap-2">
-                  <Sparkles className="w-4 h-4 text-cognitive-cyan flex-shrink-0 mt-0.5" />
-                  <p className="text-xs text-text-secondary">
-                    Official packages from{" "}
-                    <span className="text-cognitive-cyan font-medium">ros-claw</span>{" "}
-                    are highlighted and prioritized.
-                  </p>
                 </div>
+              )}
+            </>
+          ) : (
+            <RegistryMessage
+              icon={Wrench}
+              title="No interfaces match this view"
+              description="Try a broader term or clear the active category. Package names, tools, hardware targets, and publishers are all searchable."
+              action={() => { setSearchQuery(""); setActiveCategory("all"); }}
+            />
+          )}
+
+          <div className="mt-16 grid border border-white/10 bg-[#080b0c] lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="p-6 sm:p-8">
+              <p className="runtime-label">Publishable interface contract</p>
+              <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/50">
+                <span className="inline-flex items-center gap-2"><Layers3 className="h-4 w-4 text-cognitive-cyan" /> Typed MCP tools</span>
+                <span className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-cognitive-cyan" /> Declared hardware scope</span>
+                <span className="inline-flex items-center gap-2"><Terminal className="h-4 w-4 text-cognitive-cyan" /> Sandbox test path</span>
               </div>
             </div>
-          </motion.aside>
-
-          {/* Right Content */}
-          <div className="flex-1">
-            {/* Results Count */}
-            {!loading && (
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-text-muted text-sm">
-                  Showing{" "}
-                  <span className="text-foreground font-medium">
-                    {processedPackages.length}
-                  </span>{" "}
-                  packages
-                  {activeCategory !== "all" && (
-                    <span className="ml-1">
-                      in{" "}
-                      <span className="text-cognitive-cyan">
-                        {sidebarCategories.find((c) => c.id === activeCategory)?.name}
-                      </span>
-                    </span>
-                  )}
-                </p>
-              </div>
-            )}
-
-            {/* Package Grid */}
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="bg-white/5 rounded-2xl border border-white/10 overflow-hidden animate-pulse h-64"
-                  />
-                ))}
-              </div>
-            ) : processedPackages.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {processedPackages.map((pkg, index) => (
-                  <PackageCard
-                    key={pkg.id}
-                    pkg={pkg}
-                    index={index}
-                    featured={
-                      sortBy === "recommended" &&
-                      index < 3 &&
-                      (pkg.authorName === "ros-claw" || pkg.githubStars > 50)
-                    }
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <Terminal className="w-16 h-16 text-text-muted mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  No MCPs Found
-                </h3>
-                <p className="text-text-secondary mb-6">
-                  {searchQuery
-                    ? "No MCPs match your search criteria."
-                    : "No packages found in this category."}
-                </p>
-                <button
-                  onClick={() => {
-                    setSearchQuery("");
-                    setActiveCategory("all");
-                  }}
-                  className="inline-flex items-center gap-2 text-cognitive-cyan hover:underline"
-                >
-                  Clear filters
-                </button>
-              </div>
-            )}
+            <Link href="/mcp-hub/publish" className="focus-ring flex h-full items-center justify-center gap-2 border-t border-white/10 px-8 py-5 text-sm text-cognitive-cyan transition-colors hover:bg-cognitive-cyan/[0.05] lg:border-l lg:border-t-0">
+              Publish documentation <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
+      </section>
+    </main>
+  );
+}
 
-        {/* Footer CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-16"
-        >
-          <div className="bg-gradient-to-br from-white/[0.05] to-transparent backdrop-blur-md rounded-2xl border border-white/10 p-8 text-center">
-            <p className="text-text-secondary mb-4">
-              Can&apos;t find your robot?
-            </p>
-            <Link
-              href="https://github.com/ros-claw/sdk_to_mcp"
-              target="_blank"
-              className="inline-flex items-center gap-2 text-cognitive-cyan hover:text-physical-orange transition-colors"
-            >
-              Generate a reviewable Hardware MCP scaffold from SDK manuals
-              <ExternalLink className="w-4 h-4" />
-            </Link>
-          </div>
-        </motion.div>
-      </div>
+function RegistryMessage({ icon: Icon, title, description, action }: { icon: typeof Cpu; title: string; description: string; action?: () => void }) {
+  return (
+    <div className="border-x border-b border-white/10 bg-[#080b0c] px-6 py-20 text-center">
+      <Icon className="mx-auto h-8 w-8 text-cognitive-cyan" />
+      <h2 className="mt-5 text-xl font-semibold text-white">{title}</h2>
+      <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-white/45">{description}</p>
+      {action && <button type="button" onClick={action} className="focus-ring mt-6 text-sm text-cognitive-cyan hover:text-white">Clear search and filters</button>}
     </div>
   );
 }
