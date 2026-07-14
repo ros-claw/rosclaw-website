@@ -167,13 +167,13 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
             </div>
 
             {tools.length > 0 ? (
-              <div className="grid gap-px bg-white/10 sm:grid-cols-2">
+              <div className="grid min-w-0 gap-px bg-white/10 sm:grid-cols-2">
                 {tools.map((tool, index) => (
-                  <article key={`${tool.name}-${index}`} className="bg-[#080b0c] p-5 sm:p-6">
+                  <article key={`${tool.name}-${index}`} className="min-w-0 bg-[#080b0c] p-5 sm:p-6">
                     <div className="flex items-start gap-3">
                       <span className="mt-0.5 font-mono text-[9px] text-cognitive-cyan">{String(index + 1).padStart(2, "0")}</span>
                       <div className="min-w-0">
-                        <h3 className="break-words font-mono text-sm font-medium text-white">{tool.name}</h3>
+                        <h3 className="[overflow-wrap:anywhere] font-mono text-sm font-medium text-white">{tool.name}</h3>
                         <p className="mt-2 text-sm leading-relaxed text-white/42">{tool.description || "No tool description declared."}</p>
                       </div>
                     </div>
@@ -227,7 +227,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
           </section>
         </div>
 
-        <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
+        <aside className="min-w-0 space-y-5 lg:sticky lg:top-28 lg:self-start">
           <section className="industrial-panel p-5 sm:p-6">
             <div className="flex items-center gap-3">
               <Terminal className="h-5 w-5 text-cognitive-cyan" />

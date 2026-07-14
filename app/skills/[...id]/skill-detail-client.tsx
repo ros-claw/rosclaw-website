@@ -162,8 +162,8 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
               <h2 id="deployment-heading" className="mt-3 text-2xl font-semibold tracking-[-0.025em] text-white">What this behavior expects</h2>
             </div>
 
-            <div className="grid gap-px bg-white/10 md:grid-cols-2">
-              <article className="bg-[#080b0c] p-6 sm:p-7">
+            <div className="grid min-w-0 gap-px bg-white/10 md:grid-cols-2">
+              <article className="min-w-0 bg-[#080b0c] p-6 sm:p-7">
                 <div className="flex items-center gap-3">
                   <ShieldCheck className="h-5 w-5 text-physical-orange" />
                   <h3 className="text-base font-medium text-white">Compatible bodies</h3>
@@ -177,7 +177,7 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
                 )}
               </article>
 
-              <article className="bg-[#080b0c] p-6 sm:p-7">
+              <article className="min-w-0 bg-[#080b0c] p-6 sm:p-7">
                 <div className="flex items-center gap-3">
                   <GitBranch className="h-5 w-5 text-physical-orange" />
                   <h3 className="text-base font-medium text-white">Dependencies</h3>
@@ -231,7 +231,7 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
           </section>
         </div>
 
-        <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
+        <aside className="min-w-0 space-y-5 lg:sticky lg:top-28 lg:self-start">
           <section className="industrial-panel p-5 sm:p-6">
             <div className="flex items-center gap-3">
               <Terminal className="h-5 w-5 text-physical-orange" />
