@@ -1,288 +1,157 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
-import { runtimeLoopContent } from "@/content/home";
+import { KeyboardEvent, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, ExternalLink } from "lucide-react";
 
-const runtimeNodes = [
-  { id: "intent", label: "Intent", description: "A high-level task or goal expressed by an AI agent." },
-  { id: "body", label: "Body", description: "The robot body, sensors, actuators, limits, and capabilities." },
-  { id: "route", label: "Route", description: "Route the task to the right provider or controller." },
-  { id: "sandbox", label: "Sandbox", description: "Validate the proposed action in a digital twin before hardware execution." },
-  { id: "execute", label: "Execute", description: "The validated action runs on the real robot under runtime guards." },
-  { id: "trace", label: "Trace", description: "Record states, streams, decisions, failures, and recoveries as a physical trace." },
-  { id: "memory", label: "Memory", description: "Turn structured traces into spatiotemporal memory and reusable experience." },
-  { id: "evolve", label: "Evolve", description: "Evaluate, patch, benchmark, and promote skills through validation loops." },
-];
-
-function RuntimeLoopDesktop() {
-  const prefersReducedMotion = useReducedMotion();
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-
-  const cx = 360;
-  const cy = 220;
-  const rx = 300;
-  const ry = 160;
-
-  const pathD = `M ${cx + rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx - rx} ${cy} A ${rx} ${ry} 0 1 0 ${cx + rx} ${cy}`;
-
-  return (
-    <div className="relative w-full max-w-[860px] mx-auto">
-      <svg
-        viewBox="0 0 720 440"
-        className="w-full h-auto"
-        role="img"
-        aria-label="ROSClaw runtime loop from intent to evolved skill"
-      >
-        <defs>
-          <linearGradient id="loopGradientV2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00F0FF" stopOpacity="0.4" />
-            <stop offset="35%" stopColor="#3B82F6" stopOpacity="0.35" />
-            <stop offset="65%" stopColor="#F59E0B" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#00F0FF" stopOpacity="0.4" />
-          </linearGradient>
-          <filter id="loopGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Loop path */}
-        <motion.path
-          d={pathD}
-          fill="none"
-          stroke="url(#loopGradientV2)"
-          strokeWidth="2.5"
-          strokeDasharray="6 6"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
-        />
-
-        {/* Moving pulse */}
-        {!prefersReducedMotion && (
-          <motion.circle
-            r="6"
-            fill="#00F0FF"
-            filter="url(#loopGlow)"
-            initial={{ offsetDistance: "0%" }}
-            animate={{ offsetDistance: "100%" }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            style={{ offsetPath: `path("${pathD}")` }}
-          />
-        )}
-
-        {/* Center core */}
-        <g>
-          <motion.circle
-            cx={cx}
-            cy={cy}
-            r="48"
-            fill="rgba(5,5,5,0.9)"
-            stroke="#00F0FF"
-            strokeWidth="1.5"
-            strokeOpacity="0.5"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-          />
-          <text
-            x={cx}
-            y={cy - 4}
-            textAnchor="middle"
-            fill="#E5E7EB"
-            fontSize="11"
-            fontWeight="600"
-            fontFamily="var(--font-jetbrains-mono)"
-          >
-            ROSClaw
-          </text>
-          <text
-            x={cx}
-            y={cy + 12}
-            textAnchor="middle"
-            fill="rgba(255,255,255,0.6)"
-            fontSize="9"
-            fontFamily="var(--font-jetbrains-mono)"
-          >
-            Runtime
-          </text>
-        </g>
-
-        {/* Nodes */}
-        {runtimeNodes.map((node, i) => {
-          const angle = (i / runtimeNodes.length) * Math.PI * 2 - Math.PI / 2;
-          const x = cx + rx * Math.cos(angle);
-          const y = cy + ry * Math.sin(angle);
-          const isHovered = hoveredNode === node.id;
-
-          return (
-            <g
-              key={node.id}
-              onMouseEnter={() => setHoveredNode(node.id)}
-              onMouseLeave={() => setHoveredNode(null)}
-              className="cursor-pointer"
-            >
-              <motion.circle
-                cx={x}
-                cy={y}
-                r={isHovered ? 24 : 18}
-                fill="rgba(5,5,5,0.95)"
-                stroke={isHovered ? "#FF3E00" : "#00F0FF"}
-                strokeWidth="1.5"
-                initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
-              />
-              <text
-                x={x}
-                y={y + 4}
-                textAnchor="middle"
-                fill="#E5E7EB"
-                fontSize="9"
-                fontFamily="var(--font-jetbrains-mono)"
-              >
-                {i + 1}
-              </text>
-              <text
-                x={x}
-                y={y + (y > cy ? 38 : -30)}
-                textAnchor="middle"
-                fill={isHovered ? "#00F0FF" : "rgba(255,255,255,0.7)"}
-                fontSize="12"
-                fontFamily="var(--font-jetbrains-mono)"
-              >
-                {node.label}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-
-      {/* Hover description panel */}
-      <div className="min-h-[4rem] text-center mt-4">
-        {hoveredNode ? (
-          <motion.div
-            key={hoveredNode}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-block px-6 py-3 rounded-xl bg-white/[0.03] border border-white/10"
-          >
-            <p className="text-cognitive-cyan font-medium text-sm">
-              {runtimeNodes.find((n) => n.id === hoveredNode)?.label}
-            </p>
-            <p className="text-white/60 text-sm mt-1">
-              {runtimeNodes.find((n) => n.id === hoveredNode)?.description}
-            </p>
-          </motion.div>
-        ) : (
-          <p className="text-white/40 text-sm">Hover a node to explore the runtime loop.</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function RuntimeLoopMobile() {
-  return (
-    <div className="space-y-3">
-      {runtimeNodes.map((node, i) => (
-        <motion.div
-          key={node.id}
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.08 }}
-          className="flex gap-4 p-4 rounded-xl bg-white/[0.03] border border-white/[0.08]"
-        >
-          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center text-cognitive-cyan font-mono text-sm">
-            {i + 1}
-          </div>
-          <div>
-            <h4 className="text-white font-medium">{node.label}</h4>
-            <p className="text-white/60 text-sm mt-1">{node.description}</p>
-          </div>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
+const stages = [
+  {
+    id: "intent",
+    label: "Intent",
+    short: "Task enters the runtime",
+    description: "A model or operator proposes a goal. At this point it is intent—not a hardware command.",
+    evidence: "task / gesture.ok",
+    accent: "cyan",
+  },
+  {
+    id: "body",
+    label: "Body Context",
+    short: "Load capabilities and limits",
+    description: "The runtime resolves the active robot, joints, sensors, frames, tools, and safety envelope.",
+    evidence: "e-URDF / body.yaml",
+    accent: "cyan",
+  },
+  {
+    id: "sandbox",
+    label: "Sandbox",
+    short: "Check before reality",
+    description: "The proposed action is validated against limits and, where available, rehearsed in a digital twin.",
+    evidence: "ALLOW / MODIFY / BLOCK",
+    accent: "orange",
+  },
+  {
+    id: "execute",
+    label: "Execute",
+    short: "Touch real hardware",
+    description: "Only an approved action reaches the robot, while runtime guards continue watching physical state.",
+    evidence: "guarded hardware call",
+    accent: "orange",
+  },
+  {
+    id: "trace",
+    label: "Physical Trace",
+    short: "Record what happened",
+    description: "Robot state, decisions, sensor events, failures, and recovery steps become replayable evidence.",
+    evidence: "MCAP / Parquet / JSONL",
+    accent: "cyan",
+  },
+  {
+    id: "memory",
+    label: "Memory & Evolution",
+    short: "Turn evidence into change",
+    description: "Traces can be retrieved as physical memory and evaluated as candidates for safer skill updates.",
+    evidence: "candidate / benchmark / promote",
+    accent: "cyan",
+  },
+] as const;
 
 export function RuntimeLoopSection() {
+  const [activeIndex, setActiveIndex] = useState(2);
+  const active = stages[activeIndex];
+
+  const handleKeys = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let next = index;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % stages.length;
+    else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + stages.length) % stages.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = stages.length - 1;
+    else return;
+
+    event.preventDefault();
+    setActiveIndex(next);
+    document.getElementById(`runtime-tab-${stages[next].id}`)?.focus();
+  };
+
   return (
-    <section
-      id="runtime-loop"
-      className="min-h-[92vh] flex items-center py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-background"
-    >
-      <div className="max-w-7xl mx-auto w-full">
-        <div className="text-center mb-12">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-cognitive-cyan text-sm uppercase tracking-widest mb-4 font-mono"
-          >
-            {runtimeLoopContent.eyebrow}
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-6"
-          >
-            {runtimeLoopContent.title}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-white/60 text-lg max-w-3xl mx-auto"
-          >
-            {runtimeLoopContent.description}
-          </motion.p>
+    <section id="runtime-loop" className="runtime-grid border-b border-white/[0.08] px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+          <div>
+            <p className="section-kicker">02 / Runtime loop</p>
+            <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl md:text-5xl">
+              Every action becomes evidence.
+            </h2>
+          </div>
+          <p className="max-w-2xl text-pretty text-base leading-relaxed text-white/55 lg:justify-self-end lg:text-lg">
+            One causal path connects agent intent to physical execution and learning. Select a stage to inspect what the runtime knows and produces.
+          </p>
         </div>
 
-        <div className="hidden md:block">
-          <RuntimeLoopDesktop />
-        </div>
-        <div className="md:hidden">
-          <RuntimeLoopMobile />
+        <div className="mt-12 border border-white/10 bg-[#070a0b]/90">
+          <div
+            role="tablist"
+            aria-label="ROSClaw runtime stages"
+            className="grid grid-cols-1 divide-y divide-white/[0.08] md:grid-cols-3 md:divide-x md:divide-y-0 xl:grid-cols-6"
+          >
+            {stages.map((stage, index) => {
+              const selected = activeIndex === index;
+              return (
+                <button
+                  key={stage.id}
+                  id={`runtime-tab-${stage.id}`}
+                  role="tab"
+                  type="button"
+                  aria-selected={selected}
+                  aria-controls={`runtime-panel-${stage.id}`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setActiveIndex(index)}
+                  onKeyDown={(event) => handleKeys(event, index)}
+                  className={`focus-ring group relative min-h-[104px] px-4 py-4 text-left transition-colors sm:px-5 ${selected ? "bg-white/[0.055]" : "hover:bg-white/[0.025]"}`}
+                >
+                  <span className={`font-mono text-[9px] ${stage.accent === "orange" ? "text-physical-orange" : "text-cognitive-cyan"}`}>
+                    0{index + 1}
+                  </span>
+                  <span className="mt-3 block text-sm font-medium text-white">{stage.label}</span>
+                  <span className="mt-1 block text-xs leading-snug text-white/35">{stage.short}</span>
+                  {selected && (
+                    <span className={`absolute inset-x-0 bottom-0 h-0.5 ${stage.accent === "orange" ? "bg-physical-orange" : "bg-cognitive-cyan"}`} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          <div
+            id={`runtime-panel-${active.id}`}
+            role="tabpanel"
+            aria-labelledby={`runtime-tab-${active.id}`}
+            className="grid min-h-[190px] border-t border-white/10 md:grid-cols-[1.3fr_0.7fr]"
+          >
+            <div className="px-5 py-7 sm:px-8 sm:py-9">
+              <div className="flex items-center gap-3">
+                <span className={`h-2 w-2 rounded-full ${active.accent === "orange" ? "bg-physical-orange shadow-[0_0_12px_rgba(255,62,0,0.55)]" : "bg-cognitive-cyan shadow-[0_0_12px_rgba(0,240,255,0.55)]"}`} />
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">Selected stage</p>
+              </div>
+              <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white">{active.label}</h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/[0.58] sm:text-base">{active.description}</p>
+            </div>
+            <div className="flex flex-col justify-between border-t border-white/10 bg-black/25 px-5 py-7 md:border-l md:border-t-0 sm:px-8">
+              <div>
+                <p className="runtime-label">Runtime artifact</p>
+                <code className={`mt-3 block font-mono text-sm ${active.accent === "orange" ? "text-physical-orange" : "text-cognitive-cyan"}`}>
+                  {active.evidence}
+                </code>
+              </div>
+              <Link href="/runtime" className="focus-ring mt-6 inline-flex items-center gap-2 text-sm text-white/55 transition-colors hover:text-white">
+                Full runtime architecture <ExternalLink className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="mt-10 text-center"
-        >
-          <a
-            href={runtimeLoopContent.cta.href}
-            className="inline-flex items-center gap-1 text-sm text-cognitive-cyan hover:text-physical-orange transition-colors"
-          >
-            {runtimeLoopContent.cta.label}
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </a>
-        </motion.div>
+        <div className="mt-5 hidden items-center justify-center gap-3 font-mono text-[9px] uppercase tracking-[0.14em] text-white/25 md:flex">
+          Intent <ArrowRight className="h-3 w-3" /> body <ArrowRight className="h-3 w-3" /> guard <ArrowRight className="h-3 w-3" /> reality <ArrowRight className="h-3 w-3" /> evidence <ArrowRight className="h-3 w-3" /> evolution
+        </div>
       </div>
     </section>
   );

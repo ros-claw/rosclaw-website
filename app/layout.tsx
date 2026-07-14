@@ -1,9 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
-import { SmoothScroll } from "@/components/smooth-scroll";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -14,7 +12,7 @@ const structuredData = {
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Linux, macOS, Windows WSL",
   description:
-    "Self-evolving runtime infrastructure for Physical AI and embodied agents.",
+    "Runtime infrastructure that gives AI agents a body, guards physical actions, and turns execution traces into safer skills.",
   url: "https://www.rosclaw.io/",
   codeRepository: "https://github.com/ros-claw/rosclaw",
 };
@@ -26,9 +24,10 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ROSClaw | Self-Evolving Runtime Infrastructure for Physical AI",
+  metadataBase: new URL("https://rosclaw.io"),
+  title: "ROSClaw | Give AI Agents a Body That Learns",
   description:
-    "ROSClaw grounds AI agents into robot bodies through embodiment context, sandbox validation, physical memory, praxis capture, and self-evolving skill runtime.",
+    "Ground AI agents in real robot bodies, guard every physical action, and turn execution traces into safer, reusable skills with ROSClaw.",
   keywords: [
     "ROSClaw",
     "Physical AI",
@@ -66,26 +65,28 @@ export const metadata: Metadata = {
   publisher: "ROSClaw",
   robots: "index, follow",
   openGraph: {
-    title: "ROSClaw — Runtime Infrastructure for Physical AI",
+    title: "ROSClaw — Give AI Agents a Body That Learns",
     description:
-      "ROSClaw grounds AI agents into robot bodies through embodiment context, sandbox validation, physical memory, praxis capture, and self-evolving skill runtime.",
+      "Ground agents in real robot bodies, guard every physical action, and turn execution traces into safer skills.",
     type: "website",
     locale: "en_US",
     siteName: "ROSClaw",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ROSClaw | Self-Evolving Runtime Infrastructure for Physical AI",
+    title: "ROSClaw | Give AI Agents a Body That Learns",
     description:
-      "ROSClaw grounds AI agents into robot bodies through embodiment context, sandbox validation, physical memory, praxis capture, and self-evolving skill runtime.",
+      "Runtime infrastructure for body-aware, guarded, and traceable embodied AI.",
     creator: "@rosclaw",
-  },
-  verification: {
-    google: "google-site-verification-code",
   },
   alternates: {
     canonical: "https://rosclaw.io",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#060809",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({
@@ -102,12 +103,10 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <ThemeProvider>
-          <SmoothScroll />
-          <Navbar />
-          {children}
-          <Analytics />
-        </ThemeProvider>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
+        <Navbar />
+        <div id="main-content" tabIndex={-1}>{children}</div>
+        <Analytics />
       </body>
     </html>
   );

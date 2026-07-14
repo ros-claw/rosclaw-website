@@ -1,159 +1,92 @@
-"use client";
-
-import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  Box,
-  Plug,
-  BrainCircuit,
-  Cuboid,
-  Cpu,
-  BookOpen,
-  BarChart3,
-  ArrowRight,
-} from "lucide-react";
-import { assetHubPreviewContent } from "@/content/home";
-import { fadeInUp, staggerContainer, statusBadgeClasses } from "@/content/shared";
-import type { StatusLabel } from "@/content/shared";
+import { ArrowUpRight, Box, Boxes, Plug } from "lucide-react";
 
-const assets = [
+const featuredEntries = [
   {
     icon: Box,
-    title: "e-URDF Profiles",
-    description:
-      "Robot embodiment definitions, safety envelopes, sensors, actuators, capabilities, and simulation metadata.",
-    status: "Experimental" as StatusLabel,
+    type: "Embodiment registry",
+    title: "e-URDF Zoo",
+    description: "Body definitions with joints, sensors, capabilities, simulation metadata, and safety limits.",
+    version: "v1.0.0",
+    mode: "local-first",
+    status: "Experimental",
+    href: "/hub",
   },
   {
     icon: Plug,
-    title: "Hardware MCPs",
-    description:
-      "Agent-facing interfaces for robot bodies, sensors, tools, lab devices, and physical infrastructure.",
-    status: "Experimental" as StatusLabel,
+    type: "Hardware interface",
+    title: "Hardware MCP Hub",
+    description: "Agent-facing adapters for robot bodies, sensors, tools, and physical infrastructure.",
+    version: "v0.6.0",
+    mode: "sandbox required",
+    status: "Experimental",
+    href: "/hub/mcps",
   },
   {
-    icon: BrainCircuit,
-    title: "Capability Providers",
-    description:
-      "LLMs, VLMs, VLAs, VLNs, world models, critics, embeddings, classical robotics algorithms, and skill policies.",
-    status: "Planned" as StatusLabel,
+    icon: Boxes,
+    type: "Validation environment",
+    title: "Digital Twin Hub",
+    description: "Simulation worlds, replay environments, robot assets, and regression scenes.",
+    version: "v0.4.0",
+    mode: "local-first",
+    status: "Experimental",
+    href: "/hub/twins",
   },
-  {
-    icon: Cuboid,
-    title: "Digital Twins",
-    description:
-      "Simulation worlds, robot assets, validation scenes, replay environments, and regression tests.",
-    status: "Experimental" as StatusLabel,
-  },
-  {
-    icon: Cpu,
-    title: "Skills",
-    description:
-      "Versioned task policies, recovery strategies, parameter packs, and skill graphs.",
-    status: "Experimental" as StatusLabel,
-  },
-  {
-    icon: BookOpen,
-    title: "Cognitive Wikis",
-    description:
-      "Task cards, failure taxonomies, constraints, evidence, repair knowledge, and domain-specific robotics notes.",
-    status: "Experimental" as StatusLabel,
-  },
-  {
-    icon: BarChart3,
-    title: "Benchmarks",
-    description:
-      "Reproducible evaluation tasks, regression suites, and skill promotion criteria.",
-    status: "Planned" as StatusLabel,
-  },
-];
-
-function StatusBadge({ status }: { status: StatusLabel }) {
-  return (
-    <span
-      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${statusBadgeClasses[status]}`}
-    >
-      {status}
-    </span>
-  );
-}
+] as const;
 
 export function AssetHubSection() {
   return (
-    <section id="hub" className="py-20 md:py-24 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="text-center mb-10"
-        >
-          <motion.p
-            variants={fadeInUp}
-            className="text-cognitive-cyan text-sm uppercase tracking-widest mb-4 font-mono"
-          >
-            {assetHubPreviewContent.eyebrow}
-          </motion.p>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4"
-          >
-            {assetHubPreviewContent.title}
-          </motion.h2>
-          <motion.p
-            variants={fadeInUp}
-            className="text-white/60 text-lg max-w-3xl mx-auto"
-          >
-            {assetHubPreviewContent.description}
-          </motion.p>
-        </motion.div>
+    <section id="hub" className="border-b border-white/[0.08] bg-[#080b0c] px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+          <div>
+            <p className="section-kicker">05 / Physical-AI asset hub</p>
+            <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl md:text-5xl">
+              Installable context for real bodies.
+            </h2>
+          </div>
+          <div className="lg:justify-self-end">
+            <p className="max-w-2xl text-pretty text-base leading-relaxed text-white/55 lg:text-lg">
+              The Hub is a versioned registry, not a category moodboard. These entries lead to the assets currently represented in the product surface.
+            </p>
+            <Link href="/hub" className="focus-ring mt-4 inline-flex items-center gap-2 text-sm text-cognitive-cyan transition-colors hover:text-white">
+              Browse the full Hub <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-        >
-          {assets.map((asset) => {
-            const Icon = asset.icon;
-            return (
-              <motion.div
-                key={asset.title}
-                variants={fadeInUp}
-                className="group rounded-2xl bg-white/[0.03] border border-white/[0.08] p-5 hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-cognitive-cyan" />
-                  </div>
-                  <StatusBadge status={asset.status} />
+        <div className="mt-12 grid border border-white/10 bg-[#050708] lg:grid-cols-3">
+          {featuredEntries.map(({ icon: Icon, type, title, description, version, mode, status, href }, index) => (
+            <Link
+              key={title}
+              href={href}
+              className={`focus-ring group relative flex min-h-[310px] flex-col p-6 transition-colors hover:bg-white/[0.035] sm:p-8 ${index < featuredEntries.length - 1 ? "border-b border-white/10 lg:border-b-0 lg:border-r" : ""}`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex h-11 w-11 items-center justify-center border border-cognitive-cyan/25 bg-cognitive-cyan/[0.05] text-cognitive-cyan">
+                  <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-cognitive-cyan transition-colors">
-                  {asset.title}
-                </h3>
-                <p className="text-white/60 text-sm leading-relaxed">{asset.description}</p>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="mt-10 text-center"
-        >
-          <Link
-            href={assetHubPreviewContent.cta.href}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all"
-          >
-            {assetHubPreviewContent.cta.label}
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </motion.div>
+                <span className="border border-amber-300/25 bg-amber-300/[0.05] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-amber-300">{status}</span>
+              </div>
+              <p className="mt-7 font-mono text-[9px] uppercase tracking-[0.16em] text-white/30">{type}</p>
+              <h3 className="mt-2 flex items-center gap-2 text-xl font-semibold text-white group-hover:text-cognitive-cyan">
+                {title}
+                <ArrowUpRight className="h-4 w-4 opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-white/[0.48]">{description}</p>
+              <dl className="mt-auto grid grid-cols-2 gap-4 border-t border-white/[0.08] pt-5 font-mono text-[9px] uppercase tracking-wider">
+                <div>
+                  <dt className="text-white/25">Version</dt>
+                  <dd className="mt-1 text-white/65">{version}</dd>
+                </div>
+                <div>
+                  <dt className="text-white/25">Runtime mode</dt>
+                  <dd className="mt-1 text-physical-orange">{mode}</dd>
+                </div>
+              </dl>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

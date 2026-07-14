@@ -1,151 +1,95 @@
-"use client";
+import { ArrowUpRight, CheckCircle2, Construction, FlaskConical, Github, Mail } from "lucide-react";
+import { CONTACT_EMAIL, GITHUB_URL } from "@/content/shared";
 
-import { motion } from "framer-motion";
-import { Microscope, Bot, Factory, CheckCircle2, Construction, FlaskConical } from "lucide-react";
-import { builtForContent, currentStatusContent } from "@/content/home";
-import { fadeInUp, staggerContainer, statusBadgeClasses } from "@/content/shared";
+const roadmap = [
+  {
+    icon: CheckCircle2,
+    label: "Ready today",
+    tone: "green",
+    items: ["Body contexts", "Sandbox validation", "Praxis trace capture"],
+  },
+  {
+    icon: Construction,
+    label: "Experimental",
+    tone: "amber",
+    items: ["Provider lifecycle", "Physical memory", "Hardware MCP install"],
+  },
+  {
+    icon: FlaskConical,
+    label: "Research",
+    tone: "purple",
+    items: ["Darwin promotion", "Cross-body transfer", "Long-horizon memory"],
+  },
+] as const;
 
-const icons = {
-  "Robotics Researchers": Microscope,
-  "Robot Developers": Bot,
-  "Industrial Physical-AI Teams": Factory,
-};
-
-const statusIcons = {
-  Stable: CheckCircle2,
-  Experimental: Construction,
-  Research: FlaskConical,
-};
+const audiences = ["Robotics researchers", "Robot developers", "Physical-AI teams"];
 
 export function BuiltForSection() {
   return (
-    <section id="built-for" className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-background">
-      <div className="max-w-7xl mx-auto">
-        {/* Built For */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-12"
-        >
-          <motion.p
-            variants={fadeInUp}
-            className="text-cognitive-cyan text-sm uppercase tracking-widest mb-4 font-mono"
-          >
-            {builtForContent.eyebrow}
-          </motion.p>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-6"
-          >
-            {builtForContent.title}
-          </motion.h2>
-          <motion.p
-            variants={fadeInUp}
-            className="text-white/60 text-lg max-w-3xl mx-auto mb-12"
-          >
-            {builtForContent.description}
-          </motion.p>
-        </motion.div>
+    <section id="community" className="runtime-grid px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(300px,0.55fr)]">
+          <div className="border border-white/10 bg-[#070a0b]/90">
+            <div className="border-b border-white/10 px-5 py-6 sm:px-8 sm:py-8">
+              <p className="section-kicker">06 / Current status</p>
+              <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl">
+                An honest path from runtime to research.
+              </h2>
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/50 sm:text-base">
+                ROSClaw is under active development. The roadmap separates usable foundations from modules that still need evaluation and research.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-3">
+              {roadmap.map(({ icon: Icon, label, tone, items }, index) => {
+                const toneClasses = tone === "green"
+                  ? "text-emerald-400 border-emerald-400/30"
+                  : tone === "amber"
+                  ? "text-amber-300 border-amber-300/30"
+                  : "text-purple-300 border-purple-300/30";
+                return (
+                  <div key={label} className={`px-5 py-6 sm:px-8 md:min-h-[230px] ${index < roadmap.length - 1 ? "border-b border-white/10 md:border-b-0 md:border-r" : ""}`}>
+                    <div className="flex items-center gap-2.5">
+                      <Icon className={`h-4 w-4 ${toneClasses.split(" ")[0]}`} />
+                      <h3 className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/65">{label}</h3>
+                    </div>
+                    <ul className="mt-6 space-y-4">
+                      {items.map((item) => (
+                        <li key={item} className="flex items-start gap-3 text-sm text-white/[0.48]">
+                          <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full border ${toneClasses}`} />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24"
-        >
-          {builtForContent.cards.map((card) => {
-            const Icon = icons[card.title as keyof typeof icons] || Bot;
-            return (
-              <motion.div
-                key={card.title}
-                variants={fadeInUp}
-                className="rounded-2xl bg-white/[0.03] border border-white/[0.08] p-8 hover:border-white/[0.15] hover:bg-white/[0.05] transition-all duration-300"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center mb-6">
-                  <Icon className="w-7 h-7 text-cognitive-cyan" />
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-3">{card.title}</h3>
-                <p className="text-white/60 leading-relaxed">{card.description}</p>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        {/* Current Status */}
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-12"
-        >
-          <motion.p
-            variants={fadeInUp}
-            className="text-cognitive-cyan text-sm uppercase tracking-widest mb-4 font-mono"
-          >
-            {currentStatusContent.eyebrow}
-          </motion.p>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-6"
-          >
-            {currentStatusContent.title}
-          </motion.h2>
-          <motion.p
-            variants={fadeInUp}
-            className="text-white/60 text-lg max-w-3xl mx-auto"
-          >
-            {currentStatusContent.description}
-          </motion.p>
-        </motion.div>
-
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
-          {currentStatusContent.columns.map((column) => {
-            const Icon = statusIcons[column.status];
-            const badgeClass = statusBadgeClasses[column.status];
-            return (
-              <motion.div
-                key={column.title}
-                variants={fadeInUp}
-                className={`rounded-2xl border ${badgeClass.replace(/text-\w+-400/, "").replace(/text-\w+-\d+\/\d+/, "")} p-6 md:p-8 bg-opacity-10`}
-                style={{
-                  backgroundColor: column.status === "Stable"
-                    ? "rgba(34, 197, 94, 0.05)"
-                    : column.status === "Experimental"
-                    ? "rgba(234, 179, 8, 0.05)"
-                    : "rgba(168, 85, 247, 0.05)",
-                  borderColor: column.status === "Stable"
-                    ? "rgba(34, 197, 94, 0.2)"
-                    : column.status === "Experimental"
-                    ? "rgba(234, 179, 8, 0.2)"
-                    : "rgba(168, 85, 247, 0.2)",
-                }}
-              >
-                <div className="flex items-center gap-3 mb-6">
-                  <Icon className={`w-6 h-6 ${column.status === "Stable" ? "text-green-400" : column.status === "Experimental" ? "text-yellow-400" : "text-purple-400"}`} />
-                  <h3 className="text-xl font-semibold text-white">{column.title}</h3>
-                </div>
-                <ul className="space-y-3">
-                  {column.items.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-white/70">
-                      <span className={`w-1.5 h-1.5 rounded-full mt-2 ${column.status === "Stable" ? "bg-green-400" : column.status === "Experimental" ? "bg-yellow-400" : "bg-purple-400"}`} />
-                      <span className="text-sm md:text-base leading-relaxed">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+          <aside className="flex flex-col border border-physical-orange/25 bg-[linear-gradient(145deg,rgba(255,62,0,0.075),rgba(255,255,255,0.015))] p-6 sm:p-8">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-physical-orange">Build with us</p>
+            <h2 className="mt-5 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Bring the next body into the loop.</h2>
+            <p className="mt-4 text-sm leading-relaxed text-white/50">
+              We are looking for collaborators who care about real execution, safety evidence, and reusable physical experience.
+            </p>
+            <ul className="mt-6 space-y-3 border-y border-white/10 py-5">
+              {audiences.map((audience, index) => (
+                <li key={audience} className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.1em] text-white/[0.52]">
+                  <span className="text-physical-orange">0{index + 1}</span> {audience}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-auto pt-7">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="focus-ring flex min-h-11 items-center justify-center gap-2 bg-physical-orange px-4 text-sm font-semibold text-white transition-colors hover:bg-[#ff6335]">
+                <Mail className="h-4 w-4" /> Contact the team
+              </a>
+              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="focus-ring mt-3 flex min-h-11 items-center justify-between border border-white/[0.12] px-4 text-sm text-white/60 transition-colors hover:border-white/25 hover:text-white">
+                <span className="flex items-center gap-2"><Github className="h-4 w-4" /> Open source on GitHub</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-cognitive-cyan" />
+              </a>
+            </div>
+          </aside>
+        </div>
       </div>
     </section>
   );

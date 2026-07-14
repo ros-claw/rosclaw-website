@@ -1,185 +1,80 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Github, Mail, ArrowRight } from "lucide-react";
-import { EmailLink } from "./email-link";
-import { footerEcosystem } from "@/content/ecosystem";
-import { githubDocLinks } from "@/content/cli";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight, Github, Mail } from "lucide-react";
 import { CONTACT_EMAIL, GITHUB_URL } from "@/content/shared";
 
-const footerLinks = {
-  Product: [
-    { name: "Runtime", href: "/runtime" },
-    { name: "First Embodiment", href: "/#first-embodiment" },
-    { name: "Hub", href: "/hub" },
-    { name: "Flywheel", href: "/flywheel" },
-  ],
-  Developers: [
-    { name: "Docs", href: "/docs" },
-    { name: "GitHub", href: GITHUB_URL },
-    { name: "CLI", href: githubDocLinks.cli },
-    { name: "Architecture", href: githubDocLinks.architecture },
-    { name: "Safety", href: githubDocLinks.safety },
-  ],
-  Assets: [
-    { name: "e-URDF", href: "/hub" },
-    { name: "Hardware MCPs", href: "/hub" },
-    { name: "Providers", href: "/hub" },
-    { name: "Digital Twins", href: "/hub" },
-    { name: "Skills", href: "/hub" },
-  ],
-};
-
-const socialLinks = [
-  { name: "GitHub", icon: Github, href: GITHUB_URL },
-];
+const linkGroups = [
+  {
+    title: "Product",
+    links: [
+      { label: "Runtime", href: "/runtime" },
+      { label: "Recorded run", href: "/#robots" },
+      { label: "First Embodiment", href: "/#first-embodiment" },
+      { label: "Flywheel", href: "/flywheel" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Documentation", href: "/docs" },
+      { label: "Physical-AI Hub", href: "/hub" },
+      { label: "Hardware MCPs", href: "/hub/mcps" },
+      { label: "Skills", href: "/hub/skills" },
+    ],
+  },
+] as const;
 
 export function Footer() {
   return (
-    <footer className="bg-background border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        {/* Main Footer Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
-          {/* Brand Column */}
-          <div className="col-span-2">
-            <a href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-white p-0.5 flex items-center justify-center overflow-hidden">
-                <img
-                  src="/rosclaw_logo.png"
-                  alt=""
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <span className="text-white font-semibold text-lg tracking-tight">ROSClaw</span>
-            </a>
-            <p className="text-white/50 text-sm mb-6 max-w-xs">
-              Self-evolving runtime infrastructure for Physical AI and embodied agents.
+    <footer className="border-t border-white/10 bg-[#040606]">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
+        <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr_0.75fr_1fr]">
+          <div>
+            <Link href="/" className="focus-ring inline-flex items-center gap-2.5" aria-label="ROSClaw home">
+              <span className="flex h-8 w-8 items-center justify-center overflow-hidden bg-white">
+                <Image src="/rosclaw-mark.webp" alt="" width={32} height={32} className="h-full w-full object-cover" />
+              </span>
+              <span className="text-lg font-semibold tracking-tight text-white">ROSClaw</span>
+            </Link>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/[0.42]">
+              Runtime infrastructure that grounds AI agents in real bodies, guards physical actions, and turns execution traces into reusable experience.
             </p>
-            <div className="flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-white/20 transition-all"
-                  aria-label={social.name}
-                >
-                  <social.icon className="w-5 h-5" />
-                </a>
-              ))}
-            </div>
+            <p className="mt-6 font-mono text-[9px] uppercase tracking-[0.16em] text-white/25">The universal OS for embodied AI</p>
           </div>
 
-          {/* Link Columns */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="text-white font-semibold mb-4 text-sm">{category}</h4>
-              <ul className="space-y-2.5">
-                {links.map((link) => (
-                  <li key={link.name}>
-                    {link.href.startsWith("mailto:") ? (
-                      <EmailLink
-                        email={link.href.replace("mailto:", "")}
-                        className="text-white/50 text-sm hover:text-white transition-colors"
-                      >
-                        {link.name}
-                      </EmailLink>
-                    ) : (
-                      <a
-                        href={link.href}
-                        target={link.href.startsWith("http") ? "_blank" : undefined}
-                        rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="text-white/50 text-sm hover:text-white transition-colors"
-                      >
-                        {link.name}
-                      </a>
-                    )}
+          {linkGroups.map((group) => (
+            <div key={group.title}>
+              <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/[0.38]">{group.title}</h2>
+              <ul className="mt-5 space-y-3">
+                {group.links.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="focus-ring text-sm text-white/[0.48] transition-colors hover:text-white">{link.label}</Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
 
-          {/* Contact */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm">Contact</h4>
-            <ul className="space-y-2.5">
-              <li>
-                <EmailLink
-                  email={CONTACT_EMAIL}
-                  className="text-white/50 text-sm hover:text-white transition-colors flex items-center gap-2"
-                >
-                  <Mail className="w-4 h-4" />
-                  {CONTACT_EMAIL}
-                </EmailLink>
-              </li>
-              <li>
-                <a
-                  href={GITHUB_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/50 text-sm hover:text-white transition-colors flex items-center gap-2"
-                >
-                  <Github className="w-4 h-4" />
-                  GitHub
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Ecosystem Context */}
-        <div className="py-8 border-t border-white/10">
-          <p className="text-white/40 text-sm text-center mb-6">Ecosystem & Research Context</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Research Context</h5>
-              <ul className="space-y-2">
-                {footerEcosystem.researchContext.map((name) => (
-                  <li key={name} className="text-white/50 text-sm">{name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Robotics Ecosystem</h5>
-              <ul className="space-y-2">
-                {footerEcosystem.robotics.map((name) => (
-                  <li key={name} className="text-white/50 text-sm">{name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Data & Infrastructure</h5>
-              <ul className="space-y-2">
-                {footerEcosystem.dataInfrastructure.map((name) => (
-                  <li key={name} className="text-white/50 text-sm">{name}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h5 className="text-white/60 text-xs uppercase tracking-wider mb-3 font-mono">Model & Simulation</h5>
-              <ul className="space-y-2">
-                {footerEcosystem.modelSimulation.map((name) => (
-                  <li key={name} className="text-white/50 text-sm">{name}</li>
-                ))}
-              </ul>
+            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/[0.38]">Community</h2>
+            <div className="mt-5 space-y-3">
+              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="focus-ring flex items-center justify-between border-b border-white/[0.08] pb-3 text-sm text-white/[0.52] transition-colors hover:text-white">
+                <span className="flex items-center gap-2"><Github className="h-4 w-4" /> GitHub</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-cognitive-cyan" />
+              </a>
+              <a href={`mailto:${CONTACT_EMAIL}`} className="focus-ring flex items-center justify-between border-b border-white/[0.08] pb-3 text-sm text-white/[0.52] transition-colors hover:text-white">
+                <span className="flex items-center gap-2"><Mail className="h-4 w-4" /> {CONTACT_EMAIL}</span>
+                <ArrowUpRight className="h-3.5 w-3.5 text-cognitive-cyan" />
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-white/40 text-sm">
-            &copy; {new Date().getFullYear()} ROSClaw. Open source under MIT License.
-          </p>
-          <div className="flex items-center gap-6">
-            <a href="#" className="text-white/40 text-sm hover:text-white transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-white/40 text-sm hover:text-white transition-colors">
-              Terms of Service
-            </a>
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
+          <p>&copy; {new Date().getFullYear()} ROSClaw. Open source under the MIT License.</p>
+          <div className="flex items-center gap-5">
+            <Link href="/privacy/telemetry" className="focus-ring transition-colors hover:text-white">Telemetry Privacy</Link>
+            <a href={`${GITHUB_URL}/blob/main/LICENSE`} target="_blank" rel="noopener noreferrer" className="focus-ring transition-colors hover:text-white">MIT License</a>
           </div>
         </div>
       </div>

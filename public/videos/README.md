@@ -1,26 +1,7 @@
-# ROSClaw Hero Video Placeholder
+# ROSClaw recorded showcase
 
-This directory should contain the hero background video files:
+The website currently uses one historical video served through `/demo` and displayed once in the homepage evidence section.
 
-- `hero-video.webm` - WebM format (preferred)
-- `hero-video.mp4` - MP4 format fallback
-- `hero-poster.jpg` - Poster image for initial load
-
-## Video Requirements
-
-- Resolution: 1920x1080 or higher
-- Duration: 10-30 seconds (looping)
-- Content: Robot demonstrations, G1/UR5 in action
-- Style: Dark, cinematic, tech-focused
-- Overlay: Will have 60% dark overlay applied
-
-## Recommended Approach
-
-1. Place your actual video files in this directory
-2. Remove or rename this README
-3. The VideoBackground component will automatically pick them up
-
-## Current Fallback
-
-Until video is provided, the site uses an animated particle background
-in addition to the gradient fallback.
+- `unitree-g1-poster.webp` is a lightweight poster extracted from that same recording.
+- The video uses `preload="none"`; playback starts only after user interaction.
+- Do not duplicate the recording as background decoration. New evidence cards should use real, separately supplied media or code-native trace views.

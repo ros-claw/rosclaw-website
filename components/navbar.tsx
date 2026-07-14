@@ -1,152 +1,172 @@
 "use client";
 
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { Github, Menu, X, Mail, User } from "lucide-react";
-import { useState } from "react";
-import { ThemeToggle } from "./theme-toggle";
+import Image from "next/image";
 import Link from "next/link";
-import { EmailLink } from "./email-link";
+import { usePathname } from "next/navigation";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { ArrowDownRight, Github, Menu, X } from "lucide-react";
+import { GITHUB_URL } from "@/content/shared";
 
 const navLinks = [
   { name: "Runtime", href: "/runtime" },
-  { name: "First Embodiment", href: "/#first-embodiment" },
+  { name: "Robots", href: "/#robots" },
   { name: "Hub", href: "/hub" },
-  { name: "Flywheel", href: "/flywheel" },
   { name: "Docs", href: "/docs" },
-];
+] as const;
 
 export function Navbar() {
+  const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { scrollY } = useScroll();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50);
-  });
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const firstLink = mobileMenuRef.current?.querySelector<HTMLElement>("a");
+    firstLink?.focus();
+
+    const handleEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+        window.requestAnimationFrame(() => menuButtonRef.current?.focus());
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isMobileMenuOpen]);
+
+  const handleMenuKeys = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(mobileMenuRef.current?.querySelectorAll<HTMLElement>("a, button") ?? []);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  const isActive = (href: string) => !href.includes("#") && (pathname === href || (href !== "/" && pathname.startsWith(`${href}/`)));
 
   return (
-    <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? "bg-background/80 backdrop-blur-xl border-b border-white/10"
-            : "bg-transparent"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-md bg-white p-0.5 flex items-center justify-center overflow-hidden">
-                <img
-                  src="/rosclaw_logo.png"
-                  alt=""
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <span className="text-foreground font-semibold tracking-tight text-lg">ROSClaw</span>
-            </Link>
+    <header
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-200 ${
+        isScrolled || isMobileMenuOpen
+          ? "border-white/10 bg-[#060809]/90 backdrop-blur-xl"
+          : "border-transparent bg-gradient-to-b from-black/55 to-transparent"
+      }`}
+    >
+      <nav aria-label="Primary navigation" className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="focus-ring group flex items-center gap-2.5" aria-label="ROSClaw home">
+            <span className="flex h-8 w-8 items-center justify-center overflow-hidden bg-white transition-transform group-hover:-rotate-3">
+              <Image src="/rosclaw-mark.webp" alt="" width={32} height={32} className="h-full w-full object-cover" priority />
+            </span>
+            <span className="text-base font-semibold tracking-[-0.02em] text-white">ROSClaw</span>
+            <span className="hidden border-l border-white/15 pl-2 font-mono text-[8px] uppercase tracking-[0.16em] text-white/30 sm:inline">Physical AI OS</span>
+          </Link>
 
-            {/* Desktop nav */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
+          <div className="hidden items-center gap-7 lg:flex">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`focus-ring relative py-2 text-sm transition-colors ${isActive(link.href) ? "text-white" : "text-white/[0.52] hover:text-white"}`}
+              >
+                {link.name}
+                {isActive(link.href) && <span className="absolute inset-x-0 -bottom-[15px] h-px bg-cognitive-cyan" />}
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <a
+              href={GITHUB_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="focus-ring hidden h-9 w-9 items-center justify-center text-white/[0.48] transition-colors hover:bg-white/[0.05] hover:text-white sm:flex"
+              aria-label="ROSClaw on GitHub"
+            >
+              <Github className="h-[18px] w-[18px]" />
+            </a>
+            <Link
+              href="/#first-embodiment"
+              className="focus-ring hidden min-h-9 items-center gap-1.5 bg-cognitive-cyan px-4 text-xs font-semibold text-[#021012] transition-colors hover:bg-[#6af7ff] sm:flex"
+            >
+              Install ROSClaw <ArrowDownRight className="h-3.5 w-3.5" />
+            </Link>
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              className="focus-ring flex h-10 w-10 items-center justify-center text-white/65 hover:bg-white/[0.05] hover:text-white lg:hidden"
+              aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {isMobileMenuOpen && (
+        <div
+          id="mobile-navigation"
+          ref={mobileMenuRef}
+          onKeyDown={handleMenuKeys}
+          className="border-t border-white/10 bg-[#060809] px-4 py-5 lg:hidden"
+        >
+          <div className="mx-auto max-w-[1440px]">
+            <div className="divide-y divide-white/[0.08] border-y border-white/[0.08]">
+              {navLinks.map((link, index) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-sm text-text-secondary hover:text-foreground transition-colors"
+                  aria-current={isActive(link.href) ? "page" : undefined}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="focus-ring flex items-center justify-between py-4 text-base text-white/70 hover:text-white"
                 >
-                  {link.name}
+                  <span><span className="mr-3 font-mono text-[9px] text-cognitive-cyan">0{index + 1}</span>{link.name}</span>
+                  <span aria-hidden="true">→</span>
                 </Link>
               ))}
             </div>
-
-            {/* Right actions */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              <ThemeToggle />
-              <a
-                href="https://github.com/ros-claw/rosclaw"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden md:flex items-center justify-center w-9 h-9 rounded-lg text-text-secondary hover:text-foreground hover:bg-white/5 transition-all"
-                aria-label="GitHub"
-              >
-                <Github className="w-5 h-5" />
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="focus-ring flex min-h-11 items-center justify-center gap-2 border border-white/[0.12] text-sm text-white/65">
+                <Github className="h-4 w-4" /> GitHub
               </a>
-              <EmailLink
-                email="ai@rosclaw.io"
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-text-secondary text-sm hover:text-foreground hover:bg-white/10 transition-all"
-              >
-                <Mail className="w-4 h-4" />
-                Contact
-              </EmailLink>
-
-              <Link
-                href="/login"
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan text-sm hover:bg-cognitive-cyan/20 transition-all"
-              >
-                <User className="w-4 h-4" />
-                Sign In
+              <Link href="/#first-embodiment" onClick={() => setIsMobileMenuOpen(false)} className="focus-ring flex min-h-11 items-center justify-center gap-2 bg-cognitive-cyan text-sm font-semibold text-[#021012]">
+                Install <ArrowDownRight className="h-4 w-4" />
               </Link>
-
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 text-text-secondary hover:text-foreground"
-                aria-label="Toggle menu"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
-              </button>
             </div>
           </div>
         </div>
-      </motion.nav>
-
-      {/* Mobile menu */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{
-          opacity: isMobileMenuOpen ? 1 : 0,
-          y: isMobileMenuOpen ? 0 : -20,
-        }}
-        transition={{ duration: 0.2 }}
-        className={`fixed top-16 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-b border-white/10 md:hidden ${
-          isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
-        }`}
-      >
-        <div className="px-4 py-6 space-y-2">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-lg text-text-secondary hover:text-foreground py-2"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <EmailLink
-            email="ai@rosclaw.io"
-            className="flex items-center gap-2 py-3 text-lg text-cognitive-cyan"
-          >
-            <Mail className="w-5 h-5" />
-            Contact
-          </EmailLink>
-          <Link
-            href="/login"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center gap-2 py-3 text-lg text-cognitive-cyan"
-          >
-            <User className="w-5 h-5" />
-            Sign In
-          </Link>
-        </div>
-      </motion.div>
-    </>
+      )}
+    </header>
   );
 }

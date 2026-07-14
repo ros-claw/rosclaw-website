@@ -1,60 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Copy, Check } from "lucide-react";
-import { terminalCommands } from "@/content/cli";
+import { Check, Copy } from "lucide-react";
+import { INSTALL_COMMAND } from "@/content/shared";
 
-function CopyButton({ text }: { text: string }) {
+export function TerminalCTA() {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(INSTALL_COMMAND);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
+      window.setTimeout(() => setCopied(false), 1400);
     } catch {
-      // Copy failed silently; the button simply won't show "Copied!"
+      setCopied(false);
     }
   };
 
   return (
-    <motion.button
-      onClick={handleCopy}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="ml-auto p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors flex-shrink-0"
-      aria-label={copied ? "Copied!" : "Copy command"}
-    >
-      {copied ? (
-        <span className="flex items-center gap-1 text-xs text-green-400 font-medium">
-          <Check className="w-3.5 h-3.5" />
-          Copied
-        </span>
-      ) : (
-        <Copy className="w-4 h-4 text-white/60 hover:text-cognitive-cyan" />
-      )}
-    </motion.button>
-  );
-}
-
-export function TerminalCTA() {
-  return (
-    <div className="inline-block text-left w-full max-w-[620px]">
-      <div className="rounded-xl border border-cognitive-cyan/20 bg-black/40 backdrop-blur-sm p-1 shadow-[0_0_24px_-12px_rgba(0,240,255,0.15)]">
-        <div className="flex flex-col gap-1 px-4 py-3 font-mono text-sm sm:text-base">
-          {terminalCommands.map((command) => (
-            <div
-              key={command.command}
-              className="flex items-center gap-3 min-w-0"
-            >
-              <span className="text-white/40 flex-shrink-0">$</span>
-              <span className="text-cognitive-cyan truncate">{command.command}</span>
-              <CopyButton text={command.command} />
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="flex min-h-12 min-w-0 items-center border border-white/10 bg-[#050708]/85 px-3 font-mono text-[11px] shadow-[inset_3px_0_0_rgba(0,240,255,0.6)] sm:px-4 sm:text-sm">
+      <span className="mr-2 shrink-0 text-physical-orange">$</span>
+      <code className="min-w-0 flex-1 truncate text-white/[0.68]">{INSTALL_COMMAND}</code>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="focus-ring ml-2 inline-flex h-8 shrink-0 items-center gap-1.5 px-2 text-[10px] uppercase tracking-wider text-white/40 transition-colors hover:bg-white/[0.06] hover:text-white"
+        aria-label={copied ? "Install command copied" : "Copy install command"}
+      >
+        {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+        <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+      </button>
+      <span className="sr-only" aria-live="polite">{copied ? "Install command copied" : ""}</span>
     </div>
   );
 }

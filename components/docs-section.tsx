@@ -1,279 +1,157 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import { useState, useEffect, useCallback } from "react";
-import { Terminal, Check, Copy } from "lucide-react";
+import { KeyboardEvent, useState } from "react";
+import Link from "next/link";
+import { Check, Copy, ExternalLink, Terminal } from "lucide-react";
 import { firstEmbodimentSteps } from "@/content/cli";
-import { fadeInUp, staggerContainer } from "@/content/shared";
 
-const initialPassport = {
-  CLI: "—",
-  Workspace: "—",
-  Mode: "—",
-  Robot: "—",
-  Profile: "—",
-  Capabilities: "—",
-  Safety: "—",
-  Decision: "—",
-  Trace: "—",
-  Dashboard: "—",
-  Viewer: "—",
-  Status: "pending",
-  Memory: "—",
-};
-
-function fieldHighlight(value: string) {
-  if (value === "—" || value === "pending") return "text-white/30";
-  if (value === "ready" || value === "enabled" || value.includes("ALLOW")) return "text-green-400";
-  if (value.includes("local-only") || value.includes("envelope") || value.includes("loaded") || value.includes("open")) return "text-cognitive-cyan";
-  return "text-white/80";
-}
-
-function TerminalOutput({ lines }: { lines: string[] }) {
-  return (
-    <div className="rounded-xl bg-black/80 border border-white/10 overflow-hidden">
-      <div className="flex items-center gap-2 px-4 py-3 bg-white/5 border-b border-white/10">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-500/80" />
-          <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
-          <div className="w-3 h-3 rounded-full bg-green-500/80" />
-        </div>
-        <span className="ml-2 text-xs text-white/40 font-mono">rosclaw-cli</span>
-      </div>
-      <div className="p-4 font-mono text-sm min-h-[280px]">
-        {lines.map((line, i) => (
-          <div
-            key={`${line}-${i}`}
-            className={`${
-              line.startsWith("$")
-                ? "text-cognitive-cyan"
-                : line.startsWith("✓")
-                ? "text-green-400"
-                : line.startsWith("Next:") || line.startsWith("  ")
-                ? "text-white/50"
-                : "text-white/70"
-            }`}
-          >
-            {line}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CodeCopyButton({ code }: { code: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-    } catch {
-      // silently fail
-    }
-  };
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/40 hover:text-white transition-colors"
-      aria-label={copied ? "Copied" : "Copy command"}
-    >
-      {copied ? (
-        <span className="flex items-center gap-1 text-xs text-green-400 font-medium">
-          <Check className="w-3.5 h-3.5" />
-          Copied
-        </span>
-      ) : (
-        <Copy className="w-3.5 h-3.5" />
-      )}
-    </button>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, string> = {
-    Stable: "bg-green-500/10 border-green-500/30 text-green-400",
-    Experimental: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",
-    Planned: "bg-white/5 border-white/20 text-white/60",
-    Research: "bg-purple-500/10 border-purple-500/30 text-purple-400",
-  };
-
-  return (
-    <span
-      className={`px-2 py-0.5 rounded-full text-[10px] font-medium border uppercase tracking-wider ${colors[status] || colors.Stable}`}
-    >
-      {status}
-    </span>
-  );
-}
-
-function EmbodimentPassport({
-  passport,
-}: {
-  passport: Record<string, string>;
-}) {
-  return (
-    <div className="rounded-xl bg-gradient-to-br from-cognitive-cyan/5 to-physical-orange/5 border border-white/10 p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 flex items-center justify-center">
-          <span className="text-cognitive-cyan font-bold">EP</span>
-        </div>
-        <div>
-          <h4 className="text-white font-semibold">Embodiment Passport</h4>
-          <p className="text-white/40 text-xs">First body context</p>
-        </div>
-      </div>
-
-      <div className="space-y-3 font-mono text-sm">
-        {Object.entries(passport).map(([key, value]) => (
-          <div
-            key={key}
-            className="flex justify-between items-center py-2 border-b border-white/5 last:border-0"
-          >
-            <span className="text-white/40">{key}</span>
-            <span className={`text-right max-w-[60%] ${fieldHighlight(value)}`}>
-              {value}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const onboardingSteps = [
+  {
+    ...firstEmbodimentSteps[0],
+    step: "Install",
+    result: ["CLI ready", "Local workspace available"],
+  },
+  {
+    ...firstEmbodimentSteps[2],
+    step: "Create Body",
+    result: ["e-URDF linked", "Safety envelope loaded"],
+  },
+  {
+    ...firstEmbodimentSteps[3],
+    step: "Run Safely",
+    result: ["Decision: ALLOW_WITH_LIMITS", "Trace: first_embodiment_001.mcap"],
+  },
+] as const;
 
 export function DocsSection() {
-  const [activeStep, setActiveStep] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const prefersReducedMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const active = onboardingSteps[activeIndex];
 
-  const currentStep = firstEmbodimentSteps[activeStep];
+  const selectStep = (index: number) => {
+    setActiveIndex(index);
+    setCopied(false);
+  };
 
-  const buildPassport = useCallback(() => {
-    const patches: Record<string, string> = {};
-    for (let i = 0; i <= activeStep; i++) {
-      Object.assign(patches, firstEmbodimentSteps[i].passport);
+  const handleKeys = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    let next = index;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % onboardingSteps.length;
+    else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index - 1 + onboardingSteps.length) % onboardingSteps.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = onboardingSteps.length - 1;
+    else return;
+    event.preventDefault();
+    selectStep(next);
+    document.getElementById(`embodiment-tab-${onboardingSteps[next].id}`)?.focus();
+  };
+
+  const copyCommand = async () => {
+    try {
+      await navigator.clipboard.writeText(active.command.command);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
     }
-    return { ...initialPassport, ...patches };
-  }, [activeStep]);
-
-  useEffect(() => {
-    if (prefersReducedMotion || isPaused) return;
-
-    const interval = setInterval(() => {
-      setActiveStep((prev) => (prev + 1) % firstEmbodimentSteps.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [prefersReducedMotion, isPaused]);
+  };
 
   return (
-    <section
-      id="first-embodiment"
-      className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-background"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-    >
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <motion.p
-            variants={fadeInUp}
-            className="text-cognitive-cyan text-sm uppercase tracking-widest mb-4 font-mono"
-          >
-            First Embodiment
-          </motion.p>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-6"
-          >
-            Give an AI Agent Its First Physical Body Context
-          </motion.h2>
-          <motion.p
-            variants={fadeInUp}
-            className="text-white/60 text-lg max-w-3xl mx-auto"
-          >
-            First Embodiment turns a model-facing agent into a body-aware physical
-            agent: body profile, safety envelope, sandbox, memory namespace, and
-            trace stream.
-          </motion.p>
-        </motion.div>
+    <section id="first-embodiment" className="border-b border-white/[0.08] bg-[#080b0c] px-4 py-20 sm:px-6 md:py-28 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-7 lg:grid-cols-[0.75fr_1.25fr] lg:items-end">
+          <div>
+            <p className="section-kicker">03 / First embodiment</p>
+            <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl md:text-5xl">
+              From install to guarded action.
+            </h2>
+          </div>
+          <p className="max-w-2xl text-pretty text-base leading-relaxed text-white/55 lg:justify-self-end lg:text-lg">
+            Three explicit steps give an agent its first physical body context. Nothing advances automatically, so the command and runtime result stay under your control.
+          </p>
+        </div>
 
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid lg:grid-cols-12 gap-8"
-        >
-          {/* Stepper */}
-          <motion.div variants={fadeInUp} className="lg:col-span-3 space-y-2">
-            {firstEmbodimentSteps.map((step, index) => (
-              <button
-                key={step.id}
-                onClick={() => setActiveStep(index)}
-                className={`w-full text-left p-4 rounded-xl border transition-all duration-300 ${
-                  activeStep === index
-                    ? "bg-cognitive-cyan/10 border-cognitive-cyan/30"
-                    : "bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.05]"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-sm ${
-                      activeStep === index
-                        ? "bg-cognitive-cyan/20 text-cognitive-cyan"
-                        : "bg-white/5 text-white/40"
-                    }`}
-                  >
-                    {index < activeStep ? (
-                      <Check className="w-4 h-4" />
-                    ) : (
-                      index + 1
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className={`font-medium ${
-                        activeStep === index ? "text-white" : "text-white/60"
-                      }`}
-                    >
-                      {step.title}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </motion.div>
+        <div className="mt-12 grid border border-white/10 bg-[#050708] lg:grid-cols-[minmax(220px,0.42fr)_minmax(0,1.58fr)]">
+          <div role="tablist" aria-label="First Embodiment steps" className="grid grid-cols-1 border-b border-white/10 sm:grid-cols-3 lg:block lg:border-b-0 lg:border-r">
+            {onboardingSteps.map((step, index) => {
+              const selected = activeIndex === index;
+              return (
+                <button
+                  key={step.id}
+                  id={`embodiment-tab-${step.id}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls={`embodiment-panel-${step.id}`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => selectStep(index)}
+                  onKeyDown={(event) => handleKeys(event, index)}
+                  className={`focus-ring relative w-full border-b border-white/10 px-4 py-4 text-left transition-colors last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 lg:min-h-[112px] lg:border-b lg:border-r-0 lg:last:border-b-0 lg:px-6 lg:py-5 ${selected ? "bg-white/[0.055]" : "hover:bg-white/[0.025]"}`}
+                >
+                  <span className={`font-mono text-[9px] ${selected ? "text-cognitive-cyan" : "text-white/25"}`}>STEP 0{index + 1}</span>
+                  <span className={`mt-2 block text-sm font-medium ${selected ? "text-white" : "text-white/[0.52]"}`}>{step.step}</span>
+                  <span className="mt-1 hidden text-xs leading-snug text-white/30 lg:block">{step.description}</span>
+                  {selected && <span className="absolute inset-y-0 left-0 w-0.5 bg-cognitive-cyan sm:inset-x-0 sm:bottom-0 sm:top-auto sm:h-0.5 sm:w-auto lg:inset-y-0 lg:left-0 lg:right-auto lg:h-auto lg:w-0.5" />}
+                </button>
+              );
+            })}
+          </div>
 
-          {/* Terminal */}
-          <motion.div variants={fadeInUp} className="lg:col-span-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2 text-white/60">
-                <Terminal className="w-4 h-4 text-cognitive-cyan" />
-                <span className="text-sm">{currentStep.title}</span>
+          <div id={`embodiment-panel-${active.id}`} role="tabpanel" aria-labelledby={`embodiment-tab-${active.id}`}>
+            <div className="flex items-center justify-between border-b border-white/10 px-4 py-3 sm:px-6">
+              <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.15em] text-white/[0.38]">
+                <Terminal className="h-3.5 w-3.5 text-cognitive-cyan" /> rosclaw-cli
               </div>
-              <div className="flex items-center gap-2">
-                <StatusBadge status={currentStep.command.status} />
-                <CodeCopyButton code={currentStep.command.command} />
+              <span className="border border-emerald-400/25 bg-emerald-400/[0.06] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-emerald-400">
+                {active.command.status}
+              </span>
+            </div>
+
+            <div className="grid lg:grid-cols-[minmax(0,1.28fr)_minmax(250px,0.72fr)]">
+              <div className="min-w-0 px-4 py-6 sm:px-6 sm:py-8">
+                <div className="flex min-w-0 items-center border border-white/10 bg-black/40 px-3 py-3 font-mono text-[11px] sm:text-sm">
+                  <span className="mr-2 text-physical-orange">$</span>
+                  <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap text-cognitive-cyan">{active.command.command}</code>
+                  <button
+                    type="button"
+                    onClick={copyCommand}
+                    className="focus-ring ml-2 inline-flex h-8 shrink-0 items-center gap-1.5 px-2 text-[10px] uppercase tracking-wider text-white/40 transition-colors hover:bg-white/[0.06] hover:text-white"
+                    aria-label={copied ? "Command copied" : "Copy command"}
+                  >
+                    {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
+                  </button>
+                </div>
+                <div className="mt-5 space-y-2 font-mono text-[11px] leading-relaxed sm:text-xs">
+                  {active.terminalOutput.map((line, index) => (
+                    <p key={`${line}-${index}`} className="flex gap-2 text-white/[0.48]">
+                      <span className="text-emerald-400/75">{index === active.terminalOutput.length - 1 ? "✓" : "·"}</span>
+                      <span>{line}</span>
+                    </p>
+                  ))}
+                </div>
+                <span className="sr-only" aria-live="polite">{copied ? "Command copied" : ""}</span>
+              </div>
+
+              <div className="border-t border-white/10 bg-white/[0.02] px-4 py-6 lg:border-l lg:border-t-0 sm:px-6 sm:py-8">
+                <p className="runtime-label">Body passport update</p>
+                <dl className="mt-5 space-y-3">
+                  {active.result.map((item, index) => {
+                    const [label, ...rest] = item.split(": ");
+                    return (
+                      <div key={item} className="flex items-start justify-between gap-3 border-b border-white/[0.06] pb-3 font-mono text-[10px]">
+                        <dt className="text-white/35">{rest.length ? label : `Result 0${index + 1}`}</dt>
+                        <dd className="max-w-[65%] text-right text-cognitive-cyan">{rest.length ? rest.join(": ") : item}</dd>
+                      </div>
+                    );
+                  })}
+                </dl>
+                <Link href="/docs" className="focus-ring mt-6 inline-flex items-center gap-2 text-xs text-white/45 transition-colors hover:text-white">
+                  Open full documentation <ExternalLink className="h-3 w-3" />
+                </Link>
               </div>
             </div>
-            <TerminalOutput lines={currentStep.terminalOutput} />
-            <p className="text-white/40 text-sm mt-4">{currentStep.description}</p>
-          </motion.div>
-
-          {/* Passport */}
-          <motion.div variants={fadeInUp} className="lg:col-span-3">
-            <EmbodimentPassport passport={buildPassport()} />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
