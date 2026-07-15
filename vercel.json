@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/github-sync",
-      "schedule": "56 2 15 7 *"
+      "schedule": "15 19 * * *"
     }
   ]
 }
