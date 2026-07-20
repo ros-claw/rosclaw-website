@@ -5,7 +5,7 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(cookies());
+    await requireAdmin(await cookies());
 
     const { searchParams } = new URL(req.url);
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));

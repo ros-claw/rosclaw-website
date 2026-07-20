@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
         tags: body.tags || [],
         tools: body.tools || [],
         status,
-        is_verified: false,  // Only manually set true for truly official packages
+        is_verified: false,  // Publication approval never creates a verification attestation.
       })
       .select()
       .single()

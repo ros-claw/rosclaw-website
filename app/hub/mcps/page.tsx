@@ -40,15 +40,15 @@ const PAGE_SIZE = 24;
 
 const categoryDefinitions = [
   { id: "all", label: "All interfaces", keywords: [] },
-  { id: "official", label: "Verified", keywords: [] },
+  { id: "registry-verified", label: "Registry verified", keywords: [] },
   { id: "robots", label: "Robot bodies", keywords: ["robot", "humanoid", "mobile", "arm", "manipulation", "unitree", "ros2"] },
   { id: "sensing", label: "Sensors & vision", keywords: ["sensor", "vision", "camera", "lidar", "realsense", "imu"] },
   { id: "industrial", label: "Industrial & lab", keywords: ["plc", "industrial", "lab", "modbus", "canopen", "beckhoff", "device"] },
   { id: "simulation", label: "Simulation", keywords: ["simulation", "simulator", "gazebo", "isaac", "mujoco", "digital twin"] },
 ] as const;
 
-function isOfficial(pkg: McpPackage) {
-  return pkg.verified || pkg.authorName === "ros-claw" || pkg.name.startsWith("ros-claw/");
+function isRegistryVerified(pkg: McpPackage) {
+  return pkg.verified === true;
 }
 
 function searchableText(pkg: McpPackage) {
@@ -60,7 +60,7 @@ function searchableText(pkg: McpPackage) {
 
 function matchesCategory(pkg: McpPackage, categoryId: string) {
   if (categoryId === "all") return true;
-  if (categoryId === "official") return isOfficial(pkg);
+  if (categoryId === "registry-verified") return isRegistryVerified(pkg);
   const category = categoryDefinitions.find((item) => item.id === categoryId);
   if (!category) return true;
   const text = searchableText(pkg);
@@ -68,7 +68,7 @@ function matchesCategory(pkg: McpPackage, categoryId: string) {
 }
 
 function PackageCard({ pkg, number }: { pkg: McpPackage; number: number }) {
-  const official = isOfficial(pkg);
+  const registryVerified = isRegistryVerified(pkg);
   const tools = pkg.tools || [];
   const tags = pkg.tags || [];
 
@@ -79,9 +79,9 @@ function PackageCard({ pkg, number }: { pkg: McpPackage; number: number }) {
     >
       <div className="flex items-start justify-between gap-4">
         <span className="font-mono text-[9px] tracking-[0.16em] text-white/25">MCP-{String(number).padStart(3, "0")}</span>
-        {official && (
+        {registryVerified && (
           <span className="inline-flex items-center gap-1.5 border border-cognitive-cyan/25 bg-cognitive-cyan/[0.04] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-cognitive-cyan">
-            <CheckCircle2 className="h-3 w-3" /> Verified
+            <CheckCircle2 className="h-3 w-3" /> Registry verified
           </span>
         )}
       </div>
@@ -177,13 +177,16 @@ export default function McpsPage() {
       .sort((a, b) => {
         if (sortBy === "stars") return (b.githubStars || 0) - (a.githubStars || 0);
         if (sortBy === "tools") return (b.tools?.length || 0) - (a.tools?.length || 0);
-        const score = (pkg: McpPackage) => (isOfficial(pkg) ? 1_000_000 : 0) + (pkg.tools?.length || 0) * 100 + (pkg.githubStars || 0) * 10;
+        const score = (pkg: McpPackage) => (isRegistryVerified(pkg) ? 1_000_000 : 0) + (pkg.tools?.length || 0) * 100 + (pkg.githubStars || 0) * 10;
         return score(b) - score(a);
       });
   }, [packages, deferredSearch, activeCategory, sortBy]);
 
   const totalTools = useMemo(() => packages.reduce((total, pkg) => total + (pkg.tools?.length || 0), 0), [packages]);
-  const verifiedCount = useMemo(() => packages.filter(isOfficial).length, [packages]);
+  const verifiedCount = useMemo(
+    () => packages.filter(isRegistryVerified).length,
+    [packages],
+  );
   const visiblePackages = processedPackages.slice(0, visibleCount);
 
   return (
@@ -215,7 +218,7 @@ export default function McpsPage() {
             {[
               ["Registry packages", loading ? "—" : packages.length.toLocaleString()],
               ["Exposed tools", loading ? "—" : totalTools.toLocaleString()],
-              ["Verified publishers", loading ? "—" : verifiedCount.toLocaleString()],
+              ["Registry attestations", loading ? "—" : verifiedCount.toLocaleString()],
             ].map(([label, value], index) => (
               <div key={label} className={`p-5 sm:p-6 ${index < 2 ? "border-b border-white/10 sm:border-b-0 sm:border-r" : ""}`}>
                 <dt className="runtime-label">{label}</dt>

@@ -7,10 +7,10 @@ const linkGroups = [
   {
     title: "Product",
     links: [
+      { label: "Start", href: "/start" },
+      { label: "Robot support", href: "/robots" },
       { label: "Runtime", href: "/runtime" },
-      { label: "Recorded run", href: "/#robots" },
-      { label: "First Embodiment", href: "/#first-embodiment" },
-      { label: "Flywheel", href: "/flywheel" },
+      { label: "Verified run", href: "/#verified-run" },
     ],
   },
   {
@@ -37,14 +37,14 @@ export function Footer() {
               <span className="text-lg font-semibold tracking-tight text-white">ROSClaw</span>
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/[0.42]">
-              Runtime infrastructure that grounds AI agents in real bodies, guards physical actions, and turns execution traces into reusable experience.
+              Trustworthy physical execution runtime and control plane for any embodied Agent.
             </p>
-            <p className="mt-6 font-mono text-[9px] uppercase tracking-[0.16em] text-white/25">The universal OS for embodied AI</p>
+            <p className="mt-6 font-mono text-[9px] uppercase text-white/25">Body-aware · guarded · auditable</p>
           </div>
 
           {linkGroups.map((group) => (
             <div key={group.title}>
-              <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/[0.38]">{group.title}</h2>
+              <h2 className="font-mono text-[10px] uppercase text-white/[0.38]">{group.title}</h2>
               <ul className="mt-5 space-y-3">
                 {group.links.map((link) => (
                   <li key={link.label}>
@@ -56,7 +56,7 @@ export function Footer() {
           ))}
 
           <div>
-            <h2 className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/[0.38]">Community</h2>
+            <h2 className="font-mono text-[10px] uppercase text-white/[0.38]">Community</h2>
             <div className="mt-5 space-y-3">
               <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="focus-ring flex items-center justify-between border-b border-white/[0.08] pb-3 text-sm text-white/[0.52] transition-colors hover:text-white">
                 <span className="flex items-center gap-2"><Github className="h-4 w-4" /> GitHub</span>

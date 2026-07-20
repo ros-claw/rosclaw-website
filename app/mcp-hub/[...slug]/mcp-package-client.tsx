@@ -104,7 +104,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
   const tags = packageData.tags || [];
   const docs = packageData.readmeContent || packageData.longDescription || "";
   const installCommand = `rosclaw install mcp ${packageData.name}`;
-  const verified = Boolean(packageData.verified || packageData.authorName === "ros-claw" || packageData.name.startsWith("ros-claw/"));
+  const registryVerified = packageData.verified === true;
 
   return (
     <main className="min-h-screen bg-background pb-20 pt-24">
@@ -118,9 +118,9 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-cognitive-cyan">Physical interface</span>
-                {verified && (
+                {registryVerified && (
                   <span className="inline-flex items-center gap-1.5 border border-cognitive-cyan/25 bg-cognitive-cyan/[0.05] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-cognitive-cyan">
-                    <CheckCircle2 className="h-3 w-3" /> Verified
+                    <CheckCircle2 className="h-3 w-3" /> Registry verified
                   </span>
                 )}
               </div>
@@ -257,7 +257,11 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                 ["Target", packageData.robotType || "Not declared"],
                 ["Category", packageData.category || "Not declared"],
                 ["Version", packageData.version || "—"],
-                ["Status", verified ? "Verified" : "Community"],
+                [
+                  "Registry verification",
+                  registryVerified ? "Verified" : "Not attested",
+                ],
+                ["Hardware evidence", "Not represented by this flag"],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-start justify-between gap-4 border-b border-white/[0.06] pb-3 last:border-0 last:pb-0">
                   <dt className="text-white/28">{label}</dt>

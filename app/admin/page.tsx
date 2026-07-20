@@ -337,7 +337,10 @@ function McpTab() {
     setProcessing(id);
     try {
       const supabase = getSupabaseClient();
-      const { error } = await supabase.from("mcp_packages").update({ status: "approved", is_verified: true }).eq("id", id);
+      const { error } = await supabase
+        .from("mcp_packages")
+        .update({ status: "approved" })
+        .eq("id", id);
       if (error) throw error;
       setPackages((prev) => prev.filter((p) => p.id !== id));
     } catch (err: any) {

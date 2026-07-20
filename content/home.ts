@@ -1,20 +1,21 @@
 // Homepage copy and data for the ROSClaw website.
 
 import { CONTACT_EMAIL, GITHUB_URL } from "./shared";
+import { productStatus, release } from "./product-status";
 
 export const heroContent = {
-  eyebrow: "Physical AI Runtime",
+  eyebrow: `v${release.version} · ${release.maturity}`,
   title: {
-    line1: "Self-Evolving Runtime",
-    line2: "Infrastructure for Physical AI",
+    line1: "ROSClaw",
+    line2: "Trustworthy Physical Execution Runtime",
   },
-  subtitle: ["Ground the agent.", "Guard the action.", "Evolve the skill."],
+  subtitle: ["Body-aware", "Guarded", "Auditable"],
   description:
-    "ROSClaw gives AI agents a body context, validates physical actions, captures traces, builds memory, and evolves safer skills.",
+    "Give any AI agent one governed path to simulation and real robots, with policy checks, physical evidence, and an ExecutionReceipt for every action.",
   ctas: {
-    primary: { label: "Start First Embodiment", href: "/#first-embodiment" },
-    secondary: { label: "View GitHub", href: GITHUB_URL },
-    tertiary: { label: "Contact Us", href: `mailto:${CONTACT_EMAIL}` },
+    primary: { label: "Start in Simulation", href: "/start?path=simulation" },
+    secondary: { label: "Connect a Real Robot", href: "/start?path=robot" },
+    tertiary: { label: "View GitHub", href: GITHUB_URL },
   },
 };
 
@@ -66,41 +67,36 @@ export const builtForContent = {
 };
 
 export const currentStatusContent = {
-  eyebrow: "Current Status",
-  title: "What Is Ready Today",
+  eyebrow: `Current Status · v${release.version} ${release.maturity}`,
+  title: "Evidence, Not Readiness Theater",
   description:
-    "ROSClaw is under active development. Here is what you can try now, what is being built, and what remains research.",
+    "Verified, developer-observed, and not-yet-run paths are deliberately shown as different states.",
   columns: [
     {
-      title: "Ready Today",
-      status: "Stable" as const,
+      title: "Verified",
+      status: "Verified" as const,
       items: [
-        "Local runtime workspace",
-        "First Embodiment flow",
-        "e-URDF profile structure",
-        "Sandbox validation demos",
-        "Hub manifest workflow",
-        "Praxis trace schema",
-        "Dashboard foundation",
+        `${productStatus.golden_paths.ur5e_reach.display.en}: MuJoCo TASK_VERIFIED`,
+        `${productStatus.components.action_gateway.display.en}: component/system tests`,
+        `${productStatus.components.estop.display.en}: component tests only`,
       ],
     },
     {
-      title: "In Progress",
-      status: "Experimental" as const,
+      title: "Observed",
+      status: "Observed" as const,
       items: [
-        "Provider container lifecycle",
-        "Hardware MCP auto-install",
-        "Physical memory closed-loop evaluation",
-        "Darwin skill promotion",
+        `${productStatus.golden_paths.rh56_single_step.display.en}: developer hardware reports`,
+        "Independent v1 hardware revalidation is in progress",
+        "No Agent black-box acceptance claim yet",
       ],
     },
     {
-      title: "Research",
-      status: "Research" as const,
+      title: "Not Verified",
+      status: "Not Verified" as const,
       items: [
-        "Cross-embodiment transfer",
-        "Long-horizon physical memory",
-        "Self-evolving VLA/VLN skills",
+        `${productStatus.golden_paths.realsense_inspect.display.en}: hardware capture not run`,
+        `${productStatus.golden_paths.turtlesim_guarded_motion.display.en}: golden path not run`,
+        "Repository-wide real-robot readiness and physical E-Stop",
       ],
     },
   ],

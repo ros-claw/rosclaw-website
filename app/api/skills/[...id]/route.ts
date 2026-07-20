@@ -35,11 +35,12 @@ function createAdminClient() {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
     const supabase = createClient(req)
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
 
     // Convert dash format to slash format (e.g., "owner-repo" -> "owner/repo")
     const slashPath = fullPath.replace(/^([^-]+)-(.+)$/, "$1/$2")
@@ -139,10 +140,11 @@ export async function GET(
 // POST /api/skills/[...id]?action=view - Increment view count
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
     const { searchParams } = new URL(req.url)
     const action = searchParams.get("action")
 
@@ -196,10 +198,11 @@ export async function POST(
 // PUT /api/skills/[...id] - Update skill (for sync)
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
     const body = await req.json()
 
     const apiKey = req.headers.get("x-api-key")
@@ -298,10 +301,11 @@ export async function PUT(
 // DELETE /api/skills/[...id] - Delete skill
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
 
     const apiKey = req.headers.get("x-api-key")
     const identity = await authenticateApiKey(apiKey)

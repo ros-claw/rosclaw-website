@@ -262,11 +262,11 @@ export function McpHubClient() {
                               </h3>
                               {pkg.verified ? (
                                 <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium">
-                                  Official
+                                  Registry verified
                                 </span>
                               ) : (
                                 <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-[10px] font-medium">
-                                  Community
+                                  Not attested
                                 </span>
                               )}
                             </div>

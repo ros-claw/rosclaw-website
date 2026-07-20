@@ -35,11 +35,12 @@ function createAdminClient() {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
     const supabase = createClient(req)
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
 
     // Try to find by ID first
     let { data, error } = await supabase
@@ -121,10 +122,11 @@ export async function GET(
 // POST /api/mcp-packages/[...id]/view - Increment view count
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
     const { searchParams } = new URL(req.url)
     const action = searchParams.get("action")
 
@@ -181,10 +183,11 @@ export async function POST(
 // PUT /api/mcp-packages/[...id] - Update package (for sync)
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
     const body = await req.json()
 
     const apiKey = req.headers.get("x-api-key")
@@ -286,10 +289,11 @@ export async function PUT(
 // DELETE /api/mcp-packages/[...id] - Delete package
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string[] } }
+  { params }: { params: Promise<{ id: string[] }> }
 ) {
   try {
-    const fullPath = params.id.join("/")
+    const { id } = await params
+    const fullPath = id.join("/")
 
     const apiKey = req.headers.get("x-api-key")
     const identity = await authenticateApiKey(apiKey)

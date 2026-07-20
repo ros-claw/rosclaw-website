@@ -73,7 +73,7 @@ export default function AdminMcpPage() {
       const supabase = getSupabaseClient();
       const { error } = await supabase
         .from("mcp_packages")
-        .update({ status: "approved", is_verified: true })
+        .update({ status: "approved" })
         .eq("id", id);
 
       if (error) throw error;

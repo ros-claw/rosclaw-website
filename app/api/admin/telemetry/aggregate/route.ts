@@ -10,7 +10,7 @@ async function isAuthorized(req: NextRequest): Promise<boolean> {
   }
 
   try {
-    await requireAdmin(cookies());
+    await requireAdmin(await cookies());
     return true;
   } catch {
     return false;

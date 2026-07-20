@@ -14,7 +14,7 @@ function formatPercent(value: number): string {
 
 export default async function TelemetryAdminPage() {
   try {
-    await requireAdmin(cookies());
+    await requireAdmin(await cookies());
   } catch {
     redirect("/login?redirect=/admin/telemetry");
   }

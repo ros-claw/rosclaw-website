@@ -8,7 +8,7 @@ import { DataTable } from "@/components/admin/telemetry/data-table";
 
 export default async function FeedbackAdminPage() {
   try {
-    await requireAdmin(cookies());
+    await requireAdmin(await cookies());
   } catch {
     redirect("/login?redirect=/admin/feedback");
   }

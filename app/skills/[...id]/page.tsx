@@ -4,10 +4,11 @@ export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 interface SkillDetailPageProps {
-  params: { id: string[] };
+  params: Promise<{ id: string[] }>;
 }
 
-export default function SkillDetailPage({ params }: SkillDetailPageProps) {
-  const fullPath = params.id.join("/");
+export default async function SkillDetailPage({ params }: SkillDetailPageProps) {
+  const { id } = await params;
+  const fullPath = id.join("/");
   return <SkillDetailClient id={fullPath} />;
 }

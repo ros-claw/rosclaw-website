@@ -32,9 +32,23 @@ export const staggerContainer = {
   },
 };
 
-export type StatusLabel = "Stable" | "Supported" | "Experimental" | "Planned" | "Research" | "Ecosystem";
+export type StatusLabel =
+  | "Verified"
+  | "Alpha"
+  | "Observed"
+  | "Not Verified"
+  | "Stable"
+  | "Supported"
+  | "Experimental"
+  | "Planned"
+  | "Research"
+  | "Ecosystem";
 
 export const statusBadgeClasses: Record<StatusLabel, string> = {
+  Verified: "bg-green-500/10 border-green-500/30 text-green-400",
+  Alpha: "bg-cognitive-cyan/10 border-cognitive-cyan/30 text-cognitive-cyan",
+  Observed: "bg-amber-500/10 border-amber-500/30 text-amber-300",
+  "Not Verified": "bg-white/5 border-white/20 text-white/60",
   Stable: "bg-green-500/10 border-green-500/30 text-green-400",
   Supported: "bg-green-500/10 border-green-500/30 text-green-400",
   Experimental: "bg-yellow-500/10 border-yellow-500/30 text-yellow-400",

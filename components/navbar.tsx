@@ -8,8 +8,9 @@ import { ArrowDownRight, Github, Menu, X } from "lucide-react";
 import { GITHUB_URL } from "@/content/shared";
 
 const navLinks = [
+  { name: "Start", href: "/start" },
+  { name: "Robots", href: "/robots" },
   { name: "Runtime", href: "/runtime" },
-  { name: "Robots", href: "/#robots" },
   { name: "Hub", href: "/hub" },
   { name: "Docs", href: "/docs" },
 ] as const;
@@ -85,8 +86,8 @@ export function Navbar() {
             <span className="flex h-8 w-8 items-center justify-center overflow-hidden bg-white transition-transform group-hover:-rotate-3">
               <Image src="/rosclaw-mark.webp" alt="" width={32} height={32} className="h-full w-full object-cover" priority />
             </span>
-            <span className="text-base font-semibold tracking-[-0.02em] text-white">ROSClaw</span>
-            <span className="hidden border-l border-white/15 pl-2 font-mono text-[8px] uppercase tracking-[0.16em] text-white/30 sm:inline">Physical AI OS</span>
+            <span className="text-base font-semibold text-white">ROSClaw</span>
+            <span className="hidden border-l border-white/15 pl-2 font-mono text-[8px] uppercase text-white/30 sm:inline">Execution Runtime</span>
           </Link>
 
           <div className="hidden items-center gap-7 lg:flex">
@@ -114,10 +115,10 @@ export function Navbar() {
               <Github className="h-[18px] w-[18px]" />
             </a>
             <Link
-              href="/#first-embodiment"
+              href="/start?path=simulation"
               className="focus-ring hidden min-h-9 items-center gap-1.5 bg-cognitive-cyan px-4 text-xs font-semibold text-[#021012] transition-colors hover:bg-[#6af7ff] sm:flex"
             >
-              Install ROSClaw <ArrowDownRight className="h-3.5 w-3.5" />
+              Start <ArrowDownRight className="h-3.5 w-3.5" />
             </Link>
             <button
               ref={menuButtonRef}
@@ -160,8 +161,8 @@ export function Navbar() {
               <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="focus-ring flex min-h-11 items-center justify-center gap-2 border border-white/[0.12] text-sm text-white/65">
                 <Github className="h-4 w-4" /> GitHub
               </a>
-              <Link href="/#first-embodiment" onClick={() => setIsMobileMenuOpen(false)} className="focus-ring flex min-h-11 items-center justify-center gap-2 bg-cognitive-cyan text-sm font-semibold text-[#021012]">
-                Install <ArrowDownRight className="h-4 w-4" />
+              <Link href="/start?path=simulation" onClick={() => setIsMobileMenuOpen(false)} className="focus-ring flex min-h-11 items-center justify-center gap-2 bg-cognitive-cyan text-sm font-semibold text-[#021012]">
+                Start <ArrowDownRight className="h-4 w-4" />
               </Link>
             </div>
           </div>

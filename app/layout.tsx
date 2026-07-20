@@ -12,7 +12,7 @@ const structuredData = {
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Linux, macOS, Windows WSL",
   description:
-    "Runtime infrastructure that gives AI agents a body, guards physical actions, and turns execution traces into safer skills.",
+    "Trustworthy physical execution runtime and control plane for embodied AI agents.",
   url: "https://www.rosclaw.io/",
   codeRepository: "https://github.com/ros-claw/rosclaw",
 };
@@ -25,9 +25,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rosclaw.io"),
-  title: "ROSClaw | Give AI Agents a Body That Learns",
+  title: "ROSClaw | Trustworthy Physical Execution Runtime",
   description:
-    "Ground AI agents in real robot bodies, guard every physical action, and turn execution traces into safer, reusable skills with ROSClaw.",
+    "Give any AI agent a body-aware, guarded, and auditable path to simulation and real robots.",
   keywords: [
     "ROSClaw",
     "Physical AI",
@@ -65,18 +65,18 @@ export const metadata: Metadata = {
   publisher: "ROSClaw",
   robots: "index, follow",
   openGraph: {
-    title: "ROSClaw — Give AI Agents a Body That Learns",
+    title: "ROSClaw — Trustworthy Physical Execution Runtime",
     description:
-      "Ground agents in real robot bodies, guard every physical action, and turn execution traces into safer skills.",
+      "A body-aware, guarded, and auditable path from AI agents to simulation and real robots.",
     type: "website",
     locale: "en_US",
     siteName: "ROSClaw",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ROSClaw | Give AI Agents a Body That Learns",
+    title: "ROSClaw | Trustworthy Physical Execution Runtime",
     description:
-      "Runtime infrastructure for body-aware, guarded, and traceable embodied AI.",
+      "Body-aware, guarded, and auditable physical execution for embodied AI.",
     creator: "@rosclaw",
   },
   alternates: {

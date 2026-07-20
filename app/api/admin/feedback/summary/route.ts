@@ -5,7 +5,7 @@ import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export async function GET(req: NextRequest) {
   try {
-    await requireAdmin(cookies());
+    await requireAdmin(await cookies());
 
     const admin = getSupabaseAdmin();
 

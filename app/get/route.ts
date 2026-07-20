@@ -1,265 +1,172 @@
 import { NextResponse } from "next/server";
+import { release } from "@/content/product-status";
 
-const BASH_SCRIPT = `#!/bin/bash
+const BASH_SCRIPT = `#!/usr/bin/env bash
 #
-# ROSClaw OS Kernel Installer
+# ROSClaw isolated installer
 # curl -sSL https://rosclaw.io/get | bash
 #
 
-set -e
+set -Eeuo pipefail
 
-# Colors
-RED='\\033[0;31m'
-GREEN='\\033[0;32m'
-YELLOW='\\033[1;33m'
-CYAN='\\033[0;36m'
-RESET='\\033[0m'
+VERSION="${release.version}"
+MATURITY="${release.maturity.toUpperCase()}"
+INSTALL_ROOT="\${ROSCLAW_INSTALL_ROOT:-$HOME/.local/share/rosclaw}"
+BIN_DIR="\${ROSCLAW_BIN_DIR:-$HOME/.local/bin}"
+WORKSPACE="\${ROSCLAW_HOME:-$HOME/.rosclaw}"
+REPOSITORY="\${ROSCLAW_REPOSITORY:-https://github.com/ros-claw/rosclaw.git}"
+SOURCE_DIR="$INSTALL_ROOT/source"
+VENV_DIR="$INSTALL_ROOT/venv"
+WRAPPER_PATH="$BIN_DIR/rosclaw"
+CREATED_ROOT=0
+CREATED_WRAPPER=0
+MIN_DISK_MB=2048
 
-# Print functions
 info() {
-    echo "\${CYAN}[INFO]\${RESET} \$1"
+    printf '[INFO] %s\\n' "$1"
 }
 
-warn() {
-    echo "\${YELLOW}[WARN]\${RESET} \$1"
-}
-
-error() {
-    echo "\${RED}[ERROR]\${RESET} \$1"
+fail() {
+    printf '[ERROR] %s\\n' "$1" >&2
     exit 1
 }
 
-success() {
-    echo "\${GREEN}[OK]\${RESET} \$1"
+cleanup() {
+    status=$?
+    if [ "$status" -ne 0 ]; then
+        if [ "$CREATED_WRAPPER" -eq 1 ]; then
+            rm -f "$WRAPPER_PATH"
+        fi
+        if [ "$CREATED_ROOT" -eq 1 ]; then
+            rm -rf "$INSTALL_ROOT"
+        fi
+    fi
+    exit "$status"
+}
+trap cleanup EXIT
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
 }
 
-# Check dependencies
-check_dependencies() {
-    info "Checking dependencies..."
+check_python() {
+    command_exists python3 || fail "Python 3.11, 3.12, or 3.13 is required."
+    python3 - <<'PY'
+import platform
+import sys
 
-    # Check for python3
-    if ! command -v python3 &> /dev/null; then
-        error "python3 is required but not installed. Please install Python 3.8+ first."
+supported = (3, 11) <= sys.version_info[:2] < (3, 14)
+print(f"[INFO] Python: {platform.python_version()}")
+if not supported:
+    raise SystemExit("[ERROR] ROSClaw supports Python 3.11 through 3.13.")
+PY
+    python3 -m venv --help >/dev/null 2>&1 ||
+        fail "The Python venv module is required (for Ubuntu: python3-venv)."
+}
+
+show_environment() {
+    info "Operating system: $(uname -s)"
+    info "CPU architecture: $(uname -m)"
+    check_python
+    disk_path="$INSTALL_ROOT"
+    while [ ! -e "$disk_path" ]; do
+        parent=$(dirname "$disk_path")
+        if [ "$parent" = "$disk_path" ]; then
+            disk_path="$HOME"
+            break
+        fi
+        disk_path="$parent"
+    done
+    available_kb=$(df -Pk "$disk_path" | awk 'NR == 2 {print $4}')
+    available_mb=$((available_kb / 1024))
+    info "Available disk: $available_mb MB"
+    if [ "$available_mb" -lt "$MIN_DISK_MB" ]; then
+        fail "At least $MIN_DISK_MB MB of free disk is required for the isolated install."
     fi
-    success "python3 found: \$(python3 --version)"
-
-    # Check for git
-    if ! command -v git &> /dev/null; then
-        error "git is required but not installed. Please install Git first."
-    fi
-    success "git found: \$(git --version | head -n1)"
-
-    # Check for pip
-    if ! command -v pip3 &> /dev/null && ! command -v pip &> /dev/null; then
-        warn "pip not found. Will attempt to use ensurepip or system package manager."
+    if command_exists docker; then
+        info "Docker: available"
     else
-        success "pip found"
+        info "Docker: not found (optional)"
     fi
-}
-
-# Create directories
-setup_directories() {
-    info "Setting up ROSClaw directories..."
-
-    ROSCLAW_HOME="\${HOME}/.rosclaw"
-    ROSCLAW_BIN="\${ROSCLAW_HOME}/bin"
-    ROSCLAW_LIB="\${ROSCLAW_HOME}/lib"
-
-    mkdir -p "\${ROSCLAW_BIN}" "\${ROSCLAW_LIB}"
-    success "Created ~/.rosclaw/ directory structure"
-}
-
-# Install rosclaw
-install_core() {
-    info "Installing rosclaw..."
-
-    # For now, clone from GitHub (will be pip installable in v0.2.0)
-    ROSCLAW_URL="https://github.com/ros-claw/rosclaw.git"
-    ROSCLAW_DIR="\${HOME}/.rosclaw/lib/rosclaw"
-
-    if [ -d "\${ROSCLAW_DIR}" ]; then
-        info "rosclaw already exists. Updating..."
-        cd "\${ROSCLAW_DIR}"
-        git pull --quiet || warn "Failed to update rosclaw"
+    if command_exists ros2; then
+        info "ROS 2: available"
     else
-        info "Cloning rosclaw repository..."
-        git clone --quiet "\${ROSCLAW_URL}" "\${ROSCLAW_DIR}" || \\
-            error "Failed to clone rosclaw. Check your internet connection."
+        info "ROS 2: not found (optional)"
     fi
-
-    # Install dependencies
-    info "Installing Python dependencies..."
-    cd "\${ROSCLAW_DIR}"
-
-    PIP_INSTALL="pip3 install -q -e ."
-    if ! pip3 install --dry-run pip &>/dev/null 2>&1; then
-        PIP_INSTALL="pip3 install -q -e . --break-system-packages"
-        warn "PEP668 externally-managed environment detected; using --break-system-packages"
-    fi
-
-    if command -v pip3 &> /dev/null; then
-        $PIP_INSTALL 2>/dev/null || warn "pip3 install failed. You may need to install manually."
-    elif command -v pip &> /dev/null; then
-        pip install -q -e . 2>/dev/null || pip install -q -e . --break-system-packages 2>/dev/null || \\
-            warn "pip install failed. You may need to install manually."
-    fi
-
-    success "rosclaw installed"
-}
-
-# Create wrapper script
-create_wrapper() {
-    info "Creating rosclaw CLI wrapper..."
-
-    WRAPPER_PATH="\${HOME}/.rosclaw/bin/rosclaw"
-
-    cat > "\${WRAPPER_PATH}" << 'WRAPPER_EOF'
-#!/bin/bash
-# ROSClaw CLI Wrapper
-
-export ROSCLAW_HOME="\${HOME}/.rosclaw"
-
-# Prefer installed entry point; fallback to python3 -m rosclaw
-if command -v rosclaw &> /dev/null; then
-    exec rosclaw "$@"
-else
-    exec python3 -m rosclaw "$@"
-fi
-WRAPPER_EOF
-
-    chmod +x "\${WRAPPER_PATH}"
-    success "Created rosclaw CLI at \${WRAPPER_PATH}"
-}
-
-# Configure e-URDF-Zoo and workspace
-configure_workspace() {
-    info "Configuring workspace..."
-
-    ROSCLAW_DIR="\${HOME}/.rosclaw/lib/rosclaw"
-    ZOO_SOURCE="\${ROSCLAW_DIR}/e-urdf-zoo"
-    ZOO_TARGET="\${HOME}/.rosclaw/e-urdf-zoo"
-    WORKSPACE_DIR="\${HOME}/.rosclaw"
-
-    # Link e-URDF-Zoo
-    if [[ -d "$ZOO_SOURCE" ]]; then
-        rm -f "$ZOO_TARGET"
-        ln -s "$ZOO_SOURCE" "$ZOO_TARGET" 2>/dev/null || cp -r "$ZOO_SOURCE" "$ZOO_TARGET"
-        success "e-URDF-Zoo linked at $ZOO_TARGET"
-    fi
-
-    # Create default rosclaw.yaml if not exists
-    if [[ ! -f "\${WORKSPACE_DIR}/rosclaw.yaml" ]]; then
-        cat > "\${WORKSPACE_DIR}/rosclaw.yaml" <<EOF
-workspace_dir: \${WORKSPACE_DIR}
-eurdf_zoo_path: \${ZOO_TARGET}
-runtime:
-  default_robot: ur5e
-  enable_firewall: true
-  enable_sandbox: true
-  enable_memory: true
-  enable_practice: true
-memory:
-  backend: seekdb
-  data_dir: \${WORKSPACE_DIR}/memory
-practice:
-  episodes_dir: \${WORKSPACE_DIR}/episodes
-  max_episode_history: 1000
-logging:
-  level: INFO
-  dir: \${WORKSPACE_DIR}/logs
-EOF
-        success "Created \${WORKSPACE_DIR}/rosclaw.yaml"
-    fi
-}
-
-# Verify installation
-verify_install() {
-    info "Verifying installation..."
-
-    export PATH="\${HOME}/.rosclaw/bin:\${PATH}"
-
-    # Check rosclaw command
-    if ! command -v rosclaw &>/dev/null && ! python3 -m rosclaw --version &>/dev/null; then
-        warn "rosclaw command not found. You may need to restart your terminal."
-        return
-    fi
-
-    # Run doctor
-    DOCTOR_OUTPUT=$(rosclaw doctor 2>&1) || true
-    echo "$DOCTOR_OUTPUT"
-
-    ISSUE_COUNT=$(echo "$DOCTOR_OUTPUT" | grep -c "❌" || true)
-    if [[ "$ISSUE_COUNT" -eq 0 ]]; then
-        success "All health checks passed."
+    if command_exists nvidia-smi; then
+        info "GPU: NVIDIA runtime detected"
     else
-        warn "Installed with $ISSUE_COUNT warnings. Run 'rosclaw doctor' for details."
+        info "GPU: not detected (optional)"
     fi
 }
 
-# Add to PATH
-add_to_path() {
-    info "Checking PATH configuration..."
-
-    SHELL_RC=""
-    if [[ "$SHELL" == *"bash"* ]]; then
-        SHELL_RC="\${HOME}/.bashrc"
-    elif [[ "$SHELL" == *"zsh"* ]]; then
-        SHELL_RC="\${HOME}/.zshrc"
-    elif [[ "$SHELL" == *"fish"* ]]; then
-        SHELL_RC="\${HOME}/.config/fish/config.fish"
+guard_existing_install() {
+    if command_exists rosclaw; then
+        existing=$(rosclaw --version 2>/dev/null || printf 'unknown version')
+        fail "Existing ROSClaw CLI detected ($existing). This installer will not overwrite it."
+    fi
+    if [ -e "$INSTALL_ROOT" ]; then
+        fail "Install directory already exists: $INSTALL_ROOT"
+    fi
+    if [ -e "$WRAPPER_PATH" ] || [ -L "$WRAPPER_PATH" ]; then
+        fail "CLI wrapper path already exists and will not be overwritten: $WRAPPER_PATH"
+    fi
+    if [ -e "$WORKSPACE" ]; then
+        info "Existing workspace detected and preserved: $WORKSPACE"
     else
-        SHELL_RC="\${HOME}/.profile"
-    fi
-
-    PATH_LINE='export PATH="\${HOME}/.rosclaw/bin:\${PATH}"'
-
-    if ! grep -q "rosclaw/bin" "\${SHELL_RC}" 2>/dev/null; then
-        echo "" >> "\${SHELL_RC}"
-        echo "# ROSClaw CLI" >> "\${SHELL_RC}"
-        echo "\${PATH_LINE}" >> "\${SHELL_RC}"
-        success "Added rosclaw to PATH in \${SHELL_RC}"
-        warn "Please run: source \${SHELL_RC}"
-    else
-        info "rosclaw already in PATH"
+        info "Workspace will be created only by: rosclaw firstboot"
     fi
 }
 
-# Print banner
-print_banner() {
-    echo ""
-    echo "\${GREEN}═══════════════════════════════════════════════════════\${RESET}"
-    echo "\${GREEN}  ✓ ROSClaw v1.0.0 Installed Successfully!\${RESET}"
-    echo "\${GREEN}═══════════════════════════════════════════════════════\${RESET}"
-    echo ""
-    echo "  Quick Start:"
-    echo "    \${CYAN}rosclaw --help\${RESET}      Show all commands"
-    echo "    \${CYAN}rosclaw doctor\${RESET}      Health diagnosis"
-    echo "    \${CYAN}rosclaw init\${RESET}        Initialize workspace"
-    echo "    \${CYAN}rosclaw robot list\${RESET}  List robots"
-    echo "    \${CYAN}rosclaw run\${RESET}         Start runtime"
-    echo ""
-    echo "  Documentation: https://docs.rosclaw.io"
-    echo "  Community:     https://discord.gg/E6nPCDu6KJ"
-    echo ""
-    echo "\${CYAN}  Ground Once. Validate Always. Evolve Continuously. 🦞\${RESET}"
-    echo ""
+install_rosclaw() {
+    command_exists git || fail "git is required."
+    mkdir -p "$INSTALL_ROOT" "$BIN_DIR"
+    CREATED_ROOT=1
+
+    info "Cloning ROSClaw source..."
+    git clone --depth 1 --branch main "$REPOSITORY" "$SOURCE_DIR"
+
+    info "Creating isolated Python environment..."
+    python3 -m venv "$VENV_DIR"
+    "$VENV_DIR/bin/python" -m pip install --no-cache-dir --upgrade pip
+    "$VENV_DIR/bin/python" -m pip install --no-cache-dir "$SOURCE_DIR"
+
+    cat > "$WRAPPER_PATH" <<'WRAPPER'
+#!/usr/bin/env bash
+export ROSCLAW_HOME="\${ROSCLAW_HOME:-$HOME/.rosclaw}"
+exec "__ROSCLAW_EXECUTABLE__" "$@"
+WRAPPER
+    CREATED_WRAPPER=1
+    sed -i "s|__ROSCLAW_EXECUTABLE__|$VENV_DIR/bin/rosclaw|" "$WRAPPER_PATH"
+    chmod 0755 "$WRAPPER_PATH"
+
+    installed=$("$WRAPPER_PATH" --version)
+    [ "$installed" = "rosclaw $VERSION" ] ||
+        fail "Installed CLI version does not match expected release $VERSION: $installed"
 }
 
-# Main installation
+print_result() {
+    printf '\\n'
+    printf 'ROSClaw CLI: installed\\n'
+    printf 'Version: %s\\n' "$VERSION"
+    printf 'Runtime maturity: %s\\n' "$MATURITY"
+    printf 'Default mode: OFFLINE\\n'
+    printf 'Hardware actions: DISABLED\\n'
+    printf 'Workspace: preserved until firstboot\\n'
+    if ! printf '%s' ":$PATH:" | grep -q ":$BIN_DIR:"; then
+        printf 'Add to PATH: export PATH="%s:$PATH"\\n' "$BIN_DIR"
+    fi
+    printf 'Next: %s/rosclaw firstboot\\n' "$BIN_DIR"
+}
+
 main() {
-    info "Starting ROSClaw v1.0.0 installation..."
-    info "This will install ROSClaw to ~/.rosclaw/"
-    echo ""
-
-    check_dependencies
-    setup_directories
-    install_core
-    configure_workspace
-    create_wrapper
-    add_to_path
-    verify_install
-
-    print_banner
+    printf 'ROSClaw %s (%s) installer\\n' "$VERSION" "$MATURITY"
+    show_environment
+    guard_existing_install
+    install_rosclaw
+    CREATED_ROOT=0
+    CREATED_WRAPPER=0
+    print_result
 }
 
 main "$@"
@@ -270,6 +177,7 @@ export async function GET() {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "public, max-age=300",
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }

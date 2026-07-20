@@ -1,0 +1,43 @@
+name: Website CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Product Truth and Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out website
+        uses: actions/checkout@v4
+
+      - name: Check out canonical ROSClaw status
+        uses: actions/checkout@v4
+        with:
+          repository: ros-claw/rosclaw
+          path: rosclaw-core
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate product status and TypeScript
+        env:
+          ROSCLAW_CORE_ROOT: ${{ github.workspace }}/rosclaw-core
+        run: npm test
+
+      - name: Build production site
+        env:
+          ROSCLAW_CORE_ROOT: ${{ github.workspace }}/rosclaw-core
+        run: npm run build
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high

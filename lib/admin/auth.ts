@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
+type CookieStore = Awaited<ReturnType<typeof cookies>>;
+
 function getAdminEmails(): string[] {
   const emails = process.env.ROSCLAW_ADMIN_EMAILS || "";
   return emails
@@ -13,7 +15,7 @@ function getAdminEmails(): string[] {
  * Creates a Supabase server client for admin routes.
  * Callers must pass the cookie store from next/headers.
  */
-export function createAdminSupabaseClient(cookieStore: ReturnType<typeof cookies>) {
+export function createAdminSupabaseClient(cookieStore: CookieStore) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -40,7 +42,7 @@ export function createAdminSupabaseClient(cookieStore: ReturnType<typeof cookies
  * Verifies the current request is from an admin email.
  * Use in API routes and server components.
  */
-export async function requireAdmin(cookieStore: ReturnType<typeof cookies>): Promise<{
+export async function requireAdmin(cookieStore: CookieStore): Promise<{
   user: { id: string; email: string };
 }> {
   const supabase = createAdminSupabaseClient(cookieStore);
@@ -73,7 +75,7 @@ export async function requireAdmin(cookieStore: ReturnType<typeof cookies>): Pro
 export async function requireAdminServerComponent(): Promise<{
   user: { id: string; email: string };
 }> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   return requireAdmin(cookieStore);
 }
 
