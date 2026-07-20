@@ -27,7 +27,9 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci --registry=https://registry.npmjs.org
+          npm ls next react react-dom --depth=0
 
       - name: Validate product status and TypeScript
         env:
