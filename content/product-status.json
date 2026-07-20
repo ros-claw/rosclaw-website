@@ -2,7 +2,7 @@
   "generated": {
     "schema_version": "rosclaw.product_status_snapshot.v1",
     "source": "src/rosclaw/product/status.yaml",
-    "source_sha256": "1bb9eaa7d25dcff88ec22db26afe5da09e9724015bcdb38b61c947eaa1d19037"
+    "source_sha256": "3ed6f6171325c4c20488566b3447bedda0a176454f68d46751bf03ece5e96b6d"
   },
   "status": {
     "components": {
@@ -91,6 +91,51 @@
         "evidence_summary": {
           "en": "RH56 has developer-run physical evidence, but independent hardware and Agent black-box acceptance are still pending; no repository-wide real-ready claim is made.",
           "zh": "RH56 已有开发者真机证据，但独立真机与 Agent 黑盒验收仍在进行；当前不声明仓库级 Real Ready。"
+        }
+      },
+      "rosclawd": {
+        "claim": "component_system_verified",
+        "display": {
+          "en": "rosclawd Agent/physical boundary",
+          "zh": "rosclawd Agent/物理执行边界"
+        },
+        "evidence": [
+          {
+            "fixture": false,
+            "id": "rosclawd-boundary-tests",
+            "independent": true,
+            "kind": "automated_system_test",
+            "observation_scope": "local_process_boundary",
+            "path": "tests/daemon/test_process_boundary.py"
+          },
+          {
+            "fixture": false,
+            "id": "rosclawd-permit-tests",
+            "independent": true,
+            "kind": "automated_security_test",
+            "observation_scope": "local_process_boundary",
+            "path": "tests/daemon/test_permits.py"
+          },
+          {
+            "fixture": false,
+            "id": "rosclawd-server-tests",
+            "independent": true,
+            "kind": "automated_system_test",
+            "observation_scope": "local_process_boundary",
+            "path": "tests/daemon/test_server.py"
+          },
+          {
+            "fixture": false,
+            "id": "rosclawd-blackbox",
+            "independent": true,
+            "kind": "automated_blackbox_test",
+            "observation_scope": "local_process_boundary",
+            "path": "scripts/acceptance/daemon_blackbox.sh"
+          }
+        ],
+        "evidence_summary": {
+          "en": "Separate-process socket, bounded protocol, SO_PEERCRED, peer-owned actions, exact action-intent permits, forged/replayed/substituted request blocking, queue, E-Stop, and shutdown are system-tested; production cross-UID, SROS2, and hardware acceptance remain pending.",
+          "zh": "独立进程 socket、有界协议、SO_PEERCRED、动作 peer 所有权、精确 Action Intent Permit、伪造/重放/参数替换阻止、队列、E-Stop 与关闭已通过系统测试；生产跨 UID、SROS2 和真机验收仍待完成。"
         }
       }
     },
@@ -271,11 +316,21 @@
             "path": "docs/P0_AGENT_INTEGRATION.md",
             "receipt_schema": "rosclaw.receipt.v1",
             "verified_at": "2026-07-20"
+          },
+          {
+            "fixture": false,
+            "id": "rosclawd-codex-authorization-blackbox-20260720",
+            "independent": false,
+            "kind": "developer_agent_blackbox",
+            "observation_scope": "external_agent_control_boundary",
+            "path": "docs/P0_AGENT_INTEGRATION.md",
+            "receipt_schema": "rosclaw.receipt.v1",
+            "verified_at": "2026-07-20"
           }
         ],
         "evidence_summary": {
-          "en": "Real MuJoCo model load and mj_step, Cartesian predicate, collision and workspace blocks, trajectory, trace, and receipt are system-verified. A local Codex CLI black-box completed the five-tool MCP workflow; independent H5 acceptance remains pending.",
-          "zh": "真实 MuJoCo 模型与 mj_step、笛卡尔成功条件、碰撞和工作区阻止、轨迹、Trace 与 Receipt 已通过系统验证；本地 Codex CLI 黑盒已完成五工具 MCP 工作流，独立 H5 验收仍待完成。"
+          "en": "Real MuJoCo execution and receipt verification are system-tested. Local Codex CLI black-box runs discovered all 22 MCP tools, completed the simulation workflow, and confirmed that rosclawd blocks unauthorized REAL actions without hardware dispatch; independent H5 acceptance remains pending.",
+          "zh": "真实 MuJoCo 执行与 Receipt 验证已通过系统测试；本地 Codex CLI 黑盒发现全部 22 个 MCP 工具、完成仿真工作流，并确认 rosclawd 会在无硬件派发的情况下阻止未授权 REAL 动作；独立 H5 验收仍待完成。"
         },
         "modes": {
           "fixture": "fixture_available",
@@ -289,6 +344,7 @@
     },
     "readme_matrix": [
       "golden_paths.ur5e_reach",
+      "components.rosclawd",
       "components.action_gateway",
       "components.estop",
       "components.fixture_surfaces",
