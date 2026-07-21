@@ -135,6 +135,28 @@ if (skillResponse) {
   assert(Array.isArray(skills) && skills.length > 0, "Skill Registry is empty.");
 }
 
+for (const [path, items, matchLabel, detailPrefix] of [
+  ["/hub/mcps", mcpPackages, "interfaces matched", "/hub/mcps/"],
+  ["/hub/skills", skills, "skills matched", "/hub/skills/"],
+]) {
+  if (!items.length) continue;
+  const response = await request(path);
+  if (!response) continue;
+  const html = await response.text();
+  assert(
+    html.includes(`${items.length.toLocaleString()} ${matchLabel}`),
+    `${path} does not server-render its registry count.`,
+  );
+  assert(
+    html.includes(`href="${detailPrefix}`),
+    `${path} does not server-render any registry cards.`,
+  );
+  assert(
+    !html.includes("Indexing registry"),
+    `${path} returned a client-only registry placeholder.`,
+  );
+}
+
 const dynamicExamples = [];
 if (mcpPackages[0]) {
   dynamicExamples.push([
