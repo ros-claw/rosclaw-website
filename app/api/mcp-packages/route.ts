@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { authenticateApiKey } from "@/lib/api-key"
-import { hasManifestValidationEvidence } from "@/lib/registry/verification"
+import {
+  getManifestValidationMetadata,
+} from "@/lib/registry/verification"
+import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
 // Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
@@ -66,15 +69,19 @@ export async function GET(req: NextRequest) {
     if (error) throw error
 
     const packages = (data || []).map((p) => {
-      const manifestValidated = hasManifestValidationEvidence(p)
+      const validation = getManifestValidationMetadata(p)
+      const manifestValidated = validation !== null
       return {
       id: p.id,
       name: p.name,
       description: p.description,
       authorName: p.author_name,
-      githubRepoUrl: p.github_repo_url,
+      githubRepoUrl: normalizePublicHttpsUrl(p.github_repo_url),
       manifestValidated,
       verified: manifestValidated,
+      manifestValidatedAt: validation?.validatedAt,
+      manifestValidationEvidence: validation?.evidence,
+      manifestValidationEvidenceUrl: validation?.evidenceUrl,
       category: p.category,
       robotType: p.robot_type,
       version: p.version,
@@ -111,6 +118,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const githubRepoUrl = normalizePublicHttpsUrl(body.github_repo_url)
+    if (!githubRepoUrl) {
+      return NextResponse.json(
+        { error: "github_repo_url must be a public HTTPS URL" },
+        { status: 400 }
+      )
+    }
+
     // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
@@ -125,19 +140,19 @@ export async function POST(req: NextRequest) {
       if (identity.kind === "user") {
         userId = identity.userId
       }
-      status = "approved"
+      status = identity.kind === "admin" ? "approved" : "pending"
       // Use admin client to bypass RLS for API key auth
       client = createAdminClient()
     } else {
       // Session authentication (for web users)
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError) {
-        console.error("Session error:", sessionError)
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError) {
+        console.error("Session error:", userError)
       }
-      if (!session) {
+      if (!user) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
-      userId = session.user.id
+      userId = user.id
       status = "pending"
     }
 
@@ -167,7 +182,7 @@ export async function POST(req: NextRequest) {
         version: body.version || "1.0.0",
         author_user_id: userId,
         author_name: body.author_name,
-        github_repo_url: body.github_repo_url,
+        github_repo_url: githubRepoUrl,
         robot_type: body.robot_type,
         tags: body.tags || [],
         tools: body.tools || [],
@@ -242,8 +257,8 @@ export async function DELETE(req: NextRequest) {
       }
     } else {
       // Session authentication - can only delete own packages
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
 
@@ -253,7 +268,7 @@ export async function DELETE(req: NextRequest) {
         .eq("id", id)
         .single()
 
-      if (!pkg || pkg.author_user_id !== session.user.id) {
+      if (!pkg || pkg.author_user_id !== user.id) {
         return NextResponse.json(
           { error: "You can only delete your own packages" },
           { status: 403 }

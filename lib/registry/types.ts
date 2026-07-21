@@ -5,6 +5,9 @@ export interface McpPackageSummary {
   authorName: string;
   githubRepoUrl?: string;
   manifestValidated: boolean;
+  manifestValidatedAt?: string;
+  manifestValidationEvidence?: string;
+  manifestValidationEvidenceUrl?: string;
   category?: string;
   robotType?: string;
   version?: string;

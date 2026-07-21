@@ -71,7 +71,7 @@ GitHub URL
 │                                      │
 │ 方式 B: 本地规则匹配 (禁用 LLM 时)     │
 │ - 关键词匹配分类和机器人类型            │
-│ - 使用 `--skip-llm` 参数启用           │
+│ - 默认启用；使用 `--skip-llm` 参数禁用 │
 └──────────────────────────────────────┘
     │
     ▼
@@ -105,7 +105,7 @@ GitHub URL
 | `robot_type` | string | 可选 | 机器人类型: `humanoid`/`manipulator`/`mobile`/`drone`/`legged`/`universal` |
 | `tags` | string[] | 可选 | 标签数组，最多10个 |
 | `version` | string | 可选 | 版本号，自动从 GitHub 更新时间生成 (YYYY.MM.DD) |
-| `tools` | object[] | 可选 | MCP 工具列表，`{name, description}`。**必须使用 `--use-llm` 才能正确提取** |
+| `tools` | object[] | 可选 | MCP 工具列表，`{name, description}`。默认使用 LLM 提取，可用 `--skip-llm` 禁用 |
 | `github_stars` | number | 可选 | GitHub Stars 数 |
 | `github_forks` | number | 可选 | GitHub Forks 数 |
 
@@ -181,7 +181,6 @@ cp .env.example .env
 
 # 方式二：导出到系统环境变量
 export ADMIN_API_KEY="your_rosclaw_admin_key"
-# 或 export NEXT_PUBLIC_ADMIN_KEY="your_rosclaw_admin_key"
 export BAILIAN_API_KEY="your_aliyun_bailian_key"  # 可选，用于 LLM 分析
 ```
 

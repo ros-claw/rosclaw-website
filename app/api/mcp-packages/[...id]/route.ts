@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { isDeepStrictEqual } from "node:util"
 import { authenticateApiKey } from "@/lib/api-key"
-import { hasManifestValidationEvidence } from "@/lib/registry/verification"
+import {
+  getManifestValidationMetadata,
+} from "@/lib/registry/verification"
+import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
 function createClient(req: NextRequest) {
   return createServerClient(
@@ -70,13 +74,13 @@ export async function GET(
 
     // Only return approved packages (unless admin or owner)
     if (data.status !== "approved") {
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data: { user } } = await supabase.auth.getUser()
       const apiKey = req.headers.get("x-api-key")
       const identity = apiKey ? await authenticateApiKey(apiKey) : null
 
       const isAdmin = identity?.kind === "admin"
       const isOwner =
-        session?.user?.id === data.author_user_id ||
+        user?.id === data.author_user_id ||
         (identity?.kind === "user" && identity.userId === data.author_user_id)
 
       if (!isAdmin && !isOwner) {
@@ -87,7 +91,8 @@ export async function GET(
       }
     }
 
-    const manifestValidated = hasManifestValidationEvidence(data)
+    const validation = getManifestValidationMetadata(data)
+    const manifestValidated = validation !== null
     const pkg = {
       id: data.id,
       name: data.name,
@@ -96,9 +101,12 @@ export async function GET(
       readmeContent: data.readme_content,
       authorName: data.author_name,
       author_user_id: data.author_user_id,
-      githubRepoUrl: data.github_repo_url,
+      githubRepoUrl: normalizePublicHttpsUrl(data.github_repo_url),
       manifestValidated,
       verified: manifestValidated,
+      manifestValidatedAt: validation?.validatedAt,
+      manifestValidationEvidence: validation?.evidence,
+      manifestValidationEvidenceUrl: validation?.evidenceUrl,
       category: data.category,
       robotType: data.robot_type,
       version: data.version,
@@ -207,14 +215,14 @@ export async function PUT(
     // Find package by ID or name
     let { data: existing } = await adminClient
       .from("mcp_packages")
-      .select("id, author_user_id")
+      .select("id,author_user_id,description,long_description,readme_content,category,robot_type,tags,tools,version,entry_point,status")
       .eq("id", fullPath)
       .single()
 
     if (!existing) {
       const result = await adminClient
         .from("mcp_packages")
-        .select("id, author_user_id")
+        .select("id,author_user_id,description,long_description,readme_content,category,robot_type,tags,tools,version,entry_point,status")
         .eq("name", fullPath)
         .single()
       existing = result.data
@@ -243,19 +251,55 @@ export async function PUT(
     if (body.description !== undefined) updateData.description = body.description
     if (body.long_description !== undefined) updateData.long_description = body.long_description
     if (body.readme_content !== undefined) updateData.readme_content = body.readme_content
-    if (body.github_stars !== undefined) updateData.github_stars = body.github_stars
-    if (body.github_forks !== undefined) updateData.github_forks = body.github_forks
+    if (body.github_stars !== undefined && identity.kind === "admin") {
+      updateData.github_stars = body.github_stars
+    }
+    if (body.github_forks !== undefined && identity.kind === "admin") {
+      updateData.github_forks = body.github_forks
+    }
     if (body.category !== undefined) updateData.category = body.category
     if (body.robot_type !== undefined) updateData.robot_type = body.robot_type
     if (body.tags !== undefined) updateData.tags = body.tags
     if (body.tools !== undefined) updateData.tools = body.tools
     if (body.version !== undefined) updateData.version = body.version
     if (body.entry_point !== undefined) updateData.entry_point = body.entry_point
-    if (body.last_synced_at !== undefined) updateData.last_synced_at = body.last_synced_at
+    if (body.last_synced_at !== undefined && identity.kind === "admin") {
+      updateData.last_synced_at = body.last_synced_at
+    }
+
+    const invalidatesManifestAttestation = [
+      "description",
+      "long_description",
+      "readme_content",
+      "category",
+      "robot_type",
+      "tags",
+      "tools",
+      "version",
+      "entry_point",
+    ].some(
+      (field) =>
+        body[field] !== undefined &&
+        !isDeepStrictEqual(body[field], existing[field as keyof typeof existing]),
+    )
+
+    if (invalidatesManifestAttestation) {
+      updateData.is_verified = false
+      updateData.manifest_validated_at = null
+      updateData.manifest_validation_evidence = null
+      if (identity.kind === "user") {
+        updateData.status = "pending"
+      }
+    }
 
     // Only admins can change approval status
     if (body.status !== undefined && identity.kind === "admin") {
       updateData.status = body.status
+      if (body.status !== "approved") {
+        updateData.is_verified = false
+        updateData.manifest_validated_at = null
+        updateData.manifest_validation_evidence = null
+      }
     }
 
     const { data, error } = await adminClient

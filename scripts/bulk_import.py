@@ -13,7 +13,7 @@ ROSClaw Bulk Import Script
 使用方法：
     python bulk_import.py --type mcp --file mcp_repos.txt
     python bulk_import.py --type skill --file skill_repos.txt --api-key YOUR_API_KEY
-    python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --use-llm --llm-api-key BAILIAN_KEY
+    python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --llm-api-key BAILIAN_KEY
 """
 
 import argparse
@@ -641,11 +641,11 @@ def main():
   python bulk_import.py --type mcp --json-file custom_import.json --api-key YOUR_KEY
 
   # 使用 LLM 分析（提高准确度）
-  python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --use-llm --llm-api-key BAILIAN_KEY
+  python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --llm-api-key BAILIAN_KEY
 
   # 使用环境变量设置 LLM API Key
   export BAILIAN_API_KEY=your_key
-  python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY --use-llm
+  python bulk_import.py --type mcp --file mcp_repos.txt --api-key YOUR_KEY
 
   # 创建示例文件
   python bulk_import.py --init
@@ -667,8 +667,10 @@ def main():
     )
     parser.add_argument(
         "--api-key",
-        default=os.environ.get("ADMIN_API_KEY") or os.environ.get("NEXT_PUBLIC_ADMIN_KEY"),
-        help="API Key（用于直接发布，跳过审核），默认从环境变量 ADMIN_API_KEY 或 NEXT_PUBLIC_ADMIN_KEY 读取",
+        default=os.environ.get("ADMIN_API_KEY"),
+        help="API Key（用于直接发布，跳过审核），默认从服务端环境变量 ADMIN_API_KEY 读取",
+    )
+    parser.add_argument(
         "--base-url",
         default=BASE_URL,
         help=f"API 基础 URL (默认: {BASE_URL})",

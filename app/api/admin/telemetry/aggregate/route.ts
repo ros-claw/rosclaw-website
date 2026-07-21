@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { requireAdmin } from "@/lib/admin/auth";
+import { isAdminApiKey } from "@/lib/api-key";
 import { aggregateTelemetry } from "@/lib/telemetry/aggregate";
 
 async function isAuthorized(req: NextRequest): Promise<boolean> {
   const apiKey = req.headers.get("x-api-key");
-  if (apiKey && apiKey === process.env.ADMIN_API_KEY) {
+  if (isAdminApiKey(apiKey)) {
     return true;
   }
 

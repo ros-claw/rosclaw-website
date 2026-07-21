@@ -9,7 +9,8 @@ import type {
   SkillDetail,
   SkillSummary,
 } from "@/lib/registry/types";
-import { hasManifestValidationEvidence } from "@/lib/registry/verification";
+import { getManifestValidationMetadata } from "@/lib/registry/verification";
+import { normalizePublicHttpsUrl } from "@/lib/security/public-url";
 
 type RegistryRow = Record<string, unknown>;
 
@@ -48,13 +49,17 @@ function toolList(value: unknown): { name: string; description: string }[] {
 }
 
 function mcpSummary(row: RegistryRow): McpPackageSummary {
+  const validation = getManifestValidationMetadata(row);
   return {
     id: String(row.id ?? row.name ?? ""),
     name: String(row.name ?? ""),
     description: String(row.description ?? ""),
     authorName: String(row.author_name ?? ""),
-    githubRepoUrl: optionalString(row.github_repo_url),
-    manifestValidated: hasManifestValidationEvidence(row),
+    githubRepoUrl: normalizePublicHttpsUrl(row.github_repo_url),
+    manifestValidated: validation !== null,
+    manifestValidatedAt: validation?.validatedAt,
+    manifestValidationEvidence: validation?.evidence,
+    manifestValidationEvidenceUrl: validation?.evidenceUrl,
     category: optionalString(row.category),
     robotType: optionalString(row.robot_type),
     version: optionalString(row.version),
@@ -72,7 +77,7 @@ function skillSummary(row: RegistryRow): SkillSummary {
     displayName: optionalString(row.display_name),
     description: String(row.description ?? ""),
     authorName: String(row.author_name ?? ""),
-    githubRepoUrl: optionalString(row.github_repo_url),
+    githubRepoUrl: normalizePublicHttpsUrl(row.github_repo_url),
     category: optionalString(row.category),
     version: optionalString(row.version),
     githubStars: numberValue(row.github_stars),
@@ -194,7 +199,7 @@ export const loadSkill = cache(
       ...skillSummary(row),
       longDescription: optionalString(row.long_description),
       readmeContent: optionalString(row.readme_content),
-      authorUrl: optionalString(row.author_url),
+      authorUrl: normalizePublicHttpsUrl(row.author_url),
       compatibleRobots: stringList(row.compatible_robots),
       status: optionalString(row.status),
     };

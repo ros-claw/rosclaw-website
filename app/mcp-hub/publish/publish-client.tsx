@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Upload, FileText, Tags, Info, Check, AlertCircle, Github, Sparkles, Copy, CheckCircle, HelpCircle, X, Terminal, Bot, MessageSquare, Code } from "lucide-react";
+import { Upload, FileText, Tags, Info, Check, AlertCircle, Github, Sparkles, HelpCircle, X } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { getAgentAdaptations, packageNameExists, suggestAlternativeNames } from "@/lib/data";
+import { packageNameExists, suggestAlternativeNames } from "@/lib/data";
 
 const predefinedCategories = [
   "Manipulators",
@@ -40,25 +40,12 @@ export default function PublishMcpPackagePage() {
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState("");
   const [nameCheckResult, setNameCheckResult] = useState<{ available?: boolean; message?: string; suggestions?: string[] } | null>(null);
-  const [showInstallCommand, setShowInstallCommand] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [showNameHelp, setShowNameHelp] = useState(false);
-  const [showRuntimeModal, setShowRuntimeModal] = useState(false);
 
   const isOfficialRepo = (url: string) => {
     return OFFICIAL_ORGS.some(org => url.toLowerCase().includes(`github.com/${org.toLowerCase()}`));
   };
-
-  const generateInstallCommand = (name: string) => {
-    return `rosclaw mcp install ${name}`;
-  };
-
-  // Get agent adaptations for display
-  const getAgentCommands = (name: string) => [
-    { agent: "OpenClaw", command: `install mcp ${name}` },
-    { agent: "Claude Code", command: `@rosclaw install mcp ${name}` },
-    { agent: "Generic Agent", command: `Use ROSClaw MCP to install "${name}"` },
-  ];
 
   // Name Help Tooltip Component - simplified
   const NameHelpTooltip = () => (
@@ -83,100 +70,6 @@ export default function PublishMcpPackagePage() {
       </div>
     </div>
   );
-
-  // Runtime Modal Component
-  const RuntimeModal = () => {
-    const adaptations = formData.name ? getAgentAdaptations(formData.name, formData.githubUrl) : [];
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6 rounded-xl bg-card-bg border border-glass-border"
-        >
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-cognitive-cyan/10 flex items-center justify-center">
-                <Terminal className="w-5 h-5 text-cognitive-cyan" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Install Command Runtime</h3>
-                <p className="text-sm text-text-muted">How agents execute the install command</p>
-              </div>
-            </div>
-            <button onClick={() => setShowRuntimeModal(false)} className="text-text-muted hover:text-foreground">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-glass-bg">
-              <p className="text-sm text-text-secondary">
-                When you run <code className="text-cognitive-cyan font-mono">rosclaw mcp install {formData.name || "&lt;package&gt;"}</code>,
-                here&apos;s what happens behind the scenes:
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-foreground flex items-center gap-2">
-                <Bot className="w-4 h-4 text-cognitive-cyan" />
-                Agent Adaptation
-              </h4>
-              <p className="text-sm text-text-secondary">
-                Different agents support this command in different ways:
-              </p>
-              <div className="space-y-2">
-                {adaptations.map((adapt) => (
-                  <div key={adapt.agent} className="p-3 rounded-lg bg-black/40 border border-glass-border">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-foreground text-sm">{adapt.agent}</span>
-                    </div>
-                    <code className="block text-xs text-cognitive-cyan font-mono">{adapt.command}</code>
-                    <p className="text-xs text-text-muted mt-1">{adapt.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-medium text-foreground flex items-center gap-2">
-                <Code className="w-4 h-4 text-cognitive-cyan" />
-                Runtime Logic
-              </h4>
-              <ol className="space-y-2 text-sm text-text-secondary list-decimal list-inside">
-                <li>Agent receives the install command</li>
-                <li>Fetches package metadata from ROSClaw registry</li>
-                <li>Downloads source from GitHub repository</li>
-                <li>Validates package structure and dependencies</li>
-                <li>Installs into agent&apos;s MCP tools directory</li>
-                <li>Registers available tools with the agent</li>
-              </ol>
-            </div>
-
-            <div className="p-4 rounded-lg bg-cognitive-cyan/5 border border-cognitive-cyan/20">
-              <h4 className="font-medium text-foreground flex items-center gap-2 mb-2">
-                <MessageSquare className="w-4 h-4 text-cognitive-cyan" />
-                Natural Language Alternative
-              </h4>
-              <p className="text-sm text-text-secondary">
-                Users can also say: <em>&quot;Install the {formData.name || "package"} MCP package&quot;</em>
-                and any LLM agent with ROSClaw integration will understand.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={() => setShowRuntimeModal(false)}
-              className="px-4 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan hover:bg-cognitive-cyan/20 transition-all"
-            >
-              Got it
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  };
 
   const handleOneClickImport = async () => {
     if (!formData.githubUrl) {
@@ -345,19 +238,13 @@ export default function PublishMcpPackagePage() {
       console.log('Package published:', data);
 
       setIsSubmitting(false);
-      setShowInstallCommand(true);
+      setSubmitted(true);
       setStep(4);
     } catch (err) {
       console.error('Submit error:', err);
       alert('Failed to publish package');
       setIsSubmitting(false);
     }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const steps = [
@@ -723,14 +610,14 @@ export default function PublishMcpPackagePage() {
                 disabled={isSubmitting}
                 className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all disabled:opacity-50"
               >
-                {isSubmitting ? "Publishing..." : "Publish Package"}
+                {isSubmitting ? "Submitting..." : "Submit Package"}
               </button>
             </div>
           </motion.div>
         )}
 
         {/* Step 4: Success */}
-        {step === 4 && showInstallCommand && (
+        {step === 4 && submitted && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -740,7 +627,7 @@ export default function PublishMcpPackagePage() {
               <Check className="w-8 h-8 text-green-500" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-2">
-              Package Published Successfully!
+              Package submitted
             </h2>
             <p className="text-text-secondary mb-2">
               Your package <strong>{formData.name}</strong> has been submitted.
@@ -760,35 +647,14 @@ export default function PublishMcpPackagePage() {
               </div>
             </div>
 
-            {/* Install Command - Simplified URL-based */}
-            <div className="max-w-xl mx-auto mb-6">
-              <div className="p-4 rounded-lg bg-black/40 border border-glass-border">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-text-muted">Install command:</span>
-                  <button
-                    onClick={() => copyToClipboard(`rosclaw install mcp ${formData.name}`)}
-                    className="flex items-center gap-1 text-xs text-cognitive-cyan hover:text-cognitive-cyan/80"
-                  >
-                    {copied ? <CheckCircle className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                    {copied ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-                <code className="block p-3 rounded bg-glass-bg text-foreground font-mono text-sm">
-                  rosclaw install mcp {formData.name}
-                </code>
-
-                <div className="mt-4 pt-4 border-t border-glass-border">
-                  <p className="text-xs text-text-muted mb-2">Or install from GitHub directly:</p>
-                  <code className="block p-2 rounded bg-black/40 text-xs text-cognitive-cyan font-mono">
-                    rosclaw install mcp from {formData.githubUrl}
-                  </code>
-                </div>
-              </div>
+            <div className="mx-auto mb-6 max-w-xl border border-white/10 bg-black/25 p-4 text-left">
+              <p className="font-mono text-[10px] uppercase text-cognitive-cyan">Discovery record submitted</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">An install command is published only after a compatible ROSClaw Hub asset and its Manifest evidence are indexed.</p>
             </div>
 
             <div className="flex justify-center gap-4">
               <Link
-                href="/mcp-hub"
+                href="/hub/mcps"
                 className="px-6 py-2 rounded-lg bg-glass-bg border border-glass-border text-text-secondary hover:text-foreground transition-colors"
               >
                 Browse Packages
@@ -804,8 +670,6 @@ export default function PublishMcpPackagePage() {
         )}
       </div>
 
-      {/* Runtime Explanation Modal */}
-      {showRuntimeModal && <RuntimeModal />}
     </div>
   );
 }

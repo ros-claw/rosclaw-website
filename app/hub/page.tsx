@@ -199,11 +199,11 @@ export default function HubPage() {
           <div className="industrial-panel p-6 sm:p-8">
             <div className="flex items-center gap-3">
               <Terminal className="h-5 w-5 text-cognitive-cyan" />
-              <h2 className="text-lg font-medium text-white">Install the core pair</h2>
+              <h2 className="text-lg font-medium text-white">Validate before install</h2>
             </div>
             <div className="mt-6 space-y-3 font-mono text-xs">
-              <div className="overflow-x-auto border border-white/10 bg-black/40 p-4 text-white/60"><span className="mr-3 text-cognitive-cyan">$</span>rosclaw install mcp owner/package</div>
-              <div className="overflow-x-auto border border-white/10 bg-black/40 p-4 text-white/60"><span className="mr-3 text-physical-orange">$</span>rosclaw install skill owner/skill</div>
+              <div className="overflow-x-auto border border-white/10 bg-black/40 p-4 text-white/60"><span className="mr-3 text-cognitive-cyan">$</span>rosclaw hub validate ./manifest.yaml</div>
+              <div className="overflow-x-auto border border-white/10 bg-black/40 p-4 text-white/60"><span className="mr-3 text-physical-orange">$</span>rosclaw hub policy check ./asset</div>
             </div>
             <a href={githubDocLinks.assets} target="_blank" rel="noopener noreferrer" className="focus-ring mt-6 inline-flex items-center gap-2 text-sm text-cognitive-cyan hover:text-white">
               Read the asset documentation <ArrowUpRight className="h-4 w-4" />

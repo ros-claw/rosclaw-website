@@ -100,41 +100,6 @@ export function filterPackages(
   });
 }
 
-// Generate install command
-export function generateInstallCommand(name: string): string {
-  return `rosclaw mcp install ${name}`;
-}
-
-// Generate agent adaptation commands
-export function getAgentAdaptations(name: string, githubUrl: string): {
-  agent: string;
-  command: string;
-  description: string;
-}[] {
-  return [
-    {
-      agent: "ROSClaw CLI",
-      command: `rosclaw mcp install ${name}`,
-      description: "Native ROSClaw command-line interface",
-    },
-    {
-      agent: "OpenClaw",
-      command: `install mcp from ${githubUrl}`,
-      description: "OpenClaw agent needs the full GitHub URL",
-    },
-    {
-      agent: "Claude Code",
-      command: `@rosclaw install mcp ${name}`,
-      description: "Claude Code with ROSClaw MCP: '@rosclaw install mcp package-name'",
-    },
-    {
-      agent: "Generic Agent",
-      command: `Use the ROSClaw MCP tool to install package "${name}"`,
-      description: "Natural language instruction for any LLM agent",
-    },
-  ];
-}
-
 // Suggest alternative names
 export function suggestAlternativeNames(name: string): string[] {
   return [

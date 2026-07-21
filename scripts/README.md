@@ -48,8 +48,6 @@ python bulk_import.py --type mcp --file urls.txt
 ```bash
 # 必需：设置 API Key（用于认证）
 export ADMIN_API_KEY="your_rosclaw_admin_key"
-# 或
-export NEXT_PUBLIC_ADMIN_KEY="your_rosclaw_admin_key"
 
 # 可选：设置 LLM API Key（用于智能分析）
 export BAILIAN_API_KEY="your_bailian_api_key"

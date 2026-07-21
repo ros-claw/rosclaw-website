@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { authenticateApiKey } from "@/lib/api-key"
+import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
 // Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
@@ -72,8 +73,8 @@ export async function GET(req: NextRequest) {
       category: s.category,
       version: s.version,
       authorName: s.author_name,
-      authorUrl: s.author_url,
-      githubRepoUrl: s.github_repo_url,
+      authorUrl: normalizePublicHttpsUrl(s.author_url),
+      githubRepoUrl: normalizePublicHttpsUrl(s.github_repo_url),
       downloadsCount: s.downloads_count,
       viewsCount: s.views_count || 0,
       githubStars: s.github_stars || 0,
@@ -83,7 +84,6 @@ export async function GET(req: NextRequest) {
       robotTypes: s.robot_types || [],
       tags: s.tags || [],
       dependencies: s.dependencies || [],
-      installCommand: s.install_command,
       iconUrl: s.icon_url,
     }))
 
@@ -111,6 +111,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const githubRepoUrl = body.github_repo_url
+      ? normalizePublicHttpsUrl(body.github_repo_url)
+      : undefined
+    if (body.github_repo_url && !githubRepoUrl) {
+      return NextResponse.json(
+        { error: "github_repo_url must be a public HTTPS URL" },
+        { status: 400 }
+      )
+    }
+
     // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")
     let userId: string | null = null
@@ -125,16 +135,16 @@ export async function POST(req: NextRequest) {
       if (identity.kind === "user") {
         userId = identity.userId
       }
-      status = "approved"
+      status = identity.kind === "admin" ? "approved" : "pending"
       // Use admin client to bypass RLS for API key auth
       client = createAdminClient()
     } else {
       // Session authentication
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
-      userId = session.user.id
+      userId = user.id
       status = "pending"
     }
 
@@ -166,7 +176,7 @@ export async function POST(req: NextRequest) {
         author_user_id: userId,
         author_name: body.author_name,
         author_url: body.author_url,
-        github_repo_url: body.github_repo_url,
+        github_repo_url: githubRepoUrl,
         robot_types: body.robot_types || [],
         tags: body.tags || [],
         compatible_robots: body.compatible_robots || [],
@@ -242,8 +252,8 @@ export async function DELETE(req: NextRequest) {
       }
     } else {
       // Session authentication - can only delete own skills
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      if (sessionError || !session) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) {
         return NextResponse.json({ error: "Authentication required" }, { status: 401 })
       }
 
@@ -253,7 +263,7 @@ export async function DELETE(req: NextRequest) {
         .eq("id", id)
         .single()
 
-      if (!skill || skill.author_user_id !== session.user.id) {
+      if (!skill || skill.author_user_id !== user.id) {
         return NextResponse.json(
           { error: "You can only delete your own skills" },
           { status: 403 }

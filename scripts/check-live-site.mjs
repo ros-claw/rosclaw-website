@@ -128,11 +128,35 @@ if (mcpResponse) {
       "Legacy MCP verified state disagrees with manifest validation evidence.",
     );
   }
+  for (const pkg of mcpPackages) {
+    if (pkg.manifestValidated) {
+      assert(
+        typeof pkg.manifestValidatedAt === "string" &&
+          pkg.manifestValidatedAt.length > 0,
+        `${pkg.name} is validated without a timestamp.`,
+      );
+      assert(
+        typeof pkg.manifestValidationEvidence === "string" &&
+          pkg.manifestValidationEvidence.length > 0,
+        `${pkg.name} is validated without evidence.`,
+      );
+    }
+    assert(
+      pkg.installCommand === undefined,
+      `${pkg.name} exposes an install command without a public Hub bundle protocol.`,
+    );
+  }
 }
 if (skillResponse) {
   assert(skillResponse.status === 200, "Skill Registry API is unavailable.");
   skills = await skillResponse.json();
   assert(Array.isArray(skills) && skills.length > 0, "Skill Registry is empty.");
+  for (const skill of skills) {
+    assert(
+      skill.installCommand === undefined,
+      `${skill.name} exposes an install command without a public Hub bundle protocol.`,
+    );
+  }
 }
 
 for (const [path, items, matchLabel, detailPrefix] of [
@@ -187,6 +211,27 @@ for (const [path, name, legacy] of dynamicExamples) {
   assert(
     new URL(redirect.headers.get("location") ?? "", site).pathname === new URL(path, site).pathname,
     `${legacy} redirects to the wrong detail path.`,
+  );
+}
+
+for (const [method, body] of [
+  ["GET", undefined],
+  ["PATCH", JSON.stringify({ action: "approve", assetType: "mcp", id: "00000000-0000-4000-8000-000000000000" })],
+]) {
+  const response = await request("/api/admin/registry", {
+    method,
+    ...(body
+      ? { headers: { "Content-Type": "application/json" }, body }
+      : {}),
+  });
+  if (!response) continue;
+  assert(
+    response.status === 401 || response.status === 403,
+    `Unauthenticated ${method} /api/admin/registry returned ${response.status}.`,
+  );
+  assert(
+    response.headers.get("cache-control")?.includes("no-store"),
+    `Unauthenticated ${method} /api/admin/registry is cacheable.`,
   );
 }
 

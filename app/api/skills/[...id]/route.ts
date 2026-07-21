@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
+import { isDeepStrictEqual } from "node:util"
 import { authenticateApiKey } from "@/lib/api-key"
+import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
 function createClient(req: NextRequest) {
   return createServerClient(
@@ -85,13 +87,13 @@ export async function GET(
 
     // Only return approved skills (unless admin or owner)
     if (data.status !== "approved") {
-      const { data: { session } } = await supabase.auth.getSession()
+      const { data: { user } } = await supabase.auth.getUser()
       const apiKey = req.headers.get("x-api-key")
       const identity = apiKey ? await authenticateApiKey(apiKey) : null
 
       const isAdmin = identity?.kind === "admin"
       const isOwner =
-        session?.user?.id === data.author_user_id ||
+        user?.id === data.author_user_id ||
         (identity?.kind === "user" && identity.userId === data.author_user_id)
 
       if (!isAdmin && !isOwner) {
@@ -112,8 +114,8 @@ export async function GET(
       category: data.category,
       version: data.version,
       authorName: data.author_name,
-      authorUrl: data.author_url,
-      githubRepoUrl: data.github_repo_url,
+      authorUrl: normalizePublicHttpsUrl(data.author_url),
+      githubRepoUrl: normalizePublicHttpsUrl(data.github_repo_url),
       viewsCount: data.views_count || 0,
       githubStars: data.github_stars || 0,
       rating: data.rating,
@@ -123,7 +125,6 @@ export async function GET(
       tags: data.tags || [],
       compatibleRobots: data.compatible_robots || [],
       dependencies: data.dependencies || [],
-      installCommand: data.install_command,
       iconUrl: data.icon_url,
     }
 
@@ -219,14 +220,14 @@ export async function PUT(
     // Find skill by ID or name
     let { data: existing } = await adminClient
       .from("skills")
-      .select("id, author_user_id")
+      .select("id,author_user_id,description,long_description,readme_content,display_name,category,robot_types,tags,version,status")
       .eq("id", fullPath)
       .single()
 
     if (!existing) {
       const result = await adminClient
         .from("skills")
-        .select("id, author_user_id")
+        .select("id,author_user_id,description,long_description,readme_content,display_name,category,robot_types,tags,version,status")
         .eq("name", fullPath)
         .single()
       existing = result.data
@@ -256,11 +257,32 @@ export async function PUT(
     if (body.long_description !== undefined) updateData.long_description = body.long_description
     if (body.readme_content !== undefined) updateData.readme_content = body.readme_content
     if (body.display_name !== undefined) updateData.display_name = body.display_name
-    if (body.github_stars !== undefined) updateData.github_stars = body.github_stars
+    if (body.github_stars !== undefined && identity.kind === "admin") {
+      updateData.github_stars = body.github_stars
+    }
     if (body.category !== undefined) updateData.category = body.category
     if (body.robot_types !== undefined) updateData.robot_types = body.robot_types
     if (body.tags !== undefined) updateData.tags = body.tags
     if (body.version !== undefined) updateData.version = body.version
+
+    const requiresModeration = [
+      "description",
+      "long_description",
+      "readme_content",
+      "display_name",
+      "category",
+      "robot_types",
+      "tags",
+      "version",
+    ].some(
+      (field) =>
+        body[field] !== undefined &&
+        !isDeepStrictEqual(body[field], existing[field as keyof typeof existing]),
+    )
+
+    if (requiresModeration && identity.kind === "user") {
+      updateData.status = "pending"
+    }
 
     // Only admins can change approval status
     if (body.status !== undefined && identity.kind === "admin") {

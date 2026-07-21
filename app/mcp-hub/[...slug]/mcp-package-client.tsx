@@ -17,7 +17,6 @@ import {
   Terminal,
   Wrench,
 } from "lucide-react";
-import { CopyCommand } from "@/components/hub/copy-command";
 import { ExpandableSummary } from "@/components/hub/expandable-summary";
 import type { McpPackageDetail } from "@/lib/registry/types";
 
@@ -50,6 +49,11 @@ async function incrementViews(id: string) {
 
 function formatNumber(value = 0) {
   return new Intl.NumberFormat("en", { notation: value >= 1_000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
+}
+
+function formatValidationDate(value?: string) {
+  if (!value) return "Not recorded";
+  return new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
 }
 
 export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) {
@@ -89,7 +93,6 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
   const tools = packageData.tools || [];
   const tags = packageData.tags || [];
   const docs = packageData.readmeContent || packageData.longDescription || "";
-  const installCommand = `rosclaw install mcp ${packageData.name}`;
   const manifestValidated = packageData.manifestValidated === true;
 
   return (
@@ -217,10 +220,9 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
           <section className="industrial-panel p-5 sm:p-6">
             <div className="flex items-center gap-3">
               <Terminal className="h-5 w-5 text-cognitive-cyan" />
-              <h2 className="text-base font-medium text-white">Install into runtime</h2>
+              <h2 className="text-base font-medium text-white">Runtime artifact</h2>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-white/38">Pin the package version in production after validating its interface contract.</p>
-            <div className="mt-5"><CopyCommand command={installCommand} /></div>
+            <p className="mt-3 text-xs leading-relaxed text-white/42">No compatible ROSClaw Hub install artifact is indexed. Inspect the source repository and do not treat discovery metadata as an executable package.</p>
           </section>
 
           <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">
@@ -247,6 +249,12 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
                   "Manifest validation",
                   manifestValidated ? "Validated" : "Not validated",
                 ],
+                [
+                  "Validated at",
+                  manifestValidated
+                    ? formatValidationDate(packageData.manifestValidatedAt)
+                    : "Not recorded",
+                ],
                 ["Hardware evidence", "Not represented by this flag"],
               ].map(([label, value]) => (
                 <div key={label} className="flex items-start justify-between gap-4 border-b border-white/[0.06] pb-3 last:border-0 last:pb-0">
@@ -255,6 +263,25 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
                 </div>
               ))}
             </dl>
+            {manifestValidated && packageData.manifestValidationEvidence && (
+              <div className="mt-5 border-t border-white/[0.08] pt-4">
+                <p className="runtime-label">Manifest evidence</p>
+                {packageData.manifestValidationEvidenceUrl ? (
+                  <a
+                    href={packageData.manifestValidationEvidenceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus-ring mt-3 inline-flex max-w-full items-center gap-2 break-all text-xs text-cognitive-cyan hover:text-white"
+                  >
+                    Open evidence record <ArrowUpRight className="h-3.5 w-3.5 flex-none" />
+                  </a>
+                ) : (
+                  <p className="mt-3 break-all text-xs leading-relaxed text-white/45">
+                    {packageData.manifestValidationEvidence}
+                  </p>
+                )}
+              </div>
+            )}
             {packageData.githubRepoUrl && (
               <a href={packageData.githubRepoUrl} target="_blank" rel="noopener noreferrer" className="focus-ring mt-6 flex items-center justify-between border-t border-white/[0.08] pt-4 text-sm text-white/50 transition-colors hover:text-cognitive-cyan">
                 <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> Source repository</span>

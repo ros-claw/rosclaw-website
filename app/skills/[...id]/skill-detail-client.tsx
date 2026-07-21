@@ -18,7 +18,6 @@ import {
   Terminal,
   Workflow,
 } from "lucide-react";
-import { CopyCommand } from "@/components/hub/copy-command";
 import { ExpandableSummary } from "@/components/hub/expandable-summary";
 import type { SkillDetail } from "@/lib/registry/types";
 
@@ -91,7 +90,6 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
   const bodyProfiles = Array.from(new Set([...(skill.compatibleRobots || []), ...(skill.robotTypes || [])].filter(Boolean)));
   const dependencies = skill.dependencies || [];
   const docs = skill.readmeContent || skill.longDescription || "";
-  const installCommand = `rosclaw install skill ${skill.name}`;
 
   return (
     <main className="min-h-screen bg-background pb-20 pt-24">
@@ -222,10 +220,9 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
           <section className="industrial-panel p-5 sm:p-6">
             <div className="flex items-center gap-3">
               <Terminal className="h-5 w-5 text-physical-orange" />
-              <h2 className="text-base font-medium text-white">Install behavior</h2>
+              <h2 className="text-base font-medium text-white">Runtime artifact</h2>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-white/38">Pin the version after validating its dependencies and body contract.</p>
-            <div className="mt-5"><CopyCommand command={installCommand} tone="orange" /></div>
+            <p className="mt-3 text-xs leading-relaxed text-white/42">No compatible ROSClaw Hub install artifact is indexed. Treat this Registry entry as discovery metadata until a signed asset bundle is published.</p>
           </section>
 
           <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">

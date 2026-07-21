@@ -136,6 +136,7 @@ for (const route of [
   "app/status/page.tsx",
   "app/hub/mcps/page.tsx",
   "app/hub/skills/page.tsx",
+  "app/api/admin/registry/route.ts",
 ]) {
   assert(existsSync(path.join(repositoryRoot, route)), `Required product route is missing: ${route}`);
 }
@@ -231,16 +232,16 @@ const forbidden = [
     /startsWith\(["']ros-claw\//g,
     "package-name inference presented as verification",
   ],
-  [
-    /is_verified\s*:\s*true/g,
-    "publication approval coupled to verification",
-  ],
+  [/NEXT_PUBLIC_ADMIN_KEY/g, "browser-exposed administrator key"],
+  [/rosclaw install mcp\b/g, "nonexistent MCP install command"],
+  [/rosclaw mcp install\b/g, "nonexistent MCP install command"],
+  [/rosclaw install skill\b/g, "nonexistent Skill install command"],
   [/Verified publishers/g, "publisher identity conflated with package verification"],
   [/Registry verified/gi, "ambiguous registry verification badge"],
 ];
 
 const sourceFiles = [];
-for (const root of ["app", "components", "content"]) {
+for (const root of ["app", "components", "content", "lib"]) {
   const pending = [path.join(repositoryRoot, root)];
   while (pending.length) {
     const current = pending.pop();
@@ -258,13 +259,133 @@ for (const root of ["app", "components", "content"]) {
 
 for (const file of sourceFiles) {
   const text = readFileSync(file, "utf8");
+  const relativePath = path.relative(repositoryRoot, file);
   for (const [pattern, label] of forbidden) {
     pattern.lastIndex = 0;
     if (pattern.test(text)) {
       errors.push(`${path.relative(repositoryRoot, file)} contains ${label}.`);
     }
   }
+  if (relativePath.startsWith(`app${path.sep}api${path.sep}`)) {
+    assert(
+      !text.includes("auth.getSession()"),
+      `${relativePath} must validate server-side users with auth.getUser().`,
+    );
+  }
 }
+
+const publicMcpApiSource = readFileSync(
+  path.join(repositoryRoot, "app", "api", "mcp-packages", "route.ts"),
+  "utf8",
+);
+assert(
+  publicMcpApiSource.includes("is_verified: false"),
+  "MCP publication must not create a validation attestation.",
+);
+assert(
+  publicMcpApiSource.includes('identity.kind === "admin" ? "approved" : "pending"'),
+  "User-scoped MCP API keys must not bypass moderation.",
+);
+
+const publicSkillApiSource = readFileSync(
+  path.join(repositoryRoot, "app", "api", "skills", "route.ts"),
+  "utf8",
+);
+assert(
+  publicSkillApiSource.includes('identity.kind === "admin" ? "approved" : "pending"'),
+  "User-scoped Skill API keys must not bypass moderation.",
+);
+assert(
+  !publicSkillApiSource.includes("installCommand:"),
+  "Skill discovery API must not expose a legacy install command.",
+);
+
+const publicSkillDetailApiSource = readFileSync(
+  path.join(repositoryRoot, "app", "api", "skills", "[...id]", "route.ts"),
+  "utf8",
+);
+assert(
+  !publicSkillDetailApiSource.includes("installCommand:"),
+  "Skill detail API must not expose a legacy install command.",
+);
+
+const registryAdminApiSource = readFileSync(
+  path.join(repositoryRoot, "app", "api", "admin", "registry", "route.ts"),
+  "utf8",
+);
+for (const field of [
+  "is_verified: true",
+  "manifest_validated_at: validatedAt",
+  "manifest_validation_evidence: action.evidence",
+]) {
+  assert(
+    registryAdminApiSource.includes(field),
+    `Registry attestation endpoint omits ${field}.`,
+  );
+}
+
+const mcpMutationSource = readFileSync(
+  path.join(repositoryRoot, "app", "api", "mcp-packages", "[...id]", "route.ts"),
+  "utf8",
+);
+for (const field of [
+  "invalidatesManifestAttestation",
+  "updateData.is_verified = false",
+  "updateData.manifest_validated_at = null",
+  "updateData.manifest_validation_evidence = null",
+  'updateData.status = "pending"',
+]) {
+  assert(
+    mcpMutationSource.includes(field),
+    `MCP semantic updates do not enforce ${field}.`,
+  );
+}
+
+const trustGuardMigration = readFileSync(
+  path.join(
+    repositoryRoot,
+    "supabase",
+    "migrations",
+    "008_registry_trust_guards.sql",
+  ),
+  "utf8",
+);
+for (const contract of [
+  "guard_mcp_package_trust",
+  "guard_skill_moderation",
+  "MCP moderation, attestation, and metric fields are server controlled",
+  "new.status := 'pending'",
+  "mcp_packages_manifest_validation_requires_approval",
+]) {
+  assert(
+    trustGuardMigration.includes(contract),
+    `Registry database trust guard omits ${contract}.`,
+  );
+}
+
+for (const sensitiveFile of [
+  ".env.example",
+  "scripts/README.md",
+  "scripts/sync_github.py",
+  "scripts/bulk_import.py",
+  "scripts/github_crawler.py",
+  "docs/BULK_IMPORT_GUIDE.md",
+]) {
+  const source = readFileSync(path.join(repositoryRoot, sensitiveFile), "utf8");
+  assert(
+    !source.includes("NEXT_PUBLIC_ADMIN_KEY"),
+    `${sensitiveFile} must not accept a browser-exposed administrator key.`,
+  );
+}
+
+const authCallbackSource = readFileSync(
+  path.join(repositoryRoot, "app", "api", "auth", "callback", "route.ts"),
+  "utf8",
+);
+assert(
+  authCallbackSource.includes("safeInternalRedirect"),
+  "OAuth callback must validate its post-login redirect.",
+);
 
 const installerSource = readFileSync(
   path.join(repositoryRoot, "app", "get", "route.ts"),

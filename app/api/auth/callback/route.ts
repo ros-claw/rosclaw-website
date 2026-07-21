@@ -2,19 +2,21 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { getSupabaseAdmin } from "@/lib/supabase/admin"
 import { hashApiKey } from "@/lib/api-key"
+import { safeInternalRedirect } from "@/lib/auth/redirect"
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.rosclaw.io"
 
 export async function GET(req: NextRequest) {
   const requestUrl = new URL(req.url)
   const code = requestUrl.searchParams.get("code")
+  const destination = safeInternalRedirect(requestUrl.searchParams.get("next"))
 
   if (!code) {
     return NextResponse.redirect(`${requestUrl.origin}/login?error=no_code`)
   }
 
   // Create response object to set cookies
-  const response = NextResponse.redirect(`${requestUrl.origin}/profile`)
+  const response = NextResponse.redirect(new URL(destination, requestUrl.origin))
 
   // Create Supabase client with cookie handling
   const supabase = createServerClient(

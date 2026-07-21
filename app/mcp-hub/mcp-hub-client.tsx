@@ -216,14 +216,6 @@ export function McpHubClient() {
                 </div>
               </div>
 
-              {/* Quick Install */}
-              <div className="p-4 rounded-lg bg-card-bg border border-glass-border">
-                <h3 className="text-sm font-semibold text-foreground mb-2">Quick Install</h3>
-                <code className="block p-2 rounded bg-black/40 text-xs text-text-secondary font-mono">
-                  rosclaw mcp install {"<package>"}
-                </code>
-              </div>
-
               {/* Data Source Note */}
               <div className="p-3 rounded-lg bg-glass-bg text-xs text-text-muted">
                 <p className="flex items-center gap-1.5">

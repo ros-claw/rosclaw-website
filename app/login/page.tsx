@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState, Suspense } from "react"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
+import { useSearchParams } from "next/navigation"
 import { Github } from "lucide-react"
 import { getSupabaseClient } from "@/lib/supabase/client"
+import { safeInternalRedirect } from "@/lib/auth/redirect"
 
 function LoginForm() {
-  const router = useRouter()
+  const searchParams = useSearchParams()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
@@ -15,12 +15,14 @@ function LoginForm() {
     setLoading(true)
     try {
       const supabase = getSupabaseClient()
-      await supabase.auth.signInWithOAuth({
+      const destination = safeInternalRedirect(searchParams.get("redirect"))
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/api/auth/callback`,
+          redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(destination)}`,
         },
       })
+      if (oauthError) throw oauthError
     } catch {
       setError("Login failed")
       setLoading(false)
@@ -36,31 +38,27 @@ function LoginForm() {
   }, [])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="glass rounded-2xl p-8 border border-white/10">
-          <h1 className="text-2xl font-bold text-foreground text-center mb-2">
+    <main className="flex min-h-screen items-center justify-center bg-background px-4 py-24">
+      <section className="w-full max-w-md border border-white/15 bg-[#080b0c] p-6 sm:p-8">
+          <h1 className="text-center text-2xl font-semibold text-white">
             Sign in to ROSClaw
           </h1>
-          <p className="text-text-secondary text-center mb-8">
-            Create an account to publish skills and MCP packages
+          <p className="mt-3 text-center text-sm leading-relaxed text-white/60">
+            Continue to your account and authorized Registry operations.
           </p>
 
           {error && (
-            <div className="mb-6 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center">
+            <div className="mt-6 border border-red-400/30 bg-red-400/[0.06] p-3 text-center text-sm text-red-300">
               {error}
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="mt-8 space-y-3">
             <button
+              type="button"
               onClick={() => handleLogin("google")}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-foreground font-medium hover:bg-white/10 transition-all disabled:opacity-50"
+              className="focus-ring flex h-12 w-full items-center justify-center gap-3 rounded border border-white/15 bg-white/[0.04] px-5 text-sm font-medium text-white/80 transition-colors hover:border-cognitive-cyan/40 hover:text-white disabled:opacity-50"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -72,21 +70,17 @@ function LoginForm() {
             </button>
 
             <button
+              type="button"
               onClick={() => handleLogin("github")}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-lg bg-white/5 border border-white/10 text-foreground font-medium hover:bg-white/10 transition-all disabled:opacity-50"
+              className="focus-ring flex h-12 w-full items-center justify-center gap-3 rounded border border-white/15 bg-white/[0.04] px-5 text-sm font-medium text-white/80 transition-colors hover:border-cognitive-cyan/40 hover:text-white disabled:opacity-50"
             >
               <Github className="w-5 h-5" />
               Continue with GitHub
             </button>
           </div>
-
-          <p className="mt-6 text-xs text-text-muted text-center">
-            By continuing, you agree to the ROSClaw Terms of Service
-          </p>
-        </div>
-      </motion.div>
-    </div>
+      </section>
+    </main>
   )
 }
 
@@ -94,9 +88,9 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <p className="text-text-secondary">Loading...</p>
-        </div>
+        <main className="flex min-h-screen items-center justify-center bg-background">
+          <p className="text-sm text-white/60">Loading...</p>
+        </main>
       }
     >
       <LoginForm />

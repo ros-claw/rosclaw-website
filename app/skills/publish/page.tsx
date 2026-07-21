@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, Tags, Info, Check, AlertCircle, Github, Sparkles, Copy, CheckCircle } from "lucide-react";
+import { FileText, Tags, Info, Check, AlertCircle, Github, Sparkles } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -56,14 +56,9 @@ export default function PublishSkillPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState("");
-  const [copied, setCopied] = useState(false);
 
   const isOfficialRepo = (url: string) => {
     return OFFICIAL_ORGS.some(org => url.toLowerCase().includes(`github.com/${org.toLowerCase()}`));
-  };
-
-  const generateInstallCommand = (name: string) => {
-    return `rosclaw skill install ${name}`;
   };
 
   const handleOneClickImport = async () => {
@@ -233,12 +228,6 @@ export default function PublishSkillPage() {
       alert('Failed to publish skill');
       setIsSubmitting(false);
     }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const steps = [
@@ -596,7 +585,7 @@ export default function PublishSkillPage() {
                 disabled={isSubmitting}
                 className="px-6 py-2 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/30 text-cognitive-cyan font-medium hover:bg-cognitive-cyan/20 transition-all disabled:opacity-50"
               >
-                {isSubmitting ? "Publishing..." : "Publish Skill"}
+                {isSubmitting ? "Submitting..." : "Submit Skill"}
               </button>
             </div>
           </motion.div>
@@ -613,7 +602,7 @@ export default function PublishSkillPage() {
               <Check className="w-8 h-8 text-green-500" />
             </div>
             <h2 className="text-2xl font-bold text-foreground mb-2">
-              Skill Published Successfully!
+              Skill submitted
             </h2>
             <p className="text-text-secondary mb-2">
               Your skill <strong>{formData.name}</strong> has been submitted.
@@ -633,26 +622,9 @@ export default function PublishSkillPage() {
               </div>
             </div>
 
-            {/* Install Command */}
-            <div className="max-w-lg mx-auto mb-8">
-              <div className="p-4 rounded-lg bg-black/40 border border-glass-border">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-text-muted">Install with one command:</span>
-                  <button
-                    onClick={() => copyToClipboard(generateInstallCommand(formData.name))}
-                    className="flex items-center gap-1 text-xs text-cognitive-cyan hover:text-cognitive-cyan/80"
-                  >
-                    {copied ? <CheckCircle className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                    {copied ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-                <code className="block p-3 rounded bg-glass-bg text-foreground font-mono text-sm">
-                  {generateInstallCommand(formData.name)}
-                </code>
-              </div>
-              <p className="text-xs text-text-muted mt-2">
-                Users can paste this command into their ROSClaw agent to install your skill.
-              </p>
+            <div className="mx-auto mb-8 max-w-lg border border-white/10 bg-black/25 p-4 text-left">
+              <p className="font-mono text-[10px] uppercase text-cognitive-cyan">Discovery record submitted</p>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">Installation remains unavailable until a compatible ROSClaw Hub asset is packaged, validated, and indexed.</p>
             </div>
 
             <div className="flex justify-center gap-4">
