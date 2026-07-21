@@ -18,6 +18,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { CopyCommand } from "@/components/hub/copy-command";
+import { ExpandableSummary } from "@/components/hub/expandable-summary";
 import type { McpPackageDetail } from "@/lib/registry/types";
 
 interface McpPackageClientProps {
@@ -110,7 +111,7 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
                 )}
               </div>
               <h1 className="mt-4 break-words text-balance font-mono text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">{packageData.name}</h1>
-              <p className="mt-5 max-w-3xl text-pretty text-base leading-relaxed text-white/52 md:text-lg">{packageData.description}</p>
+              <ExpandableSummary text={packageData.description} />
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/35">
                 <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> {packageData.authorName}</span>
                 <span className="font-mono text-xs">v{packageData.version || "—"}</span>

@@ -19,6 +19,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { CopyCommand } from "@/components/hub/copy-command";
+import { ExpandableSummary } from "@/components/hub/expandable-summary";
 import type { SkillDetail } from "@/lib/registry/types";
 
 interface SkillDetailClientProps {
@@ -110,7 +111,7 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
               </div>
               <h1 className="mt-4 break-words text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl md:text-5xl">{skill.displayName || skill.name}</h1>
               {skill.displayName && skill.displayName !== skill.name && <p className="mt-2 break-words font-mono text-xs text-white/28">{skill.name}</p>}
-              <p className="mt-5 max-w-3xl text-pretty text-base leading-relaxed text-white/52 md:text-lg">{skill.description}</p>
+              <ExpandableSummary text={skill.description} />
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/35">
                 <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> {skill.authorName}</span>
                 <span className="font-mono text-xs">v{skill.version || "—"}</span>
