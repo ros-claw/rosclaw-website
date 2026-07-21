@@ -2,7 +2,7 @@
   "generated": {
     "schema_version": "rosclaw.product_status_snapshot.v1",
     "source": "src/rosclaw/product/status.yaml",
-    "source_sha256": "3c4f4dea18a41c2af0550d2bff77b462b13d8d9866c0525c84094608f910c077"
+    "source_sha256": "bd1a34acce0b5e27f1f5c21e217ea3aff7ebc113a4162999fcfd6fa65d407fb4"
   },
   "status": {
     "acknowledgement_stages": [
@@ -97,6 +97,64 @@
         "evidence_summary": {
           "en": "Explicit FIXTURE and SYNTHETIC data only; never valid for safety or real acceptance.",
           "zh": "仅显式 FIXTURE 与 SYNTHETIC 数据；不能用于安全判断或真实执行验收。"
+        }
+      },
+      "hub_supply_chain": {
+        "claim": "component_system_verified",
+        "display": {
+          "en": "Generic Hub asset supply chain",
+          "zh": "通用 Hub 资产供应链"
+        },
+        "evidence": [
+          {
+            "fixture": true,
+            "id": "hub-ed25519-trust-tests-20260722",
+            "independent": true,
+            "kind": "automated_security_test",
+            "observation_scope": "local_asset_integrity_and_publisher_trust",
+            "path": "tests/hub/test_signature_trust.py",
+            "verified_at": "2026-07-22"
+          },
+          {
+            "fixture": true,
+            "id": "hub-safe-archive-tests-20260722",
+            "independent": true,
+            "kind": "automated_security_test",
+            "observation_scope": "bounded_local_and_remote_bundle_extraction",
+            "path": "tests/hub/test_archive_security.py",
+            "verified_at": "2026-07-22"
+          },
+          {
+            "fixture": true,
+            "id": "hub-file-registry-e2e-20260722",
+            "independent": true,
+            "kind": "automated_system_test",
+            "observation_scope": "local_file_registry_publish_sync_install_lifecycle",
+            "path": "tests/hub/test_e2e_fake_registry.py",
+            "verified_at": "2026-07-22"
+          },
+          {
+            "fixture": true,
+            "id": "hub-install-copy-transaction-tests-20260722",
+            "independent": true,
+            "kind": "automated_security_test",
+            "observation_scope": "copied_manifest_binding_target_reverification_and_rollback",
+            "path": "tests/hub/test_installer_transaction.py",
+            "verified_at": "2026-07-22"
+          },
+          {
+            "fixture": true,
+            "id": "hub-owner-only-auth-store-tests-20260722",
+            "independent": true,
+            "kind": "automated_security_test",
+            "observation_scope": "atomic_owner_only_registry_credential_storage",
+            "path": "tests/hub/test_auth.py",
+            "verified_at": "2026-07-22"
+          }
+        ],
+        "evidence_summary": {
+          "en": "Complete payload hashes, detached Ed25519 signatures, independently scoped trust roots, canonical-reference and copied-manifest binding, target re-verification, bounded extraction, explicit install permissions, owner-only local credentials, and local/file registry lifecycle are system-tested. The packaged trust store is empty; public registry, TUF rollback protection, OS-keyring integration, and builder-attestation verification remain pending.",
+          "zh": "完整 Payload 哈希、Ed25519 分离签名、独立作用域信任根、Canonical Reference 与复制 Manifest 绑定、安装目标二次验证、有界解压、显式安装权限、Owner-only 本地凭据及本地/文件 Registry 生命周期已通过系统测试；随包 Trust Store 为空，公共 Registry、TUF 防回滚、OS Keyring 集成与 Builder Attestation 验证仍待完成。"
         }
       },
       "integrations": {
@@ -498,6 +556,7 @@
       "components.rosclawd",
       "components.action_gateway",
       "components.app_runtime",
+      "components.hub_supply_chain",
       "components.estop",
       "components.fixture_surfaces",
       "golden_paths.realsense_inspect",
