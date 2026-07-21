@@ -9,8 +9,9 @@ const linkGroups = [
     links: [
       { label: "Start", href: "/start" },
       { label: "Robot support", href: "/robots" },
+      { label: "Apps", href: "/apps" },
       { label: "Runtime", href: "/runtime" },
-      { label: "Verified run", href: "/#verified-run" },
+      { label: "Product status", href: "/status" },
     ],
   },
   {
@@ -20,6 +21,7 @@ const linkGroups = [
       { label: "Physical-AI Hub", href: "/hub" },
       { label: "Hardware MCPs", href: "/hub/mcps" },
       { label: "Skills", href: "/hub/skills" },
+      { label: "Evidence", href: "/evidence" },
     ],
   },
 ] as const;

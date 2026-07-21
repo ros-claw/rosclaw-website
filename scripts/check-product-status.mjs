@@ -128,9 +128,51 @@ if (existsSync(statusSource)) {
   }
 }
 
-for (const route of ["app/start/page.tsx", "app/robots/page.tsx"]) {
+for (const route of [
+  "app/start/page.tsx",
+  "app/robots/page.tsx",
+  "app/apps/page.tsx",
+  "app/evidence/page.tsx",
+  "app/status/page.tsx",
+  "app/hub/mcps/page.tsx",
+  "app/hub/skills/page.tsx",
+]) {
   assert(existsSync(path.join(repositoryRoot, route)), `Required product route is missing: ${route}`);
 }
+
+for (const route of ["app/hub/mcps/page.tsx", "app/hub/skills/page.tsx"]) {
+  const source = readFileSync(path.join(repositoryRoot, route), "utf8");
+  assert(!source.includes('"use client"'), `${route} must remain server-rendered.`);
+  assert(source.includes("initialLoadError"), `${route} must pass server-loaded registry data.`);
+}
+
+for (const client of [
+  "components/hub/mcp-registry-client.tsx",
+  "components/hub/skill-registry-client.tsx",
+]) {
+  const source = readFileSync(path.join(repositoryRoot, client), "utf8");
+  assert(!source.includes('fetch("/api/'), `${client} must not replace SSR data with a mount-time request.`);
+}
+
+const catalogSource = readFileSync(
+  path.join(repositoryRoot, "content", "product-catalog.ts"),
+  "utf8",
+);
+function catalogEntry(slug) {
+  const marker = `slug: "${slug}"`;
+  const start = catalogSource.indexOf(marker);
+  if (start < 0) return "";
+  const next = catalogSource.indexOf("\n  {\n    slug:", start + marker.length);
+  return catalogSource.slice(start, next < 0 ? catalogSource.length : next);
+}
+assert(
+  !catalogEntry("rh56-rps").includes("hardwareObserved: true"),
+  "RH56 RPS must not inherit hardware evidence from a different execution path.",
+);
+assert(
+  !catalogEntry("guarded-motion").includes("simulationVerified: true"),
+  "A planned App must not inherit simulation evidence from an underlying controller.",
+);
 
 const forbidden = [
   [/v0\.8\.2/g, "stale v0.8.2 release"],
@@ -152,6 +194,7 @@ const forbidden = [
     "publication approval coupled to verification",
   ],
   [/Verified publishers/g, "publisher identity conflated with package verification"],
+  [/Registry verified/gi, "ambiguous registry verification badge"],
 ];
 
 const sourceFiles = [];

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { authenticateApiKey } from "@/lib/api-key"
+import { hasManifestValidationEvidence } from "@/lib/registry/verification"
 
 function createClient(req: NextRequest) {
   return createServerClient(
@@ -86,6 +87,7 @@ export async function GET(
       }
     }
 
+    const manifestValidated = hasManifestValidationEvidence(data)
     const pkg = {
       id: data.id,
       name: data.name,
@@ -95,7 +97,8 @@ export async function GET(
       authorName: data.author_name,
       author_user_id: data.author_user_id,
       githubRepoUrl: data.github_repo_url,
-      verified: data.is_verified,
+      manifestValidated,
+      verified: manifestValidated,
       category: data.category,
       robotType: data.robot_type,
       version: data.version,

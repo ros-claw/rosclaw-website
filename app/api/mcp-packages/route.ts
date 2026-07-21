@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { authenticateApiKey } from "@/lib/api-key"
+import { hasManifestValidationEvidence } from "@/lib/registry/verification"
 
 // Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
@@ -64,13 +65,16 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query
     if (error) throw error
 
-    const packages = (data || []).map((p) => ({
+    const packages = (data || []).map((p) => {
+      const manifestValidated = hasManifestValidationEvidence(p)
+      return {
       id: p.id,
       name: p.name,
       description: p.description,
       authorName: p.author_name,
       githubRepoUrl: p.github_repo_url,
-      verified: p.is_verified,
+      manifestValidated,
+      verified: manifestValidated,
       category: p.category,
       robotType: p.robot_type,
       version: p.version,
@@ -80,7 +84,8 @@ export async function GET(req: NextRequest) {
       rating: p.rating,
       tags: p.tags || [],
       tools: p.tools || [],
-    }))
+      }
+    })
 
     return NextResponse.json(packages)
   } catch (err: any) {

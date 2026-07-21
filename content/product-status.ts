@@ -18,6 +18,7 @@ export interface ProductEvidence {
   independent: boolean;
   verified_at?: string;
   commit_sha?: string;
+  receipt_schema?: string;
 }
 
 export interface GoldenPathStatus {
@@ -48,6 +49,9 @@ export interface ProductStatus {
     maturity: string;
     supported_python: string[];
   };
+  evidence_levels: string[];
+  acknowledgement_stages: string[];
+  support_tiers: Record<string, string>;
   golden_paths: Record<string, GoldenPathStatus>;
   components: Record<string, ComponentStatus>;
 }
@@ -81,4 +85,5 @@ export const robotSupportRows = [
   productStatus.golden_paths.realsense_inspect,
   productStatus.golden_paths.rh56_single_step,
   productStatus.golden_paths.turtlesim_guarded_motion,
+  productStatus.golden_paths.mobile_base_deadman,
 ];

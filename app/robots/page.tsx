@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, CircleDashed, Eye, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, CircleDashed, Eye, PlugZap, ShieldCheck, Terminal } from "lucide-react";
 import { Footer } from "@/components/footer";
+import { VerificationBadges } from "@/components/verification-badges";
+import {
+  robotIntegrations,
+  type RobotIntegrationCatalogEntry,
+} from "@/content/product-catalog";
 import {
   type ProductState,
+  productStatus,
   release,
   robotSupportRows,
   stateLabels,
@@ -53,6 +59,74 @@ function EvidenceLink({
   );
 }
 
+const availabilityLabels: Record<RobotIntegrationCatalogEntry["availability"], string> = {
+  installable: "Installable",
+  migration_pending: "Runtime migration pending",
+  simulation_only: "Simulation only",
+};
+
+function IntegrationCard({ integration }: { integration: RobotIntegrationCatalogEntry }) {
+  const status = productStatus.golden_paths[integration.statusKey];
+  const evidence = status?.evidence[0];
+  return (
+    <article className="flex min-w-0 flex-col border border-white/10 bg-[#080b0c] p-5 sm:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="font-mono text-[9px] uppercase text-cognitive-cyan">
+            {availabilityLabels[integration.availability]}
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-white">{integration.name}</h2>
+          {integration.packageName && (
+            <code className="mt-1 block truncate font-mono text-[10px] text-white/35">
+              {integration.packageName}
+            </code>
+          )}
+        </div>
+        <PlugZap className="h-5 w-5 shrink-0 text-cognitive-cyan" />
+      </div>
+
+      <p className="mt-4 text-sm leading-relaxed text-white/50">{integration.summary}</p>
+
+      <dl className="mt-5 divide-y divide-white/[0.08] border-y border-white/[0.08] text-xs">
+        {[
+          ["Compatible", integration.compatibleModels.join(", ")],
+          ["Adapter / MCP", integration.adapter],
+          ["Capabilities", integration.capabilities.join(", ")],
+          ["Calibration", integration.calibration],
+          ["Verified modes", integration.verifiedModes.join(", ")],
+          ["Compatible Apps", integration.compatibleApps.join(", ")],
+        ].map(([label, value]) => (
+          <div key={label} className="grid gap-1 py-3 sm:grid-cols-[110px_1fr] sm:gap-3">
+            <dt className="font-mono text-[9px] uppercase text-white/30">{label}</dt>
+            <dd className="break-words leading-relaxed text-white/55">{value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {integration.installCommand ? (
+        <pre className="mt-5 overflow-x-auto border-l-2 border-cognitive-cyan bg-black/35 px-4 py-3 font-mono text-[10px] text-white/65">
+          <code>{integration.installCommand}</code>
+        </pre>
+      ) : (
+        <p className="mt-5 inline-flex items-center gap-2 border-l-2 border-amber-300 px-4 py-2 text-xs text-amber-200/75">
+          <Terminal className="h-3.5 w-3.5" /> No production install command is published.
+        </p>
+      )}
+
+      <div className="mt-5">
+        <VerificationBadges signals={integration.signals} />
+      </div>
+      <div className="mt-auto pt-5">
+        {evidence ? (
+          <EvidenceLink path={evidence.path} id={evidence.id} />
+        ) : (
+          <span className="font-mono text-[10px] text-white/30">No evidence ID</span>
+        )}
+      </div>
+    </article>
+  );
+}
+
 export default function RobotsPage() {
   return (
     <main className="min-h-screen bg-[#060809]">
@@ -99,7 +173,28 @@ export default function RobotsPage() {
             </div>
           </div>
 
-          <div className="mt-10 hidden overflow-x-auto border border-white/10 md:block">
+          <div className="mt-16 flex items-end justify-between gap-6 border-b border-white/[0.08] pb-5">
+            <div>
+              <p className="section-kicker">Robot Integrations</p>
+              <h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Installability and evidence are separate.</h2>
+            </div>
+            <Link href="/apps" className="focus-ring hidden items-center gap-2 text-sm text-cognitive-cyan hover:text-white sm:inline-flex">
+              Browse compatible Apps <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-3">
+            {robotIntegrations.map((integration) => (
+              <IntegrationCard key={integration.slug} integration={integration} />
+            ))}
+          </div>
+
+          <div className="mt-16 border-b border-white/[0.08] pb-5">
+            <p className="section-kicker">Evidence matrix</p>
+            <h2 className="mt-3 text-2xl font-semibold text-white sm:text-3xl">Dimension-level support status</h2>
+          </div>
+
+          <div className="mt-6 hidden overflow-x-auto border border-white/10 md:block">
             <table className="w-full min-w-[1100px] border-collapse text-left">
               <thead className="bg-white/[0.025] font-mono text-[9px] uppercase text-white/35">
                 <tr>

@@ -12,6 +12,7 @@ interface McpPackage {
   authorName: string;
   author_user_id?: string;
   githubRepoUrl: string;
+  manifestValidated?: boolean;
   verified: boolean;
   isOfficial?: boolean;
   category: string;
@@ -260,13 +261,13 @@ export function McpHubClient() {
                               <h3 className="font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors truncate font-mono text-sm">
                                 <Link href={`/mcp-hub/${pkg.name}`}>{pkg.name}</Link>
                               </h3>
-                              {pkg.verified ? (
+                              {pkg.manifestValidated === true ? (
                                 <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-medium">
-                                  Registry verified
+                                  Manifest validated
                                 </span>
                               ) : (
                                 <span className="flex-shrink-0 px-1.5 py-0.5 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-[10px] font-medium">
-                                  Not attested
+                                  Manifest not validated
                                 </span>
                               )}
                             </div>

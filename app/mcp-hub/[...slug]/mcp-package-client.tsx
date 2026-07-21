@@ -32,6 +32,7 @@ interface McpPackage {
   readmeContent?: string;
   authorName: string;
   githubRepoUrl?: string;
+  manifestValidated?: boolean;
   verified?: boolean;
   category?: string;
   robotType?: string;
@@ -104,7 +105,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
   const tags = packageData.tags || [];
   const docs = packageData.readmeContent || packageData.longDescription || "";
   const installCommand = `rosclaw install mcp ${packageData.name}`;
-  const registryVerified = packageData.verified === true;
+  const manifestValidated = packageData.manifestValidated === true;
 
   return (
     <main className="min-h-screen bg-background pb-20 pt-24">
@@ -118,9 +119,9 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-cognitive-cyan">Physical interface</span>
-                {registryVerified && (
+                {manifestValidated && (
                   <span className="inline-flex items-center gap-1.5 border border-cognitive-cyan/25 bg-cognitive-cyan/[0.05] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-cognitive-cyan">
-                    <CheckCircle2 className="h-3 w-3" /> Registry verified
+                    <CheckCircle2 className="h-3 w-3" /> Manifest validated
                   </span>
                 )}
               </div>
@@ -258,8 +259,8 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
                 ["Category", packageData.category || "Not declared"],
                 ["Version", packageData.version || "—"],
                 [
-                  "Registry verification",
-                  registryVerified ? "Verified" : "Not attested",
+                  "Manifest validation",
+                  manifestValidated ? "Validated" : "Not validated",
                 ],
                 ["Hardware evidence", "Not represented by this flag"],
               ].map(([label, value]) => (

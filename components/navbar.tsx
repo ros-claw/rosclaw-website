@@ -10,8 +10,10 @@ import { GITHUB_URL } from "@/content/shared";
 const navLinks = [
   { name: "Start", href: "/start" },
   { name: "Robots", href: "/robots" },
+  { name: "Apps", href: "/apps" },
   { name: "Runtime", href: "/runtime" },
   { name: "Hub", href: "/hub" },
+  { name: "Status", href: "/status" },
   { name: "Docs", href: "/docs" },
 ] as const;
 
@@ -90,7 +92,7 @@ export function Navbar() {
             <span className="hidden border-l border-white/15 pl-2 font-mono text-[8px] uppercase text-white/30 sm:inline">Execution Runtime</span>
           </Link>
 
-          <div className="hidden items-center gap-7 lg:flex">
+          <div className="hidden items-center gap-5 lg:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
