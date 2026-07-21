@@ -1,170 +1,102 @@
-"use client";
-
-import { motion } from "framer-motion";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { Brain, ArrowLeft, Cpu, Gauge, Eye, Activity } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BrainCircuit,
+  CircleDashed,
+  FileCheck2,
+  ShieldCheck,
+} from "lucide-react";
+import { Footer } from "@/components/footer";
+import { productStatus } from "@/content/product-status";
 
-const models = [
-  {
-    name: "π0",
-    fullName: "Physical Intelligence Zero",
-    architecture: "VLA (Vision-Language-Action)",
-    description: "A general-purpose robotic foundation model trained on diverse physical tasks.",
-    vram: "24GB",
-    latency: "~120ms on RTX 4090",
-    observations: ["RGB", "Depth", "Proprioception"],
-    tags: ["Diffusion Policy", "Transformer"],
-  },
-  {
-    name: "RT-2",
-    fullName: "Robotic Transformer 2",
-    architecture: "VLA (Vision-Language-Action)",
-    description: "Google DeepMind's vision-language-action model for general robotic control.",
-    vram: "16GB",
-    latency: "~85ms on RTX 4090",
-    observations: ["RGB", "Language Instructions"],
-    tags: ["PaLM-E", "End-to-End"],
-  },
-  {
-    name: "ACT",
-    fullName: "Action Chunking with Transformers",
-    architecture: "Imitation Learning",
-    description: "Efficient imitation learning with action chunking for smooth robot motions.",
-    vram: "8GB",
-    latency: "~45ms on RTX 4090",
-    observations: ["RGB", "Joint States"],
-    tags: ["Behavior Cloning", "Efficient"],
-  },
-  {
-    name: "Diffusion Policy",
-    fullName: "Diffusion Policy for Visuomotor Learning",
-    architecture: "Diffusion Model",
-    description: "State-of-the-art visuomotor policy using diffusion models for multi-modal action distributions.",
-    vram: "12GB",
-    latency: "~95ms on RTX 4090",
-    observations: ["RGB", "Depth", "Force"],
-    tags: ["Diffusion", "Multi-modal"],
-  },
-];
+export const metadata: Metadata = {
+  title: "Model Provider Registry | ROSClaw",
+  description: "Current publication state and required contract for model Providers used through ROSClaw.",
+  alternates: { canonical: "/hub/models" },
+};
 
-function ModelCard({ model }: { model: typeof models[0] }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
-      className="group relative bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-6 hover:border-white/20 transition-all"
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-xl font-semibold text-foreground group-hover:text-cognitive-cyan transition-colors">
-            {model.name}
-          </h3>
-          <p className="text-text-secondary text-sm">{model.fullName}</p>
-        </div>
-        <div className="w-10 h-10 rounded-lg bg-cognitive-cyan/10 border border-cognitive-cyan/20 flex items-center justify-center">
-          <Brain className="w-5 h-5 text-cognitive-cyan" />
-        </div>
-      </div>
-
-      <p className="text-text-secondary text-sm mb-4">{model.description}</p>
-
-      <div className="space-y-3 mb-4">
-        <div className="flex items-center gap-2 text-sm">
-          <Gauge className="w-4 h-4 text-text-muted" />
-          <span className="text-text-secondary">Min VRAM: </span>
-          <span className="text-physical-orange font-medium">{model.vram}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Activity className="w-4 h-4 text-text-muted" />
-          <span className="text-text-secondary">Latency: </span>
-          <span className="text-cognitive-cyan font-medium">{model.latency}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Eye className="w-4 h-4 text-text-muted" />
-          <span className="text-text-secondary">Observations: </span>
-          <span className="text-foreground">{model.observations.join(", ")}</span>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2 mb-4">
-        {model.tags.map((tag) => (
-          <span
-            key={tag}
-            className="px-2 py-1 rounded-full bg-cognitive-cyan/10 text-cognitive-cyan text-xs"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <div className="pt-4 border-t border-white/5">
-        <code className="text-sm text-text-muted font-mono">
-          $ rosclaw mount model {model.name.toLowerCase()}
-        </code>
-      </div>
-    </motion.div>
-  );
-}
+const contractFields = [
+  ["Identity", "Publisher, immutable model version, source, and license"],
+  ["Interface", "Typed observations, outputs, units, frames, and capability mapping"],
+  ["Runtime", "Declared hardware, dependencies, timeout, and resource limits"],
+  ["Evidence", "Reproducible benchmark scope, dataset provenance, and receipts"],
+] as const;
 
 export default function ModelsPage() {
+  const integrationStatus = productStatus.components.integrations;
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
-          <Link
-            href="/hub"
-            className="inline-flex items-center gap-2 text-text-secondary hover:text-foreground transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Hub
+    <main className="min-h-screen bg-[#060809]">
+      <section className="runtime-grid border-b border-white/[0.08] px-4 pb-20 pt-28 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <Link href="/hub" className="focus-ring inline-flex items-center gap-2 text-sm text-white/40 hover:text-white">
+            <ArrowLeft className="h-4 w-4" /> Distribution Hub
           </Link>
-
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-xl bg-cognitive-cyan/10 border border-cognitive-cyan/20 flex items-center justify-center">
-              <Brain className="w-7 h-7 text-cognitive-cyan" />
-            </div>
+          <div className="mt-10 grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Foundation Models
-              </h1>
-              <p className="text-cognitive-cyan">The Cognitive Brain.</p>
+              <p className="section-kicker">Model Provider registry</p>
+              <h1 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">No installable catalog is published.</h1>
             </div>
+            <p className="max-w-2xl text-base leading-relaxed text-white/52 lg:justify-self-end lg:text-lg">
+              ROSClaw can route typed Provider capabilities, but this release does not publish model compatibility, latency, or deployment-readiness claims. Provider output remains a proposal until Runtime policy and the Action Gateway accept it.
+            </p>
           </div>
 
-          <p className="text-text-secondary max-w-2xl">
-            Mount the world&apos;s most powerful Vision-Language-Action (VLA) models.
-            Plug-and-play intelligence optimized for robotic inference.
-          </p>
-        </motion.div>
-
-        {/* Models Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {models.map((model) => (
-            <ModelCard key={model.name} model={model} />
-          ))}
+          <div className="mt-12 grid border border-white/10 md:grid-cols-[0.75fr_1.25fr]">
+            <div className="border-b border-white/10 p-6 md:border-b-0 md:border-r md:p-8">
+              <CircleDashed className="h-6 w-6 text-white/35" />
+              <p className="mt-5 font-mono text-[9px] uppercase text-white/30">Registry state</p>
+              <p className="mt-2 text-xl font-medium text-white">Not published</p>
+              <code className="mt-3 block font-mono text-[10px] text-cognitive-cyan">{integrationStatus.claim}</code>
+            </div>
+            <div className="p-6 md:p-8">
+              <p className="runtime-label">Canonical boundary</p>
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/50">{integrationStatus.evidence_summary.en}</p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Coming Soon Note */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center"
-        >
-          <p className="text-text-muted">
-            More models coming soon. Submit yours via{" "}
-            <Link href="https://github.com/ros-claw" className="text-cognitive-cyan hover:underline">
-              GitHub
-            </Link>
-          </p>
-        </motion.div>
-      </div>
-    </div>
+      <section className="px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <p className="section-kicker">Publication contract</p>
+              <h2 className="mt-3 text-2xl font-semibold text-white">What a future Provider entry must declare</h2>
+            </div>
+            <FileCheck2 className="hidden h-7 w-7 text-cognitive-cyan sm:block" />
+          </div>
+          <div className="mt-6 divide-y divide-white/[0.08] border border-white/10 bg-[#080b0c]">
+            {contractFields.map(([name, detail], index) => (
+              <div key={name} className="grid gap-2 p-5 md:grid-cols-[80px_180px_1fr] md:items-center">
+                <span className="font-mono text-[9px] text-cognitive-cyan">{String(index + 1).padStart(2, "0")}</span>
+                <p className="text-sm font-medium text-white">{name}</p>
+                <p className="text-sm leading-relaxed text-white/45">{detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 grid gap-px bg-white/10 md:grid-cols-2">
+            <section className="bg-[#080b0c] p-6 sm:p-8">
+              <ShieldCheck className="h-5 w-5 text-physical-orange" />
+              <h2 className="mt-4 text-lg font-medium text-white">Execution stays guarded</h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/45">A VLA, VLM, VLN, critic, or classical planner never receives hardware authority merely because it is registered.</p>
+            </section>
+            <section className="bg-[#080b0c] p-6 sm:p-8">
+              <BrainCircuit className="h-5 w-5 text-cognitive-cyan" />
+              <h2 className="mt-4 text-lg font-medium text-white">Evidence stays scoped</h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/45">Benchmark results must name the exact model, hardware, task, dataset, and observation boundary.</p>
+            </section>
+          </div>
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link href="/runtime" className="focus-ring inline-flex items-center gap-2 bg-cognitive-cyan px-5 py-3 text-sm font-semibold text-[#021012] hover:bg-white">Runtime architecture <ArrowRight className="h-4 w-4" /></Link>
+            <Link href="/status" className="focus-ring inline-flex items-center gap-2 border border-white/15 px-5 py-3 text-sm text-white/60 hover:text-white">Product status <ArrowRight className="h-4 w-4" /></Link>
+          </div>
+        </div>
+      </section>
+      <Footer />
+    </main>
   );
 }

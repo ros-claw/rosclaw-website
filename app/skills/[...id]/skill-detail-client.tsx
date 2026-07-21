@@ -19,39 +19,18 @@ import {
   Workflow,
 } from "lucide-react";
 import { CopyCommand } from "@/components/hub/copy-command";
-
-interface Skill {
-  id: string;
-  name: string;
-  displayName?: string;
-  description: string;
-  longDescription?: string;
-  readmeContent?: string;
-  authorName: string;
-  authorUrl?: string;
-  githubRepoUrl?: string;
-  viewsCount?: number;
-  githubStars?: number;
-  rating?: number;
-  reviewCount?: number;
-  version?: string;
-  category?: string;
-  tags?: string[];
-  robotTypes?: string[];
-  compatibleRobots?: string[];
-  dependencies?: string[];
-  status?: string;
-}
+import type { SkillDetail } from "@/lib/registry/types";
 
 interface SkillDetailClientProps {
   id: string;
+  initialSkill?: SkillDetail;
 }
 
 function encodedPath(id: string) {
   return id.split("/").map(encodeURIComponent).join("/");
 }
 
-async function fetchSkill(id: string): Promise<Skill | null> {
+async function fetchSkill(id: string): Promise<SkillDetail | null> {
   try {
     const response = await fetch(`/api/skills/${encodedPath(id)}`);
     if (!response.ok) return null;
@@ -73,12 +52,19 @@ function formatNumber(value = 0) {
   return new Intl.NumberFormat("en", { notation: value >= 1_000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
 }
 
-export function SkillDetailClient({ id }: SkillDetailClientProps) {
-  const [skill, setSkill] = useState<Skill | null>(null);
-  const [loading, setLoading] = useState(true);
+export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) {
+  const [skill, setSkill] = useState<SkillDetail | null>(initialSkill ?? null);
+  const [loading, setLoading] = useState(initialSkill === undefined);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    if (initialSkill) {
+      setSkill(initialSkill);
+      setLoading(false);
+      setNotFound(false);
+      incrementViews(id);
+      return;
+    }
     let active = true;
     setLoading(true);
     setNotFound(false);
@@ -95,7 +81,7 @@ export function SkillDetailClient({ id }: SkillDetailClientProps) {
     });
 
     return () => { active = false; };
-  }, [id]);
+  }, [id, initialSkill]);
 
   if (loading) return <DetailLoading />;
   if (notFound || !skill) return <DetailNotFound id={id} />;

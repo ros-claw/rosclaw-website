@@ -140,10 +140,52 @@ for (const route of [
   assert(existsSync(path.join(repositoryRoot, route)), `Required product route is missing: ${route}`);
 }
 
+for (const stalePublicFile of ["public/robots.txt", "public/sitemap.xml"]) {
+  assert(
+    !existsSync(path.join(repositoryRoot, stalePublicFile)),
+    `${stalePublicFile} must not shadow the App Router metadata route.`,
+  );
+}
+
 for (const route of ["app/hub/mcps/page.tsx", "app/hub/skills/page.tsx"]) {
   const source = readFileSync(path.join(repositoryRoot, route), "utf8");
   assert(!source.includes('"use client"'), `${route} must remain server-rendered.`);
   assert(source.includes("initialLoadError"), `${route} must pass server-loaded registry data.`);
+}
+
+const rootLayoutSource = readFileSync(
+  path.join(repositoryRoot, "app", "layout.tsx"),
+  "utf8",
+);
+assert(
+  rootLayoutSource.includes('metadataBase: new URL("https://www.rosclaw.io")'),
+  "The metadata base must use the canonical www host.",
+);
+assert(
+  !rootLayoutSource.includes("alternates:"),
+  "The root layout must not force every route to use the home-page canonical.",
+);
+
+const sitemapSource = readFileSync(
+  path.join(repositoryRoot, "app", "sitemap.ts"),
+  "utf8",
+);
+for (const path of ["/robots", "/apps", "/evidence", "/status", "/hub/mcps", "/hub/skills", "/hub/twins", "/hub/wiki"]) {
+  assert(sitemapSource.includes(`[\"${path}\"`), `The dynamic sitemap omits ${path}.`);
+}
+
+const nextConfigSource = readFileSync(
+  path.join(repositoryRoot, "next.config.mjs"),
+  "utf8",
+);
+for (const header of [
+  "Content-Security-Policy",
+  "Permissions-Policy",
+  "Referrer-Policy",
+  "X-Content-Type-Options",
+  "X-Frame-Options",
+]) {
+  assert(nextConfigSource.includes(header), `Security response header is missing: ${header}.`);
 }
 
 for (const client of [

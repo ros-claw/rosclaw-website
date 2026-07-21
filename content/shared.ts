@@ -1,6 +1,7 @@
 // Shared constants and reusable animation variants for the ROSClaw website.
 
 export const CONTACT_EMAIL = "ai@rosclaw.io";
+export const SITE_URL = "https://www.rosclaw.io";
 export const GITHUB_URL = "https://github.com/ros-claw/rosclaw";
 export const GITHUB_RAW_URL = `${GITHUB_URL}/blob/main`;
 export const INSTALL_COMMAND = "curl -sSL https://rosclaw.io/get | bash";

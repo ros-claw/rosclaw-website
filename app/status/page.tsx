@@ -7,6 +7,7 @@ import { productStatus, release } from "@/content/product-status";
 export const metadata: Metadata = {
   title: "Product Status | ROSClaw",
   description: "Canonical ROSClaw release, Runtime contract, support tier, and golden-path status.",
+  alternates: { canonical: "/status" },
 };
 
 export default function StatusPage() {

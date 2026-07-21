@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
   },
   alternates: {
-    canonical: "https://rosclaw.io/mcp-hub/publish",
+    canonical: "/mcp-hub/publish",
   },
 };
 

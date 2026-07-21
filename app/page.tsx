@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { HeroSection } from "@/components/hero-section";
 import { LogoTicker } from "@/components/logo-ticker";
 import { RecordedRunSection } from "@/components/recorded-run-section";
@@ -7,6 +8,10 @@ import { RuntimeCapabilitiesSection } from "@/components/runtime-capabilities-se
 import { AssetHubSection } from "@/components/asset-hub-section";
 import { BuiltForSection } from "@/components/built-for-section";
 import { Footer } from "@/components/footer";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
   return (

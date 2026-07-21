@@ -139,11 +139,12 @@ export default function FlywheelPage() {
         </motion.div>
 
         {/* Trace Schema + Outputs */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid min-w-0 gap-8 mb-16 lg:grid-cols-2">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="min-w-0"
           >
             <h2 className="text-2xl font-bold text-foreground mb-6">Trace Schema</h2>
             <div className="rounded-2xl bg-black/60 border border-white/10 p-6 font-mono text-sm overflow-x-auto">
@@ -173,6 +174,7 @@ export default function FlywheelPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
+            className="min-w-0"
           >
             <h2 className="text-2xl font-bold text-foreground mb-6">Export Formats</h2>
             <motion.div

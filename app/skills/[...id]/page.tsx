@@ -1,14 +1,13 @@
-import { SkillDetailClient } from "./skill-detail-client";
+import { permanentRedirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
-interface SkillDetailPageProps {
+export default async function LegacySkillPage({
+  params,
+}: {
   params: Promise<{ id: string[] }>;
-}
-
-export default async function SkillDetailPage({ params }: SkillDetailPageProps) {
+}) {
   const { id } = await params;
-  const fullPath = id.join("/");
-  return <SkillDetailClient id={fullPath} />;
+  const path = id.map(encodeURIComponent).join("/");
+  permanentRedirect(`/hub/skills/${path}`);
 }

@@ -18,41 +18,18 @@ import {
   Wrench,
 } from "lucide-react";
 import { CopyCommand } from "@/components/hub/copy-command";
-
-interface McpTool {
-  name: string;
-  description?: string;
-}
-
-interface McpPackage {
-  id: string;
-  name: string;
-  description: string;
-  longDescription?: string;
-  readmeContent?: string;
-  authorName: string;
-  githubRepoUrl?: string;
-  manifestValidated?: boolean;
-  verified?: boolean;
-  category?: string;
-  robotType?: string;
-  version?: string;
-  viewsCount?: number;
-  githubStars?: number;
-  tags?: string[];
-  tools?: McpTool[];
-  status?: string;
-}
+import type { McpPackageDetail } from "@/lib/registry/types";
 
 interface McpPackageClientProps {
   id: string;
+  initialPackage?: McpPackageDetail;
 }
 
 function encodedPath(id: string) {
   return id.split("/").map(encodeURIComponent).join("/");
 }
 
-async function fetchPackage(id: string): Promise<McpPackage | null> {
+async function fetchPackage(id: string): Promise<McpPackageDetail | null> {
   try {
     const response = await fetch(`/api/mcp-packages/${encodedPath(id)}`);
     if (!response.ok) return null;
@@ -74,12 +51,19 @@ function formatNumber(value = 0) {
   return new Intl.NumberFormat("en", { notation: value >= 1_000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
 }
 
-export function McpPackageClient({ id }: McpPackageClientProps) {
-  const [packageData, setPackageData] = useState<McpPackage | null>(null);
-  const [loading, setLoading] = useState(true);
+export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) {
+  const [packageData, setPackageData] = useState<McpPackageDetail | null>(initialPackage ?? null);
+  const [loading, setLoading] = useState(initialPackage === undefined);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    if (initialPackage) {
+      setPackageData(initialPackage);
+      setLoading(false);
+      setNotFound(false);
+      incrementViews(id);
+      return;
+    }
     let active = true;
     setLoading(true);
     setNotFound(false);
@@ -96,7 +80,7 @@ export function McpPackageClient({ id }: McpPackageClientProps) {
     });
 
     return () => { active = false; };
-  }, [id]);
+  }, [id, initialPackage]);
 
   if (loading) return <DetailLoading />;
   if (notFound || !packageData) return <DetailNotFound id={id} />;

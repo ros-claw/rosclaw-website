@@ -1,111 +1,60 @@
-import { MetadataRoute } from "next";
-import { getAllPackages } from "@/lib/data";
+import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/content/shared";
+import { loadMcpPackages, loadSkills } from "@/lib/registry/server";
+
+export const revalidate = 300;
+
+function registryPath(name: string) {
+  return name.split("/").map(encodeURIComponent).join("/");
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://rosclaw.io";
-
-  // Static pages
+  const generatedAt = new Date();
   const staticPages = [
-    {
-      url: `${baseUrl}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/start`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/robots`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/apps`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/evidence`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/status`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/hub`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/flywheel`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/runtime`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/docs`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/mcp-hub`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/mcp-hub/publish`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/skills`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/skills/publish`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/profile`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    },
-  ];
+    ["", "weekly", 1.0],
+    ["/start", "weekly", 1.0],
+    ["/robots", "weekly", 0.9],
+    ["/apps", "weekly", 0.9],
+    ["/evidence", "weekly", 0.8],
+    ["/status", "weekly", 0.9],
+    ["/hub", "weekly", 0.9],
+    ["/hub/mcps", "daily", 0.8],
+    ["/hub/skills", "daily", 0.8],
+    ["/hub/twins", "weekly", 0.7],
+    ["/hub/wiki", "weekly", 0.6],
+    ["/flywheel", "weekly", 0.8],
+    ["/runtime", "weekly", 0.9],
+    ["/docs", "weekly", 0.8],
+    ["/mcp-hub/publish", "monthly", 0.6],
+    ["/skills/publish", "monthly", 0.6],
+    ["/privacy/telemetry", "yearly", 0.3],
+  ] as const;
+  const entries: MetadataRoute.Sitemap = staticPages.map(
+    ([path, changeFrequency, priority]) => ({
+      url: `${SITE_URL}${path}`,
+      lastModified: generatedAt,
+      changeFrequency,
+      priority,
+    }),
+  );
 
-  // Dynamic MCP package pages
-  const packages = getAllPackages();
-  const packagePages = packages.map((pkg) => ({
-    url: `${baseUrl}/mcp-hub/${pkg.id}`,
-    lastModified: new Date(pkg.updatedAt),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
-
-  return [...staticPages, ...packagePages];
+  const [mcpLoad, skillLoad] = await Promise.all([
+    loadMcpPackages(),
+    loadSkills(),
+  ]);
+  for (const pkg of mcpLoad.items) {
+    entries.push({
+      url: `${SITE_URL}/hub/mcps/${registryPath(pkg.name)}`,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    });
+  }
+  for (const skill of skillLoad.items) {
+    entries.push({
+      url: `${SITE_URL}/hub/skills/${registryPath(skill.name)}`,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    });
+  }
+  return entries;
 }

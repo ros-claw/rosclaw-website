@@ -5,6 +5,7 @@ import { loadMcpPackages } from "@/lib/registry/server";
 export const metadata: Metadata = {
   title: "Hardware MCP Registry | ROSClaw",
   description: "Server-rendered registry of typed physical interfaces for embodied agents.",
+  alternates: { canonical: "/hub/mcps" },
 };
 
 export const revalidate = 300;

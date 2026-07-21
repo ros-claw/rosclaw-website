@@ -17,9 +17,10 @@ import {
 import { GITHUB_RAW_URL } from "@/content/shared";
 
 export const metadata: Metadata = {
-  title: "Robot Support | ROSClaw",
+  title: "Robot Integrations & Support | ROSClaw",
   description:
     "Evidence-backed ROSClaw support matrix for simulation, read, actuation, Agent, and E-Stop paths.",
+  alternates: { canonical: "/robots" },
 };
 
 function StateBadge({ state }: { state: ProductState }) {

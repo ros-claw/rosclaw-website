@@ -7,6 +7,7 @@ import { GITHUB_RAW_URL } from "@/content/shared";
 export const metadata: Metadata = {
   title: "Evidence | ROSClaw",
   description: "Traceable evidence records behind ROSClaw Runtime, simulation, hardware, and Agent claims.",
+  alternates: { canonical: "/evidence" },
 };
 
 const evidenceRows = [

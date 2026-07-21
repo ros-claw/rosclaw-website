@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "@/content/shared";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/login"],
     },
-    sitemap: "https://rosclaw.io/sitemap.xml",
-    host: "https://rosclaw.io",
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

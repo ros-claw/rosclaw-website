@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Start | ROSClaw",
   description:
     "Choose a verified simulation, sensor, robot, Agent, or publisher path for ROSClaw.",
+  alternates: { canonical: "/start" },
 };
 
 const allowedPaths = new Set<StartPath>([

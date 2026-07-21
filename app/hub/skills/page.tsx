@@ -5,6 +5,7 @@ import { loadSkills } from "@/lib/registry/server";
 export const metadata: Metadata = {
   title: "Skill Registry | ROSClaw",
   description: "Server-rendered registry of versioned behavior packages for embodied agents.",
+  alternates: { canonical: "/hub/skills" },
 };
 
 export const revalidate = 300;

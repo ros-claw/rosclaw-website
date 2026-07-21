@@ -4,6 +4,7 @@ export const metadata = {
   title: "Telemetry & Privacy | ROSClaw",
   description:
     "ROSClaw collects lightweight anonymous product telemetry by default. Rich diagnostics, prompts, logs, media, and traces are never uploaded by default.",
+  alternates: { canonical: "/privacy/telemetry" },
 };
 
 export default function TelemetryPrivacyPage() {

@@ -14,6 +14,12 @@ export interface McpPackageSummary {
   tools?: { name: string; description: string }[];
 }
 
+export interface McpPackageDetail extends McpPackageSummary {
+  longDescription?: string;
+  readmeContent?: string;
+  status?: string;
+}
+
 export interface SkillSummary {
   id: string;
   name: string;
@@ -29,6 +35,14 @@ export interface SkillSummary {
   robotTypes?: string[];
   tags?: string[];
   dependencies?: string[];
+}
+
+export interface SkillDetail extends SkillSummary {
+  longDescription?: string;
+  readmeContent?: string;
+  authorUrl?: string;
+  compatibleRobots?: string[];
+  status?: string;
 }
 
 export interface RegistryLoad<T> {

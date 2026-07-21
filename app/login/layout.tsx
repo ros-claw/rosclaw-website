@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin | ROSClaw",
+  title: "Sign In | ROSClaw",
   robots: { index: false, follow: false },
 };
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function LoginLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

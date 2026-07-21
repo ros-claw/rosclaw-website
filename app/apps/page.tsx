@@ -10,6 +10,7 @@ import { GITHUB_RAW_URL } from "@/content/shared";
 export const metadata: Metadata = {
   title: "Apps | ROSClaw",
   description: "Capability-only task recipes with explicit Runtime compatibility and evidence status.",
+  alternates: { canonical: "/apps" },
 };
 
 const availabilityLabels: Record<AppCatalogEntry["availability"], string> = {

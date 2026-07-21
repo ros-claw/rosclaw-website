@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -13,6 +14,12 @@ import {
   Terminal,
 } from "lucide-react";
 import { githubDocLinks } from "@/content/cli";
+
+export const metadata: Metadata = {
+  title: "Physical-AI Hub | ROSClaw",
+  description: "Install typed hardware interfaces and reusable robot behaviors through the ROSClaw distribution layer.",
+  alternates: { canonical: "/hub" },
+};
 
 const runtimeFlow = [
   { step: "01", label: "MCP exposes capability", detail: "typed tools + body boundary" },

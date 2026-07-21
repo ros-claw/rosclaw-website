@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://rosclaw.io"),
+  metadataBase: new URL("https://www.rosclaw.io"),
   title: "ROSClaw | Trustworthy Physical Execution Runtime",
   description:
     "Give any AI agent a body-aware, guarded, and auditable path to simulation and real robots.",
@@ -78,9 +78,6 @@ export const metadata: Metadata = {
     description:
       "Body-aware, guarded, and auditable physical execution for embodied AI.",
     creator: "@rosclaw",
-  },
-  alternates: {
-    canonical: "https://rosclaw.io",
   },
 };
 
