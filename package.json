@@ -29,6 +29,7 @@
     "recharts": "^3.9.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
+    "sharp": "^0.35.3",
     "sigma": "^3.0.3",
     "tar": "^7.5.20",
     "uuid": "^14.0.1",
@@ -47,6 +48,7 @@
     "typescript": "^5.4.0"
   },
   "overrides": {
+    "sharp": "$sharp",
     "next": {
       "postcss": "8.5.10"
     }
