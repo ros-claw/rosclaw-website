@@ -9,8 +9,11 @@ const requireRegistry = process.env.ROSCLAW_REQUIRE_REGISTRY !== "0";
 const errors = [];
 
 const expectedPages = [
-  ["/", "Trustworthy Physical Execution Runtime"],
-  ["/start", "Choose what you have."],
+  ["/", "The Native Agent Runtime"],
+  ["/start", "Choose your first outcome."],
+  ["/native-agent", "An Agent that understands the body"],
+  ["/safety", "No model output directly controls a robot."],
+  ["/integrations", "Keep one governed body boundary."],
   ["/robots", "Support is a matrix, not a badge."],
   ["/apps", "Tasks without device-specific control."],
   ["/evidence", "Claims point to inspectable records."],
@@ -20,7 +23,7 @@ const expectedPages = [
   ["/hub/skills", "Behavior package registry"],
   ["/hub/twins", "Simulation is evidence"],
   ["/hub/models", "No installable catalog is published."],
-  ["/runtime", "Core Runtime Capabilities"],
+  ["/runtime", "Reason freely. Execute through a governed boundary."],
   ["/docs", "ROSClaw Docs"],
   ["/flywheel", "Praxis Data Flywheel"],
 ];
@@ -239,7 +242,7 @@ const sitemapResponse = await request("/sitemap.xml");
 if (sitemapResponse) {
   const sitemap = await sitemapResponse.text();
   assert(sitemapResponse.status === 200, "sitemap.xml is unavailable.");
-  for (const path of ["/robots", "/apps", "/evidence", "/status", "/hub/mcps", "/hub/skills", "/hub/twins", "/hub/wiki"]) {
+  for (const path of ["/native-agent", "/safety", "/integrations", "/robots", "/apps", "/evidence", "/status", "/hub/mcps", "/hub/skills", "/hub/twins", "/hub/wiki"]) {
     assert(sitemap.includes(canonicalPath(path)), `sitemap.xml omits ${path}.`);
   }
   for (const [path] of dynamicExamples) {

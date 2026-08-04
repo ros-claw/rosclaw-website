@@ -71,7 +71,6 @@ function mcpSummary(row: RegistryRow): McpPackageSummary {
     githubRepoUrl,
     githubUpdatedAt: optionalString(row.github_updated_at),
     lastSyncedAt: optionalString(row.last_synced_at),
-    installCommand: optionalString(row.install_command),
     officialPublisher: isOfficialPublisher(githubRepoUrl, authorName),
     manifestValidated: validation !== null,
     manifestValidatedAt: validation?.validatedAt,

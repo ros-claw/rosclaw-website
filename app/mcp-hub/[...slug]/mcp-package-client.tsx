@@ -96,7 +96,6 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
   const tags = packageData.tags || [];
   const docs = packageData.readmeContent || packageData.longDescription || "";
   const manifestValidated = packageData.manifestValidated === true;
-  const installable = manifestValidated && Boolean(packageData.installCommand);
 
   return (
     <main className="min-h-screen bg-background pb-20 pt-24">
@@ -231,7 +230,7 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
               <Terminal className="h-5 w-5 text-cognitive-cyan" />
               <h2 className="text-base font-medium text-white">Runtime artifact</h2>
             </div>
-            {installable ? <><p className="mt-3 text-xs leading-relaxed text-white/42">A validated install command is indexed. Review source and scopes before running it.</p><code className="mt-4 block overflow-x-auto border border-white/10 bg-black/45 p-3 font-mono text-[11px] text-cognitive-cyan">{packageData.installCommand}</code></> : <p className="mt-3 text-xs leading-relaxed text-white/42">No validated ROSClaw Hub install artifact is indexed. Inspect the source repository and do not treat discovery metadata as an executable package.</p>}
+            <p className="mt-3 text-xs leading-relaxed text-white/42">No public ROSClaw Hub bundle protocol is published yet. Inspect the source repository and do not treat discovery metadata as an executable package.</p>
           </section>
 
           <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">

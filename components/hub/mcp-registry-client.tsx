@@ -69,7 +69,6 @@ function matchesCategory(pkg: McpPackageSummary, categoryId: string) {
 
 function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }) {
   const manifestValidated = isManifestValidated(pkg);
-  const installable = manifestValidated && Boolean(pkg.installCommand);
   const tools = pkg.tools || [];
   const tags = pkg.tags || [];
 
@@ -82,7 +81,6 @@ function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }
         <span className="font-mono text-[9px] tracking-[0.16em] text-white/25">MCP-{String(number).padStart(3, "0")}</span>
         <div className="flex flex-wrap justify-end gap-1.5">
           {pkg.officialPublisher && <span className="border border-emerald-400/25 bg-emerald-400/[0.04] px-2 py-1 font-mono text-[8px] uppercase text-emerald-300">Official</span>}
-          {installable && <span className="border border-cognitive-cyan/25 bg-cognitive-cyan/[0.04] px-2 py-1 font-mono text-[8px] uppercase text-cognitive-cyan">Installable</span>}
           {manifestValidated && <span title="The registry found validation evidence; this is not physical execution verification." className="inline-flex items-center gap-1 border border-white/15 px-2 py-1 font-mono text-[8px] uppercase text-white/55"><CheckCircle2 className="h-3 w-3" /> Manifest</span>}
         </div>
       </div>
@@ -169,7 +167,7 @@ export function McpRegistryClient({
       .sort((a, b) => {
         if (sortBy === "stars") return (b.githubStars || 0) - (a.githubStars || 0);
         if (sortBy === "updated") return Date.parse(b.githubUpdatedAt || "") - Date.parse(a.githubUpdatedAt || "");
-        const score = (pkg: McpPackageSummary) => (pkg.officialPublisher ? 10_000_000 : 0) + (isManifestValidated(pkg) && pkg.installCommand ? 5_000_000 : 0) + (isManifestValidated(pkg) ? 1_000_000 : 0) + (isFresh(pkg.lastSyncedAt) ? 100_000 : 0) + (pkg.githubStars || 0) * 10;
+        const score = (pkg: McpPackageSummary) => (pkg.officialPublisher ? 10_000_000 : 0) + (isManifestValidated(pkg) ? 1_000_000 : 0) + (isFresh(pkg.lastSyncedAt) ? 100_000 : 0) + (pkg.githubStars || 0) * 10;
         return score(b) - score(a);
       });
   }, [packages, deferredSearch, activeCategory, sortBy]);

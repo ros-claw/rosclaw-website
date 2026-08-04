@@ -85,7 +85,6 @@ export async function GET(req: NextRequest) {
       githubRepoUrl,
       githubUpdatedAt: p.github_updated_at,
       lastSyncedAt: p.last_synced_at,
-      installCommand: p.install_command,
       officialPublisher: isOfficial(githubRepoUrl),
       manifestValidated,
       verified: manifestValidated,

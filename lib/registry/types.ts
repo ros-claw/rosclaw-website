@@ -6,7 +6,6 @@ export interface McpPackageSummary {
   githubRepoUrl?: string;
   githubUpdatedAt?: string;
   lastSyncedAt?: string;
-  installCommand?: string;
   officialPublisher: boolean;
   manifestValidated: boolean;
   manifestValidatedAt?: string;

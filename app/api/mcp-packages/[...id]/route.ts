@@ -110,7 +110,6 @@ export async function GET(
       githubRepoUrl,
       githubUpdatedAt: data.github_updated_at,
       lastSyncedAt: data.last_synced_at,
-      installCommand: data.install_command,
       officialPublisher: isOfficial(githubRepoUrl),
       manifestValidated,
       verified: manifestValidated,
