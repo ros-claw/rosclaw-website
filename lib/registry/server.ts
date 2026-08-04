@@ -11,6 +11,7 @@ import type {
 } from "@/lib/registry/types";
 import { getManifestValidationMetadata } from "@/lib/registry/verification";
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url";
+import { canonicalRegistrySourceUrl } from "@/lib/github/source-url";
 
 type RegistryRow = Record<string, unknown>;
 
@@ -61,11 +62,15 @@ function isOfficialPublisher(repoUrl: string | undefined, authorName: string) {
 
 function mcpSummary(row: RegistryRow): McpPackageSummary {
   const validation = getManifestValidationMetadata(row);
-  const githubRepoUrl = normalizePublicHttpsUrl(row.github_repo_url);
+  const rawGithubRepoUrl = normalizePublicHttpsUrl(row.github_repo_url);
+  const name = String(row.name ?? "");
+  const githubRepoUrl = rawGithubRepoUrl
+    ? canonicalRegistrySourceUrl(rawGithubRepoUrl, name, "mcp")
+    : undefined;
   const authorName = String(row.author_name ?? "");
   return {
     id: String(row.id ?? row.name ?? ""),
-    name: String(row.name ?? ""),
+    name,
     description: String(row.description ?? ""),
     authorName,
     githubRepoUrl,
@@ -87,11 +92,15 @@ function mcpSummary(row: RegistryRow): McpPackageSummary {
 }
 
 function skillSummary(row: RegistryRow): SkillSummary {
-  const githubRepoUrl = normalizePublicHttpsUrl(row.github_repo_url);
+  const rawGithubRepoUrl = normalizePublicHttpsUrl(row.github_repo_url);
+  const name = String(row.name ?? "");
+  const githubRepoUrl = rawGithubRepoUrl
+    ? canonicalRegistrySourceUrl(rawGithubRepoUrl, name, "skill")
+    : undefined;
   const authorName = String(row.author_name ?? "");
   return {
     id: String(row.id ?? row.name ?? ""),
-    name: String(row.name ?? ""),
+    name,
     displayName: optionalString(row.display_name),
     description: String(row.description ?? ""),
     authorName,

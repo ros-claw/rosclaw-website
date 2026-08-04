@@ -6,6 +6,7 @@ import {
   getManifestValidationMetadata,
 } from "@/lib/registry/verification"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
+import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -98,7 +99,10 @@ export async function GET(
 
     const validation = getManifestValidationMetadata(data)
     const manifestValidated = validation !== null
-    const githubRepoUrl = normalizePublicHttpsUrl(data.github_repo_url)
+    const rawGithubRepoUrl = normalizePublicHttpsUrl(data.github_repo_url)
+    const githubRepoUrl = rawGithubRepoUrl
+      ? canonicalRegistrySourceUrl(rawGithubRepoUrl, data.name, "mcp")
+      : undefined
     const pkg = {
       id: data.id,
       name: data.name,

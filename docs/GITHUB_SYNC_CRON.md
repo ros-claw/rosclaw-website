@@ -10,6 +10,8 @@ Failed repositories remain due and are retried by the next daily invocation. Eac
 
 Repository-root MCP entries synchronize their README. Skill entries that point at a GitHub subdirectory synchronize that directory's `SKILL.md` (with README fallbacks) from the current default branch, including entries originally imported with a pinned commit URL.
 
+Legacy official entries that only stored `https://github.com/ros-claw/skills` are resolved to `skills/<registry-slug>` before synchronization and when rendered publicly. Source freshness for monorepo assets follows that concrete path rather than unrelated repository pushes.
+
 ## Required Vercel environment variables
 
 | Variable | Purpose |

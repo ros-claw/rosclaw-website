@@ -1,4 +1,5 @@
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { canonicalRegistrySourceUrl } from "@/lib/github/source-url";
 
 const GITHUB_API_URL = "https://api.github.com";
 const DEFAULT_SYNC_INTERVAL_DAYS = 5;
@@ -104,9 +105,10 @@ function parseGitHubSource(repoUrl: string): GitHubSource | null {
       return { kind: "repository", path: null, repository };
     }
 
-    if ((parts[2] === "tree" || parts[2] === "blob") && parts.length >= 5) {
+    if ((parts[2] === "tree" || parts[2] === "blob") && parts.length >= 4) {
       const path = parts.slice(4).join("/");
-      if (!path || path.split("/").some((segment) => segment === "..")) return null;
+      if (!path) return { kind: "repository", path: null, repository };
+      if (path.split("/").some((segment) => segment === "..")) return null;
       return {
         kind: parts[2] === "blob" ? "file" : "directory",
         path,
@@ -432,7 +434,8 @@ export async function syncGitHubRegistry(options?: {
 
   const repositories = new Map<string, ResolvedRegistryItem[]>();
   for (const item of items) {
-    const source = parseGitHubSource(item.github_repo_url);
+    const sourceUrl = canonicalRegistrySourceUrl(item.github_repo_url, item.name, item.type);
+    const source = parseGitHubSource(sourceUrl);
     if (!source) {
       skipped += 1;
       failures.push({ repository: item.github_repo_url, message: "Invalid GitHub URL" });

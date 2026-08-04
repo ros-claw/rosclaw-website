@@ -5,6 +5,7 @@ import {
   getManifestValidationMetadata,
 } from "@/lib/registry/verification"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
+import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -76,7 +77,10 @@ export async function GET(req: NextRequest) {
     const packages = (data || []).map((p) => {
       const validation = getManifestValidationMetadata(p)
       const manifestValidated = validation !== null
-      const githubRepoUrl = normalizePublicHttpsUrl(p.github_repo_url)
+      const rawGithubRepoUrl = normalizePublicHttpsUrl(p.github_repo_url)
+      const githubRepoUrl = rawGithubRepoUrl
+        ? canonicalRegistrySourceUrl(rawGithubRepoUrl, p.name, "mcp")
+        : undefined
       return {
       id: p.id,
       name: p.name,
@@ -127,13 +131,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const githubRepoUrl = normalizePublicHttpsUrl(body.github_repo_url)
-    if (!githubRepoUrl) {
+    const rawGithubRepoUrl = normalizePublicHttpsUrl(body.github_repo_url)
+    if (!rawGithubRepoUrl) {
       return NextResponse.json(
         { error: "github_repo_url must be a public HTTPS URL" },
         { status: 400 }
       )
     }
+    const githubRepoUrl = canonicalRegistrySourceUrl(rawGithubRepoUrl, body.name, "mcp")
 
     // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")

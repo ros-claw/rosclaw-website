@@ -10,8 +10,9 @@
     "status:sync": "node scripts/sync-product-status.mjs",
     "status:check": "node scripts/check-product-status.mjs",
     "release:check": "node scripts/check-release-manifest.mjs",
+    "source-urls:check": "node scripts/check-github-source-urls.mjs",
     "test:live": "node scripts/check-live-site.mjs",
-    "test": "npm run status:check && npm run release:check && npm run lint"
+    "test": "npm run status:check && npm run release:check && npm run source-urls:check && npm run lint"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.15.0",

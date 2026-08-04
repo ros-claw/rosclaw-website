@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr"
 import { isDeepStrictEqual } from "node:util"
 import { authenticateApiKey } from "@/lib/api-key"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
+import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -109,7 +110,10 @@ export async function GET(
       }
     }
 
-    const githubRepoUrl = normalizePublicHttpsUrl(data.github_repo_url)
+    const rawGithubRepoUrl = normalizePublicHttpsUrl(data.github_repo_url)
+    const githubRepoUrl = rawGithubRepoUrl
+      ? canonicalRegistrySourceUrl(rawGithubRepoUrl, data.name, "skill")
+      : undefined
     const skill = {
       id: data.id,
       name: data.name,

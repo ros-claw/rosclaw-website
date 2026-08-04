@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { ExpandableSummary } from "@/components/hub/expandable-summary";
 import type { McpPackageDetail } from "@/lib/registry/types";
+import { resolveGitHubMarkdownUrl } from "@/lib/github/source-url";
 
 interface McpPackageClientProps {
   id: string;
@@ -197,17 +198,11 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
                   remarkPlugins={[remarkGfm]}
                   components={{
                   a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
-                    let finalHref = href || "";
-                    if (href && !href.startsWith("http") && !href.startsWith("#") && packageData.githubRepoUrl) {
-                      finalHref = `${packageData.githubRepoUrl.replace(/\/+$/, "")}/blob/main/${href}`;
-                    }
+                    const finalHref = resolveGitHubMarkdownUrl(packageData.githubRepoUrl, href);
                     return <a href={finalHref} target="_blank" rel="noopener noreferrer">{children}</a>;
                   },
                   img: ({ src, alt }: { src?: string; alt?: string }) => {
-                    let finalSrc = src || "";
-                    if (src && !src.startsWith("http") && packageData.githubRepoUrl) {
-                      finalSrc = `${packageData.githubRepoUrl.replace(/\/+$/, "")}/raw/main/${src}`;
-                    }
+                    const finalSrc = resolveGitHubMarkdownUrl(packageData.githubRepoUrl, src, true);
                     // eslint-disable-next-line @next/next/no-img-element
                     return <img src={finalSrc} alt={alt || "Package documentation"} loading="lazy" />;
                   },
@@ -295,7 +290,7 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
             )}
             {packageData.githubRepoUrl && (
               <a href={packageData.githubRepoUrl} target="_blank" rel="noopener noreferrer" className="focus-ring mt-6 flex items-center justify-between border-t border-white/[0.08] pt-4 text-sm text-white/50 transition-colors hover:text-cognitive-cyan">
-                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> Source repository</span>
+                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> View source on GitHub</span>
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             )}

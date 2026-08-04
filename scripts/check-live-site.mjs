@@ -162,6 +162,36 @@ if (skillResponse) {
   }
 }
 
+if (requireRegistry) {
+  const expectedOfficialSkillSources = new Map([
+    ["ros-claw/inspire_rh56_hand_gestures", "inspire_rh56_hand_gestures"],
+    ["rosclaw/realsense_camera_usage", "realsense_camera_usage"],
+    ["ros-claw/realsense_ops", "realsense_ops"],
+    ["ros-claw/ros_install", "ros_install"],
+  ]);
+  for (const [name, sourceDirectory] of expectedOfficialSkillSources) {
+    const skill = skills.find((item) => item.name === name);
+    assert(Boolean(skill), `Official Skill is missing: ${name}.`);
+    assert(
+      skill?.githubRepoUrl === `https://github.com/ros-claw/skills/tree/main/skills/${sourceDirectory}`,
+      `${name} does not link to its concrete source directory.`,
+    );
+  }
+
+  const officialSkillPage = await request("/hub/skills/ros-claw/realsense_ops");
+  if (officialSkillPage) {
+    const html = await officialSkillPage.text();
+    assert(
+      html.includes('href="https://github.com/ros-claw/skills/tree/main/skills/realsense_ops"'),
+      "Official Skill detail page does not render its concrete GitHub source link.",
+    );
+    assert(
+      html.includes("View source on GitHub"),
+      "Official Skill detail page is missing its source action.",
+    );
+  }
+}
+
 for (const [path, items, matchLabel, detailPrefix] of [
   ["/hub/mcps", mcpPackages, "interfaces matched", "/hub/mcps/"],
   ["/hub/skills", skills, "skills matched", "/hub/skills/"],

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 import { authenticateApiKey } from "@/lib/api-key"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
+import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -71,7 +72,10 @@ export async function GET(req: NextRequest) {
     if (error) throw error
 
     const skills = (data || []).map((s) => {
-      const githubRepoUrl = normalizePublicHttpsUrl(s.github_repo_url)
+      const rawGithubRepoUrl = normalizePublicHttpsUrl(s.github_repo_url)
+      const githubRepoUrl = rawGithubRepoUrl
+        ? canonicalRegistrySourceUrl(rawGithubRepoUrl, s.name, "skill")
+        : undefined
       return {
         id: s.id,
         name: s.name,
@@ -122,15 +126,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const githubRepoUrl = body.github_repo_url
+    const rawGithubRepoUrl = body.github_repo_url
       ? normalizePublicHttpsUrl(body.github_repo_url)
       : undefined
-    if (body.github_repo_url && !githubRepoUrl) {
+    if (body.github_repo_url && !rawGithubRepoUrl) {
       return NextResponse.json(
         { error: "github_repo_url must be a public HTTPS URL" },
         { status: 400 }
       )
     }
+    const githubRepoUrl = rawGithubRepoUrl
+      ? canonicalRegistrySourceUrl(rawGithubRepoUrl, body.name, "skill")
+      : undefined
 
     // Check for API key or session authentication
     const apiKey = req.headers.get("x-api-key")

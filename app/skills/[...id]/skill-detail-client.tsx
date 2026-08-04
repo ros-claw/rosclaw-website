@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { ExpandableSummary } from "@/components/hub/expandable-summary";
 import type { SkillDetail } from "@/lib/registry/types";
+import { resolveGitHubMarkdownUrl } from "@/lib/github/source-url";
 
 interface SkillDetailClientProps {
   id: string;
@@ -193,17 +194,11 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
                   remarkPlugins={[remarkGfm]}
                   components={{
                   a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
-                    let finalHref = href || "";
-                    if (href && !href.startsWith("http") && !href.startsWith("#") && skill.githubRepoUrl) {
-                      finalHref = `${skill.githubRepoUrl.replace(/\/+$/, "")}/blob/main/${href}`;
-                    }
+                    const finalHref = resolveGitHubMarkdownUrl(skill.githubRepoUrl, href);
                     return <a href={finalHref} target="_blank" rel="noopener noreferrer">{children}</a>;
                   },
                   img: ({ src, alt }: { src?: string; alt?: string }) => {
-                    let finalSrc = src || "";
-                    if (src && !src.startsWith("http") && skill.githubRepoUrl) {
-                      finalSrc = `${skill.githubRepoUrl.replace(/\/+$/, "")}/raw/main/${src}`;
-                    }
+                    const finalSrc = resolveGitHubMarkdownUrl(skill.githubRepoUrl, src, true);
                     // eslint-disable-next-line @next/next/no-img-element
                     return <img src={finalSrc} alt={alt || "Skill documentation"} loading="lazy" />;
                   },
@@ -262,7 +257,7 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
             </dl>
             {skill.githubRepoUrl && (
               <a href={skill.githubRepoUrl} target="_blank" rel="noopener noreferrer" className="focus-ring mt-6 flex items-center justify-between border-t border-white/[0.08] pt-4 text-sm text-white/50 transition-colors hover:text-physical-orange">
-                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> Source repository</span>
+                <span className="inline-flex items-center gap-2"><Github className="h-4 w-4" /> View source on GitHub</span>
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             )}
