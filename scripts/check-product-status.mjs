@@ -130,6 +130,9 @@ if (existsSync(statusSource)) {
 
 for (const route of [
   "app/start/page.tsx",
+  "app/native-agent/page.tsx",
+  "app/safety/page.tsx",
+  "app/integrations/page.tsx",
   "app/robots/page.tsx",
   "app/apps/page.tsx",
   "app/evidence/page.tsx",
@@ -171,7 +174,7 @@ const sitemapSource = readFileSync(
   path.join(repositoryRoot, "app", "sitemap.ts"),
   "utf8",
 );
-for (const path of ["/robots", "/apps", "/evidence", "/status", "/hub/mcps", "/hub/skills", "/hub/twins", "/hub/wiki"]) {
+for (const path of ["/native-agent", "/safety", "/integrations", "/robots", "/apps", "/evidence", "/status", "/hub/mcps", "/hub/skills", "/hub/twins", "/hub/wiki"]) {
   assert(sitemapSource.includes(`[\"${path}\"`), `The dynamic sitemap omits ${path}.`);
 }
 

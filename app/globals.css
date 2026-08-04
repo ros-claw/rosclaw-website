@@ -8,6 +8,7 @@
   --cognitive-cyan: #00f0ff;
   --physical-orange: #ff3e00;
   --surface-page: #060809;
+  --surface-section: #080b0c;
   --surface-panel: #0a0e10;
   --surface-raised: #101518;
   --surface-code: #040606;
@@ -135,12 +136,21 @@ select option {
 
 .section-kicker {
   color: var(--cognitive-cyan);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
 }
 
 .runtime-label {
   color: rgba(255, 255, 255, 0.34);
-  font-size: 0.58rem;
+  font-size: 0.625rem;
+}
+
+@keyframes terminal-event-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.terminal-event-enter {
+  animation: terminal-event-enter 240ms ease-out both;
 }
 
 .focus-ring:focus-visible,

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/content/shared";
 import { loadMcpPackages, loadSkills } from "@/lib/registry/server";
+import { releaseManifest } from "@/content/release-manifest";
 
 export const revalidate = 300;
 
@@ -9,10 +10,13 @@ function registryPath(name: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const generatedAt = new Date();
+  const releaseDate = new Date(releaseManifest.main.published_at);
   const staticPages = [
     ["", "weekly", 1.0],
     ["/start", "weekly", 1.0],
+    ["/native-agent", "weekly", 1.0],
+    ["/safety", "weekly", 0.9],
+    ["/integrations", "weekly", 0.9],
     ["/robots", "weekly", 0.9],
     ["/apps", "weekly", 0.9],
     ["/evidence", "weekly", 0.8],
@@ -32,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = staticPages.map(
     ([path, changeFrequency, priority]) => ({
       url: `${SITE_URL}${path}`,
-      lastModified: generatedAt,
+      lastModified: releaseDate,
       changeFrequency,
       priority,
     }),
@@ -47,6 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/hub/mcps/${registryPath(pkg.name)}`,
       changeFrequency: "weekly",
       priority: 0.7,
+      lastModified: pkg.lastSyncedAt ? new Date(pkg.lastSyncedAt) : undefined,
     });
   }
   for (const skill of skillLoad.items) {
@@ -54,6 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/hub/skills/${registryPath(skill.name)}`,
       changeFrequency: "weekly",
       priority: 0.7,
+      lastModified: skill.lastSyncedAt ? new Date(skill.lastSyncedAt) : undefined,
     });
   }
   return entries;

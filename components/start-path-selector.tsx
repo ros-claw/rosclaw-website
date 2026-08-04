@@ -4,13 +4,13 @@ import { useState } from "react";
 import {
   Bot,
   Braces,
-  Camera,
+  BrainCircuit,
   Check,
   Copy,
   MonitorPlay,
   PackageOpen,
 } from "lucide-react";
-import { release } from "@/content/product-status";
+import { releaseManifest, shortCommit } from "@/content/release-manifest";
 
 const paths = {
   simulation: {
@@ -21,6 +21,9 @@ const paths = {
     description:
       "Install locally, keep hardware disabled, execute the real MuJoCo UR5e path, and inspect its receipt.",
     limitation: "Requires Python 3.11-3.13. No physical hardware is contacted.",
+    channel: "Stable Alpha",
+    commit: releaseManifest.stable.commit,
+    outcome: "TASK_VERIFIED receipt plus an explainable evidence trace.",
     commands: [
       "curl -sSL https://rosclaw.io/get | bash",
       "rosclaw firstboot --yes --profile offline --no-telemetry",
@@ -28,19 +31,24 @@ const paths = {
       "rosclaw explain latest",
     ],
   },
-  sensor: {
-    icon: Camera,
-    label: "I have a sensor",
-    title: "Prepare a read-only RealSense path",
-    status: "Hardware Not Verified",
+  "native-agent": {
+    icon: BrainCircuit,
+    label: "Try Native Agent",
+    title: "Run the first body-aware mission",
+    status: "Main Experimental",
     description:
-      "Create the D405 body profile and run the existing read-only smoke surface without enabling actuation.",
+      "Install the pinned Main snapshot, initialize the local Agent daemon, check its runtime, and enter mission chat in simulation.",
     limitation:
-      "Profiles and component tests exist, but this release has no independently verified hardware capture run.",
+      "This surface is newer than Stable Alpha. Keep execution in SIMULATION while evaluating it.",
+    channel: "Main Experimental",
+    commit: releaseManifest.main.commit,
+    outcome: "A healthy agentd runtime and interactive rosclaw-tui mission session.",
     commands: [
-      "rosclaw body init --robot realsense-d405 --name d405_lab_01 --validate",
-      "rosclaw test realsense --profile realsense-d405 --body d405_lab_01",
-      "rosclaw status capabilities",
+      "curl -fsSL https://rosclaw.io/get-main | bash",
+      "rosclaw firstboot --yes --profile offline --no-telemetry",
+      "rosclaw agentd init",
+      "rosclaw agentd doctor",
+      "rosclaw chat --mode SIMULATION",
     ],
   },
   robot: {
@@ -52,6 +60,9 @@ const paths = {
       "Inspect the capability boundary and body tooling before creating any device-specific configuration.",
     limitation:
       "Robot Pack orchestration is not yet a stable product command. Real action remains locked until an explicit verified executor and authorization exist.",
+    channel: "Stable Alpha",
+    commit: releaseManifest.stable.commit,
+    outcome: "A capability report that states what is available, gated, or unavailable.",
     commands: [
       "rosclaw status capabilities",
       "rosclaw robot list",
@@ -59,15 +70,18 @@ const paths = {
       "rosclaw doctor --stage configured",
     ],
   },
-  agent: {
+  "external-agent": {
     icon: Braces,
-    label: "I am building an Agent",
+    label: "Connect an Agent",
     title: "Install the cross-agent runtime boundary",
     status: "MCP P0 · No Real Execution",
     description:
       "Configure project MCP for Codex and Claude Code, and install the ROSClaw workspace skill used by OpenClaw and other Agent harnesses.",
     limitation:
       "A local Codex process completed the simulation receipt workflow. OpenClaw native MCP registration remains operator-owned, and Agent real actuation is not verified.",
+    channel: "Stable Alpha",
+    commit: releaseManifest.stable.commit,
+    outcome: "Project-local integration files plus a successful MCP probe.",
     commands: [
       "rosclaw agent install --project-root . --skip-secrets",
       "rosclaw agent test codex --project-root . --quick --mcp-probe",
@@ -84,6 +98,9 @@ const paths = {
       "Export the manifest schema, validate locally, check permissions, and perform a dry-run package build.",
     limitation:
       "Robot Pack aggregation and reference-hardware certification are planned; Hub publication does not imply execution verification.",
+    channel: "Stable Alpha",
+    commit: releaseManifest.stable.commit,
+    outcome: "A locally validated asset manifest and dry-run package result.",
     commands: [
       "rosclaw hub schema export --output manifest.schema.json",
       "rosclaw hub validate ./asset/manifest.yaml",
@@ -112,6 +129,10 @@ export function StartPathSelector({ initialPath }: { initialPath: StartPath }) {
 
   return (
     <div>
+      <div className="mb-5 grid border border-white/10 bg-[#050708] sm:grid-cols-2">
+        <div className="border-b border-white/10 p-4 sm:border-b-0 sm:border-r"><p className="runtime-label">Stable Alpha · evidence-backed</p><p className="mt-2 font-mono text-xs text-white/62">v{releaseManifest.stable.version} · {shortCommit(releaseManifest.stable.commit)}</p></div>
+        <div className="p-4"><p className="runtime-label">Main · Native Agent frontier</p><p className="mt-2 font-mono text-xs text-white/62">v{releaseManifest.main.version} · {shortCommit(releaseManifest.main.commit)}</p></div>
+      </div>
       <div
         role="tablist"
         aria-label="Choose a ROSClaw start path"
@@ -152,7 +173,7 @@ export function StartPathSelector({ initialPath }: { initialPath: StartPath }) {
       >
         <div className="border-b border-white/10 p-6 sm:p-8 lg:border-b-0 lg:border-r">
           <p className="font-mono text-[10px] uppercase text-cognitive-cyan">
-            v{release.version} {release.maturity}
+            {path.channel} · {shortCommit(path.commit)}
           </p>
           <h2 className="mt-4 text-2xl font-semibold text-white sm:text-3xl">{path.title}</h2>
           <p className="mt-4 text-sm leading-relaxed text-white/55 sm:text-base">
@@ -163,6 +184,10 @@ export function StartPathSelector({ initialPath }: { initialPath: StartPath }) {
           </span>
           <div className="mt-6 border-l-2 border-physical-orange bg-physical-orange/[0.035] px-4 py-3">
             <p className="text-sm leading-relaxed text-white/55">{path.limitation}</p>
+          </div>
+          <div className="mt-4 border-l-2 border-emerald-400 bg-emerald-400/[0.035] px-4 py-3">
+            <p className="runtime-label text-emerald-300">Expected success</p>
+            <p className="mt-2 text-sm leading-relaxed text-white/55">{path.outcome}</p>
           </div>
         </div>
 

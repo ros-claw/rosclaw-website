@@ -48,8 +48,10 @@ async function incrementViews(id: string) {
   }
 }
 
-function formatNumber(value = 0) {
-  return new Intl.NumberFormat("en", { notation: value >= 1_000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
+function formatRegistryDate(value?: string) {
+  if (!value) return "Not recorded";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Not recorded" : new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(date);
 }
 
 export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) {
@@ -103,6 +105,8 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-physical-orange">Behavior package</span>
+                <span className="border border-white/15 px-2 py-1 font-mono text-[8px] uppercase text-white/50">Indexed</span>
+                {skill.officialPublisher && <span className="border border-emerald-400/25 bg-emerald-400/[0.04] px-2 py-1 font-mono text-[8px] uppercase text-emerald-300">Official publisher</span>}
                 {skill.category && (
                   <span className="border border-physical-orange/25 bg-physical-orange/[0.05] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-physical-orange">{skill.category}</span>
                 )}
@@ -120,8 +124,8 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
             <div className="grid grid-cols-3 border border-white/10 bg-[#050708] lg:min-w-[330px]">
               {[
                 ["Bodies", bodyProfiles.length.toLocaleString()],
-                ["Stars", formatNumber(skill.githubStars)],
-                ["Views", formatNumber(skill.viewsCount)],
+                ["Source updated", formatRegistryDate(skill.githubUpdatedAt)],
+                ["Registry synced", formatRegistryDate(skill.lastSyncedAt)],
               ].map(([label, value], index) => (
                 <div key={label} className={`p-4 text-center ${index < 2 ? "border-r border-white/10" : ""}`}>
                   <div className="runtime-label">{label}</div>
@@ -222,7 +226,7 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
               <Terminal className="h-5 w-5 text-physical-orange" />
               <h2 className="text-base font-medium text-white">Runtime artifact</h2>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-white/42">No compatible ROSClaw Hub install artifact is indexed. Treat this Registry entry as discovery metadata until a signed asset bundle is published.</p>
+            <p className="mt-3 text-xs leading-relaxed text-white/42">This Skill is indexed from source, but no attested ROSClaw install artifact is represented by the current registry schema. Review the SKILL.md and dependencies manually.</p>
           </section>
 
           <section className="border border-white/10 bg-[#080b0c] p-5 sm:p-6">
@@ -242,8 +246,11 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
             <dl className="mt-5 space-y-3 text-xs">
               {[
                 ["Publisher", skill.authorName || "—"],
+                ["Publisher class", skill.officialPublisher ? "Official" : "Community"],
                 ["Category", skill.category || "Not declared"],
                 ["Version", skill.version || "—"],
+                ["Source updated", formatRegistryDate(skill.githubUpdatedAt)],
+                ["Registry synced", formatRegistryDate(skill.lastSyncedAt)],
                 ["Bodies", bodyProfiles.length ? bodyProfiles.length.toLocaleString() : "Not declared"],
                 ["Dependencies", dependencies.length.toLocaleString()],
               ].map(([label, value]) => (

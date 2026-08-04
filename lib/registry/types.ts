@@ -4,6 +4,10 @@ export interface McpPackageSummary {
   description: string;
   authorName: string;
   githubRepoUrl?: string;
+  githubUpdatedAt?: string;
+  lastSyncedAt?: string;
+  installCommand?: string;
+  officialPublisher: boolean;
   manifestValidated: boolean;
   manifestValidatedAt?: string;
   manifestValidationEvidence?: string;
@@ -30,6 +34,9 @@ export interface SkillSummary {
   description: string;
   authorName: string;
   githubRepoUrl?: string;
+  githubUpdatedAt?: string;
+  lastSyncedAt?: string;
+  officialPublisher: boolean;
   category?: string;
   version?: string;
   githubStars?: number;

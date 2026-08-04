@@ -6,15 +6,20 @@ import { productStatus, release } from "./product-status";
 export const heroContent = {
   eyebrow: `v${release.version} · ${release.maturity}`,
   title: {
-    line1: "ROSClaw",
-    line2: "Trustworthy Physical Execution Runtime",
+    line1: "The Native Agent Runtime",
+    line2: "for Physical AI.",
   },
-  subtitle: ["Body-aware", "Guarded", "Auditable"],
+  subtitle: [
+    "Understand the body.",
+    "Delegate to workers.",
+    "Govern every action.",
+    "Learn from evidence.",
+  ],
   description:
-    "Give any AI agent one governed path to simulation and real robots, with policy checks, physical evidence, and an ExecutionReceipt for every action.",
+    "ROSClaw connects model reasoning, managed workers, robot capabilities, governed execution, and evidence-backed learning in one physical-agent runtime.",
   ctas: {
-    primary: { label: "Start in Simulation", href: "/start?path=simulation" },
-    secondary: { label: "Connect a Real Robot", href: "/start?path=robot" },
+    primary: { label: "Start ROSClaw", href: "/start" },
+    secondary: { label: "Watch a Verified Mission", href: "/#mission" },
     tertiary: { label: "View GitHub", href: GITHUB_URL },
   },
 };

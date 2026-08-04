@@ -8,7 +8,6 @@ import {
   ArrowUpRight,
   ChevronDown,
   Cpu,
-  Eye,
   GitBranch,
   Github,
   Layers3,
@@ -29,8 +28,19 @@ function searchableText(skill: SkillSummary) {
     .toLowerCase();
 }
 
+function isFresh(value?: string) {
+  if (!value) return false;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && Date.now() - timestamp <= 6 * 24 * 60 * 60 * 1000;
+}
+
+function formatDate(value?: string) {
+  if (!value) return "Not recorded";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Not recorded" : date.toLocaleDateString("en-CA", { timeZone: "UTC" });
+}
+
 function SkillCard({ skill, number }: { skill: SkillSummary; number: number }) {
-  const robotTypes = skill.robotTypes || [];
   const tags = skill.tags || [];
   const dependencies = skill.dependencies || [];
 
@@ -41,11 +51,14 @@ function SkillCard({ skill, number }: { skill: SkillSummary; number: number }) {
     >
       <div className="flex items-start justify-between gap-4">
         <span className="font-mono text-[9px] tracking-[0.16em] text-white/25">SKILL-{String(number).padStart(3, "0")}</span>
+        <div className="flex flex-wrap justify-end gap-1.5">
+        {skill.officialPublisher && <span className="border border-emerald-400/25 bg-emerald-400/[0.04] px-2 py-1 font-mono text-[8px] uppercase text-emerald-300">Official</span>}
         {skill.category && (
           <span className="max-w-[55%] truncate border border-physical-orange/25 bg-physical-orange/[0.04] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-physical-orange">
             {skill.category}
           </span>
         )}
+        </div>
       </div>
 
       <div className="mt-6 flex items-start gap-4">
@@ -67,12 +80,12 @@ function SkillCard({ skill, number }: { skill: SkillSummary; number: number }) {
 
       <dl className="mt-6 grid grid-cols-2 border-y border-white/[0.08] py-4 font-mono text-[9px] uppercase tracking-[0.11em]">
         <div>
-          <dt className="text-white/25">Body profiles</dt>
-          <dd className="mt-1 truncate text-physical-orange">{robotTypes.length ? robotTypes.slice(0, 2).join(", ") : "Not declared"}</dd>
+          <dt className="text-white/25">Source updated</dt>
+          <dd className="mt-1 truncate text-physical-orange">{formatDate(skill.githubUpdatedAt)}</dd>
         </div>
         <div>
-          <dt className="text-white/25">Dependencies</dt>
-          <dd className="mt-1 text-white/60">{dependencies.length}</dd>
+          <dt className="text-white/25">Registry synced</dt>
+          <dd className={`mt-1 ${isFresh(skill.lastSyncedAt) ? "text-emerald-300" : "text-white/60"}`}>{formatDate(skill.lastSyncedAt)}</dd>
         </div>
       </dl>
 
@@ -85,7 +98,7 @@ function SkillCard({ skill, number }: { skill: SkillSummary; number: number }) {
       <div className="mt-auto flex items-center justify-between gap-4 pt-6 text-xs text-white/30">
         <span className="flex items-center gap-4">
           <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5" /> {skill.githubStars || 0}</span>
-          <span className="inline-flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {skill.viewsCount || 0}</span>
+          <span className="inline-flex items-center gap-1"><GitBranch className="h-3.5 w-3.5" /> {dependencies.length} deps</span>
         </span>
         <span className="inline-flex items-center gap-1 font-mono text-[10px] text-white/45">
           v{skill.version || "—"} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
@@ -129,18 +142,18 @@ export function SkillRegistryClient({
   const processedSkills = useMemo(() => {
     const query = deferredSearch.trim().toLowerCase();
     return skills
-      .filter((skill) => activeCategory === "all" || skill.category === activeCategory)
+      .filter((skill) => activeCategory === "all" || (activeCategory === "official" ? skill.officialPublisher : activeCategory === "fresh" ? isFresh(skill.lastSyncedAt) : skill.category === activeCategory))
       .filter((skill) => !query || searchableText(skill).includes(query))
       .sort((a, b) => {
         if (sortBy === "stars") return (b.githubStars || 0) - (a.githubStars || 0);
-        if (sortBy === "views") return (b.viewsCount || 0) - (a.viewsCount || 0);
-        const score = (skill: SkillSummary) => (skill.githubStars || 0) * 10 + (skill.viewsCount || 0) + (skill.robotTypes?.length || 0) * 20 + (skill.dependencies?.length || 0) * 5;
+        if (sortBy === "updated") return (Date.parse(b.githubUpdatedAt || "") || 0) - (Date.parse(a.githubUpdatedAt || "") || 0);
+        const score = (skill: SkillSummary) => (skill.officialPublisher ? 1_000_000 : 0) + (isFresh(skill.lastSyncedAt) ? 100_000 : 0) + (skill.githubStars || 0) * 10 + (skill.robotTypes?.length || 0) * 20;
         return score(b) - score(a);
       });
   }, [skills, deferredSearch, activeCategory, sortBy]);
 
-  const uniqueBodies = useMemo(() => new Set(skills.flatMap((skill) => skill.robotTypes || []).filter(Boolean)).size, [skills]);
   const uniqueCategories = useMemo(() => new Set(skills.map((skill) => skill.category).filter(Boolean)).size, [skills]);
+  const freshCount = useMemo(() => skills.filter((skill) => isFresh(skill.lastSyncedAt)).length, [skills]);
   const visibleSkills = processedSkills.slice(0, visibleCount);
 
   return (
@@ -171,7 +184,7 @@ export function SkillRegistryClient({
           <dl className="mt-9 grid border border-white/10 bg-[#050708] sm:mt-12 sm:grid-cols-3">
             {[
               ["Registry skills", loading ? "—" : skills.length.toLocaleString()],
-              ["Declared body profiles", loading ? "—" : uniqueBodies.toLocaleString()],
+              ["Synced ≤ 6 days", loading ? "—" : freshCount.toLocaleString()],
               ["Behavior categories", loading ? "—" : uniqueCategories.toLocaleString()],
             ].map(([label, value], index) => (
               <div key={label} className={`p-5 sm:p-6 ${index < 2 ? "border-b border-white/10 sm:border-b-0 sm:border-r" : ""}`}>
@@ -200,7 +213,7 @@ export function SkillRegistryClient({
               <span className="sr-only">Sort Skills</span>
               <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="h-14 w-full border border-white/10 bg-[#0a0e10] px-4 text-sm text-white/65 focus:border-physical-orange/50 focus:outline-none">
                 <option value="recommended">Recommended</option>
-                <option value="views">Most viewed</option>
+                <option value="updated">Recently updated source</option>
                 <option value="stars">Most GitHub stars</option>
               </select>
               <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
@@ -211,6 +224,8 @@ export function SkillRegistryClient({
             <button type="button" onClick={() => setActiveCategory("all")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "all" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>
               All skills <span className="ml-2 font-mono text-[10px] opacity-60">{skills.length}</span>
             </button>
+            <button type="button" onClick={() => setActiveCategory("official")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "official" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>Official publisher <span className="ml-2 font-mono text-[10px] opacity-60">{skills.filter((skill) => skill.officialPublisher).length}</span></button>
+            <button type="button" onClick={() => setActiveCategory("fresh")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "fresh" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>Synced ≤ 6 days <span className="ml-2 font-mono text-[10px] opacity-60">{freshCount}</span></button>
             {categoryOptions.map(([category, count]) => (
               <button key={category} type="button" onClick={() => setActiveCategory(category)} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === category ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>
                 {category} <span className="ml-2 font-mono text-[10px] opacity-60">{count}</span>

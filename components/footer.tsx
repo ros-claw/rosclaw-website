@@ -7,21 +7,30 @@ const linkGroups = [
   {
     title: "Product",
     links: [
-      { label: "Start", href: "/start" },
+      { label: "Native Agent", href: "/native-agent" },
+      { label: "Runtime", href: "/runtime" },
+      { label: "Safety", href: "/safety" },
       { label: "Robot support", href: "/robots" },
       { label: "Apps", href: "/apps" },
-      { label: "Runtime", href: "/runtime" },
-      { label: "Product status", href: "/status" },
     ],
   },
   {
-    title: "Resources",
+    title: "Build",
     links: [
+      { label: "Start", href: "/start" },
       { label: "Documentation", href: "/docs" },
       { label: "Physical-AI Hub", href: "/hub" },
       { label: "Hardware MCPs", href: "/hub/mcps" },
       { label: "Skills", href: "/hub/skills" },
+    ],
+  },
+  {
+    title: "Trust",
+    links: [
+      { label: "Product status", href: "/status" },
       { label: "Evidence", href: "/evidence" },
+      { label: "Integrations", href: "/integrations" },
+      { label: "Telemetry privacy", href: "/privacy/telemetry" },
     ],
   },
 ] as const;
@@ -30,7 +39,7 @@ export function Footer() {
   return (
     <footer className="border-t border-white/10 bg-[#040606]">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr_0.75fr_1fr]">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.35fr_0.75fr_0.75fr_0.75fr_1fr]">
           <div>
             <Link href="/" className="focus-ring inline-flex items-center gap-2.5" aria-label="ROSClaw home">
               <span className="flex h-8 w-8 items-center justify-center overflow-hidden bg-white">
@@ -39,7 +48,7 @@ export function Footer() {
               <span className="text-lg font-semibold tracking-tight text-white">ROSClaw</span>
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/[0.42]">
-              Trustworthy physical execution runtime and control plane for any embodied Agent.
+              The Native Agent runtime for Physical AI: body-aware reasoning, governed execution, and auditable evidence.
             </p>
             <p className="mt-6 font-mono text-[9px] uppercase text-white/25">Body-aware · guarded · auditable</p>
           </div>
@@ -58,7 +67,7 @@ export function Footer() {
           ))}
 
           <div>
-            <h2 className="font-mono text-[10px] uppercase text-white/[0.38]">Community</h2>
+            <h2 className="font-mono text-[10px] uppercase text-white/[0.38]">Project</h2>
             <div className="mt-5 space-y-3">
               <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="focus-ring flex items-center justify-between border-b border-white/[0.08] pb-3 text-sm text-white/[0.52] transition-colors hover:text-white">
                 <span className="flex items-center gap-2"><Github className="h-4 w-4" /> GitHub</span>

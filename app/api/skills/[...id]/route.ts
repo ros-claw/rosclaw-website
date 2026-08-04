@@ -4,6 +4,11 @@ import { isDeepStrictEqual } from "node:util"
 import { authenticateApiKey } from "@/lib/api-key"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
+function isOfficial(repoUrl: string | undefined) {
+  if (!repoUrl) return false
+  try { return ["ros-claw", "rosclaw"].includes(new URL(repoUrl).pathname.split("/").filter(Boolean)[0]?.toLowerCase()) } catch { return false }
+}
+
 function createClient(req: NextRequest) {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -104,6 +109,7 @@ export async function GET(
       }
     }
 
+    const githubRepoUrl = normalizePublicHttpsUrl(data.github_repo_url)
     const skill = {
       id: data.id,
       name: data.name,
@@ -115,7 +121,10 @@ export async function GET(
       version: data.version,
       authorName: data.author_name,
       authorUrl: normalizePublicHttpsUrl(data.author_url),
-      githubRepoUrl: normalizePublicHttpsUrl(data.github_repo_url),
+      githubRepoUrl,
+      githubUpdatedAt: data.github_updated_at,
+      lastSyncedAt: data.last_synced_at,
+      officialPublisher: isOfficial(githubRepoUrl),
       viewsCount: data.views_count || 0,
       githubStars: data.github_stars || 0,
       rating: data.rating,

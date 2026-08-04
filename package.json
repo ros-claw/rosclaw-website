@@ -9,8 +9,9 @@
     "lint": "tsc --noEmit",
     "status:sync": "node scripts/sync-product-status.mjs",
     "status:check": "node scripts/check-product-status.mjs",
+    "release:check": "node scripts/check-release-manifest.mjs",
     "test:live": "node scripts/check-live-site.mjs",
-    "test": "npm run status:check && npm run lint"
+    "test": "npm run status:check && npm run release:check && npm run lint"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.15.0",

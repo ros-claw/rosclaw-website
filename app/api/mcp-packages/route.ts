@@ -6,6 +6,11 @@ import {
 } from "@/lib/registry/verification"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
+function isOfficial(repoUrl: string | undefined) {
+  if (!repoUrl) return false
+  try { return ["ros-claw", "rosclaw"].includes(new URL(repoUrl).pathname.split("/").filter(Boolean)[0]?.toLowerCase()) } catch { return false }
+}
+
 // Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
   return createServerClient(
@@ -71,12 +76,17 @@ export async function GET(req: NextRequest) {
     const packages = (data || []).map((p) => {
       const validation = getManifestValidationMetadata(p)
       const manifestValidated = validation !== null
+      const githubRepoUrl = normalizePublicHttpsUrl(p.github_repo_url)
       return {
       id: p.id,
       name: p.name,
       description: p.description,
       authorName: p.author_name,
-      githubRepoUrl: normalizePublicHttpsUrl(p.github_repo_url),
+      githubRepoUrl,
+      githubUpdatedAt: p.github_updated_at,
+      lastSyncedAt: p.last_synced_at,
+      installCommand: p.install_command,
+      officialPublisher: isOfficial(githubRepoUrl),
       manifestValidated,
       verified: manifestValidated,
       manifestValidatedAt: validation?.validatedAt,

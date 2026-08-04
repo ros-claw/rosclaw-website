@@ -3,6 +3,11 @@ import { createServerClient } from "@supabase/ssr"
 import { authenticateApiKey } from "@/lib/api-key"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
+function isOfficial(repoUrl: string | undefined) {
+  if (!repoUrl) return false
+  try { return ["ros-claw", "rosclaw"].includes(new URL(repoUrl).pathname.split("/").filter(Boolean)[0]?.toLowerCase()) } catch { return false }
+}
+
 // Helper to create Supabase client from request cookies
 function createClient(req: NextRequest) {
   return createServerClient(
@@ -65,27 +70,33 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query
     if (error) throw error
 
-    const skills = (data || []).map((s) => ({
-      id: s.id,
-      name: s.name,
-      displayName: s.display_name,
-      description: s.description,
-      category: s.category,
-      version: s.version,
-      authorName: s.author_name,
-      authorUrl: normalizePublicHttpsUrl(s.author_url),
-      githubRepoUrl: normalizePublicHttpsUrl(s.github_repo_url),
-      downloadsCount: s.downloads_count,
-      viewsCount: s.views_count || 0,
-      githubStars: s.github_stars || 0,
-      rating: s.rating,
-      reviewCount: s.review_count,
-      status: s.status,
-      robotTypes: s.robot_types || [],
-      tags: s.tags || [],
-      dependencies: s.dependencies || [],
-      iconUrl: s.icon_url,
-    }))
+    const skills = (data || []).map((s) => {
+      const githubRepoUrl = normalizePublicHttpsUrl(s.github_repo_url)
+      return {
+        id: s.id,
+        name: s.name,
+        displayName: s.display_name,
+        description: s.description,
+        category: s.category,
+        version: s.version,
+        authorName: s.author_name,
+        authorUrl: normalizePublicHttpsUrl(s.author_url),
+        githubRepoUrl,
+        githubUpdatedAt: s.github_updated_at,
+        lastSyncedAt: s.last_synced_at,
+        officialPublisher: isOfficial(githubRepoUrl),
+        downloadsCount: s.downloads_count,
+        viewsCount: s.views_count || 0,
+        githubStars: s.github_stars || 0,
+        rating: s.rating,
+        reviewCount: s.review_count,
+        status: s.status,
+        robotTypes: s.robot_types || [],
+        tags: s.tags || [],
+        dependencies: s.dependencies || [],
+        iconUrl: s.icon_url,
+      }
+    })
 
     return NextResponse.json(skills)
   } catch (err: any) {

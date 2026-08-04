@@ -3,6 +3,9 @@ import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, CircleDashed } from "lucide-react";
 import { Footer } from "@/components/footer";
 import { productStatus, release } from "@/content/product-status";
+import { releaseManifest, shortCommit } from "@/content/release-manifest";
+import { StatusBadge } from "@/components/status/status-badge";
+import { StatusExplainer } from "@/components/status/status-explainer";
 
 export const metadata: Metadata = {
   title: "Product Status | ROSClaw",
@@ -24,6 +27,29 @@ export default function StatusPage() {
               This page is generated from the same versioned status source used by the core README and release checks. Candidate support never replaces current support without qualifying evidence.
             </p>
           </div>
+
+          <section className="mt-12 grid border border-white/10 bg-[#050708] md:grid-cols-2">
+            <article className="border-b border-white/10 p-6 md:border-b-0 md:border-r">
+              <div className="flex flex-wrap items-center justify-between gap-3"><StatusBadge status="Simulation Verified"/><code className="font-mono text-[10px] text-white/30">{shortCommit(releaseManifest.stable.commit)}</code></div>
+              <h2 className="mt-6 text-xl font-semibold text-white">{releaseManifest.stable.label}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/45">The default installer resolves to this fixed, evidence-backed Alpha snapshot.</p>
+              <code className="mt-5 block overflow-x-auto border border-white/10 bg-black/40 p-3 font-mono text-xs text-cognitive-cyan">curl -fsSL https://rosclaw.io/get | bash</code>
+            </article>
+            <article className="p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3"><StatusBadge status="Experimental"/><code className="font-mono text-[10px] text-white/30">{shortCommit(releaseManifest.main.commit)}</code></div>
+              <h2 className="mt-6 text-xl font-semibold text-white">{releaseManifest.main.label}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/45">A fixed Main snapshot containing Native Agent and worker capabilities. Interfaces may change.</p>
+              <code className="mt-5 block overflow-x-auto border border-white/10 bg-black/40 p-3 font-mono text-xs text-cognitive-cyan">curl -fsSL https://rosclaw.io/get-main | bash</code>
+            </article>
+          </section>
+
+          <section className="mt-14">
+            <p className="section-kicker">Shared status language</p>
+            <h2 className="mt-3 text-2xl font-semibold text-white">Labels describe evidence scope, not marketing tiers.</h2>
+            <div className="mt-5 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+              {["Simulation Verified", "Developer Observed", "Component Tested", "Manifest Validated", "Indexed", "Experimental"].map((status) => <StatusExplainer key={status} status={status as "Simulation Verified" | "Developer Observed" | "Component Tested" | "Manifest Validated" | "Indexed" | "Experimental"} />)}
+            </div>
+          </section>
 
           <div className="mt-12 grid border border-white/10 md:grid-cols-3">
             {[

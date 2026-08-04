@@ -3,19 +3,29 @@ import { GeistSans } from "geist/font/sans";
 import { JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/navbar";
 import { Analytics } from "@vercel/analytics/next";
+import { releaseManifest } from "@/content/release-manifest";
 import "./globals.css";
 
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: "ROSClaw",
-  applicationCategory: "DeveloperApplication",
-  operatingSystem: "Linux, macOS, Windows WSL",
-  description:
-    "Trustworthy physical execution runtime and control plane for embodied AI agents.",
-  url: "https://www.rosclaw.io/",
-  codeRepository: "https://github.com/ros-claw/rosclaw",
-};
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "ROSClaw",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Linux, macOS, Windows WSL",
+    softwareVersion: releaseManifest.stable.version,
+    releaseNotes: "https://www.rosclaw.io/status",
+    downloadUrl: "https://www.rosclaw.io/get",
+    installUrl: "https://www.rosclaw.io/start",
+    license: "https://github.com/ros-claw/rosclaw/blob/main/LICENSE",
+    description: "The Native Agent runtime for Physical AI with governed execution and auditable receipts.",
+    url: "https://www.rosclaw.io/",
+    codeRepository: releaseManifest.repository,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  },
+  { "@context": "https://schema.org", "@type": "Organization", name: "ROSClaw", url: "https://www.rosclaw.io/", sameAs: ["https://github.com/ros-claw"] },
+  { "@context": "https://schema.org", "@type": "WebSite", name: "ROSClaw", url: "https://www.rosclaw.io/" },
+];
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -25,9 +35,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.rosclaw.io"),
-  title: "ROSClaw | Trustworthy Physical Execution Runtime",
+  title: "ROSClaw | The Native Agent Runtime for Physical AI",
   description:
-    "Give any AI agent a body-aware, guarded, and auditable path to simulation and real robots.",
+    "Give AI agents a body-aware mission runtime with governed execution, worker delegation, MCP interfaces, Skills, and auditable receipts.",
   keywords: [
     "ROSClaw",
     "Physical AI",
@@ -65,18 +75,18 @@ export const metadata: Metadata = {
   publisher: "ROSClaw",
   robots: "index, follow",
   openGraph: {
-    title: "ROSClaw — Trustworthy Physical Execution Runtime",
+    title: "ROSClaw — The Native Agent Runtime for Physical AI",
     description:
-      "A body-aware, guarded, and auditable path from AI agents to simulation and real robots.",
+      "Body-aware missions, governed physical execution, MCP interfaces, Skills, and auditable receipts.",
     type: "website",
     locale: "en_US",
     siteName: "ROSClaw",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ROSClaw | Trustworthy Physical Execution Runtime",
+    title: "ROSClaw | The Native Agent Runtime for Physical AI",
     description:
-      "Body-aware, guarded, and auditable physical execution for embodied AI.",
+      "Body-aware missions and governed physical execution for embodied AI.",
     creator: "@rosclaw",
   },
 };

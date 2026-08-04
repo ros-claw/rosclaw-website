@@ -4,17 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { KeyboardEvent, useEffect, useRef, useState } from "react";
-import { ArrowDownRight, Github, Menu, X } from "lucide-react";
+import { ArrowDownRight, ChevronDown, Github, Menu, X } from "lucide-react";
 import { GITHUB_URL } from "@/content/shared";
 
 const navLinks = [
-  { name: "Start", href: "/start" },
   { name: "Robots", href: "/robots" },
-  { name: "Apps", href: "/apps" },
-  { name: "Runtime", href: "/runtime" },
   { name: "Hub", href: "/hub" },
-  { name: "Status", href: "/status" },
   { name: "Docs", href: "/docs" },
+  { name: "Status", href: "/status" },
+] as const;
+
+const productLinks = [
+  { name: "Native Agent", href: "/native-agent", detail: "TUI mission runtime + workers" },
+  { name: "Runtime", href: "/runtime", detail: "Cognitive and physical lanes" },
+  { name: "Safety", href: "/safety", detail: "Authority, policy, approvals" },
+  { name: "Integrations", href: "/integrations", detail: "Models, agents, robots" },
+  { name: "Apps", href: "/apps", detail: "Operator-facing workflows" },
 ] as const;
 
 export function Navbar() {
@@ -89,10 +94,28 @@ export function Navbar() {
               <Image src="/rosclaw-mark.webp" alt="" width={32} height={32} className="h-full w-full object-cover" priority />
             </span>
             <span className="text-base font-semibold text-white">ROSClaw</span>
-            <span className="hidden border-l border-white/15 pl-2 font-mono text-[8px] uppercase text-white/30 sm:inline">Execution Runtime</span>
           </Link>
 
           <div className="hidden items-center gap-5 lg:flex">
+            <div className="group relative">
+              <Link
+                href="/native-agent"
+                className={`focus-ring inline-flex items-center gap-1 py-2 text-sm transition-colors ${["/native-agent", "/runtime", "/safety", "/integrations", "/apps"].some((href) => isActive(href)) ? "text-white" : "text-white/[0.52] hover:text-white"}`}
+              >
+                Product <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
+              </Link>
+              <div className="invisible absolute left-1/2 top-full w-[620px] -translate-x-1/2 translate-y-2 border border-white/10 bg-[#060809]/[0.98] p-3 opacity-0 shadow-2xl backdrop-blur-xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                <div className="grid grid-cols-2 gap-px bg-white/10">
+                  {productLinks.map((link, index) => (
+                    <Link key={link.name} href={link.href} className={`focus-ring group/item bg-[#090c0d] px-5 py-4 transition-colors hover:bg-[#0c1214] ${index === 0 ? "col-span-2" : ""}`}>
+                      <span className="flex items-center justify-between text-sm font-medium text-white/78 group-hover/item:text-cognitive-cyan"><span>{link.name}</span><span aria-hidden="true">→</span></span>
+                      <span className="mt-1 block text-xs text-white/34">{link.detail}</span>
+                    </Link>
+                  ))}
+                </div>
+                <div className="mt-3 flex items-center justify-between px-2 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-white/30"><span>Native Agent: Main Experimental</span><Link href="/start?path=native-agent" className="text-cognitive-cyan hover:text-white">Start frontier →</Link></div>
+              </div>
+            </div>
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -145,7 +168,16 @@ export function Navbar() {
           className="border-t border-white/10 bg-[#060809] px-4 py-5 lg:hidden"
         >
           <div className="mx-auto max-w-[1440px]">
-            <div className="divide-y divide-white/[0.08] border-y border-white/[0.08]">
+            <div className="border-y border-white/[0.08]">
+              <p className="px-1 pb-2 pt-4 font-mono text-[9px] uppercase tracking-[0.14em] text-white/30">Product</p>
+              <div className="grid grid-cols-2 gap-px bg-white/[0.08]">
+                {productLinks.map((link) => (
+                  <Link key={link.name} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className="focus-ring bg-[#060809] p-3 text-sm text-white/65 hover:text-white">
+                    {link.name}<span className="mt-1 block text-[10px] leading-snug text-white/25">{link.detail}</span>
+                  </Link>
+                ))}
+              </div>
+              <div className="mt-3 divide-y divide-white/[0.08] border-t border-white/[0.08]">
               {navLinks.map((link, index) => (
                 <Link
                   key={link.name}
@@ -158,6 +190,7 @@ export function Navbar() {
                   <span aria-hidden="true">→</span>
                 </Link>
               ))}
+              </div>
             </div>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="focus-ring flex min-h-11 items-center justify-center gap-2 border border-white/[0.12] text-sm text-white/65">

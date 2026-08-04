@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 
 const allowedPaths = new Set<StartPath>([
   "simulation",
-  "sensor",
+  "native-agent",
   "robot",
-  "agent",
+  "external-agent",
   "publisher",
 ]);
 
@@ -37,12 +37,12 @@ export default async function StartPage({
             <div>
               <p className="section-kicker">Start ROSClaw</p>
               <h1 className="mt-4 text-4xl font-semibold text-white sm:text-5xl">
-                Choose what you have.
+                Choose your first outcome.
               </h1>
             </div>
             <p className="max-w-2xl text-base leading-relaxed text-white/55 lg:justify-self-end lg:text-lg">
-              Start from a task, not a module list. Each path shows only current
-              commands and states its evidence boundary before you run anything.
+              Stable runs the evidence-backed simulation snapshot. Main unlocks the
+              Native Agent frontier. Every path names its success output and limitation.
             </p>
           </div>
           <StartPathSelector initialPath={initialPath} />

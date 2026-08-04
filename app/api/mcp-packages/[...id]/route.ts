@@ -7,6 +7,11 @@ import {
 } from "@/lib/registry/verification"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 
+function isOfficial(repoUrl: string | undefined) {
+  if (!repoUrl) return false
+  try { return ["ros-claw", "rosclaw"].includes(new URL(repoUrl).pathname.split("/").filter(Boolean)[0]?.toLowerCase()) } catch { return false }
+}
+
 function createClient(req: NextRequest) {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -93,6 +98,7 @@ export async function GET(
 
     const validation = getManifestValidationMetadata(data)
     const manifestValidated = validation !== null
+    const githubRepoUrl = normalizePublicHttpsUrl(data.github_repo_url)
     const pkg = {
       id: data.id,
       name: data.name,
@@ -101,7 +107,11 @@ export async function GET(
       readmeContent: data.readme_content,
       authorName: data.author_name,
       author_user_id: data.author_user_id,
-      githubRepoUrl: normalizePublicHttpsUrl(data.github_repo_url),
+      githubRepoUrl,
+      githubUpdatedAt: data.github_updated_at,
+      lastSyncedAt: data.last_synced_at,
+      installCommand: data.install_command,
+      officialPublisher: isOfficial(githubRepoUrl),
       manifestValidated,
       verified: manifestValidated,
       manifestValidatedAt: validation?.validatedAt,

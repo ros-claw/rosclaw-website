@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   ChevronDown,
   Cpu,
-  Eye,
   Github,
   Layers3,
   Plus,
@@ -25,6 +24,8 @@ const PAGE_SIZE = 24;
 
 const categoryDefinitions = [
   { id: "all", label: "All interfaces", keywords: [] },
+  { id: "official", label: "Official publisher", keywords: [] },
+  { id: "fresh", label: "Synced ≤ 6 days", keywords: [] },
   { id: "manifest-validated", label: "Manifest validated", keywords: [] },
   { id: "robots", label: "Robot bodies", keywords: ["robot", "humanoid", "mobile", "arm", "manipulation", "unitree", "ros2"] },
   { id: "sensing", label: "Sensors & vision", keywords: ["sensor", "vision", "camera", "lidar", "realsense", "imu"] },
@@ -36,6 +37,18 @@ function isManifestValidated(pkg: McpPackageSummary) {
   return pkg.manifestValidated === true;
 }
 
+function isFresh(value?: string) {
+  if (!value) return false;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) && Date.now() - timestamp <= 6 * 24 * 60 * 60 * 1000;
+}
+
+function formatDate(value?: string) {
+  if (!value) return "Not recorded";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "Not recorded" : date.toLocaleDateString("en-CA", { timeZone: "UTC" });
+}
+
 function searchableText(pkg: McpPackageSummary) {
   return [pkg.name, pkg.description, pkg.authorName, pkg.category, pkg.robotType, ...(pkg.tags || []), ...(pkg.tools || []).map((tool) => tool.name)]
     .filter(Boolean)
@@ -45,6 +58,8 @@ function searchableText(pkg: McpPackageSummary) {
 
 function matchesCategory(pkg: McpPackageSummary, categoryId: string) {
   if (categoryId === "all") return true;
+  if (categoryId === "official") return pkg.officialPublisher;
+  if (categoryId === "fresh") return isFresh(pkg.lastSyncedAt);
   if (categoryId === "manifest-validated") return isManifestValidated(pkg);
   const category = categoryDefinitions.find((item) => item.id === categoryId);
   if (!category) return true;
@@ -54,6 +69,7 @@ function matchesCategory(pkg: McpPackageSummary, categoryId: string) {
 
 function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }) {
   const manifestValidated = isManifestValidated(pkg);
+  const installable = manifestValidated && Boolean(pkg.installCommand);
   const tools = pkg.tools || [];
   const tags = pkg.tags || [];
 
@@ -64,11 +80,11 @@ function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }
     >
       <div className="flex items-start justify-between gap-4">
         <span className="font-mono text-[9px] tracking-[0.16em] text-white/25">MCP-{String(number).padStart(3, "0")}</span>
-        {manifestValidated && (
-          <span className="inline-flex items-center gap-1.5 border border-cognitive-cyan/25 bg-cognitive-cyan/[0.04] px-2 py-1 font-mono text-[8px] uppercase tracking-wider text-cognitive-cyan">
-            <CheckCircle2 className="h-3 w-3" /> Manifest validated
-          </span>
-        )}
+        <div className="flex flex-wrap justify-end gap-1.5">
+          {pkg.officialPublisher && <span className="border border-emerald-400/25 bg-emerald-400/[0.04] px-2 py-1 font-mono text-[8px] uppercase text-emerald-300">Official</span>}
+          {installable && <span className="border border-cognitive-cyan/25 bg-cognitive-cyan/[0.04] px-2 py-1 font-mono text-[8px] uppercase text-cognitive-cyan">Installable</span>}
+          {manifestValidated && <span title="The registry found validation evidence; this is not physical execution verification." className="inline-flex items-center gap-1 border border-white/15 px-2 py-1 font-mono text-[8px] uppercase text-white/55"><CheckCircle2 className="h-3 w-3" /> Manifest</span>}
+        </div>
       </div>
 
       <div className="mt-6 flex items-start gap-4">
@@ -89,12 +105,12 @@ function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }
 
       <dl className="mt-6 grid grid-cols-2 border-y border-white/[0.08] py-4 font-mono text-[9px] uppercase tracking-[0.11em]">
         <div>
-          <dt className="text-white/25">Exposed tools</dt>
-          <dd className="mt-1 text-cognitive-cyan">{tools.length}</dd>
+          <dt className="text-white/25">Source updated</dt>
+          <dd className="mt-1 text-cognitive-cyan">{formatDate(pkg.githubUpdatedAt)}</dd>
         </div>
         <div>
-          <dt className="text-white/25">Target</dt>
-          <dd className="mt-1 truncate text-white/60">{pkg.robotType || "Not declared"}</dd>
+          <dt className="text-white/25">Registry synced</dt>
+          <dd className={`mt-1 truncate ${isFresh(pkg.lastSyncedAt) ? "text-emerald-300" : "text-white/60"}`}>{formatDate(pkg.lastSyncedAt)}</dd>
         </div>
       </dl>
 
@@ -107,7 +123,7 @@ function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }
       <div className="mt-auto flex items-center justify-between gap-4 pt-6 text-xs text-white/30">
         <span className="flex items-center gap-4">
           <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5" /> {pkg.githubStars || 0}</span>
-          <span className="inline-flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {pkg.viewsCount || 0}</span>
+          <span className="inline-flex items-center gap-1"><Wrench className="h-3.5 w-3.5" /> {tools.length} tools</span>
         </span>
         <span className="inline-flex items-center gap-1 font-mono text-[10px] text-white/45">
           v{pkg.version || "—"} <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
@@ -152,13 +168,13 @@ export function McpRegistryClient({
       .filter((pkg) => !query || searchableText(pkg).includes(query))
       .sort((a, b) => {
         if (sortBy === "stars") return (b.githubStars || 0) - (a.githubStars || 0);
-        if (sortBy === "tools") return (b.tools?.length || 0) - (a.tools?.length || 0);
-        const score = (pkg: McpPackageSummary) => (isManifestValidated(pkg) ? 1_000_000 : 0) + (pkg.tools?.length || 0) * 100 + (pkg.githubStars || 0) * 10;
+        if (sortBy === "updated") return Date.parse(b.githubUpdatedAt || "") - Date.parse(a.githubUpdatedAt || "");
+        const score = (pkg: McpPackageSummary) => (pkg.officialPublisher ? 10_000_000 : 0) + (isManifestValidated(pkg) && pkg.installCommand ? 5_000_000 : 0) + (isManifestValidated(pkg) ? 1_000_000 : 0) + (isFresh(pkg.lastSyncedAt) ? 100_000 : 0) + (pkg.githubStars || 0) * 10;
         return score(b) - score(a);
       });
   }, [packages, deferredSearch, activeCategory, sortBy]);
 
-  const totalTools = useMemo(() => packages.reduce((total, pkg) => total + (pkg.tools?.length || 0), 0), [packages]);
+  const freshCount = useMemo(() => packages.filter((pkg) => isFresh(pkg.lastSyncedAt)).length, [packages]);
   const validatedCount = useMemo(
     () => packages.filter(isManifestValidated).length,
     [packages],
@@ -193,7 +209,7 @@ export function McpRegistryClient({
           <dl className="mt-9 grid border border-white/10 bg-[#050708] sm:mt-12 sm:grid-cols-3">
             {[
               ["Registry packages", loading ? "—" : packages.length.toLocaleString()],
-              ["Exposed tools", loading ? "—" : totalTools.toLocaleString()],
+              ["Synced ≤ 6 days", loading ? "—" : freshCount.toLocaleString()],
               ["Validated manifests", loading ? "—" : validatedCount.toLocaleString()],
             ].map(([label, value], index) => (
               <div key={label} className={`p-5 sm:p-6 ${index < 2 ? "border-b border-white/10 sm:border-b-0 sm:border-r" : ""}`}>
@@ -222,7 +238,7 @@ export function McpRegistryClient({
               <span className="sr-only">Sort Hardware MCPs</span>
               <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="h-14 w-full border border-white/10 bg-[#0a0e10] px-4 text-sm text-white/65 focus:border-cognitive-cyan/50 focus:outline-none">
                 <option value="recommended">Recommended</option>
-                <option value="tools">Most tools</option>
+                <option value="updated">Recently updated source</option>
                 <option value="stars">Most GitHub stars</option>
               </select>
               <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />

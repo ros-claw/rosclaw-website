@@ -1,0 +1,29 @@
+{
+  "schema_version": "rosclaw.website_release_manifest.v1",
+  "generated_at": "2026-08-04T06:34:02Z",
+  "repository": "https://github.com/ros-claw/rosclaw.git",
+  "stable": {
+    "version": "1.0.1",
+    "label": "Stable Alpha",
+    "maturity": "alpha",
+    "ref_type": "commit",
+    "tag": null,
+    "commit": "a0233311a6bb74b6050692d72c95a5222dd77e02",
+    "published_at": "2026-07-21T23:12:21Z",
+    "python": ["3.11", "3.12", "3.13"],
+    "install_strategy": "verified-git-commit",
+    "release_notes": "https://github.com/ros-claw/rosclaw/commit/a0233311a6bb74b6050692d72c95a5222dd77e02"
+  },
+  "main": {
+    "version": "1.0.1",
+    "label": "Main Experimental",
+    "maturity": "experimental",
+    "ref_type": "commit",
+    "branch": "main",
+    "commit": "c5047a78f6d3fa09d1d14da047311cd3d0b49c70",
+    "published_at": "2026-08-04T04:46:04Z",
+    "python": ["3.11", "3.12", "3.13"],
+    "install_strategy": "verified-git-commit",
+    "release_notes": "https://github.com/ros-claw/rosclaw/commit/c5047a78f6d3fa09d1d14da047311cd3d0b49c70"
+  }
+}

@@ -48,14 +48,31 @@ function toolList(value: unknown): { name: string; description: string }[] {
     : [];
 }
 
+function isOfficialPublisher(repoUrl: string | undefined, authorName: string) {
+  if (authorName.toLowerCase() === "ros-claw" || authorName.toLowerCase() === "rosclaw") return true;
+  if (!repoUrl) return false;
+  try {
+    const owner = new URL(repoUrl).pathname.split("/").filter(Boolean)[0]?.toLowerCase();
+    return owner === "ros-claw" || owner === "rosclaw";
+  } catch {
+    return false;
+  }
+}
+
 function mcpSummary(row: RegistryRow): McpPackageSummary {
   const validation = getManifestValidationMetadata(row);
+  const githubRepoUrl = normalizePublicHttpsUrl(row.github_repo_url);
+  const authorName = String(row.author_name ?? "");
   return {
     id: String(row.id ?? row.name ?? ""),
     name: String(row.name ?? ""),
     description: String(row.description ?? ""),
-    authorName: String(row.author_name ?? ""),
-    githubRepoUrl: normalizePublicHttpsUrl(row.github_repo_url),
+    authorName,
+    githubRepoUrl,
+    githubUpdatedAt: optionalString(row.github_updated_at),
+    lastSyncedAt: optionalString(row.last_synced_at),
+    installCommand: optionalString(row.install_command),
+    officialPublisher: isOfficialPublisher(githubRepoUrl, authorName),
     manifestValidated: validation !== null,
     manifestValidatedAt: validation?.validatedAt,
     manifestValidationEvidence: validation?.evidence,
@@ -71,13 +88,18 @@ function mcpSummary(row: RegistryRow): McpPackageSummary {
 }
 
 function skillSummary(row: RegistryRow): SkillSummary {
+  const githubRepoUrl = normalizePublicHttpsUrl(row.github_repo_url);
+  const authorName = String(row.author_name ?? "");
   return {
     id: String(row.id ?? row.name ?? ""),
     name: String(row.name ?? ""),
     displayName: optionalString(row.display_name),
     description: String(row.description ?? ""),
-    authorName: String(row.author_name ?? ""),
-    githubRepoUrl: normalizePublicHttpsUrl(row.github_repo_url),
+    authorName,
+    githubRepoUrl,
+    githubUpdatedAt: optionalString(row.github_updated_at),
+    lastSyncedAt: optionalString(row.last_synced_at),
+    officialPublisher: isOfficialPublisher(githubRepoUrl, authorName),
     category: optionalString(row.category),
     version: optionalString(row.version),
     githubStars: numberValue(row.github_stars),

@@ -1,0 +1,37 @@
+[
+  {
+    "kind": "mission",
+    "label": "MISSION",
+    "title": "limo-inspection-01",
+    "detail": "SIMULATION · Body LIMO · Goal: inspect the aisle and report hazards",
+    "state": "ACTIVE"
+  },
+  {
+    "kind": "tool",
+    "label": "OBSERVE TOOL",
+    "title": "camera.capture_rgbd",
+    "detail": "Read-only observation bound to body:limo/front_camera",
+    "state": "EVIDENCE"
+  },
+  {
+    "kind": "worker",
+    "label": "WORKER",
+    "title": "vision-risk-review",
+    "detail": "WorkOrder claimed; candidate result requires Agent verification",
+    "state": "ACCEPTED"
+  },
+  {
+    "kind": "approval",
+    "label": "OPERATOR APPROVAL",
+    "title": "base.navigate",
+    "detail": "Exact parameters reviewed · simulation-only action · expires in 90s",
+    "state": "APPROVED"
+  },
+  {
+    "kind": "receipt",
+    "label": "EXECUTION RECEIPT",
+    "title": "TASK_VERIFIED",
+    "detail": "Observation matched goal predicate; receipt persisted with provenance",
+    "state": "VERIFIED"
+  }
+]
