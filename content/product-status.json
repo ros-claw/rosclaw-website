@@ -2,7 +2,7 @@
   "generated": {
     "schema_version": "rosclaw.product_status_snapshot.v1",
     "source": "src/rosclaw/product/status.yaml",
-    "source_sha256": "bd1a34acce0b5e27f1f5c21e217ea3aff7ebc113a4162999fcfd6fa65d407fb4"
+    "source_sha256": "4cdd54356134e381c832dbf0274595fe57233a1afb27738edacc5011e80d32ab"
   },
   "status": {
     "acknowledgement_stages": [
@@ -182,7 +182,7 @@
             "independent": false,
             "kind": "developer_hardware_report",
             "observation_scope": "physical_hardware",
-            "path": "reports/lerobot_bridge/P5D_GRADED_REAL_EXECUTION_REPORT.md"
+            "path": "docs/evidence/lerobot/P5D_GRADED_REAL_EXECUTION_REPORT.md"
           }
         ],
         "evidence_summary": {
@@ -372,7 +372,7 @@
             "independent": false,
             "kind": "component_report",
             "observation_scope": "component",
-            "path": "reports/ROSClaw_RealSense_MVP_Fix_Report.md",
+            "path": "docs/evidence/realsense/ROSClaw_RealSense_MVP_Fix_Report.md",
             "verified_at": "2026-06-27"
           }
         ],
@@ -390,12 +390,13 @@
         "support_tier": "H1_CONTRACT_VERIFIED"
       },
       "rh56_single_step": {
+        "agent_discoverable": true,
         "agent_ready": false,
         "candidate_tier": "H4_HARDWARE_ACTUATION_VERIFIED",
         "capability": "rh56.single_step",
         "claim": "developer_observed_revalidation_pending",
         "dimensions": {
-          "agent_blackbox": "not_run",
+          "agent_blackbox": "developer_observed",
           "hardware_actuation": "developer_observed",
           "hardware_read": "developer_observed",
           "physical_estop": "not_verified",
@@ -413,7 +414,7 @@
             "independent": false,
             "kind": "developer_hardware_report",
             "observation_scope": "physical_hardware",
-            "path": "reports/lerobot_bridge/P5_RH56_SHADOW_REPORT_S2_OBSERVED.md",
+            "path": "docs/evidence/lerobot/P5_RH56_SHADOW_REPORT_S2_OBSERVED.md",
             "verified_at": "2026-07-17"
           },
           {
@@ -423,7 +424,7 @@
             "independent": false,
             "kind": "developer_hardware_report",
             "observation_scope": "physical_hardware",
-            "path": "reports/lerobot_bridge/P5D_GRADED_REAL_EXECUTION_REPORT.md",
+            "path": "docs/evidence/lerobot/P5D_GRADED_REAL_EXECUTION_REPORT.md",
             "verified_at": "2026-07-17"
           },
           {
@@ -433,7 +434,7 @@
             "independent": false,
             "kind": "developer_hardware_report",
             "observation_scope": "physical_hardware",
-            "path": "reports/lerobot_bridge/P5D_REAL_FAULT_INJECTION_REPORT.md",
+            "path": "docs/evidence/lerobot/P5D_REAL_FAULT_INJECTION_REPORT.md",
             "verified_at": "2026-07-17"
           },
           {
@@ -444,11 +445,106 @@
             "observation_scope": "serial_protocol_ack_loss_loopback",
             "path": "tests/unit/integrations/lerobot/test_rh56_real_gateway.py",
             "verified_at": "2026-07-21"
+          },
+          {
+            "fixture": false,
+            "id": "rh56-lerobot-agent-blackbox-20260722",
+            "independent": false,
+            "kind": "developer_agent_blackbox",
+            "notes": "Discovery / SHADOW / unauthorized-REAL passes via a fresh-context developer agent process with zero forbidden actions; dataset workflow verified deterministically (agent process run cut short by backend quota); authorized REAL requires the physical hand.",
+            "observation_scope": "external_agent_guarded_hardware",
+            "path": "docs/evidence/lerobot/AGENT_NATIVE_CLOSURE_REPORT_V1_0_1.md",
+            "receipt_schema": "rosclaw.receipt.v1",
+            "verified_at": "2026-07-22"
+          },
+          {
+            "commit_sha": "8d34f67",
+            "fixture": false,
+            "id": "rh56-right-shadow-exp2-20260723",
+            "independent": false,
+            "kind": "developer_hardware_report",
+            "notes": "Right-hand shadow gate on the real SerialModbusTransport: S1 100 steps then S2 1000 steps, hardware_actions_executed == 0, effective 5.0 Hz, zero deadline misses; STATUS/TEMP register widths measured 6/6 and declared in the transport profile.",
+            "observation_scope": "physical_hardware",
+            "path": "docs/evidence/lerobot/P5_RH56_RIGHT_SHADOW_REPORT_S2_OBSERVED.md",
+            "verified_at": "2026-07-23"
+          },
+          {
+            "commit_sha": "8d34f67",
+            "fixture": false,
+            "id": "rh56-right-real-exp3-20260723",
+            "independent": false,
+            "kind": "developer_hardware_report",
+            "notes": "Right-hand graded REAL execution: noop 20/20, micro 10/10, motion 10/10, gesture 10/10, OK contact 10/10 with protection_events=0 and emergency_over_contact=0. Position tolerances measured at the real operating envelope (little 13, ring 9, middle 10, index 10, thumb 11, thumb_rot 28) after three failing-trial-driven iterations; every level's practice session passes verify --strict.",
+            "observation_scope": "physical_hardware",
+            "path": "docs/evidence/lerobot/RH56_RIGHT_GRADED_EXECUTION_REPORT.md",
+            "verified_at": "2026-07-23"
+          },
+          {
+            "commit_sha": "8d34f67",
+            "fixture": false,
+            "id": "rh56-right-faults-exp4-20260723",
+            "independent": false,
+            "kind": "developer_hardware_report",
+            "notes": "Right-hand fault injection 8/8: stale observation command_not_sent, calibration-hash permit refusal, sandbox BLOCK, slave-no-response COMMUNICATION_LOST + permit revoked, worker restart, STATUS protection estop, Ctrl+C DISARMED, sysfs USB unbind with clean recovery (FTDI cycles limited to 4 on the day).",
+            "observation_scope": "physical_hardware",
+            "path": "docs/evidence/lerobot/RH56_RIGHT_FAULT_INJECTION_REPORT.md",
+            "verified_at": "2026-07-23"
+          },
+          {
+            "commit_sha": "8d34f67",
+            "fixture": false,
+            "id": "rh56-right-agent-blackbox-real-20260723",
+            "independent": false,
+            "kind": "developer_agent_blackbox",
+            "notes": "Authorized REAL blackbox on the physical right hand: fresh-context agent discovers, is blocked AUTHORIZATION_REQUIRED, and never attempts a forbidden path (scan 0 violations); operator issues the single-use daemon permit and one noop single-step ActionEnvelope executes exactly once (hardware_actions_executed == 1, PHYSICALLY_OBSERVED, PROTOCOL_ACKNOWLEDGED, replay PERMIT_EXHAUSTED); practice chain verify --strict passes. Developer- run, not independent.",
+            "observation_scope": "external_agent_guarded_hardware",
+            "path": "docs/evidence/lerobot/RH56_RIGHT_AGENT_BLACKBOX_REAL_V1_0_1.md",
+            "receipt_schema": "rosclaw.receipt.v1",
+            "verified_at": "2026-07-23"
+          },
+          {
+            "fixture": false,
+            "id": "rh56-dataset-agent-rerun-20260723",
+            "independent": false,
+            "kind": "developer_agent_blackbox",
+            "notes": "Dataset workflow rerun by a fresh-context agent: practice identified, strict verify passed via the pinned CLI (0 issues), the physical-feedback export path failed honestly on rollout sessions exactly as the agent predicted from source, and the deterministic P2.1 export completed with load/index/dataloader validation all OK. No training, no upload.",
+            "observation_scope": "external_agent_dataset_workflow",
+            "path": "docs/evidence/lerobot/RH56_DATASET_AGENT_RERUN_V1_0_1.md",
+            "verified_at": "2026-07-23"
           }
         ],
         "evidence_summary": {
-          "en": "Real SerialModbusTransport, shadow reads, graded REAL actions, and fault injection were developer-observed. Loopback fault tests now prove that target-near readback is DELIVERY_INFERRED rather than a protocol ACK; independent v1 hardware revalidation and Agent black-box testing remain open.",
-          "zh": "SerialModbusTransport、Shadow 读取、分级 REAL 动作和故障注入已有开发者真机观察；Loopback 故障测试现已证明目标附近回读只能标为 DELIVERY_INFERRED 而非协议 ACK；独立 v1 真机复验与 Agent 黑盒仍未完成。"
+          "en": "Real SerialModbusTransport, shadow reads, graded REAL actions, and fault injection were developer-observed; a developer Agent black-box (discovery / SHADOW / unauthorized REAL / dataset workflow) passed 2026-07-22 with zero forbidden actions. Loopback fault tests now prove that target-near readback is DELIVERY_INFERRED rather than a protocol ACK. On 2026-07-23 the full v1.0.1 chain was revalidated on the physical RIGHT hand rh56_right_01 — 6/6 register widths declared, measured-envelope calibration, shadow S2 1000 steps, graded REAL noop/micro/motion/gesture/OK all passing (OK 10/10), fault injection 8/8, and an authorized developer agent blackbox executing exactly one permitted noop single step (hardware_actions_executed == 1, PHYSICALLY_OBSERVED). Independent v1 hardware revalidation and independent Agent black-box testing remain open.",
+          "zh": "SerialModbusTransport、Shadow 读取、分级 REAL 动作和故障注入已有开发者真机观察；开发者 Agent 黑盒（discovery / SHADOW / 未授权 REAL / dataset 流程）2026-07-22 通过、零违规动作。Loopback 故障测试现已证明目标附近回读只能标为 DELIVERY_INFERRED 而非协议 ACK。2026-07-23 已在右手真机（rh56_right_01）完成 v1.0.1 全链路复验：6/6 寄存器宽度声明、运行包络实测标定、Shadow S2 1000 步、分级 REAL noop/micro/motion/gesture/OK 全通过（OK 10/10）、故障注入 8/8，以及授权开发者 Agent 黑盒精确执行一次许可 noop 单步（hardware_actions_executed == 1，PHYSICALLY_OBSERVED）。独立 v1 真机复验与独立 Agent 黑盒仍未完成。"
+        },
+        "integration": {
+          "bridge_version": "1.0.1",
+          "family": "lerobot",
+          "reference_bodies": [
+            "inspire_rh56_left",
+            "inspire_rh56_right"
+          ],
+          "reference_policy": {
+            "action_dim": 6,
+            "semantic_source": "explicit_policy_contract",
+            "type": "rosclaw_rh56_reference"
+          },
+          "runtime": {
+            "active_sessions": 1,
+            "lerobot_version": ">=0.6,<0.7",
+            "worker_python": ">=3.12"
+          },
+          "supported_execution_modes": [
+            "proposal_only",
+            "shadow",
+            "single_step_receding_horizon"
+          ],
+          "unsupported": [
+            "can_rh56_execution",
+            "open_loop_action_chunks",
+            "multiple_active_sessions",
+            "unattended_execution"
+          ]
         },
         "modes": {
           "fixture": "fixture_verified",
@@ -461,33 +557,54 @@
       },
       "turtlesim_guarded_motion": {
         "agent_ready": false,
-        "candidate_tier": "H2_SIMULATION_VERIFIED",
-        "capability": "base.move",
-        "claim": "not_verified",
+        "candidate_tier": "H5_AGENT_BLACKBOX_VERIFIED",
+        "capability": "mobile_base.guarded_move",
+        "claim": "simulation_verified",
         "dimensions": {
-          "agent_blackbox": "not_run",
+          "agent_blackbox": "developer_observed",
           "hardware_actuation": "not_applicable",
           "hardware_read": "not_applicable",
           "physical_estop": "not_applicable",
-          "simulation": "not_run"
+          "simulation": "verified"
         },
         "display": {
-          "en": "ROS 2 Turtlesim guarded motion",
-          "zh": "ROS 2 Turtlesim 受控运动"
+          "en": "ROS 2 guarded motion (Turtlesim + Gazebo)",
+          "zh": "ROS 2 受控运动（Turtlesim + Gazebo）"
         },
-        "evidence": [],
+        "evidence": [
+          {
+            "fixture": false,
+            "id": "ros2-turtlesim-canonical-20260723",
+            "independent": true,
+            "kind": "automated_live_ros2_system_test",
+            "observation_scope": "live_ros2_simulation",
+            "path": "tests/simforge/test_guarded_base_ros_integration.py",
+            "receipt_schema": "rosclaw.receipt.v1",
+            "verified_at": "2026-07-23"
+          },
+          {
+            "fixture": false,
+            "id": "gazebo-guarded-base-process-chaos-20260723",
+            "independent": true,
+            "kind": "automated_physics_process_fault_test",
+            "observation_scope": "physics_simulation",
+            "path": "tests/simforge/launch/test_gazebo_guarded_base_launch.py",
+            "receipt_schema": "rosclaw.receipt.v1",
+            "verified_at": "2026-07-23"
+          }
+        ],
         "evidence_summary": {
-          "en": "Connector contracts exist, but the ROS 2 golden path has not been run in the current validation environment.",
-          "zh": "Connector 契约已存在，但当前验证环境尚未运行 ROS 2 黄金路径。"
+          "en": "Live rosbridge runs exercised the canonical MCP-to-rosclawd command path. Gazebo Fortress verified a differential-drive body, odometry, laser data, bounded deadman stops, real process kills, rosbridge reconnect with fresh handles, and no replay of an old Action ID. This remains simulation-only; Nav2, independent external-Agent acceptance, and real hardware are not claimed.",
+          "zh": "实时 rosbridge 运行已验证 MCP 到 rosclawd 的规范命令路径；Gazebo Fortress 已验证差速底盘、里程计、激光数据、有界 Deadman 停车、真实进程终止、使用新句柄重连 rosbridge，以及旧 Action ID 不重放。当前结论仅限仿真；不声明已验证 Nav2、独立外部 Agent 验收或真机。"
         },
         "modes": {
           "fixture": "fixture_available",
           "real": "not_applicable",
-          "shadow": "not_applicable",
-          "simulation": "not_run"
+          "shadow": "verified",
+          "simulation": "verified"
         },
-        "robot": "turtlesim",
-        "support_tier": "H1_CONTRACT_VERIFIED"
+        "robot": "sim_ros2_mobile_base",
+        "support_tier": "H2_SIMULATION_VERIFIED"
       },
       "ur5e_reach": {
         "agent_ready": false,
@@ -545,6 +662,47 @@
           "fixture": "fixture_available",
           "real": "not_run",
           "shadow": "not_applicable",
+          "simulation": "verified"
+        },
+        "robot": "sim_ur5e",
+        "support_tier": "H2_SIMULATION_VERIFIED"
+      },
+      "ur5e_shield_evolution": {
+        "agent_ready": false,
+        "candidate_tier": "H2_SIMULATION_VERIFIED",
+        "capability": "sandbox.follow_trajectory",
+        "claim": "simulation_verified",
+        "dimensions": {
+          "agent_blackbox": "developer_observed",
+          "hardware_actuation": "not_run",
+          "hardware_read": "not_run",
+          "physical_estop": "not_applicable",
+          "simulation": "verified"
+        },
+        "display": {
+          "en": "UR5e physics shield evolution",
+          "zh": "UR5e 物理安全门自进化"
+        },
+        "evidence": [
+          {
+            "fixture": false,
+            "id": "ur5e-shield-cpu-paired-20260722",
+            "independent": true,
+            "kind": "automated_physics_system_test",
+            "observation_scope": "physics_simulation",
+            "path": "tests/darwin/test_physics_runner.py",
+            "receipt_schema": "rosclaw.simulation_receipt.v1",
+            "verified_at": "2026-07-23"
+          }
+        ],
+        "evidence_summary": {
+          "en": "The automated CPU MuJoCo test catches an endpoint-safe midpath tabletop collision, verifies artifact hashes and deterministic strict replay, and compares paired baseline/candidate rollouts over two effective initial-state seeds. The code enforces a SIM promotion ceiling; generated operator and GPU evidence remains outside Git.",
+          "zh": "自动化 CPU MuJoCo 测试可检出“终点安全但中段撞桌”，验证 Artifact 哈希与确定性严格重放，并在两个实际改变初始物理状态的 seed 上配对比较 baseline/candidate。代码强制晋级上限为 SIM；操作员与 GPU 运行证据保存在 Git 仓库之外。"
+        },
+        "modes": {
+          "fixture": "fixture_available",
+          "real": "not_run",
+          "shadow": "not_run",
           "simulation": "verified"
         },
         "robot": "sim_ur5e",
