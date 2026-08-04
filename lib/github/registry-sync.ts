@@ -31,6 +31,13 @@ interface GitHubRepository {
   updated_at: string;
 }
 
+interface GitHubCommit {
+  commit?: {
+    author?: { date?: string | null };
+    committer?: { date?: string | null };
+  };
+}
+
 interface GitHubSource {
   kind: "repository" | "directory" | "file";
   path: string | null;
@@ -142,6 +149,35 @@ async function fetchGitHubRepository(repository: string): Promise<GitHubReposito
   }
 
   return (await response.json()) as GitHubRepository;
+}
+
+async function fetchGitHubSourceUpdatedAt(
+  source: GitHubSource,
+  repository: GitHubRepository
+): Promise<string> {
+  const repositoryUpdatedAt = repository.pushed_at || repository.updated_at;
+  if (source.kind === "repository" || !source.path) return repositoryUpdatedAt;
+
+  const url = new URL(`${GITHUB_API_URL}/repos/${source.repository}/commits`);
+  url.searchParams.set("path", source.path);
+  url.searchParams.set("sha", repository.default_branch);
+  url.searchParams.set("per_page", "1");
+
+  const response = await fetch(url, {
+    headers: githubHeaders(),
+    cache: "no-store",
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!response.ok) {
+    throw new Error(`GitHub source history request failed (${response.status})`);
+  }
+
+  const commits = (await response.json()) as GitHubCommit[];
+  return (
+    commits[0]?.commit?.committer?.date ||
+    commits[0]?.commit?.author?.date ||
+    repositoryUpdatedAt
+  );
 }
 
 async function fetchGitHubReadme(repository: string): Promise<string> {
@@ -411,12 +447,19 @@ export async function syncGitHubRegistry(options?: {
   const tasks = Array.from(repositories.entries()).map(
     ([repository, repoItems]) => async () => {
       const repo = await fetchGitHubRepository(repository);
-      const sourceUpdatedAt = repo.pushed_at || repo.updated_at;
       const syncedAt = new Date().toISOString();
-      const version = versionFromTimestamp(sourceUpdatedAt);
       const supabase = getSupabaseAdmin();
+      const sourceTimestampCache = new Map<string, Promise<string>>();
 
       const itemTasks = repoItems.map(({ item, source }) => async () => {
+        const sourceKey = `${source.kind}:${source.path || ""}`;
+        let sourceTimestamp = sourceTimestampCache.get(sourceKey);
+        if (!sourceTimestamp) {
+          sourceTimestamp = fetchGitHubSourceUpdatedAt(source, repo);
+          sourceTimestampCache.set(sourceKey, sourceTimestamp);
+        }
+        const sourceUpdatedAt = await sourceTimestamp;
+        const version = versionFromTimestamp(sourceUpdatedAt);
         const needsDocument =
           !item.readme_content || !timestampsMatch(item.github_updated_at, sourceUpdatedAt);
         const document = needsDocument
