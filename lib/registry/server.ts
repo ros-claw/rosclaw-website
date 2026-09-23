@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { createPublicRegistryClient } from "@/lib/registry/public-client";
+import { createPublicRegistryClient, withRegistryTimeout } from "@/lib/registry/public-client";
 import type {
   McpPackageDetail,
   McpPackageSummary,
@@ -118,11 +118,11 @@ function skillSummary(row: RegistryRow): SkillSummary {
 export async function loadMcpPackages(): Promise<RegistryLoad<McpPackageSummary>> {
   const supabase = client();
   if (!supabase) return { items: [], available: false };
-  const { data, error } = await supabase
+  const { data, error } = await withRegistryTimeout(supabase
     .from("mcp_packages")
     .select("*")
     .eq("status", "approved")
-    .order("downloads_count", { ascending: false });
+    .order("downloads_count", { ascending: false })).catch((error) => ({ data: null, error }));
   if (error) {
     console.error("MCP registry SSR load failed:", error.message);
     return { items: [], available: false };
@@ -134,11 +134,11 @@ export async function loadMcpPackages(): Promise<RegistryLoad<McpPackageSummary>
 export async function loadSkills(): Promise<RegistryLoad<SkillSummary>> {
   const supabase = client();
   if (!supabase) return { items: [], available: false };
-  const { data, error } = await supabase
+  const { data, error } = await withRegistryTimeout(supabase
     .from("skills")
     .select("*")
     .eq("status", "approved")
-    .order("downloads_count", { ascending: false });
+    .order("downloads_count", { ascending: false })).catch((error) => ({ data: null, error }));
   if (error) {
     console.error("Skill registry SSR load failed:", error.message);
     return { items: [], available: false };
@@ -153,19 +153,19 @@ export const loadMcpPackage = cache(
   async (identifier: string): Promise<McpPackageDetail | null | undefined> => {
     const supabase = client();
     if (!supabase) return undefined;
-    let result = await supabase
+    let result = await withRegistryTimeout(supabase
       .from("mcp_packages")
       .select("*")
       .eq("status", "approved")
       .eq("name", identifier)
-      .maybeSingle();
+      .maybeSingle()).catch((error) => ({ data: null, error }));
     if (!result.data && UUID_PATTERN.test(identifier)) {
-      result = await supabase
+      result = await withRegistryTimeout(supabase
         .from("mcp_packages")
         .select("*")
         .eq("status", "approved")
         .eq("id", identifier)
-        .maybeSingle();
+        .maybeSingle()).catch((error) => ({ data: null, error }));
     }
     if (result.error) {
       console.error("MCP package SSR load failed:", result.error.message);
@@ -192,12 +192,12 @@ export const loadSkill = cache(
 
     let row: RegistryRow | null = null;
     for (const name of names) {
-      const result = await supabase
+      const result = await withRegistryTimeout(supabase
         .from("skills")
         .select("*")
         .eq("status", "approved")
         .eq("name", name)
-        .maybeSingle();
+        .maybeSingle()).catch((error) => ({ data: null, error }));
       if (result.error) {
         console.error("Skill SSR load failed:", result.error.message);
         return undefined;
@@ -208,12 +208,12 @@ export const loadSkill = cache(
       }
     }
     if (!row && UUID_PATTERN.test(identifier)) {
-      const result = await supabase
+      const result = await withRegistryTimeout(supabase
         .from("skills")
         .select("*")
         .eq("status", "approved")
         .eq("id", identifier)
-        .maybeSingle();
+        .maybeSingle()).catch((error) => ({ data: null, error }));
       if (result.error) {
         console.error("Skill SSR load failed:", result.error.message);
         return undefined;

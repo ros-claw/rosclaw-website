@@ -6,7 +6,7 @@ import {
 } from "@/lib/registry/verification"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
-import { createPublicRegistryClient, registryErrorKind } from "@/lib/registry/public-client"
+import { createPublicRegistryClient, registryErrorKind, withRegistryTimeout } from "@/lib/registry/public-client"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`)
     }
 
-    const { data, error } = await query
+    const { data, error } = await withRegistryTimeout(query)
     if (error) throw error
 
     const packages = (data || []).map((p) => {

@@ -2,6 +2,13 @@ import { createClient } from "@supabase/supabase-js";
 
 const REGISTRY_TIMEOUT_MS = 8000;
 
+export function withRegistryTimeout<T>(query: PromiseLike<T>, timeoutMs = REGISTRY_TIMEOUT_MS): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("Registry query timeout")), timeoutMs);
+    Promise.resolve(query).then(resolve, reject).finally(() => clearTimeout(timer));
+  });
+}
+
 export function createPublicRegistryClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
