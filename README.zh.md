@@ -6,6 +6,17 @@
 
 网站展示 ROSClaw 如何把智能体意图转化为受控的物理行动，并让经过验证的实践为记忆与可复用技能提供依据。Hub 重点展示硬件 MCP 与 Skills：**一次传授，处处具身。**
 
+<div align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/brand/institutions/rd-lockup-dark.png">
+  <img src="public/brand/institutions/rd-lockup-light.png" width="900" alt="研发单位：同济大学与上海自主智能无人系统科学中心">
+</picture>
+<br>
+<a href="https://www.tongji.edu.cn/">同济大学</a> · <a href="https://srias.tongji.edu.cn/">上海自主智能无人系统科学中心</a>
+</div>
+
+官网已提供[英文首页](https://www.rosclaw.io/)与[中文首页](https://www.rosclaw.io/zh)。
+
 ## 本地开发
 
 ```bash

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { cache } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { createPublicRegistryClient } from "@/lib/registry/public-client";
 import type {
   McpPackageDetail,
   McpPackageSummary,
@@ -16,12 +16,8 @@ import { canonicalRegistrySourceUrl } from "@/lib/github/source-url";
 type RegistryRow = Record<string, unknown>;
 
 function client() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  try { return createPublicRegistryClient(); }
+  catch { console.error("Registry configuration is missing"); return null; }
 }
 
 function optionalString(value: unknown): string | undefined {

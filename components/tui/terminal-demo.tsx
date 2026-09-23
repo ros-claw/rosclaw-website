@@ -23,7 +23,7 @@ const icons = {
 
 export function TerminalDemo({ compact = false }: { compact?: boolean }) {
   const root = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(1);
+  const [visible, setVisible] = useState(Math.min(3, events.length));
   const [inView, setInView] = useState(true);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function TerminalDemo({ compact = false }: { compact?: boolean }) {
   useEffect(() => {
     if (!inView || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(
-      () => setVisible((count) => (count >= events.length ? 1 : count + 1)),
+      () => setVisible((count) => (count >= events.length ? Math.min(3, events.length) : count + 1)),
       1800,
     );
     return () => window.clearInterval(timer);

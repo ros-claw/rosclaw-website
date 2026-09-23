@@ -9,12 +9,7 @@ interface McpPackagePageProps {
 
 // Enable dynamic params for catch-all routes
 export const dynamicParams = true;
-export const revalidate = 300;
-
-// Generate static params (empty array = all paths generated on-demand)
-export async function generateStaticParams() {
-  return [];
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: McpPackagePageProps): Promise<Metadata> {
   const { id } = await params;

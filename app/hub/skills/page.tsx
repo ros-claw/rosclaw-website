@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/hub/skills" },
 };
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function SkillsPage() {
   const registry = await loadSkills();

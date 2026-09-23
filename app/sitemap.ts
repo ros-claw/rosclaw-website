@@ -3,7 +3,7 @@ import { SITE_URL } from "@/content/shared";
 import { loadMcpPackages, loadSkills } from "@/lib/registry/server";
 import { releaseManifest } from "@/content/release-manifest";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 function registryPath(name: string) {
   return name.split("/").map(encodeURIComponent).join("/");
@@ -13,6 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const releaseDate = new Date(releaseManifest.main.published_at);
   const staticPages = [
     ["", "weekly", 1.0],
+    ["/zh", "weekly", 0.9],
     ["/start", "weekly", 1.0],
     ["/native-agent", "weekly", 1.0],
     ["/safety", "weekly", 0.9],

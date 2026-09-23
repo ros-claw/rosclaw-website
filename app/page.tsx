@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer";
 export const metadata: Metadata = {
   title: "ROSClaw | Give AI a Body. Let Experience Drive Evolution.",
   description: "The Physical AI Runtime for Embodied Agents. Connect any agent to robot bodies through governed action, verified experience, physical memory, and evolving skills.",
-  alternates: { canonical: "/" },
+  alternates: { canonical: "/", languages: { en: "/", "zh-CN": "/zh" } },
 };
 
 export default function Home() {

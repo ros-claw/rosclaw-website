@@ -1,145 +1,107 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  BrainCircuit,
-  CheckCircle2,
-  Cpu,
-  Plug,
-  ScanEye,
-  ShieldCheck,
-  Sparkles,
-  TerminalSquare,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import { StatusBadge } from "@/components/status/status-badge";
 import { releaseManifest, shortCommit } from "@/content/release-manifest";
 
-const outwardSteps = ["Intent", "Body", "Capability", "Authority", "Action", "Physical world"];
-const inwardSteps = ["Observation", "Verification", "Episode", "Memory", "Skill", "Evolution"];
+export type HomeLocale = "en" | "zh";
 
-const experienceStages = [
-  { number: "01", title: "Act", description: "An agent proposes a body-scoped action. The runtime checks policy, authority, and the execution boundary.", href: "/safety" },
-  { number: "02", title: "Verify", description: "Observations and receipts record what happened. A request alone is never proof of completion.", href: "/evidence" },
-  { number: "03", title: "Remember", description: "Practice episodes can become inspectable context for recovery and future decisions.", href: "/flywheel" },
-  { number: "04", title: "Evolve", description: "Validated experience can inform reusable skills and evaluated changes; promotion remains governed.", href: "/hub/skills" },
+const copy = {
+  en: {
+    research: "Research & Development", loopsLabel: "The architecture", loops: "One Runtime. Two Loops.",
+    loopsIntro: "ROSClaw connects intelligence and the physical world in both directions: intent becomes governed action; verified practice becomes reusable experience.",
+    outLabel: "Intelligence → Physical world", inLabel: "Physical world → Intelligence",
+    out: ["Intent", "Body", "Capability", "Authority", "Action", "Physical world"],
+    inward: ["Observation", "Verification", "Episode", "Memory", "Skill", "Evolution"],
+    caveat: "Execution is governed today. Memory and skill evolution follow distinct, evaluated paths.",
+    practiceLabel: "The practice loop", practice: "Act. Verify. Remember. Evolve.",
+    practiceIntro: "Physical intelligence grows from what can be observed, checked, and safely reused—not from a model's assertion that a task is done.",
+    stages: [
+      ["Act", "Turn intent into a body-scoped, authorized action.", "BODY · MCP · POLICY", "/safety"],
+      ["Verify", "Compare the outcome with observations and an evidence-bearing receipt.", "OBSERVATION · RECEIPT", "/evidence"],
+      ["Remember", "Retain inspectable practice, including failures and recovery context.", "EPISODE · MEMORY", "/flywheel"],
+      ["Evolve", "Evaluate changes before promoting reusable skills to another body.", "SKILL · DARWIN", "/hub/skills"],
+    ],
+    agentsLabel: "Open at both ends", agents: "Bring Your Agent. Or Use Ours.",
+    agentsIntro: "Codex, Claude Code, Hermes, OpenClaw, VLAs, and ROSClaw Native Agent are possible northbound clients. ROSClaw—not one particular agent—holds the physical execution boundary.",
+    agentClients: "Agent clients", bodies: "Bodies & backends",
+    supportNote: "Integration surfaces, not a claim that every agent or robot is independently verified.",
+    supportLink: "Check the support matrix",
+    governedLabel: "Governed by design", governed: "Physical authority stays outside the model.",
+    governedIntro: "Body binding, policy, permit, lease and E-Stop bound execution. An agent proposes; the runtime decides what may be dispatched.",
+    governedLink: "Inspect the safety boundary",
+    experienceLabel: "Experience becomes capability", experience: "Teach Once. Embody Anywhere.",
+    experienceIntro: "MCPs expose typed physical capabilities. Skills carry reusable behavior. Reuse on a new body still requires validation.",
+    evidenceLabel: "Evidence, not claims", evidence: "Why do we know it happened?",
+    evidenceIntro: "Simulation verified, developer observed, component tested and experimental are deliberately different evidence levels.",
+    evidenceLink: "Inspect evidence", statusLink: "See current status",
+    startLabel: "Start ROSClaw", start: "Begin with an evidence-backed simulation.",
+    startIntro: "The stable and main install paths resolve to fixed commits. Real hardware is not required for a first run.",
+    stable: "Stable Alpha · verified simulation", frontier: "Main · experimental Native Agent",
+  },
+  zh: {
+    research: "研发单位 / Research & Development", loopsLabel: "核心架构", loops: "一个运行时，两个闭环。",
+    loopsIntro: "ROSClaw 连接智能与物理世界：向下把意图转化为受控行动，向上把经过验证的实践转化为可复用经验。",
+    outLabel: "智能 → 物理世界", inLabel: "物理世界 → 智能成长",
+    out: ["意图", "本体", "能力", "权限", "行动", "物理世界"],
+    inward: ["观测", "验证", "实践", "记忆", "技能", "进化"],
+    caveat: "可信执行已有实现；记忆与技能演化仍需经过独立评估。",
+    practiceLabel: "实践闭环", practice: "行动 · 验证 · 记忆 · 进化",
+    practiceIntro: "物理智能来自可观测、可核验、可安全复用的实践，而不是模型单方面宣称任务完成。",
+    stages: [
+      ["行动", "将意图转化为绑定本体、经过授权的行动。", "本体 · MCP · 策略", "/safety"],
+      ["验证", "用物理观测和执行回执核对实际结果。", "观测 · 回执", "/evidence"],
+      ["记忆", "沉淀可检查的实践，包括失败与恢复的上下文。", "实践片段 · 记忆", "/flywheel"],
+      ["进化", "经过评估，再把可复用技能推广到其他本体。", "技能 · DARWIN", "/hub/skills"],
+    ],
+    agentsLabel: "双向开放", agents: "带上你的智能体，或使用我们的。",
+    agentsIntro: "Codex、Claude Code、Hermes、OpenClaw、VLA 和 ROSClaw Native Agent 都可以成为上层入口。真正守住物理执行边界的是 ROSClaw。",
+    agentClients: "智能体入口", bodies: "本体与后端",
+    supportNote: "以下展示可接入的界面，不代表每种智能体或机器人都已通过独立验证。",
+    supportLink: "查看支持矩阵",
+    governedLabel: "受控执行", governed: "物理执行权不交给模型。",
+    governedIntro: "本体绑定、策略、许可、租约与急停共同约束执行。智能体提出动作，运行时决定哪些动作可以下发。",
+    governedLink: "了解安全边界",
+    experienceLabel: "让经验成为能力", experience: "一次传授，处处具身。",
+    experienceIntro: "MCP 暴露类型明确的物理能力，Skill 承载可复用行为；换一副身体复用时仍须重新验证。",
+    evidenceLabel: "证据，而非宣称", evidence: "我们凭什么知道它完成了？",
+    evidenceIntro: "仿真验证、开发者观察、组件测试和实验性能力，是不同的证据等级。",
+    evidenceLink: "查看证据", statusLink: "查看当前状态",
+    startLabel: "开始使用", start: "先从有证据的仿真开始。",
+    startIntro: "稳定版与 main 安装路径均固定到具体提交。首次体验无需真实硬件。",
+    stable: "稳定 Alpha · 已验证仿真", frontier: "Main · 实验性 Native Agent",
+  },
+} as const;
+
+const institutions = [
+  { key: "tongji", name: "Tongji University", zh: "同济大学", logo: "/同济大学logo.png", url: "https://www.tongji.edu.cn/" },
+  { key: "srias", name: "Shanghai Research Institute for Intelligent Autonomous Systems (SRIAS)", zh: "上海自主智能无人系统科学中心", logo: "/上海自主智能无人系统科学中心logo.png", url: "https://srias.tongji.edu.cn/" },
 ] as const;
 
-const agentExamples = ["Codex", "Claude Code", "Hermes", "OpenClaw", "VLA", "ROSClaw Native Agent"];
-const bodyExamples = ["ROS 2", "Hardware MCP", "Vendor SDK", "MuJoCo", "Isaac", "Robots"];
-
-const governance = [
-  ["Body + capability", "Ground each request in a specific body and declared capability."],
-  ["Policy + permit", "Physical authority stays with rosclawd and the operator."],
-  ["Lease + E-Stop", "Bound work in time and retain a stop path."],
-  ["Receipt + evidence", "Separate proposed, dispatched, and verified outcomes."],
-] as const;
-
-function LoopCard({ label, steps, accent }: { label: string; steps: readonly string[]; accent: "cyan" | "orange" }) {
-  const color = accent === "cyan" ? "text-cognitive-cyan" : "text-physical-orange";
-  return (
-    <div className="flex h-full flex-col border border-white/10 bg-[#080b0c] p-6 sm:p-8">
-      <p className={`font-mono text-[10px] uppercase tracking-[0.17em] ${color}`}>{label}</p>
-      <ol className="mt-8 grid gap-2 sm:grid-cols-3">
-        {steps.map((step, index) => (
-          <li key={step} className="flex min-h-20 items-center gap-3 border border-white/[0.08] bg-black/20 px-4 py-3">
-            <span className={`font-mono text-[10px] ${color}`}>{String(index + 1).padStart(2, "0")}</span>
-            <span className="text-sm font-medium text-white/75">{step}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
+export function InstitutionLinks({ compact = false }: { compact?: boolean }) {
+  return <div className={compact ? "institution-links institution-links--compact" : "institution-links"}>{institutions.map(item =>
+    <a key={item.key} href={item.url} target="_blank" rel="noopener noreferrer" className="institution-link focus-ring" aria-label={`${item.name} · ${item.zh}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={item.logo} alt="" className={`institution-mark institution-mark--${item.key}`} />
+      <span><strong>{item.name}</strong><small>{item.zh}</small></span><ArrowUpRight size={14} aria-hidden="true" />
+    </a>)}</div>;
 }
 
-export function ProductHomeSections() {
-  return (
-    <>
-      <section className="border-b border-white/[0.08] bg-[#050708] px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-[1440px] divide-y divide-white/[0.08] border-x border-white/[0.08] sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
-          {[["Runtime", "One governed boundary"], ["Agents", "Replaceable clients"], ["Bodies", "Physical + simulated"], ["Evidence", "Status linked to proof"]].map(([label, value]) => (
-            <div key={label} className="px-5 py-4"><p className="runtime-label">{label}</p><p className="mt-1.5 font-mono text-xs text-white/72">{value}</p></div>
-          ))}
-        </div>
-      </section>
-
-      <section id="mission" className="px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-        <div className="mx-auto max-w-[1440px]">
-          <div className="grid gap-7 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div><p className="section-kicker">What is ROSClaw?</p><h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">One Runtime. Two Loops.</h2></div>
-            <p className="max-w-2xl text-base leading-relaxed text-white/52 lg:justify-self-end">ROSClaw is the bidirectional runtime between intelligence and the physical world: turning intent into governed action, and verified physical experience into reusable intelligence.</p>
-          </div>
-          <div className="mt-12 grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-stretch">
-            <LoopCard label="Intelligence → Physical world" steps={outwardSteps} accent="cyan" />
-            <div className="flex min-h-24 items-center justify-center border border-white/15 bg-white/[0.03] px-7 text-xl font-semibold tracking-[-0.04em] text-white lg:[writing-mode:vertical-rl]">ROSClaw</div>
-            <LoopCard label="Physical world → Intelligence" steps={inwardSteps} accent="orange" />
-          </div>
-          <p className="mt-5 max-w-4xl text-sm leading-relaxed text-white/42">Execution is governed today; memory and skill evolution consume evidence through distinct, evaluated paths. See <Link href="/status" className="text-cognitive-cyan hover:text-white">current evidence and maturity</Link> for each capability.</p>
-        </div>
-      </section>
-
-      <section className="border-y border-white/[0.08] bg-[#050708] px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-        <div className="mx-auto max-w-[1440px]">
-          <p className="section-kicker">The practice loop</p>
-          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">Act. Verify. Remember. Evolve.</h2>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/50">Experience is useful when it can be checked, retained, and evaluated before it changes how a robot acts.</p>
-          <div className="mt-12 grid gap-px overflow-hidden border border-white/10 bg-white/10 md:grid-cols-2 xl:grid-cols-4">
-            {experienceStages.map((stage) => (
-              <Link key={stage.title} href={stage.href} className="focus-ring group flex min-h-72 flex-col bg-[#080b0c] p-7 transition-colors hover:bg-[#0c1214]">
-                <span className="font-mono text-[10px] text-cognitive-cyan">{stage.number} / 04</span>
-                <h3 className="mt-12 text-3xl font-semibold text-white group-hover:text-cognitive-cyan">{stage.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-white/46">{stage.description}</p>
-                <span className="mt-auto inline-flex items-center gap-2 pt-8 text-xs text-white/45">Explore <ArrowRight className="h-3.5 w-3.5" /></span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-        <div className="mx-auto max-w-[1440px]">
-          <p className="section-kicker">Open at both ends</p>
-          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">Any Agent. Any Body. One Runtime.</h2>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/50">Bring the agent you use and connect a supported body or simulator. ROSClaw keeps the same physical execution boundary between them.</p>
-          <div className="mt-12 grid gap-4 lg:grid-cols-[1fr_auto_1fr] lg:items-stretch">
-            <div className="border border-white/10 bg-[#080b0c] p-7"><div className="flex items-center gap-3 text-cognitive-cyan"><BrainCircuit className="h-5 w-5" /><h3 className="text-lg font-semibold">Agent clients</h3></div><div className="mt-7 flex flex-wrap gap-2">{agentExamples.map((name) => <span key={name} className="border border-white/10 px-3 py-2 text-sm text-white/65">{name}</span>)}</div></div>
-            <div className="flex min-h-20 items-center justify-center border border-cognitive-cyan/25 bg-cognitive-cyan/[0.04] px-7 text-xl font-semibold text-white">ROSClaw</div>
-            <div className="border border-white/10 bg-[#080b0c] p-7"><div className="flex items-center gap-3 text-physical-orange"><Cpu className="h-5 w-5" /><h3 className="text-lg font-semibold">Bodies + backends</h3></div><div className="mt-7 flex flex-wrap gap-2">{bodyExamples.map((name) => <span key={name} className="border border-white/10 px-3 py-2 text-sm text-white/65">{name}</span>)}</div></div>
-          </div>
-          <p className="mt-5 text-xs leading-relaxed text-white/38">The examples show integration surfaces, not universal compatibility or verified support for every robot. <Link href="/robots" className="text-cognitive-cyan hover:text-white">Check the support matrix.</Link> ROSClaw Native Agent is an optional agent client.</p>
-          <Link href="/integrations" className="focus-ring mt-7 inline-flex items-center gap-2 text-sm text-cognitive-cyan hover:text-white">Explore integrations <ArrowRight className="h-4 w-4" /></Link>
-        </div>
-      </section>
-
-      <section className="border-y border-white/[0.08] bg-[#050708] px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-        <div className="mx-auto max-w-[1440px]">
-          <p className="section-kicker">Governed by design</p>
-          <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">Physical authority stays outside the model.</h2>
-          <p className="mt-5 max-w-3xl text-base leading-relaxed text-white/50">Agents can reason and propose. ROSClaw checks the body, capability, policy, and permit before an executor can act.</p>
-          <div className="mt-12 grid gap-px border border-white/10 bg-white/10 md:grid-cols-2 xl:grid-cols-4">
-            {governance.map(([title, body]) => <div key={title} className="bg-[#080b0c] p-7"><ShieldCheck className="h-5 w-5 text-physical-orange" /><h3 className="mt-10 text-lg font-semibold text-white">{title}</h3><p className="mt-3 text-sm leading-relaxed text-white/44">{body}</p></div>)}
-          </div>
-          <Link href="/safety" className="focus-ring mt-7 inline-flex items-center gap-2 text-sm text-cognitive-cyan hover:text-white">Inspect safety boundary <ArrowRight className="h-4 w-4" /></Link>
-        </div>
-      </section>
-
-      <section className="px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-        <div className="mx-auto grid max-w-[1440px] gap-10 lg:grid-cols-2 lg:items-center">
-          <div><p className="section-kicker">Experience becomes capability</p><h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">Teach Once. Embody Anywhere.</h2><p className="mt-5 max-w-xl text-base leading-relaxed text-white/50">Skills capture repeatable behavior. Body binding and capability mapping let a skill be adapted to another compatible robot, with validation at every step.</p><Link href="/hub/skills" className="focus-ring mt-7 inline-flex items-center gap-2 text-sm text-physical-orange hover:text-white">Explore Skills <ArrowRight className="h-4 w-4" /></Link></div>
-          <div className="grid gap-4 sm:grid-cols-2"><Link href="/hub/mcps" className="focus-ring border border-cognitive-cyan/25 bg-cognitive-cyan/[0.04] p-7"><Plug className="h-6 w-6 text-cognitive-cyan" /><h3 className="mt-8 text-xl font-semibold text-white">MCPs expose the body</h3><p className="mt-3 text-sm leading-relaxed text-white/45">Typed interfaces for physical capabilities.</p></Link><Link href="/hub/skills" className="focus-ring border border-physical-orange/25 bg-physical-orange/[0.04] p-7"><Sparkles className="h-6 w-6 text-physical-orange" /><h3 className="mt-8 text-xl font-semibold text-white">Skills carry the behavior</h3><p className="mt-3 text-sm leading-relaxed text-white/45">Source-linked behaviors with visible trust signals.</p></Link></div>
-        </div>
-      </section>
-
-      <section className="border-t border-white/[0.08] bg-[#050708] px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-[1440px]">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between"><div><p className="section-kicker">Evidence, not claims</p><h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">See what has been proven.</h2></div><p className="max-w-xl text-sm leading-relaxed text-white/45">Simulation verified, developer observed, component tested, and experimental paths remain distinct.</p></div>
-          <div className="mt-10 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-3">
-            {([[ScanEye, "Evidence", "Inspect receipts and validation records.", "/evidence"], [CheckCircle2, "Product status", "See current evidence and support levels.", "/status"], [TerminalSquare, "Native Agent", "Explore the optional experimental agent client.", "/native-agent"]] as const).map(([Icon, title, body, href]) => <Link key={title} href={href} className="focus-ring group bg-[#080b0c] p-7"><Icon className="h-6 w-6 text-cognitive-cyan" /><h3 className="mt-8 text-xl font-semibold text-white">{title}</h3><p className="mt-3 text-sm leading-relaxed text-white/45">{body}</p><span className="mt-6 inline-flex items-center gap-2 text-sm text-cognitive-cyan">Explore <ArrowRight className="h-4 w-4" /></span></Link>)}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-white/[0.08] px-4 py-20 sm:px-6 md:py-28 lg:px-8">
-        <div className="mx-auto max-w-[1440px]"><div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr]"><div><p className="section-kicker">Choose a starting point</p><h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">Start with a verified simulation.</h2><p className="mt-5 text-sm leading-relaxed text-white/48">The stable installer and the latest main build each resolve to a fixed commit.</p></div><div className="grid border border-white/10 bg-[#070a0b] md:grid-cols-2"><article className="border-b border-white/10 p-6 sm:p-8 md:border-b-0 md:border-r"><div className="flex items-center justify-between gap-3"><StatusBadge status="Simulation Verified" /><span className="font-mono text-[10px] text-white/30">{shortCommit(releaseManifest.stable.commit)}</span></div><h3 className="mt-7 text-2xl font-semibold text-white">Stable Alpha</h3><p className="mt-3 text-sm leading-relaxed text-white/46">Run the evidence-backed MuJoCo path with hardware disabled.</p><code className="mt-7 block overflow-x-auto border border-white/10 bg-black/40 p-4 font-mono text-xs text-cognitive-cyan">curl -fsSL https://rosclaw.io/get | bash</code><Link href="/start?path=simulation" className="focus-ring mt-5 inline-flex items-center gap-2 text-sm text-cognitive-cyan">Start verified path <ArrowRight className="h-4 w-4" /></Link></article><article className="p-6 sm:p-8"><div className="flex items-center justify-between gap-3"><StatusBadge status="Experimental" /><span className="font-mono text-[10px] text-white/30">{shortCommit(releaseManifest.main.commit)}</span></div><h3 className="mt-7 text-2xl font-semibold text-white">Main · Native Agent</h3><p className="mt-3 text-sm leading-relaxed text-white/46">Try the newest TUI mission runtime and worker fabric in simulation.</p><code className="mt-7 block overflow-x-auto border border-white/10 bg-black/40 p-4 font-mono text-xs text-cognitive-cyan">curl -fsSL https://rosclaw.io/get-main | bash</code><Link href="/start?path=native-agent" className="focus-ring mt-5 inline-flex items-center gap-2 text-sm text-cognitive-cyan">Explore experimental path <ArrowRight className="h-4 w-4" /></Link></article></div></div></div>
-      </section>
-    </>
-  );
+export function ProductHomeSections({ locale = "en" }: { locale?: HomeLocale }) {
+  const t = copy[locale];
+  return <>
+    <section className="research-band" aria-label={t.research}><div className="research-band__inner"><p>{t.research}</p><InstitutionLinks /></div></section>
+    <section id="mission" className="brand-section brand-section--loops"><div className="brand-container">
+      <p className="section-kicker">{t.loopsLabel}</p><div className="brand-intro"><h2>{t.loops}</h2><p>{t.loopsIntro}</p></div>
+      <div className="loop-architecture" aria-label={t.loops}><div className="loop-lane loop-lane--out"><span>01 / {t.outLabel}</span><div>{t.out.map(step => <b key={step}>{step}</b>)}</div></div><div className="loop-core">ROSClaw<small>PHYSICAL AI RUNTIME</small></div><div className="loop-lane loop-lane--in"><span>02 / {t.inLabel}</span><div>{t.inward.map(step => <b key={step}>{step}</b>)}</div></div></div>
+      <p className="brand-footnote">{t.caveat} <Link href="/status">{t.statusLink} ↗</Link></p>
+    </div></section>
+    <section className="brand-section brand-section--practice"><div className="brand-container"><p className="section-kicker">{t.practiceLabel}</p><div className="brand-intro"><h2>{t.practice}</h2><p>{t.practiceIntro}</p></div>
+      <ol className="practice-list">{t.stages.map(([title, description, nouns, href], i) => <li key={title}><Link href={href} className="practice-row focus-ring"><span className="practice-row__index">0{i + 1}</span><strong>{title}</strong><span className="practice-row__description">{description}<small>{nouns}</small></span><ArrowUpRight size={22}/></Link></li>)}</ol>
+    </div></section>
+    <section className="brand-section brand-section--agents"><div className="brand-container"><p className="section-kicker">{t.agentsLabel}</p><div className="brand-intro"><h2>{t.agents}</h2><p>{t.agentsIntro}</p></div><div className="agent-body-map"><div><span>{t.agentClients}</span><p>Codex / Claude Code / Hermes / OpenClaw / VLA / ROSClaw Native Agent</p></div><strong>ROSClaw</strong><div><span>{t.bodies}</span><p>ROS 2 / Hardware MCP / Vendor SDK / MuJoCo / Isaac / Robots</p></div></div><p className="brand-footnote">{t.supportNote} <Link href="/robots">{t.supportLink} ↗</Link></p></div></section>
+    <section className="brand-section brand-section--governance"><div className="brand-container brand-split"><div><p className="section-kicker section-kicker--orange">{t.governedLabel}</p><h2>{t.governed}</h2><p>{t.governedIntro}</p><Link href="/safety" className="brand-text-link">{t.governedLink} <ArrowRight size={16}/></Link></div><div className="governance-trace"><span>BODY + CAPABILITY</span><span>POLICY + PERMIT</span><span>LEASE + E-STOP</span><span><Check size={17}/> RECEIPT + EVIDENCE</span></div></div></section>
+    <section className="brand-section brand-section--experience"><div className="brand-container brand-split"><div><p className="section-kicker section-kicker--green">{t.experienceLabel}</p><h2>{t.experience}</h2><p>{t.experienceIntro}</p></div><div className="experience-links"><Link href="/hub/mcps">MCP <span>Hardware MCP ↗</span></Link><Link href="/hub/skills">Skill <span>Skills Hub ↗</span></Link></div></div></section>
+    <section className="brand-section brand-section--evidence"><div className="brand-container brand-split"><div><p className="section-kicker section-kicker--green">{t.evidenceLabel}</p><h2>{t.evidence}</h2><p>{t.evidenceIntro}</p><Link href="/evidence" className="brand-text-link">{t.evidenceLink} <ArrowRight size={16}/></Link></div><div className="evidence-specimen"><small>EXECUTION RECEIPT / EVIDENCE LEVEL</small><strong><Check size={21}/> SIMULATION VERIFIED</strong><span>UR5e tabletop reach · MuJoCo / TASK_VERIFIED</span><Link href="/evidence">{t.evidenceLink} ↗</Link></div></div></section>
+    <section className="brand-section brand-section--start"><div className="brand-container brand-split"><div><p className="section-kicker">{t.startLabel}</p><h2>{t.start}</h2><p>{t.startIntro}</p></div><div className="start-paths"><Link href="/start?path=simulation"><StatusBadge status="Simulation Verified"/><strong>{t.stable}</strong><code>curl -fsSL https://rosclaw.io/get | bash</code><span>{shortCommit(releaseManifest.stable.commit)} ↗</span></Link><Link href="/start?path=native-agent"><StatusBadge status="Experimental"/><strong>{t.frontier}</strong><code>curl -fsSL https://rosclaw.io/get-main | bash</code><span>{shortCommit(releaseManifest.main.commit)} ↗</span></Link></div></div></section>
+  </>;
 }

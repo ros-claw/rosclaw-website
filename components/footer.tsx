@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Github, Mail } from "lucide-react";
 import { CONTACT_EMAIL, GITHUB_URL } from "@/content/shared";
+import { InstitutionLinks } from "@/components/product-home-sections";
 
 const linkGroups = [
   {
@@ -35,7 +36,7 @@ const linkGroups = [
   },
 ] as const;
 
-export function Footer() {
+export function Footer({ locale = "en" }: { locale?: "en" | "zh" }) {
   return (
     <footer className="border-t border-white/10 bg-[#040606]">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 md:py-16 lg:px-8">
@@ -48,9 +49,9 @@ export function Footer() {
               <span className="text-lg font-semibold tracking-tight text-white">ROSClaw</span>
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/[0.42]">
-              The Native Agent runtime for Physical AI: body-aware reasoning, governed execution, and auditable evidence.
+              {locale === "zh" ? "面向具身智能体的 Physical AI Runtime：让 AI 受控进入物理世界，让验证过的实践成为经验。" : "The Physical AI Runtime for Embodied Agents: governed action, verified experience, physical memory, and evolving skills."}
             </p>
-            <p className="mt-6 font-mono text-[9px] uppercase text-white/25">Body-aware · guarded · auditable</p>
+            <p className="mt-6 font-mono text-[9px] uppercase text-white/25">{locale === "zh" ? "任意智能体 · 任意本体 · 一个运行时" : "Any Agent. Any Body. One Runtime."}</p>
           </div>
 
           {linkGroups.map((group) => (
@@ -81,6 +82,10 @@ export function Footer() {
           </div>
         </div>
 
+        <div className="mt-12 border-t border-white/10 pt-7">
+          <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.15em] text-white/40">{locale === "zh" ? "研发单位 / Research & Development" : "Research & Development / 研发单位"}</p>
+          <InstitutionLinks compact />
+        </div>
         <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; {new Date().getFullYear()} ROSClaw. Open source under the MIT License.</p>
           <div className="flex items-center gap-5">

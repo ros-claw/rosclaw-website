@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/hub/mcps" },
 };
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export default async function McpsPage() {
   const registry = await loadMcpPackages();

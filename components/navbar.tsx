@@ -24,6 +24,7 @@ const productLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const isChinese = pathname === "/zh" || pathname.startsWith("/zh/");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -102,7 +103,7 @@ export function Navbar() {
                 href="/runtime"
                 className={`focus-ring inline-flex items-center gap-1 py-2 text-sm transition-colors ${["/native-agent", "/runtime", "/safety", "/integrations", "/apps"].some((href) => isActive(href)) ? "text-white" : "text-white/[0.52] hover:text-white"}`}
               >
-                Product <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
+                {isChinese ? "产品" : "Product"} <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />
               </Link>
               <div className="invisible absolute left-1/2 top-full w-[620px] -translate-x-1/2 translate-y-2 border border-white/10 bg-[#060809]/[0.98] p-3 opacity-0 shadow-2xl backdrop-blur-xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
                 <div className="grid grid-cols-2 gap-px bg-white/10">
@@ -123,13 +124,18 @@ export function Navbar() {
                 aria-current={isActive(link.href) ? "page" : undefined}
                 className={`focus-ring relative py-2 text-sm transition-colors ${isActive(link.href) ? "text-white" : "text-white/[0.52] hover:text-white"}`}
               >
-                {link.name}
+                {isChinese ? ({ Robots: "机器人", Hub: "资源中心", Docs: "文档", Status: "状态" } as Record<string, string>)[link.name] : link.name}
                 {isActive(link.href) && <span className="absolute inset-x-0 -bottom-[15px] h-px bg-cognitive-cyan" />}
               </Link>
             ))}
           </div>
 
           <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-1 font-mono text-[10px] sm:flex" aria-label="Language">
+              <Link href="/" hrefLang="en" aria-current={!isChinese ? "page" : undefined} className={`focus-ring px-1.5 py-2 ${isChinese ? "text-white/40" : "text-cognitive-cyan"}`}>EN</Link>
+              <span className="text-white/20">/</span>
+              <Link href="/zh" hrefLang="zh-CN" aria-current={isChinese ? "page" : undefined} className={`focus-ring px-1.5 py-2 ${isChinese ? "text-cognitive-cyan" : "text-white/40"}`}>中文</Link>
+            </div>
             <a
               href={GITHUB_URL}
               target="_blank"
@@ -200,6 +206,7 @@ export function Navbar() {
                 Start <ArrowDownRight className="h-4 w-4" />
               </Link>
             </div>
+            <div className="mt-4 flex items-center gap-3 font-mono text-xs"><Link href="/" hrefLang="en" className={!isChinese ? "text-cognitive-cyan" : "text-white/45"}>EN</Link><span className="text-white/25">/</span><Link href="/zh" hrefLang="zh-CN" className={isChinese ? "text-cognitive-cyan" : "text-white/45"}>中文</Link></div>
           </div>
         </div>
       )}

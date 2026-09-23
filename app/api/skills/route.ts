@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr"
 import { authenticateApiKey } from "@/lib/api-key"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
+import { createPublicRegistryClient, registryErrorKind } from "@/lib/registry/public-client"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
   const search = searchParams.get("search")
 
   try {
-    const supabase = createClient(req)
+    const supabase = createPublicRegistryClient()
 
     let query = supabase
       .from("skills")
@@ -104,8 +105,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(skills)
   } catch (err: any) {
-    console.error("Skills API error:", err.message)
-    return NextResponse.json({ error: "Failed to fetch skills" }, { status: 500 })
+    const kind = registryErrorKind(err)
+    console.error("Skills API error:", kind, err)
+    return NextResponse.json({ error: "Registry temporarily unavailable", reason: kind }, { status: 503, headers: { "Retry-After": "60", "Cache-Control": "no-store" } })
   }
 }
 
