@@ -1,36 +1,23 @@
 # ROSClaw Website
 
-🌐 **English** | [中文](./README.zh.md)
+**Give AI a Body. Let Experience Drive Evolution.**
 
-The official website for ROSClaw - The Universal OS for Embodied AI.
+The website for [ROSClaw](https://github.com/ros-claw/rosclaw), the Physical AI Runtime for Embodied Agents. [English](README.md) · [中文](README.zh.md) · [Live site](https://www.rosclaw.io/)
 
-**Live Site**: [rosclaw.io](https://rosclaw.io)
-
-## Phase 1: Hero Section (Complete)
-
-- [x] Video background component
-- [x] Hero section with slogan
-- [x] Terminal CTA with copy functionality
-- [x] Logo ticker animation
-- [x] Glassmorphism design system
-
-## Design System
-
-- **Background**: Deep black (`#000000`)
-- **Cognitive Cyan**: AI/Digital accent (`#00D4FF`)
-- **Physical Orange**: ROS/Physics accent (`#FF6B00`)
-- **Typography**: Geist (headings) + JetBrains Mono (code)
+The site explains how ROSClaw connects agent intent to governed physical action and how verified practice can inform memory and reusable skills. Its Hub focuses on hardware MCPs and Skills: **Teach Once. Embody Anywhere.**
 
 ## Development
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
+npm ci
 npm run dev
+```
 
-# Build for production
+## Checks and deployment
+
+```bash
+npm test
 npm run build
 ```
 
+This is a Next.js App Router site with server-rendered registry pages and API routes. Vercel deploys the GitHub `main` branch. Product status and release claims are checked against the pinned core release data; see [brand language](docs/BRAND_LANGUAGE.md) and the [registry refresh schedule](docs/GITHUB_SYNC_CRON.md).

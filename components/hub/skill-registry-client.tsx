@@ -167,6 +167,7 @@ export function SkillRegistryClient({
               </Link>
               <p className="mt-7 font-mono text-[0.68rem] uppercase tracking-[0.17em] text-physical-orange md:mt-10">02 / Behavior package registry</p>
               <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl md:text-6xl">Skills</h1>
+              <p className="mt-4 text-xl font-semibold tracking-[-0.03em] text-physical-orange">Teach Once. Embody Anywhere.</p>
               <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-white/50 md:text-lg">
                 Find versioned task policies for embodied agents. Inspect the declared body profiles, dependencies, and operating assumptions before deployment.
               </p>

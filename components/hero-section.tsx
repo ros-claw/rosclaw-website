@@ -8,7 +8,7 @@ import { StatusBadge } from "@/components/status/status-badge";
 import { TerminalDemo } from "@/components/tui/terminal-demo";
 
 export function HeroSection() {
-  const { title, subtitle, description, ctas } = heroContent;
+  const { title, category, ecosystem, loop, description, ctas } = heroContent;
 
   return (
     <section id="product" className="runtime-grid relative overflow-hidden border-b border-white/[0.08] px-4 pb-16 pt-28 sm:px-6 lg:px-8 lg:pb-20 lg:pt-32">
@@ -19,23 +19,18 @@ export function HeroSection() {
               <ShieldCheck className="h-3.5 w-3.5" /> {releaseManifest.stable.label} · v{releaseManifest.stable.version}
             </span>
             <StatusBadge status="Experimental" />
-            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-white/38">
-              Native Agent on Main · {shortCommit(releaseManifest.main.commit)}
-            </span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-white/38">Runtime on Main · {shortCommit(releaseManifest.main.commit)}</span>
           </div>
 
+          <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.17em] text-cognitive-cyan sm:text-xs">{category}</p>
           <h1 className="text-balance text-[clamp(2.7rem,6vw,4.75rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-white">
             {title.line1}<br /><span className="text-white/72">{title.line2}</span>
           </h1>
 
-          <div className="mt-7 grid gap-1.5 font-mono text-sm text-cognitive-cyan sm:grid-cols-2 sm:text-[15px]">
-            {subtitle.map((item) => <span key={item}>{item}</span>)}
-          </div>
-
           <p className="mt-7 max-w-2xl text-base leading-relaxed text-white/62 sm:text-lg">{description}</p>
-          <p className="mt-4 max-w-2xl border-l-2 border-physical-orange pl-4 text-sm font-medium leading-relaxed text-white/72">
-            No model output directly controls a robot. <span className="text-white/45">The Native Agent proposes; rosclawd remains the physical authority.</span>
-          </p>
+          <p className="mt-5 text-sm font-semibold tracking-wide text-white/78">{ecosystem}</p>
+          <p className="mt-2 font-mono text-xs tracking-wide text-cognitive-cyan">{loop}</p>
+          <p className="mt-5 max-w-2xl border-l-2 border-physical-orange pl-4 text-sm leading-relaxed text-white/50">Agents propose actions; rosclawd governs physical execution. Verified receipts can inform memory and future skills.</p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link href={ctas.primary.href} className="focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-[4px] bg-cognitive-cyan px-5 font-semibold text-[#021012] transition-colors hover:bg-white">

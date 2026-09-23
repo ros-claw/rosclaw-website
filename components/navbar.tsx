@@ -15,10 +15,10 @@ const navLinks = [
 ] as const;
 
 const productLinks = [
-  { name: "Native Agent", href: "/native-agent", detail: "TUI mission runtime + workers" },
   { name: "Runtime", href: "/runtime", detail: "Cognitive and physical lanes" },
   { name: "Safety", href: "/safety", detail: "Authority, policy, approvals" },
   { name: "Integrations", href: "/integrations", detail: "Models, agents, robots" },
+  { name: "Native Agent", href: "/native-agent", detail: "Optional TUI agent client + workers" },
   { name: "Apps", href: "/apps", detail: "Operator-facing workflows" },
 ] as const;
 
@@ -99,7 +99,7 @@ export function Navbar() {
           <div className="hidden items-center gap-5 lg:flex">
             <div className="group relative">
               <Link
-                href="/native-agent"
+                href="/runtime"
                 className={`focus-ring inline-flex items-center gap-1 py-2 text-sm transition-colors ${["/native-agent", "/runtime", "/safety", "/integrations", "/apps"].some((href) => isActive(href)) ? "text-white" : "text-white/[0.52] hover:text-white"}`}
               >
                 Product <ChevronDown className="h-3.5 w-3.5 transition-transform group-hover:rotate-180 group-focus-within:rotate-180" />

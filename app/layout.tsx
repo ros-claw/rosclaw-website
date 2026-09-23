@@ -18,7 +18,7 @@ const structuredData = [
     downloadUrl: "https://www.rosclaw.io/get",
     installUrl: "https://www.rosclaw.io/start",
     license: "https://github.com/ros-claw/rosclaw/blob/main/LICENSE",
-    description: "The Native Agent runtime for Physical AI with governed execution and auditable receipts.",
+    description: "The Physical AI Runtime for Embodied Agents: governed action, verified experience, physical memory, and skill evolution.",
     url: "https://www.rosclaw.io/",
     codeRepository: releaseManifest.repository,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -35,9 +35,9 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.rosclaw.io"),
-  title: "ROSClaw | The Native Agent Runtime for Physical AI",
+  title: "ROSClaw | The Physical AI Runtime for Embodied Agents",
   description:
-    "Give AI agents a body-aware mission runtime with governed execution, worker delegation, MCP interfaces, Skills, and auditable receipts.",
+    "Give AI a Body. Let Experience Drive Evolution. Governed action, verified experience, physical memory, and evolving skills for embodied agents.",
   keywords: [
     "ROSClaw",
     "Physical AI",
@@ -75,18 +75,18 @@ export const metadata: Metadata = {
   publisher: "ROSClaw",
   robots: "index, follow",
   openGraph: {
-    title: "ROSClaw — The Native Agent Runtime for Physical AI",
+    title: "ROSClaw — Give AI a Body. Let Experience Drive Evolution.",
     description:
-      "Body-aware missions, governed physical execution, MCP interfaces, Skills, and auditable receipts.",
+      "The Physical AI Runtime for Embodied Agents. Any Agent. Any Body. One Runtime.",
     type: "website",
     locale: "en_US",
     siteName: "ROSClaw",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ROSClaw | The Native Agent Runtime for Physical AI",
+    title: "ROSClaw | Give AI a Body. Let Experience Drive Evolution.",
     description:
-      "Body-aware missions and governed physical execution for embodied AI.",
+      "The Physical AI Runtime for Embodied Agents. Governed action and verified experience.",
     creator: "@rosclaw",
   },
 };

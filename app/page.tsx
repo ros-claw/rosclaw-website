@@ -4,8 +4,8 @@ import { ProductHomeSections } from "@/components/product-home-sections";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "ROSClaw | The Native Agent Runtime for Physical AI",
-  description: "ROSClaw gives AI agents a body-aware mission runtime with governed execution, worker delegation, installable MCP interfaces, reusable Skills, and auditable receipts.",
+  title: "ROSClaw | Give AI a Body. Let Experience Drive Evolution.",
+  description: "The Physical AI Runtime for Embodied Agents. Connect any agent to robot bodies through governed action, verified experience, physical memory, and evolving skills.",
   alternates: { canonical: "/" },
 };
 

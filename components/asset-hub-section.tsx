@@ -32,7 +32,7 @@ export function AssetHubSection() {
           <div>
             <p className="section-kicker">05 / Distribution layer</p>
             <h2 className="mt-4 text-balance text-3xl font-semibold tracking-[-0.035em] text-white sm:text-4xl md:text-5xl">
-              Connect a body. Install a behavior.
+              Teach Once. Embody Anywhere.
             </h2>
           </div>
           <div className="lg:justify-self-end">

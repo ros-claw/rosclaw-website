@@ -9,7 +9,7 @@ const requireRegistry = process.env.ROSCLAW_REQUIRE_REGISTRY !== "0";
 const errors = [];
 
 const expectedPages = [
-  ["/", "The Native Agent Runtime"],
+  ["/", "Give AI a Body."],
   ["/start", "Choose your first outcome."],
   ["/native-agent", "An Agent that understands the body"],
   ["/safety", "No model output directly controls a robot."],

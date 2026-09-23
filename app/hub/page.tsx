@@ -122,6 +122,7 @@ export default function HubPage() {
               </div>
               <p className="mt-10 font-mono text-[10px] uppercase tracking-[0.16em] text-white/35">Behavior package registry</p>
               <h2 className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-white sm:text-4xl">Skills</h2>
+              <p className="mt-3 text-sm font-semibold text-physical-orange">Teach Once. Embody Anywhere.</p>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-white/50">
                 Versioned task policies with recovery strategies, dependencies, parameters, and declared body compatibility.
               </p>
