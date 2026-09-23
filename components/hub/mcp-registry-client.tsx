@@ -251,7 +251,7 @@ export function McpRegistryClient({
                 onClick={() => setActiveCategory(category.id)}
                 className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === category.id ? "border-cognitive-cyan/50 bg-cognitive-cyan/[0.08] text-cognitive-cyan" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}
               >
-                {category.label} <span className="ml-2 font-mono text-[10px] opacity-60">{categoryCounts[category.id] || 0}</span>
+                {category.label} <span className="ml-2 font-mono text-[10px] opacity-60">{loadError ? "—" : categoryCounts[category.id] || 0}</span>
               </button>
             ))}
           </div>
@@ -270,7 +270,7 @@ export function McpRegistryClient({
               {Array.from({ length: 6 }).map((_, index) => <div key={index} className="h-[320px] animate-pulse bg-[#080b0c]" />)}
             </div>
           ) : loadError ? (
-            <RegistryMessage icon={Cpu} title="Registry temporarily unavailable" description="The package index could not be loaded. Please retry in a moment." />
+            <RegistryMessage icon={Cpu} title="Registry temporarily unavailable" description="The package index could not be loaded. This is a service interruption, not an empty catalog. Please retry shortly." />
           ) : visiblePackages.length > 0 ? (
             <>
               <div className="grid min-w-0 gap-px bg-white/10 md:grid-cols-2 xl:grid-cols-3">

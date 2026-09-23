@@ -223,10 +223,10 @@ export function SkillRegistryClient({
 
           <div className="hub-filter-row mt-4 flex gap-2 overflow-x-auto pb-2 md:flex-wrap md:overflow-visible" aria-label="Skill categories">
             <button type="button" onClick={() => setActiveCategory("all")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "all" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>
-              All skills <span className="ml-2 font-mono text-[10px] opacity-60">{skills.length}</span>
+              All skills <span className="ml-2 font-mono text-[10px] opacity-60">{loadError ? "—" : skills.length}</span>
             </button>
-            <button type="button" onClick={() => setActiveCategory("official")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "official" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>Official publisher <span className="ml-2 font-mono text-[10px] opacity-60">{skills.filter((skill) => skill.officialPublisher).length}</span></button>
-            <button type="button" onClick={() => setActiveCategory("fresh")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "fresh" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>Synced ≤ 6 days <span className="ml-2 font-mono text-[10px] opacity-60">{freshCount}</span></button>
+            <button type="button" onClick={() => setActiveCategory("official")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "official" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>Official publisher <span className="ml-2 font-mono text-[10px] opacity-60">{loadError ? "—" : skills.filter((skill) => skill.officialPublisher).length}</span></button>
+            <button type="button" onClick={() => setActiveCategory("fresh")} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === "fresh" ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>Synced ≤ 6 days <span className="ml-2 font-mono text-[10px] opacity-60">{loadError ? "—" : freshCount}</span></button>
             {categoryOptions.map(([category, count]) => (
               <button key={category} type="button" onClick={() => setActiveCategory(category)} className={`focus-ring flex-none border px-4 py-2.5 text-sm transition-colors ${activeCategory === category ? "border-physical-orange/50 bg-physical-orange/[0.08] text-physical-orange" : "border-white/10 bg-white/[0.025] text-white/45 hover:border-white/20 hover:text-white"}`}>
                 {category} <span className="ml-2 font-mono text-[10px] opacity-60">{count}</span>
@@ -248,7 +248,7 @@ export function SkillRegistryClient({
               {Array.from({ length: 6 }).map((_, index) => <div key={index} className="h-[320px] animate-pulse bg-[#080b0c]" />)}
             </div>
           ) : loadError ? (
-            <RegistryMessage icon={Cpu} title="Registry temporarily unavailable" description="The skill index could not be loaded. Please retry in a moment." />
+            <RegistryMessage icon={Cpu} title="Registry temporarily unavailable" description="The skill index could not be loaded. This is a service interruption, not an empty catalog. Please retry shortly." />
           ) : visibleSkills.length > 0 ? (
             <>
               <div className="grid min-w-0 gap-px bg-white/10 md:grid-cols-2 xl:grid-cols-3">
