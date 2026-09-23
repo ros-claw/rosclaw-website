@@ -18,25 +18,27 @@ import {
   Wrench,
 } from "lucide-react";
 import { ExpandableSummary } from "@/components/hub/expandable-summary";
+import { RegistryDetailUnavailable } from "@/components/hub/registry-detail-unavailable";
 import type { McpPackageDetail } from "@/lib/registry/types";
 import { resolveGitHubMarkdownUrl } from "@/lib/github/source-url";
 
 interface McpPackageClientProps {
   id: string;
   initialPackage?: McpPackageDetail;
+  initialLoadError?: boolean;
 }
 
 function encodedPath(id: string) {
   return id.split("/").map(encodeURIComponent).join("/");
 }
 
-async function fetchPackage(id: string): Promise<McpPackageDetail | null> {
+async function fetchPackage(id: string): Promise<{ item: McpPackageDetail | null; unavailable: boolean }> {
   try {
     const response = await fetch(`/api/mcp-packages/${encodedPath(id)}`);
-    if (!response.ok) return null;
-    return response.json();
+    if (!response.ok) return { item: null, unavailable: response.status !== 404 };
+    return { item: await response.json(), unavailable: false };
   } catch {
-    return null;
+    return { item: null, unavailable: true };
   }
 }
 
@@ -59,10 +61,11 @@ function formatRegistryDate(value?: string) {
   return Number.isNaN(date.getTime()) ? "Not recorded" : new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(date);
 }
 
-export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) {
+export function McpPackageClient({ id, initialPackage, initialLoadError = false }: McpPackageClientProps) {
   const [packageData, setPackageData] = useState<McpPackageDetail | null>(initialPackage ?? null);
-  const [loading, setLoading] = useState(initialPackage === undefined);
+  const [loading, setLoading] = useState(initialPackage === undefined && !initialLoadError);
   const [notFound, setNotFound] = useState(false);
+  const [unavailable, setUnavailable] = useState(initialLoadError);
 
   useEffect(() => {
     if (initialPackage) {
@@ -72,25 +75,32 @@ export function McpPackageClient({ id, initialPackage }: McpPackageClientProps) 
       incrementViews(id);
       return;
     }
+    if (initialLoadError) {
+      setUnavailable(true);
+      setLoading(false);
+      return;
+    }
     let active = true;
     setLoading(true);
     setNotFound(false);
 
-    fetchPackage(id).then((pkg) => {
+    fetchPackage(id).then(({ item, unavailable: failed }) => {
       if (!active) return;
-      if (!pkg) {
-        setNotFound(true);
+      if (!item) {
+        setUnavailable(failed);
+        setNotFound(!failed);
       } else {
-        setPackageData(pkg);
+        setPackageData(item);
         incrementViews(id);
       }
       setLoading(false);
     });
 
     return () => { active = false; };
-  }, [id, initialPackage]);
+  }, [id, initialPackage, initialLoadError]);
 
   if (loading) return <DetailLoading />;
+  if (unavailable) return <RegistryDetailUnavailable id={id} backHref="/hub/mcps" backLabel="Browse Hardware MCPs" />;
   if (notFound || !packageData) return <DetailNotFound id={id} />;
 
   const tools = packageData.tools || [];

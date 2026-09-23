@@ -23,3 +23,16 @@ ROSClaw 是连接智能与物理世界的双向运行时：向下把意图变成
 - “Any Body” describes the target architecture. Cite the [robot support matrix](/robots) for concrete support.
 - “Evolve” describes an evidence-led improvement loop. Changes remain subject to validation, evaluation, and promotion. The [status page](/status) distinguishes verified, observed, component-tested, and experimental paths.
 - A receipt records execution evidence. It is not by itself proof of physical or task success.
+
+## Research attribution and social preview
+
+The homepage places Tongji University and the Shanghai Research Institute for
+Intelligent Autonomous Systems (SRIAS) in a separate light Research &
+Development band. The footer repeats the attribution at smaller scale. Neither
+institutional mark is recolored or placed directly on the dark background;
+these are research attributions, not a generic “supported by” claim.
+
+The website serves a 1280 × 640 OpenGraph image at `/opengraph-image`. A
+matching PNG is saved at `public/brand/rosclaw-social-preview.png` for
+uploading in GitHub repository Settings → General → Social preview. GitHub
+does not derive a repository's Social preview from website OpenGraph metadata.

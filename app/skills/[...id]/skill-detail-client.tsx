@@ -19,25 +19,27 @@ import {
   Workflow,
 } from "lucide-react";
 import { ExpandableSummary } from "@/components/hub/expandable-summary";
+import { RegistryDetailUnavailable } from "@/components/hub/registry-detail-unavailable";
 import type { SkillDetail } from "@/lib/registry/types";
 import { resolveGitHubMarkdownUrl } from "@/lib/github/source-url";
 
 interface SkillDetailClientProps {
   id: string;
   initialSkill?: SkillDetail;
+  initialLoadError?: boolean;
 }
 
 function encodedPath(id: string) {
   return id.split("/").map(encodeURIComponent).join("/");
 }
 
-async function fetchSkill(id: string): Promise<SkillDetail | null> {
+async function fetchSkill(id: string): Promise<{ item: SkillDetail | null; unavailable: boolean }> {
   try {
     const response = await fetch(`/api/skills/${encodedPath(id)}`);
-    if (!response.ok) return null;
-    return response.json();
+    if (!response.ok) return { item: null, unavailable: response.status !== 404 };
+    return { item: await response.json(), unavailable: false };
   } catch {
-    return null;
+    return { item: null, unavailable: true };
   }
 }
 
@@ -55,10 +57,11 @@ function formatRegistryDate(value?: string) {
   return Number.isNaN(date.getTime()) ? "Not recorded" : new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(date);
 }
 
-export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) {
+export function SkillDetailClient({ id, initialSkill, initialLoadError = false }: SkillDetailClientProps) {
   const [skill, setSkill] = useState<SkillDetail | null>(initialSkill ?? null);
-  const [loading, setLoading] = useState(initialSkill === undefined);
+  const [loading, setLoading] = useState(initialSkill === undefined && !initialLoadError);
   const [notFound, setNotFound] = useState(false);
+  const [unavailable, setUnavailable] = useState(initialLoadError);
 
   useEffect(() => {
     if (initialSkill) {
@@ -68,25 +71,32 @@ export function SkillDetailClient({ id, initialSkill }: SkillDetailClientProps) 
       incrementViews(id);
       return;
     }
+    if (initialLoadError) {
+      setUnavailable(true);
+      setLoading(false);
+      return;
+    }
     let active = true;
     setLoading(true);
     setNotFound(false);
 
-    fetchSkill(id).then((skillData) => {
+    fetchSkill(id).then(({ item, unavailable: failed }) => {
       if (!active) return;
-      if (!skillData) {
-        setNotFound(true);
+      if (!item) {
+        setUnavailable(failed);
+        setNotFound(!failed);
       } else {
-        setSkill(skillData);
+        setSkill(item);
         incrementViews(id);
       }
       setLoading(false);
     });
 
     return () => { active = false; };
-  }, [id, initialSkill]);
+  }, [id, initialSkill, initialLoadError]);
 
   if (loading) return <DetailLoading />;
+  if (unavailable) return <RegistryDetailUnavailable id={id} backHref="/hub/skills" backLabel="Browse Skills" />;
   if (notFound || !skill) return <DetailNotFound id={id} />;
 
   const tags = skill.tags || [];

@@ -4,6 +4,7 @@ import { authenticateApiKey } from "@/lib/api-key"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
 import { createPublicRegistryClient, registryErrorKind, withRegistryTimeout } from "@/lib/registry/public-client"
+import { SKILL_LIST_COLUMNS } from "@/lib/registry/list-columns"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest) {
 
     let query = supabase
       .from("skills")
-      .select("*")
+      .select(SKILL_LIST_COLUMNS)
       .eq("status", "approved")
       .order("downloads_count", { ascending: false })
 

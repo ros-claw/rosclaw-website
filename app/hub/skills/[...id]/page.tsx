@@ -29,5 +29,5 @@ export default async function SkillPage({ params }: SkillPageProps) {
   const fullPath = id.join("/");
   const initialSkill = await loadSkill(fullPath);
   if (initialSkill === null) notFound();
-  return <SkillDetailClient id={fullPath} initialSkill={initialSkill ?? undefined} />;
+  return <SkillDetailClient id={fullPath} initialSkill={initialSkill ?? undefined} initialLoadError={initialSkill === undefined} />;
 }

@@ -30,7 +30,7 @@ export function createPublicRegistryClient() {
 
 export function registryErrorKind(error: unknown): "configuration" | "timeout" | "network" | "upstream" {
   const message = error instanceof Error ? error.message : String(error);
-  if (message.includes("configuration is missing")) return "configuration";
+  if (/configuration is missing|supabaseurl is required|supabasekey is required|project's URL and Key are required/i.test(message)) return "configuration";
   if (/abort|timeout/i.test(message)) return "timeout";
   if (/fetch|network|dns|resolve|connect/i.test(message)) return "network";
   return "upstream";

@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { createPublicRegistryClient, withRegistryTimeout } from "@/lib/registry/public-client";
+import { MCP_LIST_COLUMNS, SKILL_LIST_COLUMNS } from "@/lib/registry/list-columns";
 import type {
   McpPackageDetail,
   McpPackageSummary,
@@ -120,7 +121,7 @@ export async function loadMcpPackages(): Promise<RegistryLoad<McpPackageSummary>
   if (!supabase) return { items: [], available: false };
   const { data, error } = await withRegistryTimeout(supabase
     .from("mcp_packages")
-    .select("*")
+    .select(MCP_LIST_COLUMNS)
     .eq("status", "approved")
     .order("downloads_count", { ascending: false })).catch((error) => ({ data: null, error }));
   if (error) {
@@ -136,7 +137,7 @@ export async function loadSkills(): Promise<RegistryLoad<SkillSummary>> {
   if (!supabase) return { items: [], available: false };
   const { data, error } = await withRegistryTimeout(supabase
     .from("skills")
-    .select("*")
+    .select(SKILL_LIST_COLUMNS)
     .eq("status", "approved")
     .order("downloads_count", { ascending: false })).catch((error) => ({ data: null, error }));
   if (error) {

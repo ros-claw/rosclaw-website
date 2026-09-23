@@ -7,6 +7,7 @@ import {
 } from "@/lib/registry/verification"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
+import { registryErrorKind, withRegistryTimeout } from "@/lib/registry/public-client"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -53,22 +54,22 @@ export async function GET(
     const { id } = await params
     const fullPath = id.join("/")
 
-    // Try to find by ID first
-    let { data, error } = await supabase
-      .from("mcp_packages")
-      .select("*")
-      .eq("id", fullPath)
-      .single()
-
-    // If not found by ID, try by exact name
-    if (error || !data) {
-      const result = await supabase
+    // Name is the canonical public path. Only UUID paths need an ID fallback.
+    let { data, error } = await withRegistryTimeout(supabase
         .from("mcp_packages")
         .select("*")
         .eq("name", fullPath)
-        .single()
+        .maybeSingle())
+    if (error) throw error
+    if (!data && /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(fullPath)) {
+      const result = await withRegistryTimeout(supabase
+        .from("mcp_packages")
+        .select("*")
+        .eq("id", fullPath)
+        .maybeSingle())
       data = result.data
       error = result.error
+      if (error) throw error
     }
 
     if (error || !data) {
@@ -135,10 +136,11 @@ export async function GET(
 
     return NextResponse.json(pkg)
   } catch (err: any) {
-    console.error("MCP Package API error:", err.message)
+    const kind = registryErrorKind(err)
+    console.error("MCP Package API error:", kind, err)
     return NextResponse.json(
-      { error: "Failed to fetch package" },
-      { status: 500 }
+      { error: "Registry temporarily unavailable", reason: kind },
+      { status: 503, headers: { "Retry-After": "60", "Cache-Control": "no-store" } }
     )
   }
 }

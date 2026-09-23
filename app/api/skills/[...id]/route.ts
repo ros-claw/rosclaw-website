@@ -4,6 +4,7 @@ import { isDeepStrictEqual } from "node:util"
 import { authenticateApiKey } from "@/lib/api-key"
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
+import { registryErrorKind, withRegistryTimeout } from "@/lib/registry/public-client"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -53,38 +54,23 @@ export async function GET(
     // Convert dash format to slash format (e.g., "owner-repo" -> "owner/repo")
     const slashPath = fullPath.replace(/^([^-]+)-(.+)$/, "$1/$2")
 
-    // Try to find by ID first
-    let { data, error } = await supabase
-      .from("skills")
-      .select("*")
-      .eq("id", fullPath)
-      .single()
-
-    // If not found by ID, try by name (dash format)
-    if (error || !data) {
-      const result = await supabase
+    const candidates: { field: "name" | "id"; value: string }[] = [
+      { field: "name", value: fullPath },
+    ]
+    if (slashPath !== fullPath) candidates.push({ field: "name", value: slashPath })
+    if (/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(fullPath)) candidates.push({ field: "id", value: fullPath })
+    let data = null
+    for (const candidate of candidates) {
+      const result = await withRegistryTimeout(supabase
         .from("skills")
         .select("*")
-        .eq("name", fullPath)
-        .single()
-      data = result.data
-      error = result.error
+        .eq(candidate.field, candidate.value)
+        .maybeSingle())
+      if (result.error) throw result.error
+      if (result.data) { data = result.data; break }
     }
 
-    // If still not found, try by name with slash format
-    if ((!data && slashPath !== fullPath) || (error && slashPath !== fullPath)) {
-      const result = await supabase
-        .from("skills")
-        .select("*")
-        .eq("name", slashPath)
-        .single()
-      if (result.data) {
-        data = result.data
-        error = null
-      }
-    }
-
-    if (error || !data) {
+    if (!data) {
       return NextResponse.json(
         { error: "Skill not found" },
         { status: 404 }
@@ -143,10 +129,11 @@ export async function GET(
 
     return NextResponse.json(skill)
   } catch (err: any) {
-    console.error("Skill API error:", err.message)
+    const kind = registryErrorKind(err)
+    console.error("Skill API error:", kind, err)
     return NextResponse.json(
-      { error: "Failed to fetch skill" },
-      { status: 500 }
+      { error: "Registry temporarily unavailable", reason: kind },
+      { status: 503, headers: { "Retry-After": "60", "Cache-Control": "no-store" } }
     )
   }
 }

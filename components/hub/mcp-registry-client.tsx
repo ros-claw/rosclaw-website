@@ -206,9 +206,9 @@ export function McpRegistryClient({
 
           <dl className="mt-9 grid border border-white/10 bg-[#050708] sm:mt-12 sm:grid-cols-3">
             {[
-              ["Registry packages", loading ? "—" : packages.length.toLocaleString()],
-              ["Synced ≤ 6 days", loading ? "—" : freshCount.toLocaleString()],
-              ["Validated manifests", loading ? "—" : validatedCount.toLocaleString()],
+              ["Registry packages", loading || loadError ? "—" : packages.length.toLocaleString()],
+              ["Synced ≤ 6 days", loading || loadError ? "—" : freshCount.toLocaleString()],
+              ["Validated manifests", loading || loadError ? "—" : validatedCount.toLocaleString()],
             ].map(([label, value], index) => (
               <div key={label} className={`p-5 sm:p-6 ${index < 2 ? "border-b border-white/10 sm:border-b-0 sm:border-r" : ""}`}>
                 <dt className="runtime-label">{label}</dt>
@@ -258,7 +258,7 @@ export function McpRegistryClient({
 
           <div className="mt-10 flex items-center justify-between border-b border-white/[0.08] pb-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/30">
-              {loading ? "Indexing registry" : `${processedPackages.length.toLocaleString()} interfaces matched`}
+              {loading ? "Indexing registry" : loadError ? "Registry data unavailable" : `${processedPackages.length.toLocaleString()} interfaces matched`}
             </p>
             <span className="hidden items-center gap-2 font-mono text-[9px] uppercase tracking-[0.12em] text-white/20 sm:inline-flex">
               <ShieldCheck className="h-3.5 w-3.5" /> inspect before execute

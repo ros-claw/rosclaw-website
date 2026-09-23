@@ -29,5 +29,5 @@ export default async function McpPackagePage({ params }: McpPackagePageProps) {
   const fullPath = id.join("/");
   const initialPackage = await loadMcpPackage(fullPath);
   if (initialPackage === null) notFound();
-  return <McpPackageClient id={fullPath} initialPackage={initialPackage ?? undefined} />;
+  return <McpPackageClient id={fullPath} initialPackage={initialPackage ?? undefined} initialLoadError={initialPackage === undefined} />;
 }
