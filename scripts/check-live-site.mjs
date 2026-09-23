@@ -63,6 +63,20 @@ async function request(path, init = {}) {
   }
 }
 
+async function registryItems(response, path) {
+  if (!response) return [];
+  assert(response.status === 200, `${path} returned ${response.status}.`);
+  if (response.status !== 200) return [];
+  try {
+    const payload = await response.json();
+    assert(Array.isArray(payload) && payload.length > 0, `${path} is empty or invalid.`);
+    return Array.isArray(payload) ? payload : [];
+  } catch (error) {
+    errors.push(`${path} response could not be read: ${error.message}`);
+    return [];
+  }
+}
+
 for (const [path, marker] of expectedPages) {
   const response = await request(path);
   if (!response) continue;
@@ -85,6 +99,16 @@ for (const [path, marker] of expectedPages) {
 
 const root = await request("/");
 if (root) {
+  const html = await root.text();
+  for (const phrase of [
+    "Give AI a Body.",
+    "Let Experience Drive Evolution.",
+    "One Runtime. Two Loops.",
+    "Any Agent. Any Body. One Runtime.",
+    "Teach Once. Embody Anywhere.",
+  ]) {
+    assert(html.includes(phrase), `Homepage is missing brand language: ${phrase}`);
+  }
   const requiredHeaders = {
     "content-security-policy": "frame-ancestors 'none'",
     "permissions-policy": "camera=()",
@@ -117,10 +141,11 @@ let mcpPackages = [];
 let skills = [];
 const mcpResponse = requireRegistry ? await request("/api/mcp-packages") : null;
 const skillResponse = requireRegistry ? await request("/api/skills") : null;
-if (mcpResponse) {
-  assert(mcpResponse.status === 200, "MCP Registry API is unavailable.");
-  mcpPackages = await mcpResponse.json();
-  assert(Array.isArray(mcpPackages) && mcpPackages.length > 0, "MCP Registry is empty.");
+if (requireRegistry) {
+  mcpPackages = await registryItems(mcpResponse, "/api/mcp-packages");
+  skills = await registryItems(skillResponse, "/api/skills");
+}
+if (mcpPackages.length) {
   if (mcpPackages[0]) {
     assert(
       typeof mcpPackages[0].manifestValidated === "boolean",
@@ -150,10 +175,7 @@ if (mcpResponse) {
     );
   }
 }
-if (skillResponse) {
-  assert(skillResponse.status === 200, "Skill Registry API is unavailable.");
-  skills = await skillResponse.json();
-  assert(Array.isArray(skills) && skills.length > 0, "Skill Registry is empty.");
+if (skills.length) {
   for (const skill of skills) {
     assert(
       skill.installCommand === undefined,
@@ -162,7 +184,7 @@ if (skillResponse) {
   }
 }
 
-if (requireRegistry) {
+if (skills.length) {
   const expectedOfficialSkillSources = new Map([
     ["ros-claw/inspire_rh56_hand_gestures", "inspire_rh56_hand_gestures"],
     ["rosclaw/realsense_camera_usage", "realsense_camera_usage"],
