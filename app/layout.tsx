@@ -73,6 +73,7 @@ export const metadata: Metadata = {
   authors: [{ name: "ROSClaw Team" }],
   creator: "ROSClaw",
   publisher: "ROSClaw",
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || undefined },
   robots: "index, follow",
   openGraph: {
     title: "ROSClaw — Give AI a Body. Let Experience Drive Evolution.",

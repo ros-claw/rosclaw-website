@@ -29,6 +29,9 @@ npm run dev
 ```bash
 npm test
 npm run build
+npm run test:seo:live
 ```
 
 This is a Next.js App Router site with server-rendered registry pages and API routes. Vercel deploys the GitHub `main` branch. Product status and release claims are checked against the pinned core release data; see [brand language](docs/BRAND_LANGUAGE.md) and the [registry refresh schedule](docs/GITHUB_SYNC_CRON.md).
+
+Registry pagination, source-based discovery, SEO acceptance checks, and Search Console setup are documented in [Registry SEO](docs/REGISTRY_SEO.md).

@@ -1,21 +1,11 @@
-import type { Metadata } from "next";
-import { McpRegistryClient } from "@/components/hub/mcp-registry-client";
-import { loadMcpPackages } from "@/lib/registry/server";
-
-export const metadata: Metadata = {
-  title: "Hardware MCP Registry | ROSClaw",
-  description: "Server-rendered registry of typed physical interfaces for embodied agents.",
-  alternates: { canonical: "/hub/mcps" },
-};
+import { RegistryBrowsePage, registryBrowseMetadata, type BrowseQuery } from "@/components/hub/registry-browse-page";
 
 export const dynamic = "force-dynamic";
 
-export default async function McpsPage() {
-  const registry = await loadMcpPackages();
-  return (
-    <McpRegistryClient
-      initialPackages={registry.items}
-      initialLoadError={!registry.available}
-    />
-  );
+type Props = { searchParams: Promise<BrowseQuery> };
+export async function generateMetadata({ searchParams }: Props) {
+  return registryBrowseMetadata("mcps", await searchParams);
+}
+export default async function McpsPage({ searchParams }: Props) {
+  return <RegistryBrowsePage kind="mcps" query={await searchParams} />;
 }

@@ -1,21 +1,11 @@
-import type { Metadata } from "next";
-import { SkillRegistryClient } from "@/components/hub/skill-registry-client";
-import { loadSkills } from "@/lib/registry/server";
-
-export const metadata: Metadata = {
-  title: "Skill Registry | ROSClaw",
-  description: "Teach Once. Embody Anywhere. Explore source-linked Skills for reusable behavior across compatible robot bodies.",
-  alternates: { canonical: "/hub/skills" },
-};
+import { RegistryBrowsePage, registryBrowseMetadata, type BrowseQuery } from "@/components/hub/registry-browse-page";
 
 export const dynamic = "force-dynamic";
 
-export default async function SkillsPage() {
-  const registry = await loadSkills();
-  return (
-    <SkillRegistryClient
-      initialSkills={registry.items}
-      initialLoadError={!registry.available}
-    />
-  );
+type Props = { searchParams: Promise<BrowseQuery> };
+export async function generateMetadata({ searchParams }: Props) {
+  return registryBrowseMetadata("skills", await searchParams);
+}
+export default async function SkillsPage({ searchParams }: Props) {
+  return <RegistryBrowsePage kind="skills" query={await searchParams} />;
 }

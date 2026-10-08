@@ -26,6 +26,7 @@ interface McpPackageClientProps {
   id: string;
   initialPackage?: McpPackageDetail;
   initialLoadError?: boolean;
+  children?: React.ReactNode;
 }
 
 function encodedPath(id: string) {
@@ -61,7 +62,7 @@ function formatRegistryDate(value?: string) {
   return Number.isNaN(date.getTime()) ? "Not recorded" : new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(date);
 }
 
-export function McpPackageClient({ id, initialPackage, initialLoadError = false }: McpPackageClientProps) {
+export function McpPackageClient({ id, initialPackage, initialLoadError = false, children }: McpPackageClientProps) {
   const [packageData, setPackageData] = useState<McpPackageDetail | null>(initialPackage ?? null);
   const [loading, setLoading] = useState(initialPackage === undefined && !initialLoadError);
   const [notFound, setNotFound] = useState(false);
@@ -161,6 +162,7 @@ export function McpPackageClient({ id, initialPackage, initialLoadError = false 
 
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_330px] lg:px-8 lg:py-14">
         <div className="min-w-0 space-y-14">
+          {children}
           <section aria-labelledby="contract-heading">
             <div className="flex items-end justify-between gap-4 border-b border-white/10 pb-4">
               <div>

@@ -13,6 +13,8 @@ import type {
 import { getManifestValidationMetadata } from "@/lib/registry/verification";
 import { normalizePublicHttpsUrl } from "@/lib/security/public-url";
 import { canonicalRegistrySourceUrl } from "@/lib/github/source-url";
+import { readAllRegistryRows } from "@/lib/registry/pagination";
+import { itemCategories, matchesRegistryCategory, type RegistryKind, type RegistrySummary } from "@/lib/registry/discovery";
 
 type RegistryRow = Record<string, unknown>;
 
@@ -116,39 +118,62 @@ function skillSummary(row: RegistryRow): SkillSummary {
   };
 }
 
-export async function loadMcpPackages(): Promise<RegistryLoad<McpPackageSummary>> {
+export const loadMcpPackages = cache(async (): Promise<RegistryLoad<McpPackageSummary>> => {
   const supabase = client();
   if (!supabase) return { items: [], available: false };
-  const { data, error } = await withRegistryTimeout(supabase
+  const { data, error } = await withRegistryTimeout(readAllRegistryRows<RegistryRow>((from, to, signal) => supabase
     .from("mcp_packages")
-    .select(MCP_LIST_COLUMNS)
+    .select(MCP_LIST_COLUMNS, { count: "exact" })
     .eq("status", "approved")
-    .order("downloads_count", { ascending: false })).catch((error) => ({ data: null, error }));
+    .order("downloads_count", { ascending: false })
+    .order("id", { ascending: true }).range(from, to).abortSignal(signal)))
+    .then((data) => ({ data, error: null })).catch((error) => ({ data: null, error }));
   if (error) {
     console.error("MCP registry SSR load failed:", error.message);
     return { items: [], available: false };
   }
   const items = ((data ?? []) as RegistryRow[]).map(mcpSummary);
   return { items, available: true };
-}
+});
 
-export async function loadSkills(): Promise<RegistryLoad<SkillSummary>> {
+export const loadSkills = cache(async (): Promise<RegistryLoad<SkillSummary>> => {
   const supabase = client();
   if (!supabase) return { items: [], available: false };
-  const { data, error } = await withRegistryTimeout(supabase
+  const { data, error } = await withRegistryTimeout(readAllRegistryRows<RegistryRow>((from, to, signal) => supabase
     .from("skills")
-    .select(SKILL_LIST_COLUMNS)
+    .select(SKILL_LIST_COLUMNS, { count: "exact" })
     .eq("status", "approved")
-    .order("downloads_count", { ascending: false })).catch((error) => ({ data: null, error }));
+    .order("downloads_count", { ascending: false })
+    .order("id", { ascending: true }).range(from, to).abortSignal(signal)))
+    .then((data) => ({ data, error: null })).catch((error) => ({ data: null, error }));
   if (error) {
     console.error("Skill registry SSR load failed:", error.message);
     return { items: [], available: false };
   }
   const items = ((data ?? []) as RegistryRow[]).map(skillSummary);
   return { items, available: true };
-}
+});
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export async function loadRelatedRegistryItems(item: RegistrySummary, kind: RegistryKind) {
+  const supabase = client();
+  if (!supabase) return [];
+  const categories = itemCategories(item).filter((category) => category.slug !== "other");
+  if (!categories.length) return [];
+  const load = async (candidateKind: RegistryKind) => {
+    const table = candidateKind === "skills" ? "skills" : "mcp_packages";
+    let query = supabase.from(table).select((candidateKind === "skills" ? SKILL_LIST_COLUMNS : MCP_LIST_COLUMNS) as string)
+      .eq("status", "approved").order("github_stars", { ascending: false }).order("id", { ascending: true }).limit(80);
+    if (candidateKind === kind && item.category) query = query.eq("category", item.category);
+    const { data, error } = await withRegistryTimeout(query).catch(() => ({ data: null, error: true }));
+    if (error) return [];
+    return ((data || []) as unknown as RegistryRow[]).map((row) => candidateKind === "skills" ? skillSummary(row) : mcpSummary(row))
+      .filter((candidate) => candidate.name !== item.name && categories.some((category) => matchesRegistryCategory(candidate, category.slug)))
+      .slice(0, 3).map((candidate) => ({ kind: candidateKind, item: candidate }));
+  };
+  return (await Promise.all([load(kind), load(kind === "skills" ? "mcps" : "skills")])).flat();
+}
 
 export const loadMcpPackage = cache(
   async (identifier: string): Promise<McpPackageDetail | null | undefined> => {

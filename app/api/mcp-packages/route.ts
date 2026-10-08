@@ -8,6 +8,7 @@ import { normalizePublicHttpsUrl } from "@/lib/security/public-url"
 import { canonicalRegistrySourceUrl } from "@/lib/github/source-url"
 import { createPublicRegistryClient, registryErrorKind, withRegistryTimeout } from "@/lib/registry/public-client"
 import { MCP_LIST_COLUMNS } from "@/lib/registry/list-columns"
+import { readAllRegistryRows } from "@/lib/registry/pagination"
 
 function isOfficial(repoUrl: string | undefined) {
   if (!repoUrl) return false
@@ -59,22 +60,24 @@ export async function GET(req: NextRequest) {
   try {
     const supabase = createPublicRegistryClient()
 
-    let query = supabase
-      .from("mcp_packages")
-      .select(MCP_LIST_COLUMNS)
-      .eq("status", "approved")
-      .order("downloads_count", { ascending: false })
+    const data = await withRegistryTimeout(readAllRegistryRows((from, to, signal) => {
+      let query = supabase
+        .from("mcp_packages")
+        .select(MCP_LIST_COLUMNS, { count: "exact" })
+        .eq("status", "approved")
+        .order("downloads_count", { ascending: false })
+        .order("id", { ascending: true })
 
-    if (category && category !== "all") {
-      query = query.eq("robot_type", category)
-    }
+      if (category && category !== "all") {
+        query = query.eq("robot_type", category)
+      }
 
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`)
-    }
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`)
+      }
 
-    const { data, error } = await withRegistryTimeout(query)
-    if (error) throw error
+      return query.range(from, to).abortSignal(signal)
+    }))
 
     const packages = (data || []).map((p) => {
       const validation = getManifestValidationMetadata(p)

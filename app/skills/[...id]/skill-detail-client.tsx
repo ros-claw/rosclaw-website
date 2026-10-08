@@ -27,6 +27,7 @@ interface SkillDetailClientProps {
   id: string;
   initialSkill?: SkillDetail;
   initialLoadError?: boolean;
+  children?: React.ReactNode;
 }
 
 function encodedPath(id: string) {
@@ -57,7 +58,7 @@ function formatRegistryDate(value?: string) {
   return Number.isNaN(date.getTime()) ? "Not recorded" : new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" }).format(date);
 }
 
-export function SkillDetailClient({ id, initialSkill, initialLoadError = false }: SkillDetailClientProps) {
+export function SkillDetailClient({ id, initialSkill, initialLoadError = false, children }: SkillDetailClientProps) {
   const [skill, setSkill] = useState<SkillDetail | null>(initialSkill ?? null);
   const [loading, setLoading] = useState(initialSkill === undefined && !initialLoadError);
   const [notFound, setNotFound] = useState(false);
@@ -156,6 +157,7 @@ export function SkillDetailClient({ id, initialSkill, initialLoadError = false }
 
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,1fr)_330px] lg:px-8 lg:py-14">
         <div className="min-w-0 space-y-14">
+          {children}
           <section aria-labelledby="deployment-heading">
             <div className="border-b border-white/10 pb-4">
               <p className="font-mono text-[0.68rem] uppercase tracking-[0.17em] text-physical-orange">Deployment contract</p>

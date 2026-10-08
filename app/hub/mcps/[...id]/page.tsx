@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { McpPackageClient } from "../../../mcp-hub/[...slug]/mcp-package-client";
-import { loadMcpPackage } from "@/lib/registry/server";
+import { loadMcpPackage, loadRelatedRegistryItems } from "@/lib/registry/server";
+import { detailMetadata, detailStructuredData } from "@/lib/registry/detail-seo";
+import { RegistryJsonLd } from "@/components/hub/registry-jsonld";
+import { RegistryIntegrationGuide } from "@/components/hub/registry-integration-guide";
 
 interface McpPackagePageProps {
   params: Promise<{ id: string[] }>;
@@ -15,13 +18,7 @@ export async function generateMetadata({ params }: McpPackagePageProps): Promise
   const { id } = await params;
   const fullPath = id.join("/");
   const pkg = await loadMcpPackage(fullPath);
-  return {
-    title: `${pkg?.name ?? fullPath} | Hardware MCP Registry | ROSClaw`,
-    description: pkg?.description ?? `Inspect the tools, target hardware, source, and install contract for the ${fullPath} MCP package on ROSClaw.`,
-    alternates: {
-      canonical: `/hub/mcps/${id.map(encodeURIComponent).join("/")}`,
-    },
-  };
+  return detailMetadata("mcps", fullPath, pkg);
 }
 
 export default async function McpPackagePage({ params }: McpPackagePageProps) {
@@ -29,5 +26,11 @@ export default async function McpPackagePage({ params }: McpPackagePageProps) {
   const fullPath = id.join("/");
   const initialPackage = await loadMcpPackage(fullPath);
   if (initialPackage === null) notFound();
-  return <McpPackageClient id={fullPath} initialPackage={initialPackage ?? undefined} initialLoadError={initialPackage === undefined} />;
+  const related = initialPackage ? await loadRelatedRegistryItems(initialPackage, "mcps") : [];
+  return <>
+    {initialPackage && <RegistryJsonLd data={detailStructuredData("mcps", initialPackage)} />}
+    <McpPackageClient id={fullPath} initialPackage={initialPackage ?? undefined} initialLoadError={initialPackage === undefined}>
+      {initialPackage && <RegistryIntegrationGuide kind="mcps" item={initialPackage} related={related} />}
+    </McpPackageClient>
+  </>;
 }

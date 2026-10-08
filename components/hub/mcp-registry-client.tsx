@@ -19,8 +19,12 @@ import {
   Wrench,
 } from "lucide-react";
 import type { McpPackageSummary } from "@/lib/registry/types";
+import { REGISTRY_PAGE_SIZE, registryPath } from "@/lib/registry/pagination";
+import { rankedRegistryItems } from "@/lib/registry/discovery";
+import { RegistryPagination } from "./registry-pagination";
+import { RegistryCategories } from "./registry-categories";
 
-const PAGE_SIZE = 24;
+const PAGE_SIZE = REGISTRY_PAGE_SIZE;
 
 const categoryDefinitions = [
   { id: "all", label: "All interfaces", keywords: [] },
@@ -74,7 +78,8 @@ function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }
 
   return (
     <Link
-      href={`/hub/mcps/${pkg.name}`}
+      href={`/hub/mcps/${registryPath(pkg.name)}`}
+      prefetch={false}
       className="focus-ring group flex min-h-[320px] min-w-0 flex-col overflow-hidden border border-white/10 bg-[#080b0c] p-6 transition-colors hover:border-cognitive-cyan/40 hover:bg-cognitive-cyan/[0.025]"
     >
       <div className="flex items-start justify-between gap-4">
@@ -134,11 +139,19 @@ function PackageCard({ pkg, number }: { pkg: McpPackageSummary; number: number }
 interface McpRegistryClientProps {
   initialPackages: McpPackageSummary[];
   initialLoadError: boolean;
+  initialPage?: number;
+  basePath?: string;
+  heading?: string;
+  introduction?: string;
 }
 
 export function McpRegistryClient({
   initialPackages,
   initialLoadError,
+  initialPage = 1,
+  basePath = "/hub/mcps",
+  heading = "Hardware MCPs",
+  introduction,
 }: McpRegistryClientProps) {
   const packages = initialPackages;
   const loading = false;
@@ -167,8 +180,7 @@ export function McpRegistryClient({
       .sort((a, b) => {
         if (sortBy === "stars") return (b.githubStars || 0) - (a.githubStars || 0);
         if (sortBy === "updated") return Date.parse(b.githubUpdatedAt || "") - Date.parse(a.githubUpdatedAt || "");
-        const score = (pkg: McpPackageSummary) => (pkg.officialPublisher ? 10_000_000 : 0) + (isManifestValidated(pkg) ? 1_000_000 : 0) + (isFresh(pkg.lastSyncedAt) ? 100_000 : 0) + (pkg.githubStars || 0) * 10;
-        return score(b) - score(a);
+        return 0;
       });
   }, [packages, deferredSearch, activeCategory, sortBy]);
 
@@ -177,7 +189,11 @@ export function McpRegistryClient({
     () => packages.filter(isManifestValidated).length,
     [packages],
   );
-  const visiblePackages = processedPackages.slice(0, visibleCount);
+  const browsing = !deferredSearch.trim() && activeCategory === "all" && sortBy === "recommended";
+  const sortedPackages = sortBy === "recommended" ? rankedRegistryItems(processedPackages) : processedPackages;
+  const visiblePackages = browsing
+    ? sortedPackages.slice((initialPage - 1) * PAGE_SIZE, initialPage * PAGE_SIZE)
+    : sortedPackages.slice(0, visibleCount);
 
   return (
     <main className="min-h-screen bg-background pb-20 pt-24">
@@ -189,9 +205,9 @@ export function McpRegistryClient({
                 <ArrowLeft className="h-4 w-4" /> Distribution Hub
               </Link>
               <p className="section-kicker mt-7 md:mt-10">01 / Physical interface registry</p>
-              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl md:text-6xl">Hardware MCPs</h1>
+              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl md:text-6xl">{heading}</h1>
               <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-white/50 md:text-lg">
-                Find the typed tools that connect an agent to a robot, sensor, device, or physical system. Inspect every interface before granting hardware access.
+                {introduction || "Find the typed tools that connect an agent to a robot, sensor, device, or physical system. Inspect every interface before granting hardware access."}
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
@@ -256,6 +272,7 @@ export function McpRegistryClient({
             ))}
           </div>
 
+          {!loadError && <RegistryCategories kind="mcps" items={packages} />}
           <div className="mt-10 flex items-center justify-between border-b border-white/[0.08] pb-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/30">
               {loading ? "Indexing registry" : loadError ? "Registry data unavailable" : `${processedPackages.length.toLocaleString()} interfaces matched`}
@@ -274,9 +291,10 @@ export function McpRegistryClient({
           ) : visiblePackages.length > 0 ? (
             <>
               <div className="grid min-w-0 gap-px bg-white/10 md:grid-cols-2 xl:grid-cols-3">
-                {visiblePackages.map((pkg, index) => <PackageCard key={pkg.id} pkg={pkg} number={index + 1} />)}
+                {visiblePackages.map((pkg, index) => <PackageCard key={pkg.id} pkg={pkg} number={(browsing ? (initialPage - 1) * PAGE_SIZE : 0) + index + 1} />)}
               </div>
-              {visibleCount < processedPackages.length && (
+              {browsing && <RegistryPagination basePath={basePath} page={initialPage} pages={Math.ceil(processedPackages.length / PAGE_SIZE)} />}
+              {!browsing && visibleCount < processedPackages.length && (
                 <div className="flex justify-center border-x border-b border-white/10 bg-[#080b0c] p-6">
                   <button type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)} className="focus-ring inline-flex items-center gap-2 border border-white/15 px-6 py-3 text-sm text-white/60 transition-colors hover:border-cognitive-cyan/40 hover:text-white">
                     Load {Math.min(PAGE_SIZE, processedPackages.length - visibleCount)} more <ArrowRight className="h-4 w-4" />

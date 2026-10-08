@@ -18,8 +18,12 @@ import {
   Workflow,
 } from "lucide-react";
 import type { SkillSummary } from "@/lib/registry/types";
+import { REGISTRY_PAGE_SIZE, registryPath } from "@/lib/registry/pagination";
+import { rankedRegistryItems } from "@/lib/registry/discovery";
+import { RegistryPagination } from "./registry-pagination";
+import { RegistryCategories } from "./registry-categories";
 
-const PAGE_SIZE = 24;
+const PAGE_SIZE = REGISTRY_PAGE_SIZE;
 
 function searchableText(skill: SkillSummary) {
   return [skill.name, skill.displayName, skill.description, skill.authorName, skill.category, ...(skill.tags || []), ...(skill.robotTypes || []), ...(skill.dependencies || [])]
@@ -46,7 +50,8 @@ function SkillCard({ skill, number }: { skill: SkillSummary; number: number }) {
 
   return (
     <Link
-      href={`/hub/skills/${skill.name}`}
+      href={`/hub/skills/${registryPath(skill.name)}`}
+      prefetch={false}
       className="focus-ring group flex min-h-[320px] min-w-0 flex-col overflow-hidden border border-white/10 bg-[#080b0c] p-6 transition-colors hover:border-physical-orange/45 hover:bg-physical-orange/[0.025]"
     >
       <div className="flex items-start justify-between gap-4">
@@ -111,11 +116,19 @@ function SkillCard({ skill, number }: { skill: SkillSummary; number: number }) {
 interface SkillRegistryClientProps {
   initialSkills: SkillSummary[];
   initialLoadError: boolean;
+  initialPage?: number;
+  basePath?: string;
+  heading?: string;
+  introduction?: string;
 }
 
 export function SkillRegistryClient({
   initialSkills,
   initialLoadError,
+  initialPage = 1,
+  basePath = "/hub/skills",
+  heading = "Skills",
+  introduction,
 }: SkillRegistryClientProps) {
   const skills = initialSkills;
   const loading = false;
@@ -147,14 +160,17 @@ export function SkillRegistryClient({
       .sort((a, b) => {
         if (sortBy === "stars") return (b.githubStars || 0) - (a.githubStars || 0);
         if (sortBy === "updated") return (Date.parse(b.githubUpdatedAt || "") || 0) - (Date.parse(a.githubUpdatedAt || "") || 0);
-        const score = (skill: SkillSummary) => (skill.officialPublisher ? 1_000_000 : 0) + (isFresh(skill.lastSyncedAt) ? 100_000 : 0) + (skill.githubStars || 0) * 10 + (skill.robotTypes?.length || 0) * 20;
-        return score(b) - score(a);
+        return 0;
       });
   }, [skills, deferredSearch, activeCategory, sortBy]);
 
   const uniqueCategories = useMemo(() => new Set(skills.map((skill) => skill.category).filter(Boolean)).size, [skills]);
   const freshCount = useMemo(() => skills.filter((skill) => isFresh(skill.lastSyncedAt)).length, [skills]);
-  const visibleSkills = processedSkills.slice(0, visibleCount);
+  const browsing = !deferredSearch.trim() && activeCategory === "all" && sortBy === "recommended";
+  const sortedSkills = sortBy === "recommended" ? rankedRegistryItems(processedSkills) : processedSkills;
+  const visibleSkills = browsing
+    ? sortedSkills.slice((initialPage - 1) * PAGE_SIZE, initialPage * PAGE_SIZE)
+    : sortedSkills.slice(0, visibleCount);
 
   return (
     <main className="min-h-screen bg-background pb-20 pt-24">
@@ -166,10 +182,10 @@ export function SkillRegistryClient({
                 <ArrowLeft className="h-4 w-4" /> Distribution Hub
               </Link>
               <p className="mt-7 font-mono text-[0.68rem] uppercase tracking-[0.17em] text-physical-orange md:mt-10">02 / Behavior package registry</p>
-              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl md:text-6xl">Skills</h1>
+              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl md:text-6xl">{heading}</h1>
               <p className="mt-4 text-xl font-semibold tracking-[-0.03em] text-physical-orange">Teach Once. Embody Anywhere.</p>
               <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-white/50 md:text-lg">
-                Find versioned task policies for embodied agents. Inspect the declared body profiles, dependencies, and operating assumptions before deployment.
+                {introduction || "Find versioned task policies for embodied agents. Inspect the declared body profiles, dependencies, and operating assumptions before deployment."}
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
@@ -234,6 +250,7 @@ export function SkillRegistryClient({
             ))}
           </div>
 
+          {!loadError && <RegistryCategories kind="skills" items={skills} />}
           <div className="mt-10 flex items-center justify-between border-b border-white/[0.08] pb-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/30">
               {loading ? "Indexing registry" : loadError ? "Registry data unavailable" : `${processedSkills.length.toLocaleString()} skills matched`}
@@ -252,9 +269,10 @@ export function SkillRegistryClient({
           ) : visibleSkills.length > 0 ? (
             <>
               <div className="grid min-w-0 gap-px bg-white/10 md:grid-cols-2 xl:grid-cols-3">
-                {visibleSkills.map((skill, index) => <SkillCard key={skill.id} skill={skill} number={index + 1} />)}
+                {visibleSkills.map((skill, index) => <SkillCard key={skill.id} skill={skill} number={(browsing ? (initialPage - 1) * PAGE_SIZE : 0) + index + 1} />)}
               </div>
-              {visibleCount < processedSkills.length && (
+              {browsing && <RegistryPagination basePath={basePath} page={initialPage} pages={Math.ceil(processedSkills.length / PAGE_SIZE)} />}
+              {!browsing && visibleCount < processedSkills.length && (
                 <div className="flex justify-center border-x border-b border-white/10 bg-[#080b0c] p-6">
                   <button type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)} className="focus-ring inline-flex items-center gap-2 border border-white/15 px-6 py-3 text-sm text-white/60 transition-colors hover:border-physical-orange/40 hover:text-white">
                     Load {Math.min(PAGE_SIZE, processedSkills.length - visibleCount)} more <ArrowRight className="h-4 w-4" />

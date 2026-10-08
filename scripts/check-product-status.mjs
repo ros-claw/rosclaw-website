@@ -154,7 +154,8 @@ for (const stalePublicFile of ["public/robots.txt", "public/sitemap.xml"]) {
 for (const route of ["app/hub/mcps/page.tsx", "app/hub/skills/page.tsx"]) {
   const source = readFileSync(path.join(repositoryRoot, route), "utf8");
   assert(!source.includes('"use client"'), `${route} must remain server-rendered.`);
-  assert(source.includes("initialLoadError"), `${route} must pass server-loaded registry data.`);
+  const browseSource = readFileSync(path.join(repositoryRoot, "components/hub/registry-browse-page.tsx"), "utf8");
+  assert(source.includes("RegistryBrowsePage") && !browseSource.includes('"use client"') && browseSource.includes("loadSkills()") && browseSource.includes("loadMcpPackages()") && browseSource.includes("initialLoadError={!available}"), `${route} must pass server-loaded registry data through the shared browse page.`);
 }
 
 const rootLayoutSource = readFileSync(
